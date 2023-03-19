@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { v4 } from 'uuid';
 import { z } from 'zod';
 
+import turtleSpecs from './assets/talents.json';
 import Button from './components/Button';
 import Icon from './components/Icon';
 import IconPicker from './form/IconPicker';
@@ -29,7 +30,7 @@ const TalentForm = z.object({
 	icon: z.string(),
 	name: z.string(),
 	tree: TalentTree,
-	selected: z.number()
+	selected: z.number().optional()
 });
 export type TalentFormT = z.infer<typeof TalentForm>;
 
@@ -48,7 +49,7 @@ const getInitialTree = () =>
 		id: v4(),
 		icon: 'inv_misc_questionmark',
 		name: 'Unnamed',
-		selected: 0,
+		selected: undefined,
 		tree: [...Array(4 * 7).keys()].map(() => ({} as TalentT))
 	};
 
@@ -66,7 +67,7 @@ const App = () => {
 	const tree = watch('tree');
 
 	const [savedSpecs, setSavedSpecs] = useLocalStorage<
-		Record<string, Required<TalentFormT>>
+		Record<string, TalentFormT>
 	>('saved-specs', {});
 
 	const compressed = compressTree(getValues());
@@ -138,17 +139,20 @@ const App = () => {
 								highlight={selected === i}
 								frameClass={cls({ 'opacity-10': !t.name })}
 								className={cls({
-									invert: tree[selected].requires === i
+									invert:
+										selected !== undefined && tree[selected].requires === i
 								})}
 							/>
 						))}
 					</div>
-					<TalentEdit
-						key={selected}
-						selected={selected}
-						watch={watch}
-						register={register}
-					/>
+					{selected !== undefined && (
+						<TalentEdit
+							key={selected}
+							selected={selected}
+							watch={watch}
+							register={register}
+						/>
+					)}
 				</div>
 				<details className="w-full">
 					<summary className="py-4 cursor-pointer">Export/import</summary>
@@ -170,6 +174,22 @@ const App = () => {
 									showDefault
 									onClick={() => reset(savedSpecs[s.id])}
 									highlight={s.id === getValues().id}
+									className="mx-auto"
+								/>
+								<p className="text-center truncate">{s.name}</p>
+							</div>
+						))}
+					</div>
+				</div>
+				<div className="flex flex-col gap-4">
+					<h2 className="font-bold text-lg">TurtleWoW specs</h2>
+					<div className="flex gap-4 flex-wrap">
+						{Object.entries(turtleSpecs).map(([id, s]) => (
+							<div key={id} className="flex flex-col w-[100px]">
+								<Icon
+									icon={s.icon}
+									showDefault
+									onClick={() => reset(s)}
 									className="mx-auto"
 								/>
 								<p className="text-center truncate">{s.name}</p>
