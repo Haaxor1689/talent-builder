@@ -1,23 +1,17 @@
 import { type Resolver, type FieldValues } from 'react-hook-form';
 import type { z } from 'zod';
-import { encode, decode } from 'js-base64';
+import { zodResolver as resolver } from '@hookform/resolvers/zod';
 
-import { TalentFormT } from './App';
+export const zodResolver = <In extends FieldValues, Out extends FieldValues>(
+	schema: z.ZodType<In, z.ZodTypeDef, Out>
+): Resolver<z.infer<z.ZodType<In, z.ZodTypeDef, Out>>> => resolver(schema);
 
-export const zodResolver =
-	<T extends FieldValues>(
-		schema: z.ZodType<T>
-	): Resolver<z.infer<z.ZodType<T>>> =>
-	async values => {
-		const result = await schema.safeParseAsync(values);
-		return {
-			values: result.success ? result.data : {},
-			errors: result.success ? {} : result.error
-		};
-	};
+export const downloadBlob = (blob: Blob, title: string) => {
+	const url = window.URL.createObjectURL(blob);
+	const link = document.createElement('a');
 
-export const compressTree = (form: TalentFormT) =>
-	encode(JSON.stringify(form), true);
+	link.href = url;
+	link.download = title;
 
-export const decompressTree = (tree: string): TalentFormT =>
-	JSON.parse(decode(tree));
+	link.click();
+};

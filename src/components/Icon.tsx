@@ -5,7 +5,7 @@ type Props = React.DetailedHTMLProps<
 	HTMLButtonElement
 > & {
 	icon?: string;
-	ranks?: number;
+	ranks?: number | null;
 	frameClass?: string;
 	showDefault?: boolean;
 	highlight?: boolean;
@@ -21,6 +21,7 @@ const Icon = ({
 	...props
 }: Props) => (
 	<button
+		type="button"
 		tabIndex={!props.onClick ? -1 : undefined}
 		className={cls(
 			'group relative w-[68px] h-[68px] flex-shrink-0 focus:outline-none',

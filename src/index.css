@@ -7,3 +7,15 @@ body,
 	width: 100vw;
 	height: 100vh;
 }
+
+.button-group {
+	@apply rounded border border-zinc-800;
+}
+
+.button-group > button {
+	@apply rounded-none border-r border-zinc-800;
+}
+
+.button-group > button:last-of-type {
+	@apply border-none;
+}
