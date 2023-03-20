@@ -16,7 +16,7 @@ export type TalentTreeT = z.infer<typeof TalentTree>;
 
 export const TalentForm = z.object({
 	id: z.string(),
-	class: z.number(),
+	class: z.number().optional(),
 	icon: z.string(),
 	name: z.string(),
 	tree: TalentTree,

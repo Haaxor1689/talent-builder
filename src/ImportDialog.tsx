@@ -24,6 +24,7 @@ const ImportDialog = ({ onSubmit }: Props) => {
 					try {
 						return TalentForm.parse(JSON.parse(await v[0]?.text()));
 					} catch (e) {
+						console.error(e);
 						ctx.addIssue({
 							code: z.ZodIssueCode.custom,
 							message: 'Invalid file'
