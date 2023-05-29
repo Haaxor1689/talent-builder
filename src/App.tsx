@@ -151,7 +151,9 @@ const App = () => {
 								highlight={selected === i}
 								frameClass={cls({ 'opacity-10': !t.name })}
 								className={cls({
-									invert:
+									'after:absolute after:top-0 after:bottom-0 after:right-0 after:left-0 after:scale-125 after:bg-orange-300 after:blur after:rounded after:opacity-25':
+										t.highlight,
+									'invert':
 										selected !== undefined && tree[selected].requires === i
 								})}
 								draggable

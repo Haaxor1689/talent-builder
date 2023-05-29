@@ -7,6 +7,7 @@ import ConfirmDialog from './ConfirmDialog';
 import IconPicker from './form/IconPicker';
 import Input from './form/Input';
 import Textarea from './form/Textarea';
+import Checkbox from './form/Checkbox';
 
 type Props = {
 	selected: number;
@@ -51,6 +52,7 @@ const TalentEdit = ({ selected, watch, register, onDelete }: Props) => (
 			label="Requires"
 			type="number"
 		/>
+		<Checkbox label="Highlight" {...register(`tree.${selected}.highlight`)} />
 	</div>
 );
 

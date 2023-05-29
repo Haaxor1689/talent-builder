@@ -6,7 +6,8 @@ const Talent = z
 		name: z.string(),
 		ranks: z.number().min(1).max(5).nullable(),
 		description: z.string(),
-		requires: z.number().nullable()
+		requires: z.number().nullable(),
+		highlight: z.boolean().optional()
 	})
 	.partial();
 export type TalentT = z.infer<typeof Talent>;
