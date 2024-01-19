@@ -43,10 +43,10 @@ const RootLayout = async ({ children }: Props) => (
 						<div className="flex items-center gap-3 p-4">
 							<h3>Talent builder</h3>
 							<Link href="/">
-								<TextButton onClick={noop}>Home</TextButton>
+								<TextButton type="submit">Home</TextButton>
 							</Link>
 							<Link href="/new">
-								<TextButton onClick={noop}>New</TextButton>
+								<TextButton type="submit">New</TextButton>
 							</Link>
 							<div className="grow" />
 							<UserStatus />
