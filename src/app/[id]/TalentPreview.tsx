@@ -7,6 +7,7 @@ import { type TalentFormT } from '~/server/api/types';
 
 import TalentIcon from '../_components/TalentIcon';
 import Tooltip from '../_components/styled/Tooltip';
+import { useMemo } from 'react';
 
 const TalentPreview = ({
 	i,
@@ -23,6 +24,13 @@ const TalentPreview = ({
 		name: `tree.${i}`
 	});
 	const { setValue, getValues } = useFormContext<TalentFormT>();
+
+	const dragImage = useMemo(() => {
+		const img = new Image();
+		img.src = `/api/icon/${field.icon ?? 'inv_misc_questionmark'}`;
+		return img;
+	}, [field.icon]);
+
 	if (!field) return null;
 	return (
 		<Tooltip
@@ -53,9 +61,7 @@ const TalentPreview = ({
 				draggable={!!editable}
 				onDragStart={e => {
 					if (!editable) return;
-					const img = new Image();
-					img.src = `https://wow.zamimg.com/images/wow/icons/large/${field.icon}.jpg`;
-					e.dataTransfer.setDragImage(img, 28, 28);
+					e.dataTransfer.setDragImage(dragImage, 28, 28);
 					e.dataTransfer.setData('text/plain', i.toString());
 				}}
 				onDragOver={e => {

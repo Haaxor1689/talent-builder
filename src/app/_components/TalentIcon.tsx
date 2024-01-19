@@ -39,7 +39,7 @@ const TalentIcon = forwardRef<HTMLButtonElement, Props>(
 				type="button"
 				tabIndex={!isClickable ? -1 : undefined}
 				className={cls(
-					'cursor group relative size-16 flex-shrink-0 focus:outline-none',
+					'cursor size-16 group relative flex-shrink-0 focus:outline-none',
 					!isClickable ? 'cursor-default' : 'cursor-pointer',
 					className
 				)}
@@ -57,11 +57,11 @@ const TalentIcon = forwardRef<HTMLButtonElement, Props>(
 					/>
 				) : (
 					<Image
-						className={cls('absolute inset-0', frameClass)}
 						src="/icon_frame.png"
 						alt="frame"
 						width={64}
 						height={64}
+						className={cls('absolute inset-0', frameClass)}
 					/>
 				)}
 				<Image

@@ -186,6 +186,7 @@ const TalentBuilder = (props: Props) => {
 								i={i}
 								selected={selected}
 								setSelected={setSelected}
+								editable={editable}
 							/>
 						))}
 					</div>

@@ -6,6 +6,7 @@ import { api } from '~/trpc/react';
 
 import TalentIcon from '../TalentIcon';
 import Spinner from '../styled/Spinner';
+import Tooltip from '../styled/Tooltip';
 
 type Props = {
 	filter?: string;
@@ -44,12 +45,20 @@ const IconGrid = ({ filter, required, icon, setIcon }: Props) => {
 			{icons.data?.pages.map((page, index) => (
 				<Fragment key={page.items[0]?.name ?? index}>
 					{page.items.map(item => (
-						<TalentIcon
+						<Tooltip
 							key={item.name}
-							icon={item.name}
-							selected={icon === item.name}
-							onClick={() => setIcon(item.name)}
-						/>
+							tooltip={
+								<div className="tw-surface left-5 top-5 max-w-[400px] bg-darkerGray/90">
+									{item.name}
+								</div>
+							}
+						>
+							<TalentIcon
+								icon={item.name}
+								selected={icon === item.name}
+								onClick={() => setIcon(item.name)}
+							/>
+						</Tooltip>
 					))}
 				</Fragment>
 			))}
