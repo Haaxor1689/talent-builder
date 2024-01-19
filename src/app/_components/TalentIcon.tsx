@@ -48,14 +48,13 @@ const TalentIcon = forwardRef<HTMLButtonElement, Props>(
 				{...props}
 			>
 				{showDefault || icon ? (
-					<Image
+					<img
 						src={`/api/icon/${
 							showDefault && !icon ? 'inv_misc_questionmark' : icon
 						}`}
 						alt={icon ?? 'empty'}
 						width={64}
 						height={64}
-						unoptimized
 						className="rounded-lg"
 					/>
 				) : (
