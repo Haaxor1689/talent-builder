@@ -55,6 +55,7 @@ const TalentIcon = forwardRef<HTMLButtonElement, Props>(
 						alt={icon ?? 'empty'}
 						width={64}
 						height={64}
+						unoptimized
 						className="rounded-lg"
 					/>
 				) : (

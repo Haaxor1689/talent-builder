@@ -6,10 +6,23 @@ type Props = HTMLProps<HTMLInputElement> & {
 	label?: string;
 	error?: boolean;
 	icon?: LucideIcon;
+	onIconClick?: () => void;
 };
 
 const Input = forwardRef<HTMLInputElement, Props>(
-	({ label, name, id = name, className, error, icon: Icon, ...props }, ref) => (
+	(
+		{
+			label,
+			name,
+			id = name,
+			className,
+			error,
+			icon: Icon,
+			onIconClick,
+			...props
+		},
+		ref
+	) => (
 		<div className={cls('flex flex-col gap-2', className)}>
 			{label && <label htmlFor={id}>{label}</label>}
 			<div className="relative flex items-center">
@@ -24,7 +37,15 @@ const Input = forwardRef<HTMLInputElement, Props>(
 					})}
 				/>
 				{Icon && (
-					<Icon className="pointer-events-none absolute right-2 text-blueGray" />
+					<Icon
+						role={onIconClick ? 'button' : undefined}
+						tabIndex={onIconClick ? 0 : undefined}
+						onClick={onIconClick}
+						className={cls(
+							'absolute right-2 text-blueGray',
+							onIconClick ? 'hocus:text-white' : 'pointer-events-none'
+						)}
+					/>
 				)}
 			</div>
 		</div>

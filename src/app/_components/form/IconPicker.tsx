@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ListFilter } from 'lucide-react';
+import { HelpCircle, ListFilter } from 'lucide-react';
 import { useController } from 'react-hook-form';
 
 import DialogButton from '../styled/DialogButton';
@@ -16,7 +16,10 @@ type Props = {
 
 const IconPicker = ({ name, required, disabled }: Props) => {
 	const [filter, setFilter] = useState('');
+	const [wowhead, setWowhead] = useState('');
+
 	const { field } = useController({ name });
+
 	return (
 		<DialogButton
 			dialog={close => (
@@ -36,9 +39,34 @@ const IconPicker = ({ name, required, disabled }: Props) => {
 						icon={field.value}
 						setIcon={i => {
 							field.onChange(i);
+							setWowhead('');
 							close();
 						}}
 					/>
+
+					<form
+						className="flex items-center gap-2"
+						onSubmit={() => {
+							field.onChange(wowhead);
+							setWowhead('');
+							close();
+						}}
+					>
+						<label htmlFor="wowhead" className="shrink-0">
+							Wowhead icon:
+						</label>
+						<Input
+							name="wowhead"
+							value={wowhead}
+							onChange={e => setWowhead((e.target as any).value)}
+							icon={HelpCircle}
+							onIconClick={() => {
+								// Open wowhead in new tab
+								window.open('https://wowhead.com/icons/');
+							}}
+							className="w-full"
+						/>
+					</form>
 				</div>
 			)}
 			clickAway

@@ -10,7 +10,10 @@ export const GET = async (
 
 	const img = await api.icon.get.query(params.id);
 
-	if (!img) return new Response(null, { status: 404 });
+	if (!img)
+		return Response.redirect(
+			`https://wow.zamimg.com/images/wow/icons/large/${params.id}.jpg`
+		);
 
 	// Decode from base64
 	const data = Buffer.from(img.data, 'base64');
