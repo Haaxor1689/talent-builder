@@ -26,7 +26,7 @@ const IconPicker = ({ name, required, disabled }: Props) => {
 						<Input
 							value={filter}
 							icon={ListFilter}
-							onChange={e => setFilter(e.target.value)}
+							onChange={e => setFilter((e.target as any).value)}
 						/>
 					</div>
 

@@ -3,6 +3,7 @@ import '~/styles/globals.css';
 import localFont from 'next/font/local';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
+import { noop } from 'lodash-es';
 
 import { TRPCReactProvider } from '~/trpc/react';
 
@@ -42,10 +43,10 @@ const RootLayout = async ({ children }: Props) => (
 						<div className="flex items-center gap-3 p-4">
 							<h3>Talent builder</h3>
 							<Link href="/">
-								<TextButton>Home</TextButton>
+								<TextButton onClick={noop}>Home</TextButton>
 							</Link>
 							<Link href="/new">
-								<TextButton>New</TextButton>
+								<TextButton onClick={noop}>New</TextButton>
 							</Link>
 							<div className="grow" />
 							<UserStatus />

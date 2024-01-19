@@ -28,7 +28,10 @@ const CheckboxInput = ({ name, label, disabled, className }: Props) => {
 	const { field } = useController({ name });
 	return (
 		<TextButton
-			onClick={!disabled ? () => field.onChange(!field.value) : undefined}
+			onClick={() => {
+				if (disabled) return;
+				field.onChange(!field.value);
+			}}
 			icon={Checkbox as never}
 			disabled={disabled}
 			className={cls(

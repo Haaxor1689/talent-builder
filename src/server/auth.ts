@@ -47,7 +47,8 @@ export const authOptions: NextAuthOptions = {
 			}
 		})
 	},
-	adapter: DrizzleAdapter(db, mysqlTable),
+	// TODO: Fix types
+	adapter: DrizzleAdapter(db, mysqlTable) as never,
 	providers: [
 		DiscordProvider({
 			clientId: env.DISCORD_CLIENT_ID,

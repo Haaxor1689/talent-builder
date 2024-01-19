@@ -15,10 +15,10 @@ const Input = forwardRef<HTMLTextAreaElement, Props>(
 		<div className={cls('flex flex-col gap-2', className)}>
 			{label && <label htmlFor={id}>{label}</label>}
 			<TextareaAutosize
-				ref={ref as never}
+				ref={ref as any}
 				id={id}
 				name={name}
-				{...props}
+				{...(props as any)}
 				className={cls('tw-input-underline', { 'tw-input-error': error })}
 			/>
 		</div>
