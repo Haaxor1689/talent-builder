@@ -15,6 +15,7 @@ type Props = React.DetailedHTMLProps<
 	frameClass?: string;
 	showDefault?: boolean;
 	selected?: boolean;
+	highlighted?: boolean;
 };
 
 const TalentIcon = forwardRef<HTMLButtonElement, Props>(
@@ -25,6 +26,7 @@ const TalentIcon = forwardRef<HTMLButtonElement, Props>(
 			arrow,
 			showDefault,
 			selected,
+			highlighted,
 			frameClass,
 			className,
 			clickable,
@@ -39,7 +41,7 @@ const TalentIcon = forwardRef<HTMLButtonElement, Props>(
 				type="button"
 				tabIndex={!isClickable ? -1 : undefined}
 				className={cls(
-					'cursor size-16 group relative flex-shrink-0 focus:outline-none',
+					'cursor group relative size-16 flex-shrink-0 focus:outline-none',
 					!isClickable ? 'cursor-default' : 'cursor-pointer',
 					className
 				)}
@@ -75,6 +77,16 @@ const TalentIcon = forwardRef<HTMLButtonElement, Props>(
 					width={64}
 					height={64}
 				/>
+
+				{highlighted && (
+					<Image
+						className={cls('absolute inset-0 scale-125 rounded-lg')}
+						src="/icon_hover.png"
+						alt="hover"
+						width={64}
+						height={64}
+					/>
+				)}
 
 				{!!ranks && (
 					<p className="absolute bottom-1 right-1 w-5 translate-x-1/2 translate-y-1/2 rounded border-0 bg-darkGray">

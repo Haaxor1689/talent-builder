@@ -1,7 +1,10 @@
+/* eslint-disable jsx-a11y/alt-text */
 import { eq } from 'drizzle-orm';
 import { ImageResponse } from 'next/og';
+
 import { db } from '~/server/db';
 import { icons, talentTrees, users } from '~/server/db/schema';
+
 import defaultImage from '../opengraph-image';
 
 // Route segment config
@@ -17,7 +20,7 @@ export const size = {
 export const contentType = 'image/png';
 
 // Image generation
-export default async function Image({ params }: { params: { id: string } }) {
+const Image = async ({ params }: { params: { id: string } }) => {
 	const talentTree = await db.query.talentTrees.findFirst({
 		where: eq(talentTrees.id, params.id)
 	});
@@ -89,7 +92,7 @@ export default async function Image({ params }: { params: { id: string } }) {
 					}}
 				>
 					<span style={{ color: '#929391' }}>Total points: </span>
-					{talentTree.tree.reduce((p, n) => p + (n?.ranks || 0), 0)}
+					{talentTree.tree.reduce((p, n) => p + ((n?.ranks ?? 0) || 0), 0)}
 				</div>
 
 				{user?.name && (
@@ -122,4 +125,6 @@ export default async function Image({ params }: { params: { id: string } }) {
 			]
 		}
 	);
-}
+};
+
+export default Image;

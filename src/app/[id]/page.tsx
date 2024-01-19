@@ -1,11 +1,12 @@
+import { eq } from 'drizzle-orm';
+
 import TalentBuilder from '~/app/[id]/TalentBuilder';
 import { api } from '~/trpc/server';
+import { db } from '~/server/db';
+import { icons, talentTrees } from '~/server/db/schema';
 
 import ClientLoader from './ClientLoader';
 import NotFound from './NotFound';
-import { db } from '~/server/db';
-import { icons, talentTrees } from '~/server/db/schema';
-import { eq } from 'drizzle-orm';
 
 export const generateMetadata = async ({
 	params

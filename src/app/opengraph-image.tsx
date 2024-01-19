@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 import { ImageResponse } from 'next/og';
 
 // Route segment config
@@ -12,8 +13,7 @@ export const size = {
 
 export const contentType = 'image/png';
 
-// Image generation
-export default async function Image() {
+const Image = async () => {
 	// Font
 	const fontinSans = fetch(
 		new URL('./_components/assets/FontinSans-Regular.otf', import.meta.url)
@@ -68,4 +68,6 @@ export default async function Image() {
 			]
 		}
 	);
-}
+};
+
+export default Image;

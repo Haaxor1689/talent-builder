@@ -11,6 +11,7 @@ import Input from './form/Input';
 import Textarea from './form/Textarea';
 import TextButton from './styled/TextButton';
 import TalentIcon from './TalentIcon';
+import CheckboxInput from './form/CheckboxInput';
 
 const RequiredTalent = ({
 	selected,
@@ -60,7 +61,6 @@ const TalentEdit = ({ selected, editable, onDelete }: Props) => {
 				/>
 				{editable && (
 					<ConfirmDialog
-						// TODO: Remove watch
 						title={`Are you sure you want to delete "${name}"?`}
 						confirm={onDelete}
 					>
@@ -94,6 +94,14 @@ const TalentEdit = ({ selected, editable, onDelete }: Props) => {
 				<p className="text-blueGray">
 					Shift + click other talent to set dependency
 				</p>
+			</div>
+			<div className="flex flex-col">
+				<span>Other options:</span>
+				<CheckboxInput
+					name={`tree.${selected}.highlight`}
+					label="Highlight change"
+					disabled={!editable}
+				/>
 			</div>
 		</div>
 	);

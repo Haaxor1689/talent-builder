@@ -6,7 +6,33 @@ import { api } from '~/trpc/react';
 
 import TalentIcon from '../TalentIcon';
 import Spinner from '../styled/Spinner';
-import Tooltip from '../styled/Tooltip';
+import useTooltip from '../hooks/useTooltip';
+
+type IconProps = {
+	item: { name: string; data: string };
+	icon?: string;
+	setIcon: (icon?: string) => void;
+};
+
+const Icon = ({ item, icon, setIcon }: IconProps) => {
+	const { elementProps, tooltipProps } = useTooltip();
+	return (
+		<>
+			<TalentIcon
+				icon={item.name}
+				selected={icon === item.name}
+				onClick={() => setIcon(item.name)}
+				{...elementProps}
+			/>
+			<div
+				className="tw-surface max-w-[400px] bg-darkerGray/90"
+				{...tooltipProps}
+			>
+				{item.name}
+			</div>
+		</>
+	);
+};
 
 type Props = {
 	filter?: string;
@@ -42,23 +68,11 @@ const IconGrid = ({ filter, required, icon, setIcon }: Props) => {
 					onClick={() => setIcon(undefined)}
 				/>
 			)}
+
 			{icons.data?.pages.map((page, index) => (
 				<Fragment key={page.items[0]?.name ?? index}>
 					{page.items.map(item => (
-						<Tooltip
-							key={item.name}
-							tooltip={
-								<div className="tw-surface left-5 top-5 max-w-[400px] bg-darkerGray/90">
-									{item.name}
-								</div>
-							}
-						>
-							<TalentIcon
-								icon={item.name}
-								selected={icon === item.name}
-								onClick={() => setIcon(item.name)}
-							/>
-						</Tooltip>
+						<Icon key={item.name} icon={icon} setIcon={setIcon} item={item} />
 					))}
 				</Fragment>
 			))}

@@ -1,13 +1,13 @@
 'use client';
 
+import { useRef } from 'react';
 import { useWatch, useFormContext } from 'react-hook-form';
 import cls from 'classnames';
 
 import { type TalentFormT } from '~/server/api/types';
 
 import TalentIcon from '../_components/TalentIcon';
-import Tooltip from '../_components/styled/Tooltip';
-import { useMemo } from 'react';
+import useTooltip from '../_components/hooks/useTooltip';
 
 const TalentPreview = ({
 	i,
@@ -25,33 +25,25 @@ const TalentPreview = ({
 	});
 	const { setValue, getValues } = useFormContext<TalentFormT>();
 
-	const dragImage = useMemo(() => {
-		const img = new Image();
-		img.src = `/api/icon/${field.icon ?? 'inv_misc_questionmark'}`;
-		return img;
-	}, [field.icon]);
+	const ref = useRef<HTMLButtonElement>(null);
+	const dragging = useRef(false);
+
+	const { tooltipProps, elementProps } = useTooltip(dragging.current);
 
 	if (!field) return null;
 	return (
-		<Tooltip
-			tooltip={
-				field.name ? (
-					<div className="tw-surface left-5 top-5 max-w-[400px] bg-darkerGray/90">
-						<h4 className="tw-color">{field.name}</h4>
-						<p>{field.description}</p>
-					</div>
-				) : null
-			}
-		>
+		<>
 			<TalentIcon
+				ref={ref}
 				onClick={e =>
 					e.shiftKey && selected
 						? setValue(`tree.${selected}.requires`, i)
 						: setSelected(i)
 				}
-				icon={field.icon}
-				ranks={field.ranks}
-				selected={selected === i}
+				icon={dragging.current ? undefined : field.icon}
+				ranks={dragging.current ? undefined : field.ranks}
+				selected={dragging.current ? undefined : selected === i}
+				highlighted={dragging.current ? undefined : !!field.highlight}
 				frameClass={cls({ 'opacity-10': !field.name })}
 				arrow={
 					!field.requires && field.requires !== 0
@@ -61,7 +53,9 @@ const TalentPreview = ({
 				draggable={!!editable}
 				onDragStart={e => {
 					if (!editable) return;
-					e.dataTransfer.setDragImage(dragImage, 28, 28);
+					dragging.current = true;
+					const img = ref.current?.querySelector('img');
+					img && e.dataTransfer.setDragImage(img, 28, 28);
 					e.dataTransfer.setData('text/plain', i.toString());
 				}}
 				onDragOver={e => {
@@ -70,6 +64,7 @@ const TalentPreview = ({
 				}}
 				onDrop={e => {
 					if (!editable) return;
+					dragging.current = false;
 					e.preventDefault();
 					const idx = Number(e.dataTransfer.getData('text/plain'));
 					if (i === idx) return;
@@ -78,8 +73,18 @@ const TalentPreview = ({
 					setValue('tree', newTree);
 					setSelected(i);
 				}}
+				{...elementProps}
 			/>
-		</Tooltip>
+			{field.name && (
+				<div
+					className="tw-surface max-w-[400px] bg-darkerGray/90"
+					{...tooltipProps}
+				>
+					<h4 className="tw-color">{field.name}</h4>
+					<p>{field.description}</p>
+				</div>
+			)}
+		</>
 	);
 };
 export default TalentPreview;
