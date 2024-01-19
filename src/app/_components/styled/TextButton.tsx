@@ -1,3 +1,5 @@
+'use client';
+
 import cls from 'classnames';
 import { type LucideIcon } from 'lucide-react';
 import { type MouseEventHandler, type ReactNode } from 'react';

@@ -3,7 +3,6 @@ import '~/styles/globals.css';
 import localFont from 'next/font/local';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
-import { noop } from 'lodash-es';
 
 import { TRPCReactProvider } from '~/trpc/react';
 
