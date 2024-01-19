@@ -23,7 +23,8 @@ const din = localFont({
 export const metadata = {
 	title: 'Talent Builder',
 	description: 'Simple talent builder app for Turtle WoW',
-	icons: [{ rel: 'icon', url: '/icon.png' }]
+	icons: [{ rel: 'icon', url: '/icon.png' }],
+	metadataBase: new URL('https://talent-builder.haaxor1689.dev')
 };
 
 type Props = {

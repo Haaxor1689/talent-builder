@@ -23,18 +23,23 @@ const ImportDialog = ({ disabled, onSubmit }: Props) => {
 	} = useForm({
 		resolver: zodResolver(
 			z.object({
-				file: z.instanceof(FileList).transform(async (v, ctx) => {
-					try {
-						return TalentForm.parse(JSON.parse((await v[0]?.text()) ?? ''));
-					} catch (e) {
-						console.error(e);
-						ctx.addIssue({
-							code: z.ZodIssueCode.custom,
-							message: 'Invalid file'
-						});
-						return z.NEVER;
-					}
-				})
+				file:
+					typeof window !== 'undefined'
+						? z.instanceof(FileList).transform(async (v, ctx) => {
+								try {
+									return TalentForm.parse(
+										JSON.parse((await v[0]?.text()) ?? '')
+									);
+								} catch (e) {
+									console.error(e);
+									ctx.addIssue({
+										code: z.ZodIssueCode.custom,
+										message: 'Invalid file'
+									});
+									return z.NEVER;
+								}
+						  })
+						: z.never()
 			})
 		)
 	});
