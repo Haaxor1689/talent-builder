@@ -1,9 +1,9 @@
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable jsx-a11y/alt-text */
-import { eq } from 'drizzle-orm';
+
 import { ImageResponse } from 'next/og';
 
-import { db } from '~/server/db';
-import { icons, talentTrees, users } from '~/server/db/schema';
+import { type TalentTreeT } from '~/server/api/types';
 
 import defaultImage from '../opengraph-image';
 
@@ -21,10 +21,11 @@ export const contentType = 'image/png';
 
 // Image generation
 const Image = async ({ params }: { params: { id: string } }) => {
-	const talentTree = await db.query.talentTrees.findFirst({
-		where: eq(talentTrees.id, params.id)
-	});
-	if (!talentTree) return await defaultImage();
+	const response = await fetch(
+		`http://localhost:3000/api/og/${params.id}`
+	).then(r => r.json());
+
+	if (!response) return await defaultImage();
 
 	// Font
 	const fontinSans = fetch(
@@ -36,17 +37,6 @@ const Image = async ({ params }: { params: { id: string } }) => {
 		new URL('../../../public/page_background.png', import.meta.url).toString()
 	).then(res => res.arrayBuffer());
 	const bgSrc = `data:image/png;base64,${Buffer.from(bg).toString('base64')}`;
-
-	// Tree icon
-	const icon = await db.query.icons.findFirst({
-		where: eq(icons.name, talentTree.icon)
-	});
-	const iconSrc = `data:image/png;base64,${icon?.data}`;
-
-	// User
-	const user = await db.query.users.findFirst({
-		where: eq(users.id, talentTree.createdById)
-	});
 
 	return new ImageResponse(
 		(
@@ -79,8 +69,8 @@ const Image = async ({ params }: { params: { id: string } }) => {
 						paddingBottom: 8
 					}}
 				>
-					<img src={iconSrc} width={64} height={64} />
-					<div style={{ fontSize: 86 }}>{talentTree.name}</div>
+					<img src={response.icon} width={64} height={64} />
+					<div style={{ fontSize: 86 }}>{response.name}</div>
 				</div>
 
 				<div
@@ -92,10 +82,13 @@ const Image = async ({ params }: { params: { id: string } }) => {
 					}}
 				>
 					<span style={{ color: '#929391' }}>Total points: </span>
-					{talentTree.tree.reduce((p, n) => p + ((n?.ranks ?? 0) || 0), 0)}
+					{(response.tree as TalentTreeT).reduce(
+						(p, n) => p + ((n?.ranks ?? 0) || 0),
+						0
+					)}
 				</div>
 
-				{user?.name && (
+				{response.user?.name && (
 					<div
 						style={{
 							display: 'flex',
@@ -105,10 +98,10 @@ const Image = async ({ params }: { params: { id: string } }) => {
 						}}
 					>
 						<span style={{ color: '#929391' }}>Author:</span>
-						{user?.image && (
-							<img src={user?.image ?? ''} width={42} height={42} />
+						{response.user?.image && (
+							<img src={response.user?.image ?? ''} width={42} height={42} />
 						)}
-						{user?.name}
+						{response.user?.name}
 					</div>
 				)}
 			</div>
