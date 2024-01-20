@@ -1,10 +1,10 @@
 'use client';
 
-import TextareaAutosize from 'react-textarea-autosize';
 import cls from 'classnames';
-import { type HTMLProps, forwardRef, useEffect, useState } from 'react';
+import { forwardRef, type ComponentProps } from 'react';
+import TextareaAutosize from 'react-textarea-autosize';
 
-type Props = HTMLProps<HTMLTextAreaElement> & {
+type Props = ComponentProps<typeof TextareaAutosize> & {
 	label?: string;
 	error?: boolean;
 	minRows?: number;
@@ -15,10 +15,10 @@ const Input = forwardRef<HTMLTextAreaElement, Props>(
 		<div className={cls('flex flex-col gap-2', className)}>
 			{label && <label htmlFor={id}>{label}</label>}
 			<TextareaAutosize
-				ref={ref as any}
+				ref={ref}
 				id={id}
 				name={name}
-				{...(props as any)}
+				{...props}
 				className={cls('tw-input-underline', { 'tw-input-error': error })}
 			/>
 		</div>

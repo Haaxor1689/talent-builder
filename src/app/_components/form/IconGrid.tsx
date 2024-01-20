@@ -57,6 +57,7 @@ const IconGrid = ({ filter, required, icon, setIcon }: Props) => {
 		});
 		observer.observe(bottomRef.current);
 		return () => observer.disconnect();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [bottomRef, icons.isFetchingNextPage, icons.hasNextPage]);
 
 	return (

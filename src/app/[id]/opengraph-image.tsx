@@ -3,10 +3,6 @@
 
 import { ImageResponse } from 'next/og';
 
-import { type TalentTreeT } from '~/server/api/types';
-
-import defaultImage from '../opengraph-image';
-
 // Route segment config
 export const runtime = 'edge';
 
@@ -25,7 +21,7 @@ const Image = async ({ params }: { params: { id: string } }) => {
 		`http://localhost:3000/api/og/${params.id}`
 	).then(r => r.json());
 
-	if (!response) return await defaultImage();
+	if (!response) return undefined;
 
 	// Font
 	const fontinSans = fetch(

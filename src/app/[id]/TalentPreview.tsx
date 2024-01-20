@@ -69,6 +69,7 @@ const TalentPreview = ({
 					const idx = Number(e.dataTransfer.getData('text/plain'));
 					if (i === idx) return;
 					const newTree = [...getValues().tree];
+					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 					[newTree[i], newTree[idx]] = [newTree[idx]!, newTree[i]!];
 					setValue('tree', newTree);
 					setSelected(i);

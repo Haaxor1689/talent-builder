@@ -29,7 +29,7 @@ const IconPicker = ({ name, required, disabled }: Props) => {
 						<Input
 							value={filter}
 							icon={ListFilter}
-							onChange={e => setFilter((e.target as any).value)}
+							onChange={e => setFilter((e.target as HTMLInputElement).value)}
 						/>
 					</div>
 
@@ -58,7 +58,7 @@ const IconPicker = ({ name, required, disabled }: Props) => {
 						<Input
 							name="wowhead"
 							value={wowhead}
-							onChange={e => setWowhead((e.target as any).value)}
+							onChange={e => setWowhead((e.target as HTMLInputElement).value)}
 							icon={HelpCircle}
 							onIconClick={() => {
 								// Open wowhead in new tab
