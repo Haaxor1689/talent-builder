@@ -30,7 +30,7 @@ export const GET = async (
 	return Response.json({
 		icon: iconSrc,
 		name: talentTree.name,
-		tree: talentTree.tree,
+		sum: talentTree.tree.reduce((p, n) => p + ((n?.ranks ?? 0) || 0), 0),
 		user: {
 			name: user?.name,
 			image: user?.image

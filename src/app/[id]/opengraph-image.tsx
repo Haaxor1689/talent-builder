@@ -83,10 +83,7 @@ const Image = async ({ params }: { params: { id: string } }) => {
 					}}
 				>
 					<span style={{ color: '#929391' }}>Total points: </span>
-					{(response.tree as TalentTreeT).reduce(
-						(p, n) => p + ((n?.ranks ?? 0) || 0),
-						0
-					)}
+					{response.sum}
 				</div>
 
 				{response.user?.name && (
