@@ -3,6 +3,8 @@
 
 import { ImageResponse } from 'next/og';
 
+import { env } from '~/env';
+
 // Route segment config
 export const runtime = 'edge';
 
@@ -17,9 +19,9 @@ export const contentType = 'image/png';
 
 // Image generation
 const Image = async ({ params }: { params: { id: string } }) => {
-	const response = await fetch(
-		`http://localhost:3000/api/og/${params.id}`
-	).then(r => r.json());
+	const response = await fetch(`${env.DEPLOY_URL}/api/og/${params.id}`).then(
+		r => r.json()
+	);
 
 	if (!response) return undefined;
 
@@ -27,15 +29,6 @@ const Image = async ({ params }: { params: { id: string } }) => {
 	const fontinSans = fetch(
 		new URL('../_components/assets/FontinSans-Regular.otf', import.meta.url)
 	).then(res => res.arrayBuffer());
-
-	// Background image
-	const bg = await fetch(
-		new URL(
-			'../../../public/page_background_min.png',
-			import.meta.url
-		).toString()
-	).then(res => res.arrayBuffer());
-	const bgSrc = `data:image/png;base64,${Buffer.from(bg).toString('base64')}`;
 
 	return new ImageResponse(
 		(
@@ -50,7 +43,7 @@ const Image = async ({ params }: { params: { id: string } }) => {
 					gap: 8,
 					color: 'white',
 					background: '#181412',
-					backgroundImage: `url("${bgSrc}")`
+					backgroundImage: `url("${env.DEPLOY_URL}/page_background_min.png")`
 				}}
 			>
 				<div style={{ fontSize: 32, textTransform: 'uppercase' }}>

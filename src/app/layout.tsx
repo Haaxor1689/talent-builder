@@ -5,6 +5,7 @@ import { cookies } from 'next/headers';
 import Link from 'next/link';
 
 import { TRPCReactProvider } from '~/trpc/react';
+import { env } from '~/env';
 
 import TextButton from './_components/styled/TextButton';
 import UserStatus from './UserStatus';
@@ -24,7 +25,7 @@ export const metadata = {
 	title: 'Talent Builder',
 	description: 'Simple talent builder app for Turtle WoW',
 	icons: [{ rel: 'icon', url: '/icon.png' }],
-	metadataBase: new URL('https://talent-builder.haaxor1689.dev')
+	metadataBase: new URL(env.DEPLOY_URL)
 };
 
 type Props = {

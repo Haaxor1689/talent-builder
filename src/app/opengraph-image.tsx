@@ -3,6 +3,8 @@
 
 import { ImageResponse } from 'next/og';
 
+import { env } from '~/env';
+
 // Route segment config
 export const runtime = 'edge';
 
@@ -21,20 +23,6 @@ const Image = async () => {
 		new URL('./_components/assets/FontinSans-Regular.otf', import.meta.url)
 	).then(res => res.arrayBuffer());
 
-	// Website logo
-	const logo = await fetch(
-		new URL('../../public/icon.png', import.meta.url).toString()
-	).then(res => res.arrayBuffer());
-	const logoSrc = `data:image/png;base64,${Buffer.from(logo).toString(
-		'base64'
-	)}`;
-
-	// Background image
-	const bg = await fetch(
-		new URL('../../public/page_background_min.png', import.meta.url).toString()
-	).then(res => res.arrayBuffer());
-	const bgSrc = `data:image/png;base64,${Buffer.from(bg).toString('base64')}`;
-
 	return new ImageResponse(
 		(
 			<div
@@ -49,12 +37,12 @@ const Image = async () => {
 					color: 'white',
 					textTransform: 'uppercase',
 					background: '#181412',
-					backgroundImage: `url("${bgSrc}")`,
+					backgroundImage: `url("${env.DEPLOY_URL}/page_background_min.png")`,
 					backgroundSize: 'cover',
 					backgroundPosition: 'top'
 				}}
 			>
-				<img src={logoSrc} width={128} height={128} />
+				<img src={`${env.DEPLOY_URL}/icon.png`} width={128} height={128} />
 				<p style={{ fontSize: 128 }}>Talent builder</p>
 			</div>
 		),

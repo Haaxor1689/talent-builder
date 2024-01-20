@@ -32,8 +32,8 @@ export const GET = async (
 		name: talentTree.name,
 		sum: talentTree.tree.reduce((p, n) => p + ((n?.ranks ?? 0) || 0), 0),
 		user: {
-			name: user?.name
-			// image: user?.image
+			name: user?.name,
+			image: user?.image
 		}
 	});
 };
