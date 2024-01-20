@@ -29,7 +29,7 @@ const Image = async () => {
 
 	// Background image
 	const bg = await fetch(
-		new URL('../../public/page_background.png', import.meta.url).toString()
+		new URL('../../public/page_background_min.png', import.meta.url).toString()
 	).then(res => res.arrayBuffer());
 	const bgSrc = `data:image/png;base64,${Buffer.from(bg).toString('base64')}`;
 

@@ -34,7 +34,10 @@ const Image = async ({ params }: { params: { id: string } }) => {
 
 	// Background image
 	const bg = await fetch(
-		new URL('../../../public/page_background.png', import.meta.url).toString()
+		new URL(
+			'../../../public/page_background_min.png',
+			import.meta.url
+		).toString()
 	).then(res => res.arrayBuffer());
 	const bgSrc = `data:image/png;base64,${Buffer.from(bg).toString('base64')}`;
 
@@ -51,9 +54,7 @@ const Image = async ({ params }: { params: { id: string } }) => {
 					gap: 8,
 					color: 'white',
 					background: '#181412',
-					backgroundImage: `url("${bgSrc}")`,
-					backgroundSize: 'cover',
-					backgroundPosition: 'top'
+					backgroundImage: `url("${bgSrc}")`
 				}}
 			>
 				<div style={{ fontSize: 32, textTransform: 'uppercase' }}>
