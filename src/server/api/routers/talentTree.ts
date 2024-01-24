@@ -20,7 +20,8 @@ export const upsertTalentTree = protectedProcedure({
 			await db.insert(talentTrees).values({
 				...input,
 				createdById: session.user.id,
-				createdAt: new Date()
+				createdAt: new Date(),
+				updatedAt: new Date()
 			});
 			return;
 		}

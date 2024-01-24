@@ -53,6 +53,8 @@ input[type='number'] {
 		font-weight: 400;
 		font-size: 16px;
 		line-height: 26px;
+		min-width: 0;
+		min-height: 0;
 	}
 
 	h1,

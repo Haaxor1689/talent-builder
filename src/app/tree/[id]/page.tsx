@@ -19,6 +19,7 @@ export const generateMetadata = async ({
 };
 
 const TalentTreePage = async ({ params }: { params: { id: string } }) => {
+	// TODO: Investigate crash when talent tree is not found and is cached
 	const talentTree = await getTalentTree(params.id);
 	if (!talentTree) return notFound();
 	return <TalentBuilder defaultValues={talentTree} />;

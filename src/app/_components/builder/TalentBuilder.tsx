@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { noop } from 'lodash-es';
+import toast from 'react-hot-toast';
 
 import { type TalentTreeTable } from '~/server/db/schema';
 import {
@@ -50,13 +51,13 @@ const TalentBuilder = (props: Props) => {
 		<T extends unknown[]>(fn: (...args: T) => Promise<unknown>) =>
 		(...args: T) => {
 			setDisableInteractions(true);
-			return fn(...args).finally(() => setDisableInteractions(false));
+			return fn(...args)
+				.catch(e => toast.error(e?.message ?? JSON.stringify(e)))
+				.finally(() => setDisableInteractions(false));
 		};
 
 	const session = useSession();
 	const router = useRouter();
-
-	const setSavedState = useLocalStorage<TalentFormT>('saved-form-state')[1];
 
 	const setSavedSpecs =
 		useLocalStorage<Record<string, TalentFormT>>('saved-specs')[1];
@@ -70,7 +71,7 @@ const TalentBuilder = (props: Props) => {
 		defaultValues: props.defaultValues ?? EmptyTalentTree(),
 		resolver: zodResolver(TalentForm)
 	});
-	const { handleSubmit, register, getValues, reset, trigger, control } =
+	const { handleSubmit, register, getValues, reset, control, formState } =
 		formProps;
 
 	const [selected, setSelected] = useState(0);
@@ -78,6 +79,7 @@ const TalentBuilder = (props: Props) => {
 
 	return (
 		<FormProvider {...formProps}>
+			{/* TODO: <UndoRedo /> */}
 			<form
 				onSubmit={handleSubmit(noop)}
 				className="tw-surface flex flex-col gap-3"
@@ -99,7 +101,7 @@ const TalentBuilder = (props: Props) => {
 						) : (
 							<CheckboxInput
 								name="public"
-								label="Public"
+								label="Publicly visible"
 								disabled={!editable}
 							/>
 						)}
@@ -107,35 +109,37 @@ const TalentBuilder = (props: Props) => {
 						{editable && (
 							<TextButton
 								onClick={asyncTask(async () => {
-									if (!(await trigger())) return;
 									const values = getValues();
 									if (!props.isLocal) {
 										await upsertTalentTree(values);
+										toast.success('Saved!');
 										return;
 									}
 									setSavedSpecs(p => ({ ...p, [values.id]: values }));
+									toast.success('Saved!');
 									if (props.isNew) router.push(`/local/${values.id}`);
 								})}
 								icon={Save}
-								title={props.isLocal ? 'Save locally' : 'Save'}
-								disabled={disableInteractions}
+								title={props.isLocal ? 'Save locally' : 'Save changes'}
+								disabled={!formState.isDirty || disableInteractions}
 							/>
 						)}
 
 						{props.isLocal && session.status === 'authenticated' && (
 							<TextButton
 								onClick={asyncTask(async () => {
-									if (!(await trigger())) return;
 									const values = getValues();
-									await upsertTalentTree(values);
+									const newId = v4();
+									await upsertTalentTree({ ...values, id: newId });
 									setSavedSpecs(savedSpecs => {
 										const { [values.id]: _, ...newSpecs } = savedSpecs ?? {};
 										return newSpecs;
 									});
-									router.push(`/tree/${values.id}`);
+									toast.success('Talent tree saved online!');
+									router.push(`/tree/${newId}`);
 								})}
 								icon={UploadCloud}
-								title="Publish"
+								title="Save online"
 								disabled={disableInteractions}
 							/>
 						)}
@@ -145,23 +149,26 @@ const TalentBuilder = (props: Props) => {
 								onClick={asyncTask(async () => {
 									const values = getValues();
 									const newId = v4();
-									setSavedState({
-										...values,
-										id: newId,
-										name: `${values.name} (copy)`,
-										public: false
-									});
-									router.push('/new-tree');
+									setSavedSpecs(savedSpecs => ({
+										...savedSpecs,
+										[newId]: {
+											...values,
+											id: newId,
+											name: `${values.name} (copy)`,
+											createdById: null,
+											public: false
+										}
+									}));
+									toast.success('New copy saved locally!');
+									router.push(`/local/${newId}`);
 								})}
 								icon={Copy}
-								title="Duplicate"
+								title="Clone locally"
 								disabled={disableInteractions}
 							/>
 						)}
 
-						{editable && (
-							<ImportDialog onSubmit={reset} disabled={disableInteractions} />
-						)}
+						{editable && <ImportDialog disabled={disableInteractions} />}
 
 						{editable && (
 							<ConfirmDialog

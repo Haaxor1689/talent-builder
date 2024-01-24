@@ -42,7 +42,7 @@ const TalentPreview = ({
 						: setSelected(i)
 				}
 				onKeyDown={e => {
-					if (e.key !== 'Delete') return;
+					if (!editable || e.key !== 'Delete') return;
 					setValue(`tree.${selected}`, {
 						icon: '',
 						name: '',

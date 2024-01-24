@@ -10,6 +10,7 @@ import useTooltip from '../hooks/useTooltip';
 
 type Item = TalentTreeTable & { href: string };
 
+// TODO: Add user info to tooltip
 const Icon = (s: Item) => {
 	const { elementProps, tooltipProps } = useTooltip();
 	return (

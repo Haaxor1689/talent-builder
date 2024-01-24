@@ -1,6 +1,7 @@
 'use client';
 
-import NotFound from '~/app/tree/[id]/not-found';
+import { notFound } from 'next/navigation';
+
 import TalentBuilder from '~/app/_components/builder/TalentBuilder';
 import useLocalStorage from '~/app/_components/hooks/useLocalStorage';
 import Spinner from '~/app/_components/styled/Spinner';
@@ -18,7 +19,7 @@ const LocalTreePage = ({ params }: { params: { id: string } }) => {
 		);
 
 	const localSpec = savedSpecs?.[params.id];
-	if (!localSpec) return <NotFound />;
+	if (!localSpec) return notFound();
 	return <TalentBuilder defaultValues={localSpec} isLocal />;
 };
 

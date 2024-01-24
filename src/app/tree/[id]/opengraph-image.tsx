@@ -56,7 +56,9 @@ const Image = async ({ params }: { params: { id: string } }) => {
 						gap: 8,
 						alignItems: 'center',
 						paddingTop: 16,
-						paddingBottom: 8
+						paddingBottom: 8,
+						maxWidth: '90%',
+						textAlign: 'center'
 					}}
 				>
 					<img src={response.icon} width={64} height={64} />
