@@ -1,10 +1,11 @@
 'use client';
 
 import { Fragment, useEffect, useRef } from 'react';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
-import { api } from '~/trpc/react';
+import { listIcons } from '~/server/api/routers/icon';
 
-import TalentIcon from '../TalentIcon';
+import TalentIcon from '../builder/TalentIcon';
 import Spinner from '../styled/Spinner';
 import useTooltip from '../hooks/useTooltip';
 
@@ -42,10 +43,17 @@ type Props = {
 };
 
 const IconGrid = ({ filter, required, icon, setIcon }: Props) => {
-	const icons = api.icon.list.useInfiniteQuery(
-		{ limit: 64, filter },
-		{ getNextPageParam: prev => prev.nextCursor, staleTime: Infinity }
-	);
+	const icons = useInfiniteQuery({
+		queryKey: ['icons', filter],
+		queryFn: async ({ pageParam = 0 }) =>
+			await listIcons({
+				limit: 64,
+				filter,
+				cursor: pageParam
+			}),
+		getNextPageParam: prev => prev.nextCursor,
+		staleTime: Infinity
+	});
 
 	const bottomRef = useRef<HTMLDivElement>(null);
 	useEffect(() => {
@@ -61,8 +69,17 @@ const IconGrid = ({ filter, required, icon, setIcon }: Props) => {
 	}, [bottomRef, icons.isFetchingNextPage, icons.hasNextPage]);
 
 	return (
-		<div className="grid max-h-[520px] grid-cols-8 gap-1 overflow-auto">
-			{!required && (
+		<div
+			className="grid max-h-[520px] gap-1 overflow-auto"
+			style={{ gridTemplateColumns: 'repeat(8, 64px)' }}
+		>
+			{icons.isLoading && (
+				<div className="col-span-8 flex h-32 items-center justify-center">
+					<Spinner size={32} />
+				</div>
+			)}
+
+			{!required && !icons.isLoading && (
 				<TalentIcon
 					showDefault
 					selected={!icon}

@@ -1,74 +1,89 @@
-import { TRPCError } from '@trpc/server';
+'use server';
+
 import { desc, eq } from 'drizzle-orm';
 import { z } from 'zod';
+import { revalidateTag } from 'next/cache';
 
-import {
-	createTRPCRouter,
-	protectedProcedure,
-	publicProcedure
-} from '~/server/api/trpc';
 import { talentTrees } from '~/server/db/schema';
 
 import { TalentForm } from '../types';
+import { getTag, protectedProcedure, publicProcedure } from '../helpers';
 
-export const talentTreeRouter = createTRPCRouter({
-	upsert: protectedProcedure
-		.input(TalentForm)
-		.mutation(async ({ ctx, input }) => {
-			const entry = await ctx.db.query.talentTrees.findFirst({
-				where: eq(talentTrees.id, input.id)
+export const upsertTalentTree = protectedProcedure({
+	input: TalentForm,
+	query: async ({ input, db, session }) => {
+		const entry = await db.query.talentTrees.findFirst({
+			where: eq(talentTrees.id, input.id)
+		});
+
+		if (!entry) {
+			await db.insert(talentTrees).values({
+				...input,
+				createdById: session.user.id,
+				createdAt: new Date()
 			});
+			return;
+		}
 
-			if (!entry) {
-				await ctx.db.insert(talentTrees).values({
-					...input,
-					createdById: ctx.session.user.id
-				});
-				return;
-			}
+		if (session.user.id !== entry.createdById) throw new Error('UNAUTHORIZED');
 
-			if (ctx.session.user.id !== entry.createdById)
-				throw new TRPCError({ code: 'UNAUTHORIZED' });
-
-			await ctx.db.update(talentTrees).set({
+		await db
+			.update(talentTrees)
+			.set({
 				...input,
 				updatedAt: new Date()
-			});
-		}),
+			})
+			.where(eq(talentTrees.id, input.id));
 
-	listPublic: publicProcedure.query(async ({ ctx }) =>
-		ctx.db.query.talentTrees.findMany({
+		if (entry.public || input.public) {
+			revalidateTag(getTag('listPublicTalentTrees', undefined));
+		}
+		revalidateTag(getTag('getTalentTree', input.id));
+		revalidateTag(getTag('getOgInfo', input.id));
+	}
+});
+
+export const listPublicTalentTrees = publicProcedure({
+	query: async ({ db }) =>
+		db.query.talentTrees.findMany({
 			orderBy: [desc(talentTrees.updatedAt)],
 			where: eq(talentTrees.public, true)
-		})
-	),
+		}),
+	queryKey: 'listPublicTalentTrees'
+});
 
-	listPersonal: protectedProcedure.query(async ({ ctx }) =>
-		ctx.db.query.talentTrees.findMany({
+export const listPersonalTalentTrees = protectedProcedure({
+	query: async ({ db, session }) =>
+		db.query.talentTrees.findMany({
 			orderBy: [desc(talentTrees.updatedAt)],
-			where: eq(talentTrees.createdById, ctx.session.user.id)
+			where: eq(talentTrees.createdById, session.user.id)
 		})
-	),
+});
 
-	get: publicProcedure.input(z.string()).query(async ({ ctx, input }) =>
-		ctx.db.query.talentTrees.findFirst({
+export const getTalentTree = publicProcedure({
+	input: z.string(),
+	queryKey: 'getTalentTree',
+	query: async ({ db, input }) =>
+		db.query.talentTrees.findFirst({
 			where: eq(talentTrees.id, input)
 		})
-	),
+});
 
-	delete: protectedProcedure
-		.input(z.string())
-		.mutation(async ({ ctx, input }) => {
-			if (
-				ctx.session.user.id !==
-				(
-					await ctx.db.query.talentTrees.findFirst({
-						where: eq(talentTrees.id, input)
-					})
-				)?.createdById
-			)
-				throw new TRPCError({ code: 'UNAUTHORIZED' });
+export const deleteTalentTree = protectedProcedure({
+	input: z.string(),
+	query: async ({ input, db, session }) => {
+		const entry = await db.query.talentTrees.findFirst({
+			where: eq(talentTrees.id, input)
+		});
 
-			await ctx.db.delete(talentTrees).where(eq(talentTrees.id, input));
-		})
+		if (!entry) throw new Error('NOT_FOUND');
+
+		if (session.user.id !== entry?.createdById) throw new Error('UNAUTHORIZED');
+
+		await db.delete(talentTrees).where(eq(talentTrees.id, input));
+
+		if (entry.public) {
+			revalidateTag(getTag('listPublicTalentTrees', undefined));
+		}
+	}
 });

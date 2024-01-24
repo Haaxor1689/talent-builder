@@ -6,8 +6,9 @@ import cls from 'classnames';
 
 import { type TalentFormT } from '~/server/api/types';
 
-import TalentIcon from '../_components/TalentIcon';
-import useTooltip from '../_components/hooks/useTooltip';
+import useTooltip from '../hooks/useTooltip';
+
+import TalentIcon from './TalentIcon';
 
 const TalentPreview = ({
 	i,
@@ -36,10 +37,21 @@ const TalentPreview = ({
 			<TalentIcon
 				ref={ref}
 				onClick={e =>
-					e.shiftKey && selected
+					e.shiftKey && editable
 						? setValue(`tree.${selected}.requires`, i)
 						: setSelected(i)
 				}
+				onKeyDown={e => {
+					if (e.key !== 'Delete') return;
+					setValue(`tree.${selected}`, {
+						icon: '',
+						name: '',
+						description: '',
+						highlight: false,
+						requires: null,
+						ranks: null
+					});
+				}}
 				icon={dragging.current ? undefined : field.icon}
 				ranks={dragging.current ? undefined : field.ranks}
 				selected={dragging.current ? undefined : selected === i}
@@ -76,13 +88,15 @@ const TalentPreview = ({
 				}}
 				{...elementProps}
 			/>
-			{field.name && (
+			{(field.icon || field.name || field.description) && (
 				<div
 					className="tw-surface max-w-[400px] bg-darkerGray/90"
 					{...tooltipProps}
 				>
-					<h4 className="tw-color">{field.name}</h4>
-					<p>{field.description}</p>
+					{/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
+					<h4 className="tw-color">{field.name || '[Unnamed talent]'}</h4>
+					{/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
+					<p>{field.description || '[No description]'}</p>
 				</div>
 			)}
 		</>

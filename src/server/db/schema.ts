@@ -27,11 +27,11 @@ export const talentTrees = mysqlTable(
 	'talentTree',
 	{
 		id: varchar('id', { length: 128 }).primaryKey().$default(v4),
-		name: varchar('name', { length: 256 }),
+		name: varchar('name', { length: 256 }).default('New talent tree').notNull(),
 		public: boolean('public').default(false).notNull(),
 		icon: varchar('icon', { length: 256 })
-			.notNull()
-			.default('inv_misc_questionmark'),
+			.default('inv_misc_questionmark')
+			.notNull(),
 		tree: json('tree').$type<TalentTreeT>().notNull().default([]),
 		createdById: varchar('createdById', { length: 255 }).notNull(),
 		createdAt: timestamp('created_at')

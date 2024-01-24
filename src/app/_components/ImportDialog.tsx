@@ -2,12 +2,12 @@
 
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Upload } from 'lucide-react';
+import { FileJson2 } from 'lucide-react';
 
 import { TalentForm, type TalentFormT } from '../../server/api/types';
+import { zodResolver } from '../../utils';
 
 import DialogButton from './styled/DialogButton';
-import { zodResolver } from './utils';
 import TextButton from './styled/TextButton';
 
 type Props = {
@@ -75,7 +75,7 @@ const ImportDialog = ({ disabled, onSubmit }: Props) => {
 			{open => (
 				<TextButton
 					onClick={open}
-					icon={Upload}
+					icon={FileJson2}
 					title="Import"
 					disabled={disabled}
 				/>

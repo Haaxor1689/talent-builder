@@ -126,9 +126,12 @@ input[type='number'] {
 	.tw-input {
 		@apply rounded-[2px];
 		@apply border border-gray/40 bg-darkerGray/50;
-		@apply transition-colors hocus:border-blueGray hocus:bg-darkGray;
 		@apply grow cursor-text p-2;
 		@apply placeholder-blueGray/70;
+
+		&-hocus {
+			@apply transition-colors hocus:border-blueGray hocus:bg-darkGray;
+		}
 
 		&-underline {
 			@apply tw-input border-0 border-b;

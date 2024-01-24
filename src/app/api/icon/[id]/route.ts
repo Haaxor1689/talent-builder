@@ -1,6 +1,6 @@
 import { type NextRequest } from 'next/server';
 
-import { api } from '~/trpc/server';
+import { getIcon, upsertIcon } from '~/server/api/routers/icon';
 
 export const GET = async (
 	_: NextRequest,
@@ -8,7 +8,7 @@ export const GET = async (
 ) => {
 	if (!params.id) return new Response(null, { status: 404 });
 
-	const img = await api.icon.get.query(params.id);
+	const img = await getIcon(params.id);
 
 	if (!img)
 		return Response.redirect(
@@ -26,7 +26,7 @@ export const POST = async (
 ) => {
 	if (!params.id) return new Response(null, { status: 404 });
 
-	await api.icon.upsert.mutate({ name: params.id, data: await req.text() });
+	await upsertIcon({ name: params.id, data: await req.text() });
 
 	return new Response(null, { status: 200 });
 };

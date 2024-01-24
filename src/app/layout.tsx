@@ -1,15 +1,12 @@
 import '~/styles/globals.css';
 
 import localFont from 'next/font/local';
-import { cookies } from 'next/headers';
-import Link from 'next/link';
 
-import { TRPCReactProvider } from '~/trpc/react';
 import { env } from '~/env';
 
-import TextButton from './_components/styled/TextButton';
-import UserStatus from './UserStatus';
 import Providers from './Providers';
+import Header from './Header';
+import Footer from './Footer';
 
 const fontin = localFont({
 	src: './_components/assets/FontinSans-Regular.otf',
@@ -35,26 +32,15 @@ type Props = {
 const RootLayout = async ({ children }: Props) => (
 	<html lang="en">
 		<body
-			className={`${fontin.variable} ${din.variable} flex min-h-screen flex-col overflow-auto bg-darkGray bg-cover bg-top bg-no-repeat`}
+			className={`${fontin.variable} ${din.variable} flex min-h-screen flex-col items-stretch overflow-auto overflow-x-hidden bg-darkGray bg-cover bg-top bg-no-repeat`}
 			style={{ backgroundImage: 'url("/page_background.png")' }}
 		>
 			<Providers>
-				<TRPCReactProvider cookies={cookies().toString()}>
-					<main className="mx-auto flex w-full max-w-screen-xl grow flex-col gap-4 p-1 md:p-6">
-						<div className="flex items-center gap-3 p-4">
-							<h3>Talent builder</h3>
-							<Link href="/">
-								<TextButton type="submit">Home</TextButton>
-							</Link>
-							<Link href="/new">
-								<TextButton type="submit">New</TextButton>
-							</Link>
-							<div className="grow" />
-							<UserStatus />
-						</div>
-						{children}
-					</main>
-				</TRPCReactProvider>
+				<Header />
+				<main className="flex max-w-screen-xl grow flex-col gap-6 p-2 pt-0 md:px-6 xl:mx-auto xl:w-full">
+					{children}
+				</main>
+				<Footer />
 			</Providers>
 		</body>
 	</html>

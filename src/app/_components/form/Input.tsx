@@ -7,6 +7,7 @@ type Props = HTMLProps<HTMLInputElement> & {
 	error?: boolean;
 	icon?: LucideIcon;
 	onIconClick?: () => void;
+	inputClassName?: cls.Value;
 };
 
 const Input = forwardRef<HTMLInputElement, Props>(
@@ -19,6 +20,7 @@ const Input = forwardRef<HTMLInputElement, Props>(
 			error,
 			icon: Icon,
 			onIconClick,
+			inputClassName,
 			...props
 		},
 		ref
@@ -31,7 +33,8 @@ const Input = forwardRef<HTMLInputElement, Props>(
 					id={id}
 					name={name}
 					{...props}
-					className={cls('tw-input-underline', {
+					className={cls('tw-input-underline', inputClassName, {
+						'tw-input-hocus': !props.disabled,
 						'tw-input-error': error,
 						'pr-9': !!Icon
 					})}

@@ -3,15 +3,16 @@
 import { useFormContext, useWatch } from 'react-hook-form';
 import { Link2Off, Trash2 } from 'lucide-react';
 
-import { type TalentFormT } from '../../server/api/types';
+import { EmptyTalent, type TalentFormT } from '~/server/api/types';
 
-import ConfirmDialog from './ConfirmDialog';
-import IconPicker from './form/IconPicker';
-import Input from './form/Input';
-import Textarea from './form/Textarea';
-import TextButton from './styled/TextButton';
+import ConfirmDialog from '../ConfirmDialog';
+import IconPicker from '../form/IconPicker';
+import Input from '../form/Input';
+import Textarea from '../form/Textarea';
+import TextButton from '../styled/TextButton';
+import CheckboxInput from '../form/CheckboxInput';
+
 import TalentIcon from './TalentIcon';
-import CheckboxInput from './form/CheckboxInput';
 
 const RequiredTalent = ({
 	selected,
@@ -23,11 +24,15 @@ const RequiredTalent = ({
 	const { setValue } = useFormContext<TalentFormT>();
 	const fields = useWatch<TalentFormT, 'tree'>({ name: 'tree' });
 	const requires = fields[fields[selected ?? -1]?.requires ?? -1];
+	if (!requires && !editable) return <p className="text-blueGray">Nothing</p>;
 	if (!requires) return null;
 	return (
 		<div className="flex items-center gap-3">
-			<TalentIcon icon={requires.icon} className="!size-12" />
-			<p className="tw-color grow font-bold">{requires.name}</p>
+			<TalentIcon icon={requires.icon} className="!size-12" showDefault />
+			<p className="tw-color grow font-bold">
+				{/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
+				{requires.name || '[Unnamed talent]'}
+			</p>
 			{editable && (
 				<TextButton
 					icon={Link2Off}
@@ -42,11 +47,10 @@ const RequiredTalent = ({
 type Props = {
 	selected: number;
 	editable?: boolean;
-	onDelete: () => void;
 };
 
-const TalentEdit = ({ selected, editable, onDelete }: Props) => {
-	const { register } = useFormContext<TalentFormT>();
+const TalentEdit = ({ selected, editable }: Props) => {
+	const { register, setValue } = useFormContext<TalentFormT>();
 	const name = useWatch<TalentFormT, `tree.${number}.name`>({
 		name: `tree.${selected}.name`
 	});
@@ -57,12 +61,14 @@ const TalentEdit = ({ selected, editable, onDelete }: Props) => {
 				<Input
 					{...register(`tree.${selected}.name`)}
 					disabled={!editable}
-					className="flex-grow"
+					className="grow"
 				/>
 				{editable && (
 					<ConfirmDialog
 						title={`Are you sure you want to delete "${name}"?`}
-						confirm={onDelete}
+						confirm={() => {
+							setValue(`tree.${selected}`, EmptyTalent);
+						}}
 					>
 						{open => (
 							<TextButton
@@ -91,9 +97,11 @@ const TalentEdit = ({ selected, editable, onDelete }: Props) => {
 			<div className="flex flex-col gap-2">
 				<span>Requires:</span>
 				<RequiredTalent selected={selected} editable={editable} />
-				<p className="text-blueGray">
-					Shift + click other talent to set dependency
-				</p>
+				{editable && (
+					<p className="text-blueGray">
+						Shift + click other talent to set dependency
+					</p>
+				)}
 			</div>
 			<div className="flex flex-col">
 				<span>Other options:</span>

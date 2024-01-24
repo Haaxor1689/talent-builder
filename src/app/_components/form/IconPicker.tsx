@@ -3,7 +3,7 @@ import { HelpCircle, ListFilter } from 'lucide-react';
 import { useController } from 'react-hook-form';
 
 import DialogButton from '../styled/DialogButton';
-import TalentIcon from '../TalentIcon';
+import TalentIcon from '../builder/TalentIcon';
 
 import Input from './Input';
 import IconGrid from './IconGrid';
