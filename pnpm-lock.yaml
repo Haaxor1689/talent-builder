@@ -35,6 +35,12 @@ dependencies:
   '@trpc/server':
     specifier: ^10.45.0
     version: 10.45.0
+  '@vercel/analytics':
+    specifier: ^1.1.2
+    version: 1.1.2
+  '@vercel/speed-insights':
+    specifier: ^1.0.7
+    version: 1.0.7(next@14.1.1-canary.5)(react@18.2.0)
   classnames:
     specifier: ^2.5.1
     version: 2.5.1
@@ -1225,6 +1231,40 @@ packages:
   /@ungap/structured-clone@1.2.0:
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
     dev: true
+
+  /@vercel/analytics@1.1.2:
+    resolution: {integrity: sha512-CodhkLCQ/EHzjX8k+Qg+OzTBY0UadykrcfolfSOJVZZY/ZJM5nbhztm9KdbYvMfqKlasAr1+OYy0ThZnDA/MYA==}
+    dependencies:
+      server-only: 0.0.1
+    dev: false
+
+  /@vercel/speed-insights@1.0.7(next@14.1.1-canary.5)(react@18.2.0):
+    resolution: {integrity: sha512-1XYZO/OlrAco8QPoXXIOPoMrj0O+slB9k6poRo1drQJ+DWTbdUUT18Mtm4ybA8KMj4mGEMEgbw0BKR/yq/VPhA==}
+    requiresBuild: true
+    peerDependencies:
+      '@sveltejs/kit': ^1 || ^2
+      next: '>= 13'
+      react: ^18 || ^19
+      svelte: ^4
+      vue: ^3
+      vue-router: ^4
+    peerDependenciesMeta:
+      '@sveltejs/kit':
+        optional: true
+      next:
+        optional: true
+      react:
+        optional: true
+      svelte:
+        optional: true
+      vue:
+        optional: true
+      vue-router:
+        optional: true
+    dependencies:
+      next: 14.1.1-canary.5(react-dom@18.2.0)(react@18.2.0)
+      react: 18.2.0
+    dev: false
 
   /acorn-jsx@5.3.2(acorn@8.11.3):
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}

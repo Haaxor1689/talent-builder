@@ -1,6 +1,8 @@
 import '~/styles/globals.css';
 
 import localFont from 'next/font/local';
+import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Analytics } from '@vercel/analytics/react';
 
 import { env } from '~/env';
 
@@ -42,6 +44,8 @@ const RootLayout = async ({ children }: Props) => (
 				</main>
 				<Footer />
 			</Providers>
+			<SpeedInsights />
+			<Analytics />
 		</body>
 	</html>
 );
