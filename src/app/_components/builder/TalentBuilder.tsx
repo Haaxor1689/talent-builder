@@ -3,13 +3,12 @@
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { v4 } from 'uuid';
 import { Copy, FileLock2, Save, Trash2, UploadCloud } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { noop } from 'lodash-es';
 import toast from 'react-hot-toast';
 
-import { type TalentTreeTable } from '~/server/db/schema';
 import {
 	deleteTalentTree,
 	upsertTalentTree
@@ -32,18 +31,11 @@ import useLocalStorage from '../hooks/useLocalStorage';
 import TalentPreview from './TalentPreview';
 import PointsSummary from './PointsSummary';
 import TalentEdit from './TalentEdit';
+import UndoRedo from './UndoRedo';
 
-type Props =
-	| {
-			isLocal?: false;
-			isNew?: false;
-			defaultValues?: TalentTreeTable;
-	  }
-	| {
-			isLocal: true;
-			isNew?: boolean;
-			defaultValues?: TalentFormT;
-	  };
+type Props = {
+	defaultValues?: TalentFormT;
+} & ({ isLocal?: false; isNew?: false } | { isLocal: true; isNew?: boolean });
 
 const TalentBuilder = (props: Props) => {
 	const [disableInteractions, setDisableInteractions] = useState(false);
@@ -67,8 +59,14 @@ const TalentBuilder = (props: Props) => {
 		(session.status === 'authenticated' &&
 			session.data.user.id === props.defaultValues?.createdById);
 
+	const defaultValues = useMemo(
+		() => TalentForm.parse(props.defaultValues ?? EmptyTalentTree()),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[]
+	);
+
 	const formProps = useForm({
-		defaultValues: props.defaultValues ?? EmptyTalentTree(),
+		defaultValues,
 		resolver: zodResolver(TalentForm)
 	});
 	const { handleSubmit, register, getValues, reset, control, formState } =
@@ -79,7 +77,6 @@ const TalentBuilder = (props: Props) => {
 
 	return (
 		<FormProvider {...formProps}>
-			{/* TODO: <UndoRedo /> */}
 			<form
 				onSubmit={handleSubmit(noop)}
 				className="tw-surface flex flex-col gap-3"
@@ -140,7 +137,9 @@ const TalentBuilder = (props: Props) => {
 								})}
 								icon={UploadCloud}
 								title="Save online"
-								disabled={disableInteractions}
+								disabled={
+									(props.isNew && !formState.isDirty) || disableInteractions
+								}
 							/>
 						)}
 
@@ -209,7 +208,7 @@ const TalentBuilder = (props: Props) => {
 				<hr />
 
 				<div className="flex flex-col gap-3 md:flex-row md:justify-center">
-					<div className="relative grid flex-shrink-0 grow grid-cols-[repeat(4,_max-content)] content-center justify-center gap-6 p-6">
+					<div className="relative grid flex-shrink-0 grow select-none grid-cols-[repeat(4,_max-content)] content-center justify-center gap-6 p-6">
 						{fields.map((field, i) => (
 							<TalentPreview
 								key={field.id}
@@ -219,6 +218,8 @@ const TalentBuilder = (props: Props) => {
 								editable={editable}
 							/>
 						))}
+
+						{editable && <UndoRedo />}
 						{!editable && (
 							<p className="absolute bottom-0 left-0 flex gap-1 text-pink">
 								<FileLock2 /> Read only

@@ -1,72 +1,104 @@
-import { useEffect, useRef } from 'react';
+import { cloneDeep, isEqual } from 'lodash-es';
+import { useEffect, useRef, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 import { type TalentFormT } from '~/server/api/types';
 
-// TODO: Figure this out correctly
+import TextButton from '../styled/TextButton';
+
 const UndoRedo = () => {
+	const [disabled, setDisabled] = useState([true, true]);
+
 	const { watch, reset } = useFormContext<TalentFormT>();
 	const history = useRef<TalentFormT[]>([]);
 	const index = useRef(0);
-	const isReset = useRef(false);
+	const isReset = useRef(1);
+
+	const updateDisabled = () => {
+		setDisabled([
+			index.current === history.current.length - 1,
+			index.current === 0
+		]);
+	};
+
+	const undo = () => {
+		if (index.current === history.current.length - 1) return;
+		index.current += 1;
+		isReset.current += 2;
+
+		reset(history.current[index.current], {
+			keepDefaultValues: true
+		});
+
+		updateDisabled();
+	};
+
+	const redo = () => {
+		if (index.current === 0) return;
+		index.current -= 1;
+		isReset.current += 2;
+		reset(history.current[index.current], {
+			keepDefaultValues: true
+		});
+
+		updateDisabled();
+	};
 
 	useEffect(() => {
 		const { unsubscribe } = watch(v => {
-			console.log('change');
-			console.log({
-				history: history.current.length,
-				index: index.current,
-				isReset: isReset.current
-			});
-
 			if (isReset.current) {
-				isReset.current = false;
+				isReset.current -= 1;
 				return;
 			}
 
+			if (isEqual(v, history.current[index.current])) return;
+
 			history.current = [
-				v as never,
-				...history.current.slice(0, index.current)
+				cloneDeep(v) as never,
+				...history.current.slice(index.current)
 			];
+
 			index.current = 0;
+			updateDisabled();
 		});
 		return () => unsubscribe();
 	}, [watch]);
 
 	useEffect(() => {
 		const callback = (e: KeyboardEvent): void => {
-			if (e.ctrlKey && e.key === 'z') {
-				e.preventDefault();
-				console.log('undo');
-				console.log({
-					history: history.current.length,
-					index: index.current,
-					isReset: isReset.current
-				});
-				if (index.current === history.current.length) return;
-				index.current += 1;
-				isReset.current = true;
-				reset(history.current[index.current]);
-			}
-			if (e.ctrlKey && e.key === 'y') {
-				e.preventDefault();
-				console.log('redo');
-				console.log({
-					history: history.current.length,
-					index: index.current,
-					isReset: isReset.current
-				});
-				if (index.current === 0) return;
-				index.current -= 1;
-				isReset.current = true;
-				reset(history.current[index.current]);
+			if (e.key.toLocaleLowerCase() !== 'z' || !e.ctrlKey) return;
+			e.preventDefault();
+
+			if (!e.shiftKey) {
+				undo();
+			} else {
+				redo();
 			}
 		};
 		window.addEventListener('keydown', callback);
 		return () => window.removeEventListener('keydown', callback);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [reset]);
 
-	return null;
+	return (
+		<div className="absolute left-0 top-0 flex gap-1">
+			<TextButton
+				onClick={undo}
+				icon={ArrowLeft}
+				title="Undo"
+				disabled={disabled[0]}
+				className="-m-2"
+			/>
+			<TextButton
+				onClick={redo}
+				icon={ArrowRight}
+				title="Redo"
+				disabled={disabled[1]}
+				className="-m-2"
+			/>
+		</div>
+	);
 };
 
 export default UndoRedo;

@@ -3,6 +3,7 @@
 import { desc, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { revalidateTag } from 'next/cache';
+import { omit } from 'lodash-es';
 
 import { talentTrees } from '~/server/db/schema';
 
@@ -20,8 +21,7 @@ export const upsertTalentTree = protectedProcedure({
 			await db.insert(talentTrees).values({
 				...input,
 				createdById: session.user.id,
-				createdAt: new Date(),
-				updatedAt: new Date()
+				createdAt: new Date()
 			});
 			return;
 		}
@@ -30,10 +30,7 @@ export const upsertTalentTree = protectedProcedure({
 
 		await db
 			.update(talentTrees)
-			.set({
-				...input,
-				updatedAt: new Date()
-			})
+			.set(omit(input, ['createdById', 'createdAt']))
 			.where(eq(talentTrees.id, input.id));
 
 		if (entry.public || input.public) {

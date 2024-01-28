@@ -51,7 +51,10 @@ const ImportDialog = ({ disabled }: Props) => {
 			dialog={close => (
 				<form
 					onSubmit={handleSubmit(v => {
-						reset({ ...v.file, id: getValues().id });
+						reset(
+							{ ...v.file, id: getValues().id },
+							{ keepDefaultValues: true }
+						);
 						close();
 					})}
 					className="tw-surface flex flex-col gap-4 bg-darkGray/90"

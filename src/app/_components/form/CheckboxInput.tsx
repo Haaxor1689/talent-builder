@@ -25,7 +25,8 @@ type Props = {
 };
 
 const CheckboxInput = ({ name, label, disabled, className }: Props) => {
-	const { field } = useController({ name });
+	const { field } = useController({ name, defaultValue: false });
+
 	return (
 		<TextButton
 			onClick={() => {

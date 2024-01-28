@@ -18,6 +18,11 @@ const Input = forwardRef<HTMLTextAreaElement, Props>(
 				ref={ref}
 				id={id}
 				name={name}
+				onKeyDown={e => {
+					if (e.key.toLocaleLowerCase() === 'z' && e.ctrlKey) {
+						e.preventDefault();
+					}
+				}}
 				{...props}
 				className={cls('tw-input-underline', { 'tw-input-error': error })}
 			/>

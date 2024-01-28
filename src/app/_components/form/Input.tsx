@@ -33,6 +33,11 @@ const Input = forwardRef<HTMLInputElement, Props>(
 					id={id}
 					name={name}
 					{...props}
+					onKeyDown={e => {
+						if (e.key.toLocaleLowerCase() === 'z' && e.ctrlKey) {
+							e.preventDefault();
+						}
+					}}
 					className={cls('tw-input-underline', inputClassName, {
 						'tw-input-hocus': !props.disabled,
 						'tw-input-error': error,

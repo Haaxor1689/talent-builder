@@ -3,12 +3,16 @@
 import { useRef } from 'react';
 import { useWatch, useFormContext } from 'react-hook-form';
 import cls from 'classnames';
+import { cloneDeep, isEqual } from 'lodash-es';
 
-import { type TalentFormT } from '~/server/api/types';
+import { EmptyTalent, type TalentFormT } from '~/server/api/types';
 
 import useTooltip from '../hooks/useTooltip';
 
 import TalentIcon from './TalentIcon';
+
+const isEmptyTalent = (talent?: TalentFormT['tree'][number]) =>
+	!talent || isEqual(talent, EmptyTalent());
 
 const TalentPreview = ({
 	i,
@@ -43,16 +47,9 @@ const TalentPreview = ({
 				}
 				onKeyDown={e => {
 					if (!editable || e.key !== 'Delete') return;
-					setValue(`tree.${selected}`, {
-						icon: '',
-						name: '',
-						description: '',
-						highlight: false,
-						requires: null,
-						ranks: null
-					});
+					setValue(`tree.${selected}`, EmptyTalent());
 				}}
-				icon={dragging.current ? undefined : field.icon}
+				icon={dragging.current ? '' : field.icon}
 				ranks={dragging.current ? undefined : field.ranks}
 				selected={dragging.current ? undefined : selected === i}
 				highlighted={dragging.current ? undefined : !!field.highlight}
@@ -62,9 +59,12 @@ const TalentPreview = ({
 						? undefined
 						: [field.requires, i]
 				}
-				draggable={!!editable}
 				onDragStart={e => {
-					if (!editable) return;
+					if (!editable || isEmptyTalent(field)) {
+						e.preventDefault();
+						return;
+					}
+
 					dragging.current = true;
 					const img = ref.current?.querySelector('img');
 					img && e.dataTransfer.setDragImage(img, 28, 28);
@@ -80,10 +80,14 @@ const TalentPreview = ({
 					e.preventDefault();
 					const idx = Number(e.dataTransfer.getData('text/plain'));
 					if (i === idx) return;
-					const newTree = [...getValues().tree];
-					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-					[newTree[i], newTree[idx]] = [newTree[idx]!, newTree[i]!];
-					setValue('tree', newTree);
+
+					const cloned = cloneDeep(getValues().tree);
+
+					const [a, b] = [cloned[i], cloned[idx]];
+					cloned[i] = { ...EmptyTalent(), ...b };
+					cloned[idx] = { ...EmptyTalent(), ...a };
+
+					setValue('tree', cloned);
 					setSelected(i);
 				}}
 				{...elementProps}

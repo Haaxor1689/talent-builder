@@ -5,7 +5,6 @@ import { Link2Off, Trash2 } from 'lucide-react';
 
 import { EmptyTalent, type TalentFormT } from '~/server/api/types';
 
-import ConfirmDialog from '../ConfirmDialog';
 import IconPicker from '../form/IconPicker';
 import Input from '../form/Input';
 import Textarea from '../form/Textarea';
@@ -51,9 +50,6 @@ type Props = {
 
 const TalentEdit = ({ selected, editable }: Props) => {
 	const { register, setValue } = useFormContext<TalentFormT>();
-	const name = useWatch<TalentFormT, `tree.${number}.name`>({
-		name: `tree.${selected}.name`
-	});
 	return (
 		<div className="flex w-full flex-col gap-4 md:max-w-md">
 			<div className="flex items-center gap-2">
@@ -64,29 +60,22 @@ const TalentEdit = ({ selected, editable }: Props) => {
 					className="grow"
 				/>
 				{editable && (
-					<ConfirmDialog
-						title={`Are you sure you want to delete "${name}"?`}
-						confirm={() => {
-							setValue(`tree.${selected}`, EmptyTalent);
-						}}
-					>
-						{open => (
-							<TextButton
-								onClick={open}
-								className="text-red-500"
-								icon={Trash2}
-								title="Delete"
-							/>
-						)}
-					</ConfirmDialog>
+					<TextButton
+						onClick={() => setValue(`tree.${selected}`, EmptyTalent())}
+						className="text-red-500"
+						icon={Trash2}
+						title="Delete"
+					/>
 				)}
 			</div>
+
 			<Input
 				{...register(`tree.${selected}.ranks`, { valueAsNumber: true })}
 				label="Ranks"
 				type="number"
 				disabled={!editable}
 			/>
+
 			<Textarea
 				{...register(`tree.${selected}.description`)}
 				label="Text"
@@ -103,6 +92,7 @@ const TalentEdit = ({ selected, editable }: Props) => {
 					</p>
 				)}
 			</div>
+
 			<div className="flex flex-col">
 				<span>Other options:</span>
 				<CheckboxInput

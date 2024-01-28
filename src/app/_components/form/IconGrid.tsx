@@ -12,7 +12,7 @@ import useTooltip from '../hooks/useTooltip';
 type IconProps = {
 	item: { name: string; data: string };
 	icon?: string;
-	setIcon: (icon?: string) => void;
+	setIcon: (icon: string) => void;
 };
 
 const Icon = ({ item, icon, setIcon }: IconProps) => {
@@ -38,7 +38,7 @@ const Icon = ({ item, icon, setIcon }: IconProps) => {
 type Props = {
 	filter?: string;
 	icon?: string;
-	setIcon: (icon?: string) => void;
+	setIcon: (icon: string) => void;
 	required?: boolean;
 };
 
@@ -82,8 +82,9 @@ const IconGrid = ({ filter, required, icon, setIcon }: Props) => {
 			{!required && !icons.isLoading && (
 				<TalentIcon
 					showDefault
+					icon=""
 					selected={!icon}
-					onClick={() => setIcon(undefined)}
+					onClick={() => setIcon('')}
 				/>
 			)}
 
