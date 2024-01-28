@@ -7,13 +7,13 @@ import { type TalentFormT } from '~/server/api/types';
 
 import TextButton from '../styled/TextButton';
 
-const UndoRedo = () => {
+const UndoRedo = ({ defaultValues }: { defaultValues: TalentFormT }) => {
 	const [disabled, setDisabled] = useState([true, true]);
 
 	const { watch, reset } = useFormContext<TalentFormT>();
-	const history = useRef<TalentFormT[]>([]);
+	const history = useRef<TalentFormT[]>([defaultValues]);
 	const index = useRef(0);
-	const isReset = useRef(1);
+	const isReset = useRef(false);
 
 	const updateDisabled = () => {
 		setDisabled([
@@ -25,7 +25,7 @@ const UndoRedo = () => {
 	const undo = () => {
 		if (index.current === history.current.length - 1) return;
 		index.current += 1;
-		isReset.current += 2;
+		isReset.current = true;
 
 		reset(history.current[index.current], {
 			keepDefaultValues: true
@@ -37,7 +37,7 @@ const UndoRedo = () => {
 	const redo = () => {
 		if (index.current === 0) return;
 		index.current -= 1;
-		isReset.current += 2;
+		isReset.current = true;
 		reset(history.current[index.current], {
 			keepDefaultValues: true
 		});
@@ -48,7 +48,7 @@ const UndoRedo = () => {
 	useEffect(() => {
 		const { unsubscribe } = watch(v => {
 			if (isReset.current) {
-				isReset.current -= 1;
+				isReset.current = false;
 				return;
 			}
 

@@ -219,7 +219,7 @@ const TalentBuilder = (props: Props) => {
 							/>
 						))}
 
-						{editable && <UndoRedo />}
+						{editable && <UndoRedo defaultValues={defaultValues} />}
 						{!editable && (
 							<p className="absolute bottom-0 left-0 flex gap-1 text-pink">
 								<FileLock2 /> Read only
