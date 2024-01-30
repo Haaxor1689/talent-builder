@@ -1,6 +1,5 @@
 import { Suspense } from 'react';
 
-import LocalTrees from './_components/tree-lists/LocalTrees';
 import PersonalTrees from './_components/tree-lists/PersonalTrees';
 import Spinner from './_components/styled/Spinner';
 import PublicTrees from './_components/tree-lists/PublicTrees';

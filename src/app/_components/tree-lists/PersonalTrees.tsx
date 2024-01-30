@@ -1,7 +1,6 @@
 import { getServerAuthSession } from '~/server/auth';
 import { listPersonalTalentTrees } from '~/server/api/routers/talentTree';
 
-import IconGrid from './IconGrid';
 import LocalTrees from './LocalTrees';
 
 const PersonalTrees = async () => {

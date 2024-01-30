@@ -53,7 +53,7 @@ export const TalentForm = z.object({
 	tree: TalentTree,
 	createdById: z.string().nullable().default(null),
 	createdBy: z
-		.object({ name: z.string(), image: z.string() })
+		.object({ name: z.string().nullable(), image: z.string().nullable() })
 		.nullable()
 		.default(null),
 	createdAt: z.coerce.date().nullable().default(null),
