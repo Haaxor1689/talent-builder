@@ -2,6 +2,7 @@ import { getServerAuthSession } from '~/server/auth';
 import { listPersonalTalentTrees } from '~/server/api/routers/talentTree';
 
 import IconGrid from './IconGrid';
+import LocalTrees from './LocalTrees';
 
 const PersonalTrees = async () => {
 	const session = await getServerAuthSession();
@@ -11,9 +12,8 @@ const PersonalTrees = async () => {
 	if (!listPersonal.length) return null;
 
 	return (
-		<IconGrid
-			title="Personal"
-			list={listPersonal.map(s => ({
+		<LocalTrees
+			serverList={listPersonal.map(s => ({
 				href: `/tree/${s.id}`,
 				...s
 			}))}

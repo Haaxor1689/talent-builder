@@ -17,6 +17,7 @@ export const EmptyTalentTree = (): TalentFormT => ({
 	name: 'New talent tree',
 	tree: [...Array(4 * 7).keys()].map(() => EmptyTalent()),
 	createdById: null,
+	createdBy: null,
 	createdAt: null,
 	updatedAt: null
 });
@@ -51,6 +52,10 @@ export const TalentForm = z.object({
 	name: z.string().default(''),
 	tree: TalentTree,
 	createdById: z.string().nullable().default(null),
+	createdBy: z
+		.object({ name: z.string(), image: z.string() })
+		.nullable()
+		.default(null),
 	createdAt: z.coerce.date().nullable().default(null),
 	updatedAt: z.coerce.date().nullable().default(null)
 });

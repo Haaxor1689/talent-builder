@@ -1,11 +1,11 @@
 'use server';
 
-import { desc, eq } from 'drizzle-orm';
+import { and, desc, eq, not } from 'drizzle-orm';
 import { z } from 'zod';
 import { revalidateTag } from 'next/cache';
 import { omit } from 'lodash-es';
 
-import { talentTrees } from '~/server/db/schema';
+import { talentTrees, users } from '~/server/db/schema';
 
 import { TalentForm } from '../types';
 import { getTag, protectedProcedure, publicProcedure } from '../helpers';
@@ -41,12 +41,34 @@ export const upsertTalentTree = protectedProcedure({
 	}
 });
 
-export const listPublicTalentTrees = publicProcedure({
-	query: async ({ db }) =>
-		db.query.talentTrees.findMany({
+export const listTurtleTalentTrees = publicProcedure({
+	query: async ({ db }) => {
+		const turtleAcc = await db.query.users.findFirst({
+			where: eq(users.name, 'TurtleWoW')
+		});
+		return db.query.talentTrees.findMany({
 			orderBy: [desc(talentTrees.updatedAt)],
-			where: eq(talentTrees.public, true)
-		}),
+			where: eq(talentTrees.createdById, turtleAcc?.id ?? ''),
+			with: { createdBy: true }
+		});
+	},
+	queryKey: 'listTurtleTalentTrees'
+});
+
+export const listPublicTalentTrees = publicProcedure({
+	query: async ({ db }) => {
+		const turtleAcc = await db.query.users.findFirst({
+			where: eq(users.name, 'TurtleWoW')
+		});
+		return db.query.talentTrees.findMany({
+			orderBy: [desc(talentTrees.updatedAt)],
+			where: and(
+				eq(talentTrees.public, true),
+				not(eq(talentTrees.createdById, turtleAcc?.id ?? ''))
+			),
+			with: { createdBy: true }
+		});
+	},
 	queryKey: 'listPublicTalentTrees'
 });
 
@@ -54,7 +76,8 @@ export const listPersonalTalentTrees = protectedProcedure({
 	query: async ({ db, session }) =>
 		db.query.talentTrees.findMany({
 			orderBy: [desc(talentTrees.updatedAt)],
-			where: eq(talentTrees.createdById, session.user.id)
+			where: eq(talentTrees.createdById, session.user.id),
+			with: { createdBy: true }
 		})
 });
 
@@ -63,7 +86,8 @@ export const getTalentTree = publicProcedure({
 	queryKey: 'getTalentTree',
 	query: async ({ db, input }) =>
 		db.query.talentTrees.findFirst({
-			where: eq(talentTrees.id, input)
+			where: eq(talentTrees.id, input),
+			with: { createdBy: true }
 		})
 });
 

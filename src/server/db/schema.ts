@@ -23,35 +23,6 @@ import { type TalentTreeT } from '~/server/api/types';
  */
 export const mysqlTable = mysqlTableCreator(name => `talent-builder_${name}`);
 
-export const talentTrees = mysqlTable(
-	'talentTree',
-	{
-		id: varchar('id', { length: 128 }).primaryKey().$default(v4),
-		name: varchar('name', { length: 256 }).default('New talent tree').notNull(),
-		public: boolean('public').default(false).notNull(),
-		icon: varchar('icon', { length: 256 })
-			.default('inv_misc_questionmark')
-			.notNull(),
-		tree: json('tree').$type<TalentTreeT>().notNull().default([]),
-		createdById: varchar('createdById', { length: 255 }).notNull(),
-		createdAt: timestamp('created_at')
-			.default(sql`CURRENT_TIMESTAMP`)
-			.notNull(),
-		updatedAt: timestamp('updatedAt').onUpdateNow()
-	},
-	example => ({
-		createdByIdIdx: index('createdById_idx').on(example.createdById),
-		nameIndex: index('name_idx').on(example.name)
-	})
-);
-
-export type TalentTreeTable = InferSelectModel<typeof talentTrees>;
-
-export const icons = mysqlTable('icon', {
-	name: varchar('name', { length: 255 }).notNull().primaryKey(),
-	data: text('data').notNull()
-});
-
 export const users = mysqlTable('user', {
 	id: varchar('id', { length: 255 }).notNull().primaryKey(),
 	name: varchar('name', { length: 255 }),
@@ -65,7 +36,8 @@ export const users = mysqlTable('user', {
 
 export const usersRelations = relations(users, ({ many }) => ({
 	accounts: many(accounts),
-	sessions: many(sessions)
+	sessions: many(sessions),
+	trees: many(talentTrees)
 }));
 
 export const accounts = mysqlTable(
@@ -126,3 +98,45 @@ export const verificationTokens = mysqlTable(
 		compoundKey: primaryKey({ columns: [vt.identifier, vt.token] })
 	})
 );
+
+export const icons = mysqlTable('icon', {
+	name: varchar('name', { length: 255 }).notNull().primaryKey(),
+	data: text('data').notNull()
+});
+
+export const iconsRelations = relations(icons, ({ many }) => ({
+	trees: many(talentTrees)
+}));
+
+export const talentTrees = mysqlTable(
+	'talentTree',
+	{
+		id: varchar('id', { length: 128 }).primaryKey().$default(v4),
+		name: varchar('name', { length: 256 }).default('New talent tree').notNull(),
+		public: boolean('public').default(false).notNull(),
+		icon: varchar('icon', { length: 256 })
+			.default('inv_misc_questionmark')
+			.notNull(),
+		tree: json('tree').$type<TalentTreeT>().notNull().default([]),
+		createdById: varchar('createdById', { length: 255 }).notNull(),
+		createdAt: timestamp('created_at')
+			.default(sql`CURRENT_TIMESTAMP`)
+			.notNull(),
+		updatedAt: timestamp('updatedAt').onUpdateNow()
+	},
+	example => ({
+		createdByIdIdx: index('createdById_idx').on(example.createdById),
+		nameIndex: index('name_idx').on(example.name)
+	})
+);
+
+export const treesRelations = relations(talentTrees, ({ one }) => ({
+	createdBy: one(users, {
+		fields: [talentTrees.createdById],
+		references: [users.id]
+	}),
+	iconSource: one(icons, {
+		fields: [talentTrees.icon],
+		references: [icons.name]
+	})
+}));

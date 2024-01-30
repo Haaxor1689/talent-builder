@@ -2,7 +2,14 @@
 
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { v4 } from 'uuid';
-import { Copy, FileLock2, Save, Trash2, UploadCloud } from 'lucide-react';
+import {
+	CloudOff,
+	Copy,
+	FileLock2,
+	Save,
+	Trash2,
+	UploadCloud
+} from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
@@ -93,16 +100,6 @@ const TalentBuilder = (props: Props) => {
 					</div>
 
 					<div className="flex items-center">
-						{props.isLocal ? (
-							<p className="pr-2 text-blueGray">Local</p>
-						) : (
-							<CheckboxInput
-								name="public"
-								label="Publicly visible"
-								disabled={!editable}
-							/>
-						)}
-
 						{editable && (
 							<TextButton
 								onClick={asyncTask(async () => {
@@ -208,7 +205,7 @@ const TalentBuilder = (props: Props) => {
 				<hr />
 
 				<div className="flex flex-col gap-3 md:flex-row md:justify-center">
-					<div className="relative grid flex-shrink-0 grow select-none grid-cols-[repeat(4,_max-content)] content-center justify-center gap-6 p-6">
+					<div className="relative grid flex-shrink-0 grow select-none grid-cols-[repeat(4,_max-content)] content-center justify-center gap-6 py-[72px]">
 						{fields.map((field, i) => (
 							<TalentPreview
 								key={field.id}
@@ -220,11 +217,38 @@ const TalentBuilder = (props: Props) => {
 						))}
 
 						{editable && <UndoRedo defaultValues={defaultValues} />}
-						{!editable && (
-							<p className="absolute bottom-0 left-0 flex gap-1 text-pink">
-								<FileLock2 /> Read only
-							</p>
-						)}
+
+						<div className="absolute bottom-0 left-0 flex flex-col gap-2">
+							{!editable ? (
+								<>
+									<p className="flex gap-1 text-pink">
+										<FileLock2 /> Read only
+									</p>
+									<div className="flex items-center gap-1.5 text-blueGray">
+										Author:
+										<div
+											className="size-7 rounded-full bg-contain"
+											style={{
+												backgroundImage: `url(${defaultValues.createdBy?.image})`
+											}}
+										/>
+										<span>{defaultValues.createdBy?.name}</span>
+									</div>
+								</>
+							) : props.isLocal ? (
+								<p className="flex gap-1 text-blueGray">
+									<CloudOff size={24} />
+									Local only
+								</p>
+							) : (
+								<CheckboxInput
+									name="public"
+									label="Publicly visible"
+									disabled={!editable}
+								/>
+							)}
+						</div>
+
 						<PointsSummary />
 					</div>
 

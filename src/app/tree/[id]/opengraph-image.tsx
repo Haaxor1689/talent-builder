@@ -26,7 +26,7 @@ const Image = async ({ params }: { params: { id: string } }) => {
 	if (!response) return undefined;
 
 	// Font
-	const fontinSans = fetch(
+	const fontinSans = await fetch(
 		new URL('../../_components/assets/FontinSans-Regular.otf', import.meta.url)
 	).then(res => res.arrayBuffer());
 
@@ -88,7 +88,12 @@ const Image = async ({ params }: { params: { id: string } }) => {
 					>
 						<span style={{ color: '#929391' }}>Author:</span>
 						{response.user?.image && (
-							<img src={response.user?.image ?? ''} width={42} height={42} />
+							<img
+								src={response.user?.image ?? ''}
+								width={42}
+								height={42}
+								style={{ borderRadius: '100%' }}
+							/>
 						)}
 						{response.user?.name}
 					</div>

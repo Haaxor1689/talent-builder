@@ -12,7 +12,7 @@ const UserStatus = async () => {
 					{session.user.name}
 				</span>
 				<div
-					className="size-8 bg-contain"
+					className="size-8 rounded-full bg-contain"
 					style={{ backgroundImage: `url(${session.user.image})` }}
 				/>
 			</div>
