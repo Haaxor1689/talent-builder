@@ -48,6 +48,7 @@ export const upsertTalentTree = protectedProcedure({
 });
 
 export const listTurtleTalentTrees = publicProcedure({
+	queryKey: 'listTurtleTalentTrees',
 	query: async ({ db }) => {
 		const turtleAcc = await db.query.users.findFirst({
 			where: eq(users.name, 'TurtleWoW')
@@ -57,11 +58,11 @@ export const listTurtleTalentTrees = publicProcedure({
 			where: eq(talentTrees.createdById, turtleAcc?.id ?? ''),
 			with: { createdBy: true }
 		});
-	},
-	queryKey: 'listTurtleTalentTrees'
+	}
 });
 
 export const listPublicTalentTrees = publicProcedure({
+	queryKey: 'listPublicTalentTrees',
 	query: async ({ db }) => {
 		const turtleAcc = await db.query.users.findFirst({
 			where: eq(users.name, 'TurtleWoW')
@@ -74,8 +75,7 @@ export const listPublicTalentTrees = publicProcedure({
 			),
 			with: { createdBy: true }
 		});
-	},
-	queryKey: 'listPublicTalentTrees'
+	}
 });
 
 export const listPersonalTalentTrees = protectedProcedure({

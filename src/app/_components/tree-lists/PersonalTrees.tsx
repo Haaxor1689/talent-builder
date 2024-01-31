@@ -8,7 +8,7 @@ const PersonalTrees = async () => {
 	if (!session) return <LocalTrees serverList={[]} />;
 
 	const listPersonal = await listPersonalTalentTrees(undefined);
-	if (!listPersonal.length) return null;
+	if (!listPersonal.length) return <LocalTrees serverList={[]} />;
 
 	return (
 		<LocalTrees
