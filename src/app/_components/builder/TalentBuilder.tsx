@@ -105,12 +105,14 @@ const TalentBuilder = (props: Props) => {
 								onClick={asyncTask(async () => {
 									const values = getValues();
 									if (!props.isLocal) {
-										await upsertTalentTree(values);
+										const newTree = await upsertTalentTree(values);
 										toast.success('Saved!');
+										newTree && reset(newTree);
 										return;
 									}
 									setSavedSpecs(p => ({ ...p, [values.id]: values }));
 									toast.success('Saved!');
+									reset(values);
 									if (props.isNew) router.push(`/local/${values.id}`);
 								})}
 								icon={Save}

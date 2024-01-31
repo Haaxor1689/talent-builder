@@ -126,7 +126,8 @@ export const talentTrees = mysqlTable(
 	},
 	example => ({
 		createdByIdIdx: index('createdById_idx').on(example.createdById),
-		nameIndex: index('name_idx').on(example.name)
+		nameIndex: index('name_idx').on(example.name),
+		publicIndex: index('public_idx').on(example.public)
 	})
 );
 

@@ -36,7 +36,12 @@ const RequiredTalent = ({
 				<TextButton
 					icon={Link2Off}
 					title="Remove link"
-					onClick={() => setValue(`tree.${selected}.requires`, null)}
+					onClick={() =>
+						setValue(`tree.${selected}.requires`, null, {
+							shouldDirty: true,
+							shouldTouch: true
+						})
+					}
 				/>
 			)}
 		</div>
@@ -61,7 +66,12 @@ const TalentEdit = ({ selected, editable }: Props) => {
 				/>
 				{editable && (
 					<TextButton
-						onClick={() => setValue(`tree.${selected}`, EmptyTalent())}
+						onClick={() =>
+							setValue(`tree.${selected}`, EmptyTalent(), {
+								shouldDirty: true,
+								shouldTouch: true
+							})
+						}
 						className="text-red-500"
 						icon={Trash2}
 						title="Delete"

@@ -18,7 +18,8 @@ const LocalTrees = ({
 
 	if (loading) return <Spinner className="self-center" />;
 
-	if (!Object.values(savedSpecs ?? {}).length) return null;
+	if (!serverList.length && !Object.values(savedSpecs ?? {}).length)
+		return null;
 
 	return (
 		<IconGrid

@@ -23,14 +23,16 @@ export const upsertTalentTree = protectedProcedure({
 				createdById: session.user.id,
 				createdAt: new Date()
 			});
-			return;
+			return await db.query.talentTrees.findFirst({
+				where: eq(talentTrees.id, input.id)
+			});
 		}
 
 		if (session.user.id !== entry.createdById) throw new Error('UNAUTHORIZED');
 
 		await db
 			.update(talentTrees)
-			.set(omit(input, ['createdById', 'createdAt']))
+			.set(omit(input, ['createdBy', 'createdById', 'createdAt']))
 			.where(eq(talentTrees.id, input.id));
 
 		if (entry.public || input.public) {
@@ -38,6 +40,10 @@ export const upsertTalentTree = protectedProcedure({
 		}
 		revalidateTag(getTag('getTalentTree', input.id));
 		revalidateTag(getTag('getOgInfo', input.id));
+
+		return await db.query.talentTrees.findFirst({
+			where: eq(talentTrees.id, input.id)
+		});
 	}
 });
 

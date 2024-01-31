@@ -41,13 +41,24 @@ const TalentPreview = ({
 			<TalentIcon
 				ref={ref}
 				onClick={e =>
-					e.shiftKey && editable
-						? setValue(`tree.${selected}.requires`, i)
-						: setSelected(i)
+					!e.shiftKey || !editable
+						? setSelected(i)
+						: selected === i
+						? setValue(`tree.${selected}.requires`, null, {
+								shouldDirty: true,
+								shouldTouch: true
+						  })
+						: setValue(`tree.${selected}.requires`, i, {
+								shouldDirty: true,
+								shouldTouch: true
+						  })
 				}
 				onKeyDown={e => {
 					if (!editable || e.key !== 'Delete') return;
-					setValue(`tree.${selected}`, EmptyTalent());
+					setValue(`tree.${selected}`, EmptyTalent(), {
+						shouldDirty: true,
+						shouldTouch: true
+					});
 				}}
 				icon={dragging.current ? '' : field.icon}
 				ranks={dragging.current ? undefined : field.ranks}
@@ -87,7 +98,10 @@ const TalentPreview = ({
 					cloned[i] = { ...EmptyTalent(), ...b };
 					cloned[idx] = { ...EmptyTalent(), ...a };
 
-					setValue('tree', cloned);
+					setValue('tree', cloned, {
+						shouldDirty: true,
+						shouldTouch: true
+					});
 					setSelected(i);
 				}}
 				{...elementProps}
