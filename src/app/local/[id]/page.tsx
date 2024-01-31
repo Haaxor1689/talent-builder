@@ -19,7 +19,7 @@ const LocalTreePage = ({ params }: { params: { id: string } }) => {
 		);
 
 	const localSpec = savedSpecs?.[params.id];
-	if (!localSpec) notFound();
+	if (!localSpec) return notFound();
 	return <TalentBuilder defaultValues={localSpec} isLocal />;
 };
 

@@ -19,12 +19,9 @@ export const generateMetadata = async ({
 };
 
 const TalentTreePage = async ({ params }: { params: { id: string } }) => {
-	if (params.id === 'undefined') notFound();
-
+	if (!params.id || params.id === 'undefined') return notFound();
 	const talentTree = await getTalentTree(params.id);
-
-	if (!talentTree) notFound();
-
+	if (!talentTree) return notFound();
 	return <TalentBuilder defaultValues={talentTree} />;
 };
 
