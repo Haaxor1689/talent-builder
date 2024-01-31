@@ -5,7 +5,7 @@ import LocalTrees from './LocalTrees';
 
 const PersonalTrees = async () => {
 	const session = await getServerAuthSession();
-	if (!session) return null;
+	if (!session) return <LocalTrees serverList={[]} />;
 
 	const listPersonal = await listPersonalTalentTrees(undefined);
 	if (!listPersonal.length) return null;
