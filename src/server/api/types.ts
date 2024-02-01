@@ -31,10 +31,7 @@ const Talent = z.preprocess(
 	z.object({
 		icon: z.string(),
 		name: z.string(),
-		ranks: z.preprocess(
-			val => (!val ? null : val),
-			z.number().min(1).max(5).nullable()
-		),
+		ranks: z.preprocess(val => (!val ? null : val), z.number().nullable()),
 		description: z.string(),
 		requires: z.number().nullable(),
 		highlight: z.boolean()
