@@ -34,6 +34,7 @@ const TalentPreview = ({
 	const dragging = useRef(false);
 
 	const { tooltipProps, elementProps } = useTooltip(dragging.current);
+	const isEmpty = isEmptyTalent(field);
 
 	if (!field) return null;
 	return (
@@ -71,7 +72,7 @@ const TalentPreview = ({
 						: [field.requires, i]
 				}
 				onDragStart={e => {
-					if (!editable || isEmptyTalent(field)) {
+					if (!editable || isEmpty) {
 						e.preventDefault();
 						return;
 					}
@@ -104,9 +105,10 @@ const TalentPreview = ({
 					});
 					setSelected(i);
 				}}
+				showDefault={!isEmpty}
 				{...elementProps}
 			/>
-			{(field.icon || field.name || field.description) && (
+			{!isEmpty && (
 				<div
 					className="tw-surface max-w-[400px] bg-darkerGray/90"
 					{...tooltipProps}

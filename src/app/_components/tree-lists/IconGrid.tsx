@@ -103,20 +103,23 @@ type Props = {
 };
 
 const IconGrid = ({ title, list }: Props) => (
-	<div className="flex items-start gap-3">
+	<div className="flex flex-col items-stretch gap-2 md:flex-row">
 		<h3
-			className="tw-color py-3"
+			className="tw-color hidden py-3 md:block"
 			style={{ textOrientation: 'mixed', writingMode: 'vertical-rl' }}
 		>
 			{title}
 		</h3>
-		<div
-			className="grid grow gap-3 md:p-4"
-			style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}
-		>
-			{list.map(item => (
-				<Icon key={item.href} {...item} />
-			))}
+		<h3 className="tw-color px-2 md:hidden">{title}</h3>
+		<div className="tw-surface grow p-2 md:p-4">
+			<div
+				className="grid items-start gap-3"
+				style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}
+			>
+				{list.map(item => (
+					<Icon key={item.href} {...item} />
+				))}
+			</div>
 		</div>
 	</div>
 );

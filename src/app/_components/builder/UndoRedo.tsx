@@ -67,7 +67,7 @@ const UndoRedo = ({ defaultValues }: { defaultValues: TalentFormT }) => {
 
 	useEffect(() => {
 		const callback = (e: KeyboardEvent): void => {
-			if (e.key.toLocaleLowerCase() !== 'z' || !e.ctrlKey) return;
+			if (e.key?.toLocaleLowerCase() !== 'z' || !e.ctrlKey) return;
 			e.preventDefault();
 
 			if (!e.shiftKey) {

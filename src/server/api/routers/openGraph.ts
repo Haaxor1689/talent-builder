@@ -23,7 +23,9 @@ export const getOgInfo = publicProcedure({
 		if (!talentTree) return null;
 
 		// Tree icon
-		const iconSrc = `data:image/png;base64,${talentTree.iconSource.data}`;
+		const iconSrc = !talentTree.iconSource
+			? `https://wow.zamimg.com/images/wow/icons/large/${talentTree.icon}.jpg`
+			: `data:image/png;base64,${talentTree.iconSource.data}`;
 
 		// User
 		const { name, image } = talentTree.createdBy;
