@@ -1,6 +1,6 @@
 import { type NextRequest } from 'next/server';
 
-import { getIcon, upsertIcon } from '~/server/api/routers/icon';
+import { getIconData, upsertIcon } from '~/server/api/routers/icon';
 
 export const GET = async (
 	_: NextRequest,
@@ -8,15 +8,10 @@ export const GET = async (
 ) => {
 	if (!params.id) return new Response(null, { status: 404 });
 
-	const img = await getIcon(params.id);
-
-	if (!img)
-		return fetch(
-			`https://wow.zamimg.com/images/wow/icons/large/${params.id}.jpg`
-		);
+	const img = await getIconData(params.id);
 
 	// Decode from base64
-	const data = Buffer.from(img.data, 'base64');
+	const data = Buffer.from(img, 'base64');
 	return new Response(data, { headers: { 'content-type': 'image/png' } });
 };
 

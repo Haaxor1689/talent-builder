@@ -28,9 +28,11 @@ export const publicProcedure =
 		const values = (input ?? z.undefined()).parse(val);
 		if (queryKey) {
 			const tag = getTag(queryKey, values);
-			return unstable_cache(() => query({ input: values, db }), [tag], {
-				tags: [tag]
-			})() as never;
+			return unstable_cache(
+				async () => (await query({ input: values, db })) ?? null,
+				[tag],
+				{ tags: [tag] }
+			)() as never;
 		}
 		return query({ input: values, db }) as never;
 	};

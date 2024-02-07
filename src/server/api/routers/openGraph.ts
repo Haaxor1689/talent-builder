@@ -14,24 +14,16 @@ export const getOgInfo = publicProcedure({
 	query: async ({ db, input }) => {
 		const talentTree = await db.query.talentTrees.findFirst({
 			where: eq(talentTrees.id, input),
-			with: {
-				createdBy: true,
-				iconSource: true
-			}
+			with: { createdBy: true }
 		});
 
 		if (!talentTree) return null;
-
-		// Tree icon
-		const iconSrc = !talentTree.iconSource
-			? `https://wow.zamimg.com/images/wow/icons/large/${talentTree.icon}.jpg`
-			: `data:image/png;base64,${talentTree.iconSource.data}`;
 
 		// User
 		const { name, image } = talentTree.createdBy;
 
 		return {
-			icon: iconSrc,
+			icon: talentTree.icon,
 			name: talentTree.name,
 			sum: getTalentSum(talentTree.tree),
 			user: { name, image }

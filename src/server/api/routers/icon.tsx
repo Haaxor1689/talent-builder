@@ -3,8 +3,10 @@
 import { desc, eq, like } from 'drizzle-orm';
 import { z } from 'zod';
 import { revalidateTag } from 'next/cache';
+import { ImageResponse } from 'next/og';
 
 import { icons, talentTrees } from '~/server/db/schema';
+import { env } from '~/env';
 
 import { adminProcedure, getTag, publicProcedure } from '../helpers';
 
@@ -19,6 +21,7 @@ export const upsertIcon = adminProcedure({
 		else await db.update(icons).set(input).where(eq(icons.name, input.name));
 
 		revalidateTag(getTag('getIcon', input.name));
+		revalidateTag(getTag('getIconData', input.name));
 
 		const trees = await db.query.talentTrees.findMany({
 			where: eq(talentTrees.icon, input.name)
@@ -64,5 +67,71 @@ export const deleteIcon = adminProcedure({
 	query: async ({ input, db }) => {
 		await db.delete(icons).where(eq(icons.name, input));
 		revalidateTag(getTag('getIcon', input));
+		revalidateTag(getTag('getIconData', input));
+	}
+});
+
+export const getIconData = publicProcedure({
+	input: z.string(),
+	queryKey: 'getIconData',
+	query: async ({ db, input }) => {
+		const icon = await db.query.icons.findFirst({
+			where: eq(icons.name, input)
+		});
+		if (icon) return icon.data;
+
+		// Fetch from wowhead
+		const wowHeadIcon = await fetch(
+			`https://wow.zamimg.com/images/wow/icons/large/${input}.jpg`
+		);
+
+		const size = { width: 64, height: 64 };
+		const img = new ImageResponse(
+			(
+				<div
+					style={{
+						position: 'relative',
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
+						...size
+					}}
+				>
+					{wowHeadIcon.ok ? (
+						// eslint-disable-next-line @next/next/no-img-element
+						<img
+							src={`https://wow.zamimg.com/images/wow/icons/large/${input}.jpg`}
+							alt={input}
+							{...size}
+							style={{ padding: 4 }}
+						/>
+					) : (
+						<div
+							style={{
+								textAlign: 'center',
+								color: 'red',
+								fontSize: 10,
+								wordBreak: 'break-all',
+								padding: 6
+							}}
+						>
+							{input}
+						</div>
+					)}
+					<div
+						style={{
+							position: 'absolute',
+							bottom: 2,
+							right: 2,
+							width: '100%',
+							height: '100%',
+							backgroundImage: `url("${env.DEPLOY_URL}/icon_frame.png")`
+						}}
+					/>
+				</div>
+			),
+			size
+		);
+		return Buffer.from(await img.arrayBuffer()).toString('base64');
 	}
 });

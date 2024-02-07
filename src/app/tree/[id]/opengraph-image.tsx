@@ -61,7 +61,11 @@ const Image = async ({ params }: { params: { id: string } }) => {
 						textAlign: 'center'
 					}}
 				>
-					<img src={response.icon} width={64} height={64} />
+					<img
+						src={`${env.DEPLOY_URL}/api/icon/${response.icon}`}
+						width={64}
+						height={64}
+					/>
 					<div style={{ fontSize: 86 }}>{response.name}</div>
 				</div>
 
