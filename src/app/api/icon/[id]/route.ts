@@ -11,7 +11,7 @@ export const GET = async (
 	const img = await getIcon(params.id);
 
 	if (!img)
-		return Response.redirect(
+		return fetch(
 			`https://wow.zamimg.com/images/wow/icons/large/${params.id}.jpg`
 		);
 
