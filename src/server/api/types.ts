@@ -15,6 +15,7 @@ export const EmptyTalentTree = (): TalentFormT => ({
 	public: false,
 	icon: 'inv_misc_questionmark',
 	name: 'New talent tree',
+	class: 0,
 	tree: [...Array(4 * 7).keys()].map(() => EmptyTalent()),
 	createdById: null,
 	createdBy: null,
@@ -47,6 +48,7 @@ export const TalentForm = z.object({
 	public: z.boolean().default(false),
 	icon: z.string().default(''),
 	name: z.string().default(''),
+	class: z.number().default(0),
 	tree: TalentTree,
 	createdById: z.string().nullable().default(null),
 	createdBy: z
@@ -57,3 +59,10 @@ export const TalentForm = z.object({
 	updatedAt: z.coerce.date().nullable().default(null)
 });
 export type TalentFormT = z.infer<typeof TalentForm>;
+
+export const Filters = z.object({
+	name: z.string().default(''),
+	from: z.string().default(''),
+	class: z.coerce.number().default(0)
+});
+export type FiltersT = z.infer<typeof Filters>;

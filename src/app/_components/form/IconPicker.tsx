@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { HelpCircle, ListFilter } from 'lucide-react';
 import { useController } from 'react-hook-form';

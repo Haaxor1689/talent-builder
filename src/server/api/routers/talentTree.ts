@@ -1,13 +1,13 @@
 'use server';
 
-import { and, desc, eq, not } from 'drizzle-orm';
+import { and, desc, eq, ilike, inArray, like, not } from 'drizzle-orm';
 import { z } from 'zod';
 import { revalidateTag } from 'next/cache';
 import { omit } from 'lodash-es';
 
 import { talentTrees, users } from '~/server/db/schema';
 
-import { TalentForm } from '../types';
+import { Filters, TalentForm } from '../types';
 import { getTag, protectedProcedure, publicProcedure } from '../helpers';
 
 export const upsertTalentTree = protectedProcedure({
@@ -48,30 +48,54 @@ export const upsertTalentTree = protectedProcedure({
 });
 
 export const listTurtleTalentTrees = publicProcedure({
+	input: Filters,
 	queryKey: 'listTurtleTalentTrees',
-	query: async ({ db }) => {
+	query: async ({ input, db }) => {
+		if (input.from) return [];
+
 		const turtleAcc = await db.query.users.findFirst({
 			where: eq(users.name, 'TurtleWoW')
 		});
 		return db.query.talentTrees.findMany({
-			orderBy: [desc(talentTrees.updatedAt)],
-			where: eq(talentTrees.createdById, turtleAcc?.id ?? ''),
+			orderBy: [desc(talentTrees.class)],
+			where: and(
+				eq(talentTrees.createdById, turtleAcc?.id ?? ''),
+				input.name ? like(talentTrees.name, `%${input.name}%`) : undefined,
+				input.class ? eq(talentTrees.class, input.class) : undefined
+			),
 			with: { createdBy: true }
 		});
 	}
 });
 
 export const listPublicTalentTrees = publicProcedure({
+	input: Filters,
 	queryKey: 'listPublicTalentTrees',
-	query: async ({ db }) => {
+	query: async ({ input, db }) => {
 		const turtleAcc = await db.query.users.findFirst({
 			where: eq(users.name, 'TurtleWoW')
 		});
+
+		const whereAcc = input.from
+			? (
+					await db.query.users.findMany({
+						where: like(users.name, `%${input.from}%`)
+					})
+			  ).map(a => a.id)
+			: [];
+
+		if (input.from && !whereAcc.length) return [];
+
 		return db.query.talentTrees.findMany({
 			orderBy: [desc(talentTrees.updatedAt)],
 			where: and(
 				eq(talentTrees.public, true),
-				not(eq(talentTrees.createdById, turtleAcc?.id ?? ''))
+				not(eq(talentTrees.createdById, turtleAcc?.id ?? '')),
+				input.name ? like(talentTrees.name, `%${input.name}%`) : undefined,
+				whereAcc.length
+					? inArray(talentTrees.createdById, whereAcc)
+					: undefined,
+				input.class ? eq(talentTrees.class, input.class) : undefined
 			),
 			with: { createdBy: true }
 		});
@@ -79,12 +103,19 @@ export const listPublicTalentTrees = publicProcedure({
 });
 
 export const listPersonalTalentTrees = protectedProcedure({
-	query: async ({ db, session }) =>
-		db.query.talentTrees.findMany({
+	input: Filters,
+	query: async ({ input, db, session }) => {
+		if (input.from && !session.user.name?.match(input.from)) return [];
+		return db.query.talentTrees.findMany({
 			orderBy: [desc(talentTrees.updatedAt)],
-			where: eq(talentTrees.createdById, session.user.id),
+			where: and(
+				eq(talentTrees.createdById, session.user.id),
+				input.name ? like(talentTrees.name, `%${input.name}%`) : undefined,
+				input.class ? eq(talentTrees.class, input.class) : undefined
+			),
 			with: { createdBy: true }
-		})
+		});
+	}
 });
 
 export const getTalentTree = publicProcedure({

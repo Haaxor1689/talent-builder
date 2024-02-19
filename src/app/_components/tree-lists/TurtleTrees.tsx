@@ -1,9 +1,10 @@
 import { listTurtleTalentTrees } from '~/server/api/routers/talentTree';
+import { type FiltersT } from '~/server/api/types';
 
 import IconGrid from './IconGrid';
 
-const TurtleTrees = async () => {
-	const listPublic = await listTurtleTalentTrees(undefined);
+const TurtleTrees = async (props: FiltersT) => {
+	const listPublic = await listTurtleTalentTrees(props);
 
 	if (!listPublic.length) return null;
 

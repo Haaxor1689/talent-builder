@@ -1,9 +1,10 @@
 import { listPublicTalentTrees } from '~/server/api/routers/talentTree';
+import { type FiltersT } from '~/server/api/types';
 
 import IconGrid from './IconGrid';
 
-const PublicTrees = async () => {
-	const listPublic = await listPublicTalentTrees(undefined);
+const PublicTrees = async (props: FiltersT) => {
+	const listPublic = await listPublicTalentTrees(props);
 
 	if (!listPublic.length) return null;
 

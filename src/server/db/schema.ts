@@ -114,6 +114,7 @@ export const talentTrees = mysqlTable(
 		id: varchar('id', { length: 128 }).primaryKey().$default(v4),
 		name: varchar('name', { length: 256 }).default('New talent tree').notNull(),
 		public: boolean('public').default(false).notNull(),
+		class: int('class').notNull().default(0),
 		icon: varchar('icon', { length: 256 })
 			.default('inv_misc_questionmark')
 			.notNull(),

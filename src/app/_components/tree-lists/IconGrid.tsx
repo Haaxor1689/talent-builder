@@ -8,6 +8,7 @@ import { type talentTrees, type users } from '~/server/db/schema';
 
 import TalentIcon from '../builder/TalentIcon';
 import useTooltip from '../hooks/useTooltip';
+import { maskToClass } from '../hooks/utils';
 
 const getLastUpdatedString = (date: Date) => {
 	if (!date) return 'Never';
@@ -31,19 +32,23 @@ type Item = typeof talentTrees.$inferSelect & {
 
 const Icon = (item: Item) => {
 	const { elementProps, tooltipProps } = useTooltip();
+	const classInfo = maskToClass(item.class);
 	return (
 		<>
 			<Link
 				key={item.href}
 				href={item.href}
-				className="tw-hocus flex items-center gap-3 p-2"
+				className="tw-hocus -mb-2 flex items-center gap-3 p-2"
 				{...elementProps}
 			>
-				<TalentIcon
-					icon={item.icon}
-					showDefault
-					className="cursor-pointer items-center self-center"
-				/>
+				<div className="relative flex shrink-0 items-center">
+					<TalentIcon icon={item.icon} showDefault className="cursor-pointer" />
+					{classInfo && (
+						<div className="pointer-events-none absolute -bottom-4 -right-2">
+							<TalentIcon icon={classInfo.icon} className="size-6" />
+						</div>
+					)}
+				</div>
 				<div className="flex flex-col gap-1 text-inherit">
 					<p className="truncate text-lg text-inherit">{item.name}</p>
 					{item.createdBy ? (
@@ -91,6 +96,13 @@ const Icon = (item: Item) => {
 							<span>{item.createdBy?.name}</span>
 						</div>
 					</>
+				)}
+				{classInfo && (
+					<p className="flex items-center gap-1 text-blueGray">
+						Class:{' '}
+						<TalentIcon icon={classInfo.icon} showDefault className="size-6" />{' '}
+						<span style={{ color: classInfo.color }}>{classInfo.name}</span>
+					</p>
 				)}
 			</div>
 		</>

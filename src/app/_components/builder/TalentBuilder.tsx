@@ -34,11 +34,14 @@ import { zodResolver } from '../../../utils';
 import TextButton from '../styled/TextButton';
 import CheckboxInput from '../form/CheckboxInput';
 import useLocalStorage from '../hooks/useLocalStorage';
+import { maskToClass } from '../hooks/utils';
+import ClassPicker from '../form/ClassPicker';
 
 import TalentPreview from './TalentPreview';
 import PointsSummary from './PointsSummary';
 import TalentEdit from './TalentEdit';
 import UndoRedo from './UndoRedo';
+import TalentIcon from './TalentIcon';
 
 type Props = {
 	defaultValues?: TalentFormT;
@@ -100,6 +103,7 @@ const TalentBuilder = (props: Props) => {
 					</div>
 
 					<div className="flex items-center">
+						<ClassPicker name="class" disabled={!editable} />
 						{editable && (
 							<TextButton
 								onClick={asyncTask(async () => {

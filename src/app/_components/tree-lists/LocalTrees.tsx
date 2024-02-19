@@ -1,22 +1,26 @@
 'use client';
 
 import { type ComponentProps } from 'react';
+import { useSession } from 'next-auth/react';
 
-import { type TalentFormT } from '../../../server/api/types';
+import { type FiltersT, type TalentFormT } from '../../../server/api/types';
 import useLocalStorage from '../hooks/useLocalStorage';
 import Spinner from '../styled/Spinner';
 
 import IconGrid from './IconGrid';
 
-const LocalTrees = ({
-	serverList
-}: {
+type Props = FiltersT & {
 	serverList: ComponentProps<typeof IconGrid>['list'];
-}) => {
+};
+
+const LocalTrees = ({ serverList, name, from, class: classId }: Props) => {
 	const [savedSpecs, _, loading] =
 		useLocalStorage<Record<string, TalentFormT>>('saved-specs');
 
-	if (loading) return <Spinner className="self-center" />;
+	const session = useSession();
+
+	if (loading || session.status === 'loading')
+		return <Spinner className="self-center" />;
 
 	if (!serverList.length && !Object.values(savedSpecs ?? {}).length)
 		return null;
@@ -26,14 +30,21 @@ const LocalTrees = ({
 			title="Personal"
 			list={[
 				...serverList,
-				...Object.values(savedSpecs ?? {}).map(s => ({
-					href: `/local/${s.id}`,
-					...s,
-					createdAt: null as never,
-					updatedAt: null as never,
-					createdById: null as never,
-					createdBy: null as never
-				}))
+				...Object.values(savedSpecs ?? {})
+					.filter(
+						v =>
+							(!name || v.name.match(name)) &&
+							(!from || session.data?.user.name?.match(from)) &&
+							(!classId || v.class === classId)
+					)
+					.map(s => ({
+						href: `/local/${s.id}`,
+						...s,
+						createdAt: null as never,
+						updatedAt: null as never,
+						createdById: null as never,
+						createdBy: null as never
+					}))
 			]}
 		/>
 	);
