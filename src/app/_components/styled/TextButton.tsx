@@ -1,11 +1,19 @@
 'use client';
 
 import cls from 'classnames';
-import { type LucideIcon } from 'lucide-react';
-import { type MouseEventHandler, type ReactNode } from 'react';
+import {
+	type FunctionComponent,
+	type MouseEventHandler,
+	type ReactNode
+} from 'react';
 import Link from 'next/link';
+import { type LucideIcon } from 'lucide-react';
 
 import Spinner from './Spinner';
+
+type IconType =
+	| FunctionComponent<{ size?: number; className: string }>
+	| LucideIcon;
 
 type Props = {
 	active?: boolean;
@@ -25,8 +33,8 @@ type Props = {
 	| { href: string; type: 'link' }
 ) &
 	(
-		| { children: ReactNode; icon?: LucideIcon; title?: never }
-		| { children?: never; icon: LucideIcon; title: string }
+		| { children: ReactNode; icon?: IconType; title?: never }
+		| { children?: never; icon: IconType; title: string }
 	);
 
 // TODO: Make server compatible by changing how Icon is passed
