@@ -9,7 +9,7 @@ import { type Adapter } from 'next-auth/adapters';
 import DiscordProvider, {
 	type DiscordProfile
 } from 'next-auth/providers/discord';
-import GithubProvider, { type GithubProfile } from 'next-auth/providers/github';
+import GithubProvider from 'next-auth/providers/github';
 import { revalidateTag } from 'next/cache';
 
 import { env } from '~/env';

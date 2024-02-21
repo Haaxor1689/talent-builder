@@ -37,13 +37,13 @@ const ClassPicker = ({ name, disabled }: Props) => {
 							<TalentIcon
 								key={mask}
 								icon={classInfo.icon}
-								selected={field.value === mask}
+								selected={field.value === Number(mask)}
 								onClick={() => {
-									field.onChange(mask);
+									field.onChange(Number(mask));
 									close();
 								}}
 								className={
-									field.value !== mask
+									field.value !== Number(mask)
 										? 'grayscale hover:grayscale-0'
 										: undefined
 								}
