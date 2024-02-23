@@ -5,7 +5,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 
 import { listIcons } from '~/server/api/routers/icon';
 
-import TalentIcon from '../builder/TalentIcon';
+import TalentIcon from '../styled/TalentIcon';
 import Spinner from '../styled/Spinner';
 import useTooltip from '../hooks/useTooltip';
 

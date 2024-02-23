@@ -11,9 +11,7 @@ import FiltersSection from './FiltersSection';
 
 const Home = async ({ searchParams }: { searchParams: FiltersT }) => {
 	const params = Filters.safeParse(searchParams);
-	if (!params.success) {
-		notFound();
-	}
+	if (!params.success) notFound();
 
 	return (
 		<>

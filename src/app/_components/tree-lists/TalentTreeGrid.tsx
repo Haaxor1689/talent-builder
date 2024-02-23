@@ -3,12 +3,11 @@
 import Link from 'next/link';
 import { CloudOff } from 'lucide-react';
 
-import { getTalentSum } from '~/utils';
+import { getTalentSum, maskToClass } from '~/utils';
 import { type talentTrees, type users } from '~/server/db/schema';
 
-import TalentIcon from '../builder/TalentIcon';
+import TalentIcon from '../styled/TalentIcon';
 import useTooltip from '../hooks/useTooltip';
-import { maskToClass } from '../hooks/utils';
 
 const getLastUpdatedString = (date: Date) => {
 	if (!date) return 'Never';
@@ -30,13 +29,12 @@ type Item = typeof talentTrees.$inferSelect & {
 	createdBy: typeof users.$inferSelect;
 };
 
-const Icon = (item: Item) => {
+const GridItem = (item: Item) => {
 	const { elementProps, tooltipProps } = useTooltip();
 	const classInfo = maskToClass(item.class);
 	return (
 		<>
 			<Link
-				key={item.href}
 				href={item.href}
 				className="tw-hocus -mb-2 flex items-center gap-3 p-2"
 				{...elementProps}
@@ -114,7 +112,7 @@ type Props = {
 	list: Item[];
 };
 
-const IconGrid = ({ title, list }: Props) => (
+const TalentTreeGrid = ({ title, list }: Props) => (
 	<div className="flex flex-col items-stretch gap-2 md:flex-row">
 		<h3
 			className="tw-color hidden py-3 md:block"
@@ -129,11 +127,11 @@ const IconGrid = ({ title, list }: Props) => (
 				style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}
 			>
 				{list.map(item => (
-					<Icon key={item.href} {...item} />
+					<GridItem key={item.href} {...item} />
 				))}
 			</div>
 		</div>
 	</div>
 );
 
-export default IconGrid;
+export default TalentTreeGrid;

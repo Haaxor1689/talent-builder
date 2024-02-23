@@ -7,10 +7,10 @@ import { type FiltersT, type TalentFormT } from '../../../server/api/types';
 import useLocalStorage from '../hooks/useLocalStorage';
 import Spinner from '../styled/Spinner';
 
-import IconGrid from './IconGrid';
+import TalentTreeGrid from './TalentTreeGrid';
 
 type Props = FiltersT & {
-	serverList: ComponentProps<typeof IconGrid>['list'];
+	serverList: ComponentProps<typeof TalentTreeGrid>['list'];
 };
 
 const LocalTrees = ({ serverList, name, from, class: classId }: Props) => {
@@ -26,7 +26,7 @@ const LocalTrees = ({ serverList, name, from, class: classId }: Props) => {
 		return null;
 
 	return (
-		<IconGrid
+		<TalentTreeGrid
 			title="Personal"
 			list={[
 				...serverList,

@@ -5,7 +5,8 @@ import { HelpCircle, ListFilter } from 'lucide-react';
 import { useController } from 'react-hook-form';
 
 import DialogButton from '../styled/DialogButton';
-import TalentIcon from '../builder/TalentIcon';
+import TalentIcon from '../styled/TalentIcon';
+import useDebounced from '../hooks/useDebounced';
 
 import Input from './Input';
 import IconGrid from './IconGrid';
@@ -19,6 +20,8 @@ type Props = {
 const IconPicker = ({ name, required, disabled }: Props) => {
 	const [filter, setFilter] = useState('');
 	const [wowhead, setWowhead] = useState('');
+
+	const debouncedFilter = useDebounced(filter);
 
 	const { field } = useController({ name });
 
@@ -36,7 +39,7 @@ const IconPicker = ({ name, required, disabled }: Props) => {
 					</div>
 
 					<IconGrid
-						filter={filter}
+						filter={debouncedFilter}
 						required={required}
 						icon={field.value}
 						setIcon={i => {

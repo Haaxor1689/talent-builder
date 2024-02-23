@@ -8,10 +8,12 @@ type Props = React.DetailedHTMLProps<
 	React.ButtonHTMLAttributes<HTMLButtonElement>,
 	HTMLButtonElement
 > & {
-	clickable?: true;
+	clickable?: boolean;
 	icon: string;
+	value?: number;
 	ranks?: number | null;
 	arrow?: [number, number] | null;
+	highlightedArrow?: boolean;
 	frameClass?: string;
 	showDefault?: boolean;
 	selected?: boolean;
@@ -22,8 +24,10 @@ const TalentIcon = forwardRef<HTMLButtonElement, Props>(
 	(
 		{
 			icon,
+			value,
 			ranks,
 			arrow,
+			highlightedArrow,
 			showDefault,
 			selected,
 			highlighted,
@@ -90,12 +94,27 @@ const TalentIcon = forwardRef<HTMLButtonElement, Props>(
 				)}
 
 				{!!ranks && (
-					<p className="absolute bottom-1 right-1 w-5 translate-x-1/2 translate-y-1/2 rounded border-0 bg-darkGray">
+					<p
+						className={cls(
+							'absolute bottom-1 right-1 translate-x-1/2 translate-y-1/2 rounded border-0 bg-darkGray px-1',
+							{
+								'text-green': value !== undefined && ranks !== value,
+								'text-yellow': value !== undefined && ranks === value
+							}
+						)}
+					>
+						{value !== undefined ? `${value}/` : ''}
 						{ranks}
 					</p>
 				)}
 
-				{!!arrow && <TalentArrow start={arrow[0]} end={arrow[1]} />}
+				{!!arrow && (
+					<TalentArrow
+						start={arrow[0]}
+						end={arrow[1]}
+						highlighted={highlightedArrow}
+					/>
+				)}
 			</button>
 		);
 	}

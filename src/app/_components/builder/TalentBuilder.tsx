@@ -13,7 +13,6 @@ import {
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { noop } from 'lodash-es';
 import toast from 'react-hot-toast';
 
 import {
@@ -34,14 +33,12 @@ import { zodResolver } from '../../../utils';
 import TextButton from '../styled/TextButton';
 import CheckboxInput from '../form/CheckboxInput';
 import useLocalStorage from '../hooks/useLocalStorage';
-import { maskToClass } from '../hooks/utils';
 import ClassPicker from '../form/ClassPicker';
+import UndoRedo from '../form/UndoRedo';
 
 import TalentPreview from './TalentPreview';
 import PointsSummary from './PointsSummary';
 import TalentEdit from './TalentEdit';
-import UndoRedo from './UndoRedo';
-import TalentIcon from './TalentIcon';
 
 type Props = {
 	defaultValues?: TalentFormT;
@@ -79,18 +76,14 @@ const TalentBuilder = (props: Props) => {
 		defaultValues,
 		resolver: zodResolver(TalentForm)
 	});
-	const { handleSubmit, register, getValues, reset, control, formState } =
-		formProps;
+	const { register, getValues, reset, control, formState } = formProps;
 
 	const [selected, setSelected] = useState(0);
 	const { fields } = useFieldArray({ control, name: 'tree' });
 
 	return (
 		<FormProvider {...formProps}>
-			<form
-				onSubmit={handleSubmit(noop)}
-				className="tw-surface flex flex-col gap-3"
-			>
+			<form className="tw-surface flex flex-col gap-3">
 				<div className="flex flex-col gap-3 md:flex-row md:items-center">
 					<div className="flex grow items-center gap-4 overflow-hidden">
 						<IconPicker required name="icon" disabled={!editable} />

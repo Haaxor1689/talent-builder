@@ -1,11 +1,12 @@
 'use server';
 
-import { and, desc, eq, ilike, inArray, like, not } from 'drizzle-orm';
+import { and, desc, eq, inArray, like, not, or } from 'drizzle-orm';
 import { z } from 'zod';
 import { revalidateTag } from 'next/cache';
 import { omit } from 'lodash-es';
 
 import { talentTrees, users } from '~/server/db/schema';
+import { getServerAuthSession } from '~/server/auth';
 
 import { Filters, TalentForm } from '../types';
 import { getTag, protectedProcedure, publicProcedure } from '../helpers';
@@ -44,6 +45,56 @@ export const upsertTalentTree = protectedProcedure({
 		return await db.query.talentTrees.findFirst({
 			where: eq(talentTrees.id, input.id)
 		});
+	}
+});
+
+export const listInfiniteTalentTrees = publicProcedure({
+	input: Filters.extend({
+		limit: z.number().min(1).max(100).optional(),
+		cursor: z.number().optional()
+	}),
+	query: async ({ input, db }) => {
+		const { limit = 32, cursor: offset = 0 } = input;
+
+		const whereAcc = input.from
+			? (
+					await db.query.users.findMany({
+						where: like(users.name, `%${input.from}%`)
+					})
+			  ).map(a => a.id)
+			: [];
+
+		if (input.from && !whereAcc.length)
+			return { items: [], nextCursor: undefined };
+
+		const session = await getServerAuthSession();
+
+		const items = await db.query.talentTrees.findMany({
+			limit: limit + 1,
+			offset,
+			orderBy: [desc(talentTrees.updatedAt)],
+			where: and(
+				or(
+					eq(talentTrees.public, true),
+					session?.user.id
+						? eq(talentTrees.createdById, session?.user.id)
+						: undefined
+				),
+				input.name ? like(talentTrees.name, `%${input.name}%`) : undefined,
+				whereAcc.length
+					? inArray(talentTrees.createdById, whereAcc)
+					: undefined,
+				input.class ? eq(talentTrees.class, input.class) : undefined
+			),
+			with: { createdBy: true }
+		});
+
+		const hasMore = items.length > limit;
+		if (hasMore) items.pop();
+		return {
+			items,
+			nextCursor: hasMore ? offset + items.length : undefined
+		};
 	}
 });
 

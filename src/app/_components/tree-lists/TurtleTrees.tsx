@@ -1,7 +1,7 @@
 import { listTurtleTalentTrees } from '~/server/api/routers/talentTree';
 import { type FiltersT } from '~/server/api/types';
 
-import IconGrid from './IconGrid';
+import TalentTreeGrid from './TalentTreeGrid';
 
 const TurtleTrees = async (props: FiltersT) => {
 	const listPublic = await listTurtleTalentTrees(props);
@@ -9,7 +9,7 @@ const TurtleTrees = async (props: FiltersT) => {
 	if (!listPublic.length) return null;
 
 	return (
-		<IconGrid
+		<TalentTreeGrid
 			title="Turtle WoW"
 			list={listPublic.map(s => ({
 				href: `/tree/${s.id}`,

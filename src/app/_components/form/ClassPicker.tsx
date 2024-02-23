@@ -1,25 +1,30 @@
 'use client';
 
-import { useController } from 'react-hook-form';
+import { type Control, useController } from 'react-hook-form';
 import cls from 'classnames';
 import { X } from 'lucide-react';
 
+import { maskToClass, classMask } from '~/utils';
+
 import DialogButton from '../styled/DialogButton';
-import TalentIcon from '../builder/TalentIcon';
-import { classMask, maskToClass } from '../hooks/utils';
+import TalentIcon from '../styled/TalentIcon';
 import TextButton from '../styled/TextButton';
 
 type Props = {
 	name: string;
 	disabled?: boolean;
+	showEmpty?: boolean;
+	large?: boolean;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	control?: Control<any>;
 };
 
-const ClassPicker = ({ name, disabled }: Props) => {
-	const { field } = useController({ name });
+const ClassPicker = ({ name, disabled, showEmpty, large, control }: Props) => {
+	const { field } = useController({ name, control });
 
 	const classInfo = maskToClass(field.value);
 
-	if (disabled && !classInfo) return null;
+	if (disabled && !showEmpty && !classInfo) return null;
 
 	return (
 		<DialogButton
@@ -71,15 +76,20 @@ const ClassPicker = ({ name, disabled }: Props) => {
 					onKeyDown={e => e.key === 'Enter' && open()}
 					tabIndex={disabled ? -1 : 0}
 					className={cls(
-						'tw-hocus flex items-center gap-2 self-center p-2 text-blueGray',
-						{ 'pointer-events-none': disabled }
+						'tw-hocus flex shrink-0 items-center gap-2 p-2 text-blueGray',
+						{
+							'pointer-events-none': disabled
+						}
 					)}
 				>
 					<TalentIcon
 						icon={classInfo?.icon ?? 'inv_misc_questionmark'}
-						className="size-8 cursor-pointer"
+						className={cls('cursor-pointer', large ? 'size-12' : 'size-8')}
 					/>
-					<span className="text-[inherit]" style={{ color: classInfo?.color }}>
+					<span
+						className={cls('text-[inherit]', { h3: large })}
+						style={{ color: classInfo?.color }}
+					>
 						{classInfo?.name ?? 'Any class'}
 					</span>
 				</div>

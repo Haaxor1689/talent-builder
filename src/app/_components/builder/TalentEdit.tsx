@@ -10,8 +10,7 @@ import Input from '../form/Input';
 import Textarea from '../form/Textarea';
 import TextButton from '../styled/TextButton';
 import CheckboxInput from '../form/CheckboxInput';
-
-import TalentIcon from './TalentIcon';
+import TalentIcon from '../styled/TalentIcon';
 
 const RequiredTalent = ({
 	selected,

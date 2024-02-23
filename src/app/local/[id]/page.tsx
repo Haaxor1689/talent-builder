@@ -7,7 +7,11 @@ import useLocalStorage from '~/app/_components/hooks/useLocalStorage';
 import Spinner from '~/app/_components/styled/Spinner';
 import { type TalentFormT } from '~/server/api/types';
 
-const LocalTreePage = ({ params }: { params: { id: string } }) => {
+type PageProps = {
+	params: { id: string };
+};
+
+const LocalTreePage = ({ params }: PageProps) => {
 	const [savedSpecs, _1, specsLoading] =
 		useLocalStorage<Record<string, TalentFormT>>('saved-specs');
 

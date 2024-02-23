@@ -5,11 +5,11 @@ import { getTalentTree } from '~/server/api/routers/talentTree';
 import { getOgInfo } from '~/server/api/routers/openGraph';
 import { env } from '~/env';
 
-export const generateMetadata = async ({
-	params
-}: {
+export type PageProps = {
 	params: { id: string };
-}) => {
+};
+
+export const generateMetadata = async ({ params }: PageProps) => {
 	const info = await getOgInfo(params.id);
 	if (!info) return null;
 	return {
@@ -19,7 +19,7 @@ export const generateMetadata = async ({
 	};
 };
 
-const TalentTreePage = async ({ params }: { params: { id: string } }) => {
+const TalentTreePage = async ({ params }: PageProps) => {
 	if (!params.id || params.id === 'undefined') return notFound();
 	const talentTree = await getTalentTree(params.id);
 	if (!talentTree) return notFound();

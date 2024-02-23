@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, Workflow } from 'lucide-react';
 
 import UserStatus from './_components/session/UserStatus';
 import Spinner from './_components/styled/Spinner';
@@ -16,8 +16,11 @@ const Header = () => (
 					TB
 				</span>
 			</TextButton>
-			<TextButton type="link" href="/new-tree">
-				<PlusCircle />
+			<TextButton type="link" href="/new-tree" icon={PlusCircle}>
+				New tree
+			</TextButton>
+			<TextButton type="link" href="/calculator" icon={Workflow}>
+				Calculator
 			</TextButton>
 		</nav>
 		<Suspense fallback={<Spinner size={26} />}>

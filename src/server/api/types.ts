@@ -23,6 +23,17 @@ export const EmptyTalentTree = (): TalentFormT => ({
 	updatedAt: null
 });
 
+export const EmptyCalculatorForm = (
+	p: Partial<CalculatorFormT>
+): CalculatorFormT => ({
+	class: p.class ?? 0,
+	points: p.points ?? [
+		[...Array(4 * 7).keys()].map(() => 0),
+		[...Array(4 * 7).keys()].map(() => 0),
+		[...Array(4 * 7).keys()].map(() => 0)
+	]
+});
+
 const Talent = z.preprocess(
 	v => ({
 		...EmptyTalent(),
@@ -66,3 +77,26 @@ export const Filters = z.object({
 	class: z.coerce.number().default(0)
 });
 export type FiltersT = z.infer<typeof Filters>;
+
+export const CalculatorParams = z.object({
+	t0: z.string().default(''),
+	t1: z.string().default(''),
+	t2: z.string().default(''),
+	t: z
+		.string()
+		.regex(/^\d*-\d*-\d*$/)
+		.optional(),
+	c: z.coerce.number().default(0)
+});
+
+export type CalculatorParamsT = z.infer<typeof CalculatorParams>;
+
+export const CalculatorForm = z.object({
+	class: z.coerce.number().default(0),
+	points: z.tuple([
+		z.array(z.number()).length(4 * 7),
+		z.array(z.number()).length(4 * 7),
+		z.array(z.number()).length(4 * 7)
+	])
+});
+export type CalculatorFormT = z.infer<typeof CalculatorForm>;

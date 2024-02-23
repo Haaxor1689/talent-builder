@@ -3,16 +3,13 @@
 import { useRef } from 'react';
 import { useWatch, useFormContext } from 'react-hook-form';
 import cls from 'classnames';
-import { cloneDeep, isEqual } from 'lodash-es';
+import { cloneDeep } from 'lodash-es';
 
 import { EmptyTalent, type TalentFormT } from '~/server/api/types';
+import { isEmptyTalent } from '~/utils';
 
 import useTooltip from '../hooks/useTooltip';
-
-import TalentIcon from './TalentIcon';
-
-const isEmptyTalent = (talent?: TalentFormT['tree'][number]) =>
-	!talent || isEqual(talent, EmptyTalent());
+import TalentIcon from '../styled/TalentIcon';
 
 const TalentPreview = ({
 	i,

@@ -1,17 +1,19 @@
 import { cloneDeep, isEqual } from 'lodash-es';
 import { useEffect, useRef, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { type FieldValues, useFormContext } from 'react-hook-form';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-
-import { type TalentFormT } from '~/server/api/types';
 
 import TextButton from '../styled/TextButton';
 
-const UndoRedo = ({ defaultValues }: { defaultValues: TalentFormT }) => {
+const UndoRedo = <T extends FieldValues>({
+	defaultValues
+}: {
+	defaultValues: T;
+}) => {
 	const [disabled, setDisabled] = useState([true, true]);
 
-	const { watch, reset } = useFormContext<TalentFormT>();
-	const history = useRef<TalentFormT[]>([defaultValues]);
+	const { watch, reset } = useFormContext<T>();
+	const history = useRef<T[]>([defaultValues]);
 	const index = useRef(0);
 	const isReset = useRef(false);
 

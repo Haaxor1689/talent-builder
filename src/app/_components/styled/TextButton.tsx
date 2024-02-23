@@ -1,5 +1,3 @@
-'use client';
-
 import cls from 'classnames';
 import {
 	type FunctionComponent,

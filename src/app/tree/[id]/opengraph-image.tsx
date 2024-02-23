@@ -5,6 +5,8 @@ import { ImageResponse } from 'next/og';
 
 import { env } from '~/env';
 
+import { type PageProps } from './page';
+
 // Route segment config
 export const runtime = 'edge';
 
@@ -18,7 +20,7 @@ export const size = {
 export const contentType = 'image/png';
 
 // Image generation
-const Image = async ({ params }: { params: { id: string } }) => {
+const Image = async ({ params }: PageProps) => {
 	const response = await fetch(`${env.DEPLOY_URL}/api/og/${params.id}`).then(
 		r => r.json()
 	);

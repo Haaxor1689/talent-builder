@@ -5,11 +5,17 @@ const getXY = (pos: number) => [pos % 4, Math.floor(pos / 4)] as const;
 type Props = {
 	start: number;
 	end: number;
+	highlighted?: boolean;
 };
 
-const TalentArrow = ({ start, end }: Props) => {
+const TalentArrow = ({ start, end, highlighted }: Props) => {
 	const [x1, y1] = getXY(start);
 	const [x2, y2] = getXY(end);
+
+	const url = (name: string) =>
+		`url("https://wow.zamimg.com/images/TalentCalc/arrows/${name}${
+			highlighted ? '2' : ''
+		}.png")`;
 
 	if (y1 > y2)
 		return (
@@ -23,8 +29,8 @@ const TalentArrow = ({ start, end }: Props) => {
 					className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 bg-cover bg-left"
 					style={{
 						height: 15,
-						width: (x1 - x2 - 1) * 68 + (x1 - x2) * 24,
-						backgroundImage: `url("https://wow.zamimg.com/images/TalentCalc/arrows/left.png")`
+						width: (x1 - x2 - 1) * 64 + (x1 - x2) * 24,
+						backgroundImage: url('left')
 					}}
 				/>
 			);
@@ -34,8 +40,8 @@ const TalentArrow = ({ start, end }: Props) => {
 					className="pointer-events-none absolute right-full top-1/2 -translate-y-1/2 bg-cover bg-right"
 					style={{
 						height: 15,
-						width: (x2 - x1 - 1) * 68 + (x2 - x1) * 24,
-						backgroundImage: `url("https://wow.zamimg.com/images/TalentCalc/arrows/right.png")`
+						width: (x2 - x1 - 1) * 64 + (x2 - x1) * 24,
+						backgroundImage: url('right')
 					}}
 				/>
 			);
@@ -51,16 +57,16 @@ const TalentArrow = ({ start, end }: Props) => {
 				className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 bg-bottom"
 				style={{
 					width: 15,
-					height: (y2 - y1 - 1) * 68 + (y2 - y1) * 24 + 34,
-					backgroundImage: `url("https://wow.zamimg.com/images/TalentCalc/arrows/down.png")`
+					height: (y2 - y1 - 1) * 64 + (y2 - y1) * 24 + 32,
+					backgroundImage: url('down')
 				}}
 			>
 				<div
 					className="pointer-events-none absolute -translate-y-1/2 bg-left"
 					style={{
 						height: 15,
-						width: (x1 - x2 - 1) * 68 + (x1 - x2) * 24 + 34 + 7.5,
-						backgroundImage: `url("https://wow.zamimg.com/images/TalentCalc/arrows/leftdown.png")`
+						width: (x1 - x2 - 1) * 64 + (x1 - x2) * 24 + 32 + 7.5,
+						backgroundImage: url('leftdown')
 					}}
 				/>
 			</div>
@@ -71,16 +77,16 @@ const TalentArrow = ({ start, end }: Props) => {
 				className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 bg-bottom"
 				style={{
 					width: 15,
-					height: (y2 - y1 - 1) * 68 + (y2 - y1) * 24 + 34,
-					backgroundImage: `url("https://wow.zamimg.com/images/TalentCalc/arrows/down.png")`
+					height: (y2 - y1 - 1) * 64 + (y2 - y1) * 24 + 32,
+					backgroundImage: url('down')
 				}}
 			>
 				<div
 					className="pointer-events-none absolute right-0 -translate-y-1/2 bg-right"
 					style={{
 						height: 15,
-						width: (x2 - x1 - 1) * 68 + (x2 - x1) * 24 + 34 + 7.5,
-						backgroundImage: `url("https://wow.zamimg.com/images/TalentCalc/arrows/rightdown.png")`
+						width: (x2 - x1 - 1) * 64 + (x2 - x1) * 24 + 32 + 7.5,
+						backgroundImage: url('rightdown')
 					}}
 				/>
 			</div>
@@ -91,8 +97,8 @@ const TalentArrow = ({ start, end }: Props) => {
 			className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 bg-bottom"
 			style={{
 				width: 15,
-				height: (y2 - y1 - 1) * 68 + (y2 - y1) * 24,
-				backgroundImage: `url("https://wow.zamimg.com/images/TalentCalc/arrows/down.png")`
+				height: (y2 - y1 - 1) * 64 + (y2 - y1) * 24,
+				backgroundImage: url('down')
 			}}
 		/>
 	);
