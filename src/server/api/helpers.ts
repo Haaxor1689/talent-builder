@@ -13,6 +13,7 @@ export const publicProcedure =
 		Func extends (args: {
 			input: z.infer<Input>;
 			db: typeof db;
+			session: Awaited<ReturnType<typeof getServerAuthSession>>;
 		}) => Promise<any>,
 		Input extends z.ZodTypeAny = z.ZodUndefined
 	>({
@@ -24,17 +25,19 @@ export const publicProcedure =
 		queryKey?: string;
 		query: Func;
 	}) =>
-	(val: z.infer<Input>): ReturnType<Func> => {
+	async (val: z.infer<Input>): Promise<ReturnType<Func>> => {
 		const values = (input ?? z.undefined()).parse(val);
+		const session = await getServerAuthSession();
 		if (queryKey) {
 			const tag = getTag(queryKey, values);
+			const sessionTag = `session:[${session?.user?.id ?? 'null'}]`;
 			return unstable_cache(
-				async () => (await query({ input: values, db })) ?? null,
-				[tag],
-				{ tags: [tag] }
+				async () => (await query({ input: values, db, session })) ?? null,
+				[tag, sessionTag],
+				{ tags: [tag, sessionTag] }
 			)() as never;
 		}
-		return query({ input: values, db }) as never;
+		return query({ input: values, db, session }) as never;
 	};
 
 export const protectedProcedure = <
@@ -57,9 +60,8 @@ export const protectedProcedure = <
 		input,
 		queryKey,
 		query: async args => {
-			const session = await getServerAuthSession();
-			if (!session) throw new Error('UNAUTHORIZED');
-			return query({ ...args, session }) as never;
+			if (!args.session) throw new Error('UNAUTHORIZED');
+			return query({ ...args, session: args.session }) as never;
 		}
 	}) as never;
 
@@ -83,8 +85,8 @@ export const adminProcedure = <
 		input,
 		queryKey,
 		query: async args => {
-			const session = await getServerAuthSession();
-			if (session?.user?.name !== 'Haaxor1689') throw new Error('UNAUTHORIZED');
-			return query({ ...args, session }) as never;
+			if (args.session?.user?.name !== 'Haaxor1689')
+				throw new Error('UNAUTHORIZED');
+			return query({ ...args, session: args.session }) as never;
 		}
 	}) as never;

@@ -6,7 +6,6 @@ import { revalidateTag } from 'next/cache';
 import { omit } from 'lodash-es';
 
 import { talentTrees, users } from '~/server/db/schema';
-import { getServerAuthSession } from '~/server/auth';
 
 import { Filters, TalentForm } from '../types';
 import { getTag, protectedProcedure, publicProcedure } from '../helpers';
@@ -53,7 +52,7 @@ export const listInfiniteTalentTrees = publicProcedure({
 		limit: z.number().min(1).max(100).optional(),
 		cursor: z.number().optional()
 	}),
-	query: async ({ input, db }) => {
+	query: async ({ input, db, session }) => {
 		const { limit = 32, cursor: offset = 0 } = input;
 
 		const whereAcc = input.from
@@ -67,7 +66,6 @@ export const listInfiniteTalentTrees = publicProcedure({
 		if (input.from && !whereAcc.length)
 			return { items: [], nextCursor: undefined };
 
-		const session = await getServerAuthSession();
 		const turtleAcc = await db.query.users.findFirst({
 			where: eq(users.name, 'TurtleWoW')
 		});
@@ -176,14 +174,13 @@ export const listPersonalTalentTrees = protectedProcedure({
 export const getTalentTree = publicProcedure({
 	input: z.string(),
 	queryKey: 'getTalentTree',
-	query: async ({ db, input }) => {
+	query: async ({ db, input, session }) => {
 		const tree = await db.query.talentTrees.findFirst({
 			where: eq(talentTrees.id, input),
 			with: { createdBy: true }
 		});
 
-		if (tree?.createdBy.name !== 'TurtleWoW' && !(await getServerAuthSession()))
-			return undefined;
+		if (tree?.createdBy.name !== 'TurtleWoW' && !session) return undefined;
 
 		return tree;
 	}
