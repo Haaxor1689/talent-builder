@@ -25,7 +25,7 @@ export const publicProcedure =
 		queryKey?: string;
 		query: Func;
 	}) =>
-	async (val: z.infer<Input>): Promise<ReturnType<Func>> => {
+	async (val: z.infer<Input>): Promise<Awaited<ReturnType<Func>>> => {
 		const values = (input ?? z.undefined()).parse(val);
 		const session = await getServerAuthSession();
 		if (queryKey) {
