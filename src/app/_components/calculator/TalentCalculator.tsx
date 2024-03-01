@@ -67,8 +67,8 @@ const UrlSync = () => {
 
 type Props = {
 	trees: [TalentFormT?, TalentFormT?, TalentFormT?];
-	cls: number;
 	points?: [number[], number[], number[]];
+	cls: number;
 };
 
 const TalentCalculator = ({ trees, cls, points }: Props) => {

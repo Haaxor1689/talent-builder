@@ -6,17 +6,49 @@ import {
 	type NextAuthOptions
 } from 'next-auth';
 import { type Adapter } from 'next-auth/adapters';
-import DiscordProvider, {
-	type DiscordProfile
-} from 'next-auth/providers/discord';
+import { type DiscordProfile } from 'next-auth/providers/discord';
 import GithubProvider from 'next-auth/providers/github';
 import { revalidateTag } from 'next/cache';
+import {
+	type OAuthConfig,
+	type OAuthUserConfig
+} from 'next-auth/providers/oauth';
 
 import { env } from '~/env';
 import { db } from '~/server/db';
 import { mysqlTable, talentTrees, users } from '~/server/db/schema';
 
 import { getTag } from './api/helpers';
+
+const DiscordProvider = <P extends DiscordProfile>(
+	options: OAuthUserConfig<P>
+): OAuthConfig<P> => ({
+	id: 'discord',
+	name: 'Discord',
+	type: 'oauth',
+	authorization:
+		'https://discord.com/api/oauth2/authorize?scope=identify+email+guilds',
+	token: 'https://discord.com/api/oauth2/token',
+	userinfo: 'https://discord.com/api/users/@me',
+	profile: profile => {
+		if (profile.avatar === null) {
+			const defaultAvatarNumber = parseInt(profile.discriminator) % 5;
+			profile.image_url = `https://cdn.discordapp.com/embed/avatars/${defaultAvatarNumber}.png`;
+		} else {
+			const format = profile.avatar.startsWith('a_') ? 'gif' : 'png';
+			profile.image_url = `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.${format}`;
+		}
+
+		return {
+			id: profile.id,
+			name: profile.username,
+			email: profile.email,
+			image: profile.image_url
+		};
+	},
+	style: { logo: '/discord.svg', bg: '#5865F2', text: '#fff' },
+	options
+});
 
 declare module 'next-auth' {
 	// eslint-disable-next-line
@@ -32,6 +64,27 @@ declare module 'next-auth' {
 
 export const authOptions: NextAuthOptions = {
 	callbacks: {
+		signIn: async ({ user, account, profile }) => {
+			console.log('signIn', user, account, profile);
+
+			if (account?.provider === 'discord') {
+				const guilds = await fetch('https://discord.com/api/users/@me/guilds', {
+					headers: {
+						Authorization: `Bearer ${account.access_token}`
+					}
+				}).then(res => res.json());
+				const isClassChangesMember = !!(guilds as { id: string }[])?.find(
+					g => g?.id === '1034290945597902878'
+				);
+				if (!isClassChangesMember) return '/unauthorized';
+			}
+			if (account?.provider === 'github') {
+				// Hardcoded workaround for Muigin's GitHub account
+				if (user.id !== 'e83d04b7-b8ee-4aee-8b8a-93e72ea10d77')
+					return '/unauthorized';
+			}
+			return true;
+		},
 		session: ({ session, user }) => ({
 			...session,
 			user: {

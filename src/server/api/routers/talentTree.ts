@@ -68,6 +68,9 @@ export const listInfiniteTalentTrees = publicProcedure({
 			return { items: [], nextCursor: undefined };
 
 		const session = await getServerAuthSession();
+		const turtleAcc = await db.query.users.findFirst({
+			where: eq(users.name, 'TurtleWoW')
+		});
 
 		const items = await db.query.talentTrees.findMany({
 			limit: limit + 1,
@@ -84,7 +87,8 @@ export const listInfiniteTalentTrees = publicProcedure({
 				whereAcc.length
 					? inArray(talentTrees.createdById, whereAcc)
 					: undefined,
-				input.class ? eq(talentTrees.class, input.class) : undefined
+				input.class ? eq(talentTrees.class, input.class) : undefined,
+				!session ? eq(talentTrees.createdById, turtleAcc?.id ?? '') : undefined
 			),
 			with: { createdBy: true }
 		});
@@ -119,7 +123,7 @@ export const listTurtleTalentTrees = publicProcedure({
 	}
 });
 
-export const listPublicTalentTrees = publicProcedure({
+export const listPublicTalentTrees = protectedProcedure({
 	input: Filters,
 	queryKey: 'listPublicTalentTrees',
 	query: async ({ input, db }) => {
@@ -172,11 +176,17 @@ export const listPersonalTalentTrees = protectedProcedure({
 export const getTalentTree = publicProcedure({
 	input: z.string(),
 	queryKey: 'getTalentTree',
-	query: async ({ db, input }) =>
-		db.query.talentTrees.findFirst({
+	query: async ({ db, input }) => {
+		const tree = await db.query.talentTrees.findFirst({
 			where: eq(talentTrees.id, input),
 			with: { createdBy: true }
-		})
+		});
+
+		if (tree?.createdBy.name !== 'TurtleWoW' && !(await getServerAuthSession()))
+			return undefined;
+
+		return tree;
+	}
 });
 
 export const deleteTalentTree = protectedProcedure({
