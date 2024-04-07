@@ -16,7 +16,7 @@ import {
 
 import { env } from '~/env';
 import { db } from '~/server/db';
-import { mysqlTable, talentTrees, users } from '~/server/db/schema';
+import { sqliteTable, talentTrees, users } from '~/server/db/schema';
 
 import { getTag } from './api/helpers';
 
@@ -93,7 +93,7 @@ export const authOptions: NextAuthOptions = {
 			}
 		})
 	},
-	adapter: DrizzleAdapter(db, mysqlTable) as Adapter,
+	adapter: DrizzleAdapter(db, sqliteTable) as Adapter,
 	providers: [
 		DiscordProvider({
 			clientId: env.DISCORD_CLIENT_ID,

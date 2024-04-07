@@ -32,7 +32,10 @@ export const upsertTalentTree = protectedProcedure({
 
 		await db
 			.update(talentTrees)
-			.set(omit(input, ['createdBy', 'createdById', 'createdAt']))
+			.set({
+				...omit(input, ['createdBy', 'createdById', 'createdAt']),
+				updatedAt: new Date()
+			})
 			.where(eq(talentTrees.id, input.id));
 
 		if (entry.public || input.public) {
