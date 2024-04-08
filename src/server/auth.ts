@@ -80,8 +80,7 @@ export const authOptions: NextAuthOptions = {
 			}
 			if (account?.provider === 'github') {
 				// Hardcoded workaround for Muigin's GitHub account
-				if (user.id !== 'e83d04b7-b8ee-4aee-8b8a-93e72ea10d77')
-					return '/unauthorized';
+				if (account.providerAccountId !== '166345821') return '/unauthorized';
 			}
 			return true;
 		},
