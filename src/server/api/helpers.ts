@@ -5,7 +5,9 @@ import { unstable_cache } from 'next/cache';
 import { db } from '../db';
 import { getServerAuthSession } from '../auth';
 
-export const getTag = (queryKey: string, input: unknown) =>
+export const getQueryTag = (queryKey: string) => `api:[${queryKey}]`;
+
+export const getFullTag = (queryKey: string, input: unknown) =>
 	`api:[${queryKey}] | input:[${JSON.stringify(input)}]`;
 
 export const publicProcedure =
@@ -19,25 +21,29 @@ export const publicProcedure =
 	>({
 		input,
 		queryKey,
-		query
+		query,
+		noSession
 	}: {
 		input?: Input;
 		queryKey?: string;
 		query: Func;
+		noSession?: true;
 	}) =>
 	async (val: z.infer<Input>): Promise<Awaited<ReturnType<Func>>> => {
 		const values = (input ?? z.undefined()).parse(val);
-		const session = await getServerAuthSession();
-		if (queryKey) {
-			const tag = getTag(queryKey, values);
-			const sessionTag = `session:[${session?.user?.id ?? 'null'}]`;
-			return unstable_cache(
-				async () => (await query({ input: values, db, session })) ?? null,
-				[tag, sessionTag],
-				{ tags: [tag, sessionTag] }
-			)() as never;
-		}
-		return query({ input: values, db, session }) as never;
+		const session = noSession ? null : await getServerAuthSession();
+
+		if (!queryKey) return query({ input: values, db, session }) as never;
+
+		const queryTag = getQueryTag(queryKey);
+		const fullTag = getFullTag(queryKey, values);
+		const sessionTag = `session:[${session?.user?.id ?? 'null'}]`;
+
+		return unstable_cache(
+			async () => (await query({ input: values, db, session })) ?? null,
+			[fullTag, sessionTag],
+			{ tags: [queryTag, fullTag, sessionTag] }
+		)() as never;
 	};
 
 export const protectedProcedure = <
@@ -50,19 +56,23 @@ export const protectedProcedure = <
 >({
 	input,
 	queryKey,
-	query
+	query,
+	noSession
 }: {
 	input?: Input;
 	queryKey?: string;
 	query: Func;
+	noSession?: true;
 }): ((val: z.infer<Input>) => ReturnType<Func>) =>
 	publicProcedure({
 		input,
 		queryKey,
 		query: async args => {
-			if (!args.session) throw new Error('UNAUTHORIZED');
-			return query({ ...args, session: args.session }) as never;
-		}
+			const session = args.session ?? (await getServerAuthSession());
+			if (!session) throw new Error('UNAUTHORIZED');
+			return query({ ...args, session }) as never;
+		},
+		noSession
 	}) as never;
 
 export const adminProcedure = <
@@ -85,8 +95,7 @@ export const adminProcedure = <
 		input,
 		queryKey,
 		query: async args => {
-			if (args.session?.user?.name !== 'Haaxor1689')
-				throw new Error('UNAUTHORIZED');
+			if (!args.session?.user?.isAdmin) throw new Error('UNAUTHORIZED');
 			return query({ ...args, session: args.session }) as never;
 		}
 	}) as never;

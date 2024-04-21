@@ -8,6 +8,7 @@ import { type talentTrees, type users } from '~/server/db/schema';
 
 import TalentIcon from '../styled/TalentIcon';
 import useTooltip from '../hooks/useTooltip';
+import AuthorTag from '../styled/AuthorTag';
 
 const getLastUpdatedString = (date: Date) => {
 	if (!date) return 'Never';
@@ -37,6 +38,7 @@ const GridItem = (item: Item) => {
 			<Link
 				href={item.href}
 				className="tw-hocus -mb-2 flex items-center gap-3 p-2"
+				prefetch={false}
 				{...elementProps}
 			>
 				<div className="relative flex shrink-0 items-center">
@@ -68,7 +70,7 @@ const GridItem = (item: Item) => {
 				</div>
 			</Link>
 			<div
-				className="tw-surface max-w-[400px] bg-darkerGray/90"
+				className="tw-surface max-w-[400px] whitespace-nowrap bg-darkerGray/90"
 				{...tooltipProps}
 			>
 				<h4 className="tw-color text-lg">{item.name}</h4>
@@ -86,12 +88,7 @@ const GridItem = (item: Item) => {
 							</span>
 						</span>
 						<div className="flex items-center gap-1.5 text-blueGray">
-							Author:
-							<div
-								className="size-7 rounded-full bg-contain"
-								style={{ backgroundImage: `url(${item.createdBy?.image})` }}
-							/>
-							<span>{item.createdBy?.name}</span>
+							Author: <AuthorTag {...item.createdBy} />
 						</div>
 					</>
 				)}

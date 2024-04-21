@@ -24,7 +24,8 @@ export const users = sqliteTable('user', {
 	name: text('name', { length: 255 }),
 	email: text('email', { length: 255 }).notNull(),
 	emailVerified: integer('emailVerified', { mode: 'timestamp' }),
-	image: text('image', { length: 255 })
+	image: text('image', { length: 255 }),
+	isAdmin: integer('isAdmin', { mode: 'boolean' }).default(0 as never)
 });
 
 export const usersRelations = relations(users, ({ many }) => ({

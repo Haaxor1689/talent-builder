@@ -19,6 +19,7 @@ import Input from '../form/Input';
 import ClassPicker from '../form/ClassPicker';
 import useDebounced from '../hooks/useDebounced';
 import Spinner from '../styled/Spinner';
+import AuthorTag from '../styled/AuthorTag';
 
 const getLastUpdatedString = (date: Date) => {
 	if (!date) return 'Never';
@@ -57,6 +58,7 @@ const GridItem = ({ idx, ...item }: Item) => {
 			<Link
 				href={`${pathname}?${newSearch}`}
 				className="tw-hocus -mb-2 flex items-center gap-3 p-2"
+				prefetch={false}
 				{...elementProps}
 			>
 				<div className="relative flex shrink-0 items-center">
@@ -88,7 +90,7 @@ const GridItem = ({ idx, ...item }: Item) => {
 				</div>
 			</Link>
 			<div
-				className="tw-surface max-w-[400px] bg-darkerGray/90"
+				className="tw-surface max-w-[400px] whitespace-nowrap bg-darkerGray/90"
 				{...tooltipProps}
 			>
 				<h4 className="tw-color text-lg">{item.name}</h4>
@@ -106,12 +108,7 @@ const GridItem = ({ idx, ...item }: Item) => {
 							</span>
 						</span>
 						<div className="flex items-center gap-1.5 text-blueGray">
-							Author:
-							<div
-								className="size-7 rounded-full bg-contain"
-								style={{ backgroundImage: `url(${item.createdBy?.image})` }}
-							/>
-							<span>{item.createdBy?.name}</span>
+							Author: <AuthorTag {...item.createdBy} />
 						</div>
 					</>
 				)}

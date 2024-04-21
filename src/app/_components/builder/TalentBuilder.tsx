@@ -35,6 +35,7 @@ import CheckboxInput from '../form/CheckboxInput';
 import useLocalStorage from '../hooks/useLocalStorage';
 import ClassPicker from '../form/ClassPicker';
 import UndoRedo from '../form/UndoRedo';
+import AuthorTag from '../styled/AuthorTag';
 
 import TalentPreview from './TalentPreview';
 import PointsSummary from './PointsSummary';
@@ -64,7 +65,8 @@ const TalentBuilder = (props: Props) => {
 	const editable =
 		props.isLocal ||
 		(session.status === 'authenticated' &&
-			session.data.user.id === props.defaultValues?.createdById);
+			(session.data.user.isAdmin ||
+				session.data.user.id === props.defaultValues?.createdById));
 
 	const defaultValues = useMemo(
 		() => TalentForm.parse(props.defaultValues ?? EmptyTalentTree()),
@@ -224,14 +226,7 @@ const TalentBuilder = (props: Props) => {
 										<FileLock2 /> Read only
 									</p>
 									<div className="flex items-center gap-1.5 text-blueGray">
-										Author:
-										<div
-											className="size-7 rounded-full bg-contain"
-											style={{
-												backgroundImage: `url(${defaultValues.createdBy?.image})`
-											}}
-										/>
-										<span>{defaultValues.createdBy?.name}</span>
+										Author: <AuthorTag {...defaultValues.createdBy} />
 									</div>
 								</>
 							) : props.isLocal ? (

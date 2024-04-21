@@ -101,7 +101,15 @@ const Image = async ({ params }: PageProps) => {
 								style={{ borderRadius: '100%' }}
 							/>
 						)}
-						{response.user?.name}
+						<span
+							style={
+								response.user.isAdmin
+									? { color: '#8DD958', fontWeight: 600 }
+									: undefined
+							}
+						>
+							{response.user?.name}
+						</span>
 					</div>
 				)}
 			</div>

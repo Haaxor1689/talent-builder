@@ -2,13 +2,18 @@
 
 import { and, desc, eq, inArray, like, not, or } from 'drizzle-orm';
 import { z } from 'zod';
-import { revalidateTag } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { omit } from 'lodash-es';
 
 import { talentTrees, users } from '~/server/db/schema';
 
 import { Filters, TalentForm } from '../types';
-import { getTag, protectedProcedure, publicProcedure } from '../helpers';
+import {
+	getFullTag,
+	getQueryTag,
+	protectedProcedure,
+	publicProcedure
+} from '../helpers';
 
 export const upsertTalentTree = protectedProcedure({
 	input: TalentForm,
@@ -28,7 +33,8 @@ export const upsertTalentTree = protectedProcedure({
 			});
 		}
 
-		if (session.user.id !== entry.createdById) throw new Error('UNAUTHORIZED');
+		if (!session.user.isAdmin && session.user.id !== entry.createdById)
+			throw new Error('UNAUTHORIZED');
 
 		await db
 			.update(talentTrees)
@@ -39,10 +45,13 @@ export const upsertTalentTree = protectedProcedure({
 			.where(eq(talentTrees.id, input.id));
 
 		if (entry.public || input.public) {
-			revalidateTag(getTag('listPublicTalentTrees', undefined));
+			revalidateTag(getQueryTag('listPublicTalentTrees'));
+			revalidateTag(getQueryTag('listInfiniteTalentTrees'));
 		}
-		revalidateTag(getTag('getTalentTree', input.id));
-		revalidateTag(getTag('getOgInfo', input.id));
+
+		revalidateTag(getFullTag('getTalentTree', input.id));
+		revalidateTag(getFullTag('getOgInfo', input.id));
+		revalidatePath(`/api/og/${input.id}`);
 
 		return await db.query.talentTrees.findFirst({
 			where: eq(talentTrees.id, input.id)
@@ -50,11 +59,23 @@ export const upsertTalentTree = protectedProcedure({
 	}
 });
 
+export const turtleWoWAccountId = publicProcedure({
+	queryKey: 'turtleWoWAccountId',
+	query: async ({ db }) => {
+		const turtleAcc = await db.query.users.findFirst({
+			where: eq(users.name, 'TurtleWoW')
+		});
+		return turtleAcc?.id ?? '';
+	},
+	noSession: true
+});
+
 export const listInfiniteTalentTrees = publicProcedure({
 	input: Filters.extend({
 		limit: z.number().min(1).max(100).optional(),
 		cursor: z.number().optional()
 	}),
+	queryKey: 'listInfiniteTalentTrees',
 	query: async ({ input, db, session }) => {
 		const { limit = 32, cursor: offset = 0 } = input;
 
@@ -69,9 +90,7 @@ export const listInfiniteTalentTrees = publicProcedure({
 		if (input.from && !whereAcc.length)
 			return { items: [], nextCursor: undefined };
 
-		const turtleAcc = await db.query.users.findFirst({
-			where: eq(users.name, 'TurtleWoW')
-		});
+		const turtleAccId = await turtleWoWAccountId(undefined);
 
 		const items = await db.query.talentTrees.findMany({
 			limit: limit + 1,
@@ -89,7 +108,7 @@ export const listInfiniteTalentTrees = publicProcedure({
 					? inArray(talentTrees.createdById, whereAcc)
 					: undefined,
 				input.class ? eq(talentTrees.class, input.class) : undefined,
-				!session ? eq(talentTrees.createdById, turtleAcc?.id ?? '') : undefined
+				!session ? eq(talentTrees.createdById, turtleAccId) : undefined
 			),
 			with: { createdBy: true }
 		});
@@ -109,28 +128,25 @@ export const listTurtleTalentTrees = publicProcedure({
 	query: async ({ input, db }) => {
 		if (input.from) return [];
 
-		const turtleAcc = await db.query.users.findFirst({
-			where: eq(users.name, 'TurtleWoW')
-		});
+		const turtleAccId = await turtleWoWAccountId(undefined);
 		return db.query.talentTrees.findMany({
 			orderBy: [desc(talentTrees.class)],
 			where: and(
-				eq(talentTrees.createdById, turtleAcc?.id ?? ''),
+				eq(talentTrees.createdById, turtleAccId),
 				input.name ? like(talentTrees.name, `%${input.name}%`) : undefined,
 				input.class ? eq(talentTrees.class, input.class) : undefined
 			),
 			with: { createdBy: true }
 		});
-	}
+	},
+	noSession: true
 });
 
 export const listPublicTalentTrees = protectedProcedure({
 	input: Filters,
 	queryKey: 'listPublicTalentTrees',
 	query: async ({ input, db }) => {
-		const turtleAcc = await db.query.users.findFirst({
-			where: eq(users.name, 'TurtleWoW')
-		});
+		const turtleAccId = await turtleWoWAccountId(undefined);
 
 		const whereAcc = input.from
 			? (
@@ -146,7 +162,7 @@ export const listPublicTalentTrees = protectedProcedure({
 			orderBy: [desc(talentTrees.updatedAt)],
 			where: and(
 				eq(talentTrees.public, true),
-				not(eq(talentTrees.createdById, turtleAcc?.id ?? '')),
+				not(eq(talentTrees.createdById, turtleAccId)),
 				input.name ? like(talentTrees.name, `%${input.name}%`) : undefined,
 				whereAcc.length
 					? inArray(talentTrees.createdById, whereAcc)
@@ -155,7 +171,8 @@ export const listPublicTalentTrees = protectedProcedure({
 			),
 			with: { createdBy: true }
 		});
-	}
+	},
+	noSession: true
 });
 
 export const listPersonalTalentTrees = protectedProcedure({
@@ -183,7 +200,8 @@ export const getTalentTree = publicProcedure({
 			with: { createdBy: true }
 		});
 
-		if (tree?.createdBy.name !== 'TurtleWoW' && !session) return undefined;
+		const turtleAccId = await turtleWoWAccountId(undefined);
+		if (tree?.createdById !== turtleAccId && !session) return undefined;
 
 		return tree;
 	}
@@ -198,12 +216,23 @@ export const deleteTalentTree = protectedProcedure({
 
 		if (!entry) throw new Error('NOT_FOUND');
 
-		if (session.user.id !== entry?.createdById) throw new Error('UNAUTHORIZED');
+		if (!session.user.isAdmin && session.user.id !== entry?.createdById)
+			throw new Error('UNAUTHORIZED');
 
 		await db.delete(talentTrees).where(eq(talentTrees.id, input));
 
 		if (entry.public) {
-			revalidateTag(getTag('listPublicTalentTrees', undefined));
+			revalidateTag(getQueryTag('listPublicTalentTrees'));
+			revalidateTag(getQueryTag('listInfiniteTalentTrees'));
 		}
+
+		const turtleAccId = await turtleWoWAccountId(undefined);
+		if (entry.createdById === turtleAccId) {
+			revalidateTag(getQueryTag('listTurtleTalentTrees'));
+		}
+
+		revalidateTag(getFullTag('getTalentTree', entry.id));
+		revalidateTag(getFullTag('getOgInfo', entry.id));
+		revalidatePath(`/api/og/${entry.id}`);
 	}
 });

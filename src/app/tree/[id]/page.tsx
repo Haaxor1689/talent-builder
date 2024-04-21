@@ -23,6 +23,7 @@ const TalentTreePage = async ({ params }: PageProps) => {
 	if (!params.id || params.id === 'undefined') return notFound();
 	const talentTree = await getTalentTree(params.id);
 	if (!talentTree) return notFound();
+
 	return <TalentBuilder defaultValues={talentTree} />;
 };
 

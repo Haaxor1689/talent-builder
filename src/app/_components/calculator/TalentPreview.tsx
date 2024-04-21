@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useRef } from 'react';
+import { Fragment, useMemo, useRef } from 'react';
 import cls from 'classnames';
 import { useFormContext, useWatch } from 'react-hook-form';
 
@@ -77,6 +77,61 @@ const TalentPreview = ({ i, idx, tree, ...field }: Props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [points, value]);
 
+	const description = useMemo(() => {
+		if (!field.description) return null;
+		if (!field.ranks || field.ranks <= 1) return field.description;
+
+		const reg = new RegExp(
+			`([\\d\\.]*(?:\\/[\\d\\.]*\\d){${field.ranks - 1}})`,
+			'gm'
+		);
+		const result: (string | JSX.Element)[] = [];
+
+		const arr = [...field.description.matchAll(reg)];
+
+		arr.map((match, i) => {
+			if (i === 0) result.push(field.description.slice(0, match.index));
+
+			const ranks = match[0].split('/');
+			if (ranks.length !== field.ranks) {
+				result.push(match[0]);
+			} else {
+				result.push(
+					<span className="text-blueGray">
+						[
+						{ranks.map((r, i) => (
+							<Fragment key={i}>
+								{i === value - 1 ? (
+									<span className="font-extrabold text-white">{r}</span>
+								) : (
+									r
+								)}
+								{i === ranks.length - 1 ? '' : '/'}
+							</Fragment>
+						))}
+						]
+					</span>
+				);
+			}
+
+			if (i < arr.length - 1) {
+				if (!arr[i + 1]?.index) throw new Error('Unexpected end of match');
+				result.push(
+					field.description.slice(
+						match.index + match[0].length,
+						arr[i + 1]?.index
+					)
+				);
+			} else {
+				result.push(field.description.slice(match.index + match[0].length));
+			}
+		});
+
+		if (result.length === 0) return field.description;
+
+		return result;
+	}, [field.description, field.ranks, value]);
+
 	return (
 		<>
 			<TalentIcon
@@ -110,13 +165,18 @@ const TalentPreview = ({ i, idx, tree, ...field }: Props) => {
 				{...elementProps}
 			/>
 			<div
-				className="tw-surface max-w-[400px] bg-darkerGray/90"
+				className="tw-surface w-full max-w-[400px] bg-darkerGray/90"
 				{...tooltipProps}
 			>
 				{/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
 				<h4 className="tw-color">{field.name || '[Unnamed talent]'}</h4>
-				{/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
-				<p>{field.description || '[No description]'}</p>
+				<p
+					className={cls('whitespace-pre-wrap', {
+						['text-blueGray']: !description
+					})}
+				>
+					{description ?? '[No description]'}
+				</p>
 			</div>
 		</>
 	);

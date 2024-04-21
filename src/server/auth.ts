@@ -1,6 +1,7 @@
 import { DrizzleAdapter } from '@auth/drizzle-adapter';
 import { eq } from 'drizzle-orm';
 import {
+	type DefaultUser,
 	getServerSession,
 	type DefaultSession,
 	type NextAuthOptions
@@ -8,7 +9,7 @@ import {
 import { type Adapter } from 'next-auth/adapters';
 import { type DiscordProfile } from 'next-auth/providers/discord';
 import GithubProvider from 'next-auth/providers/github';
-import { revalidateTag } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import {
 	type OAuthConfig,
 	type OAuthUserConfig
@@ -16,9 +17,15 @@ import {
 
 import { env } from '~/env';
 import { db } from '~/server/db';
-import { sqliteTable, talentTrees, users } from '~/server/db/schema';
+import {
+	accounts,
+	sessions,
+	talentTrees,
+	users,
+	verificationTokens
+} from '~/server/db/schema';
 
-import { getTag } from './api/helpers';
+import { getFullTag } from './api/helpers';
 
 const DiscordProvider = <P extends DiscordProfile>(
 	options: OAuthUserConfig<P>
@@ -52,9 +59,15 @@ const DiscordProvider = <P extends DiscordProfile>(
 
 declare module 'next-auth' {
 	// eslint-disable-next-line
+	interface User extends DefaultUser {
+		isAdmin?: boolean;
+	}
+
+	// eslint-disable-next-line
 	interface Session extends DefaultSession {
 		user: {
 			id: string;
+			isAdmin: boolean;
 		} & DefaultSession['user'];
 	}
 
@@ -88,11 +101,22 @@ export const authOptions: NextAuthOptions = {
 			...session,
 			user: {
 				...session.user,
-				id: user.id
+				id: user.id,
+				isAdmin: user.isAdmin
 			}
 		})
 	},
-	adapter: DrizzleAdapter(db, sqliteTable) as Adapter,
+	adapter: DrizzleAdapter(
+		db,
+		// Know issue workaround https://github.com/nextauthjs/next-auth/discussions/8758#discussioncomment-8833831
+		(name: string) =>
+			({
+				user: users,
+				account: accounts,
+				session: sessions,
+				verificationToken: verificationTokens
+			}[name] as never)
+	) as Adapter,
 	providers: [
 		DiscordProvider({
 			clientId: env.DISCORD_CLIENT_ID,
@@ -118,7 +142,10 @@ export const authOptions: NextAuthOptions = {
 			const trees = await db.query.talentTrees.findMany({
 				where: eq(talentTrees.createdById, user.id)
 			});
-			trees.forEach(tree => revalidateTag(getTag('getOgInfo', tree.id)));
+			trees.forEach(tree => {
+				revalidateTag(getFullTag('getOgInfo', tree.id));
+				revalidatePath(`/api/og/${tree.id}`);
+			});
 		}
 	}
 };

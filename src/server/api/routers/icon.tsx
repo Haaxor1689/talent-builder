@@ -2,13 +2,13 @@
 
 import { desc, eq, like } from 'drizzle-orm';
 import { z } from 'zod';
-import { revalidateTag } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { ImageResponse } from 'next/og';
 
 import { icons, talentTrees } from '~/server/db/schema';
 import { env } from '~/env';
 
-import { adminProcedure, getTag, publicProcedure } from '../helpers';
+import { adminProcedure, getFullTag, publicProcedure } from '../helpers';
 
 export const upsertIcon = adminProcedure({
 	input: z.object({ name: z.string(), data: z.string() }),
@@ -20,13 +20,17 @@ export const upsertIcon = adminProcedure({
 		if (!entry) await db.insert(icons).values(input);
 		else await db.update(icons).set(input).where(eq(icons.name, input.name));
 
-		revalidateTag(getTag('getIcon', input.name));
-		revalidateTag(getTag('getIconData', input.name));
+		revalidateTag(getFullTag('getIcon', input.name));
+		revalidateTag(getFullTag('getIconData', input.name));
+		revalidatePath(`/api/icon/${input.name}`);
 
 		const trees = await db.query.talentTrees.findMany({
 			where: eq(talentTrees.icon, input.name)
 		});
-		trees.forEach(tree => revalidateTag(getTag('getOgInfo', tree.id)));
+		trees.forEach(tree => {
+			revalidateTag(getFullTag('getOgInfo', tree.id));
+			revalidatePath(`/api/og/${tree.id}`);
+		});
 	}
 });
 
@@ -50,7 +54,8 @@ export const listIcons = publicProcedure({
 			items,
 			nextCursor: hasMore ? offset + items.length : undefined
 		};
-	}
+	},
+	noSession: true
 });
 
 export const getIcon = publicProcedure({
@@ -59,15 +64,18 @@ export const getIcon = publicProcedure({
 	query: async ({ db, input }) =>
 		db.query.icons.findFirst({
 			where: eq(icons.name, input)
-		})
+		}),
+	noSession: true
 });
 
 export const deleteIcon = adminProcedure({
 	input: z.string(),
 	query: async ({ input, db }) => {
 		await db.delete(icons).where(eq(icons.name, input));
-		revalidateTag(getTag('getIcon', input));
-		revalidateTag(getTag('getIconData', input));
+
+		revalidateTag(getFullTag('getIcon', input));
+		revalidateTag(getFullTag('getIconData', input));
+		revalidatePath(`/api/icon/${input}`);
 	}
 });
 
@@ -133,5 +141,6 @@ export const getIconData = publicProcedure({
 			size
 		);
 		return Buffer.from(await img.arrayBuffer()).toString('base64');
-	}
+	},
+	noSession: true
 });
