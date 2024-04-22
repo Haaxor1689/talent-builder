@@ -66,7 +66,7 @@ export const TalentForm = z.object({
 		.object({
 			name: z.string().nullable(),
 			image: z.string().nullable(),
-			isAdmin: z.boolean().nullable()
+			isAdmin: z.boolean().nullable().default(false)
 		})
 		.nullable()
 		.default(null),
