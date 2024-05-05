@@ -58,7 +58,7 @@ export type TalentTreeT = z.infer<typeof TalentTree>;
 export const TalentForm = z.object({
 	id: z.string(),
 	public: z.boolean().default(false),
-	notes: z.string().nullable(),
+	notes: z.string().nullable().default(null),
 	icon: z.string().default(''),
 	name: z.string().default(''),
 	class: z.number().default(0),
