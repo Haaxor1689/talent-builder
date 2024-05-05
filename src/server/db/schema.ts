@@ -108,6 +108,7 @@ export const talentTrees = sqliteTable(
 		public: integer('public', { mode: 'boolean' })
 			.default(0 as never)
 			.notNull(),
+		notes: text('notes'),
 		class: integer('class').notNull().default(0),
 		icon: text('icon', { length: 256 })
 			.default('inv_misc_questionmark')
@@ -117,7 +118,7 @@ export const talentTrees = sqliteTable(
 			.$type<TalentTreeT>()
 			.notNull(),
 		createdById: text('createdById', { length: 255 }).notNull(),
-		createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+		createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
 		updatedAt: integer('updatedAt', { mode: 'timestamp' })
 	},
 	example => ({

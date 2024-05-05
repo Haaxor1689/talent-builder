@@ -36,6 +36,7 @@ import useLocalStorage from '../hooks/useLocalStorage';
 import ClassPicker from '../form/ClassPicker';
 import UndoRedo from '../form/UndoRedo';
 import AuthorTag from '../styled/AuthorTag';
+import Textarea from '../form/Textarea';
 
 import TalentPreview from './TalentPreview';
 import PointsSummary from './PointsSummary';
@@ -80,7 +81,7 @@ const TalentBuilder = (props: Props) => {
 	});
 	const { register, getValues, reset, control, formState } = formProps;
 
-	const [selected, setSelected] = useState(0);
+	const [selected, setSelected] = useState(-1);
 	const { fields } = useFieldArray({ control, name: 'tree' });
 
 	return (
@@ -249,11 +250,22 @@ const TalentBuilder = (props: Props) => {
 					<hr className="md:hidden" />
 
 					<div className="flex grow flex-col gap-3 border-0 border-gray/40 md:-my-3 md:max-w-sm md:border-l md:py-3 md:pl-3">
-						<TalentEdit
-							key={selected}
-							selected={selected}
-							editable={editable}
-						/>
+						{selected === -1 ? (
+							<div className="flex w-full grow flex-col gap-4 md:max-w-md">
+								<Textarea
+									{...register('notes')}
+									label="Notes"
+									disabled={!editable}
+									className="grow"
+								/>
+							</div>
+						) : (
+							<TalentEdit
+								key={selected}
+								selected={selected}
+								editable={editable}
+							/>
+						)}
 					</div>
 				</div>
 			</form>

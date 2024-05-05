@@ -11,17 +11,14 @@ import { isEmptyTalent } from '~/utils';
 import useTooltip from '../hooks/useTooltip';
 import TalentIcon from '../styled/TalentIcon';
 
-const TalentPreview = ({
-	i,
-	selected,
-	setSelected,
-	editable
-}: {
+type Props = {
 	i: number;
 	selected: number;
 	setSelected: (i: number) => void;
 	editable?: boolean;
-}) => {
+};
+
+const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 	const field = useWatch<TalentFormT, `tree.${number}`>({
 		name: `tree.${i}`
 	});
@@ -78,19 +75,16 @@ const TalentPreview = ({
 		<>
 			<TalentIcon
 				ref={ref}
-				onClick={e =>
-					!e.shiftKey || !editable
-						? setSelected(i)
-						: selected === i
-						? setValue(`tree.${selected}.requires`, null, {
-								shouldDirty: true,
-								shouldTouch: true
-						  })
-						: setValue(`tree.${selected}.requires`, i, {
-								shouldDirty: true,
-								shouldTouch: true
-						  })
-				}
+				onClick={e => {
+					if (e.shiftKey && editable) {
+						setValue(`tree.${selected}.requires`, selected === i ? null : i, {
+							shouldDirty: true,
+							shouldTouch: true
+						});
+					} else {
+						setSelected(selected === i ? -1 : i);
+					}
+				}}
 				onKeyDown={e => {
 					if (!editable || e.key !== 'Delete') return;
 					setValue(`tree.${selected}`, EmptyTalent(), {
