@@ -2,6 +2,7 @@ import { type Resolver, type FieldValues } from 'react-hook-form';
 import type { z } from 'zod';
 import { zodResolver as resolver } from '@hookform/resolvers/zod';
 import { isEqual } from 'lodash-es';
+import { PlusCircle, Workflow } from 'lucide-react';
 
 import {
 	EmptyTalent,
@@ -45,3 +46,8 @@ export const maskToClass = (mask: number) =>
 	classMask[mask as never] as
 		| (typeof classMask)[keyof typeof classMask]
 		| undefined;
+
+export const topNavigation = [
+	{ href: '/new-tree', icon: PlusCircle, text: 'New tree' },
+	{ href: '/calculator', icon: Workflow, text: 'Calculator' }
+] as const;

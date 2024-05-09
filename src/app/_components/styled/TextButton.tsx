@@ -28,7 +28,11 @@ type Props = {
 			onDoubleClick?: MouseEventHandler<HTMLButtonElement>;
 			onContextMenu?: MouseEventHandler<HTMLButtonElement>;
 	  }
-	| { href: string; type: 'link' }
+	| {
+			href: string;
+			type: 'link';
+			onClick?: MouseEventHandler<HTMLButtonElement>;
+	  }
 ) &
 	(
 		| { children: ReactNode; icon?: IconType; title?: never }
@@ -63,7 +67,7 @@ const TextButton = ({
 				}
 			)}
 			{...((props.type === 'link'
-				? { href: props.href }
+				? { href: props.href, onClick: props.onClick }
 				: props.type === 'submit'
 				? { form: props.form }
 				: {

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { CloudOff, ListFilter } from 'lucide-react';
+import { CloudOff, ListFilter, Workflow } from 'lucide-react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -13,13 +13,14 @@ import { listInfiniteTalentTrees } from '~/server/api/routers/talentTree';
 import { Filters } from '~/server/api/types';
 
 import TalentIcon from '../styled/TalentIcon';
-import useTooltip from '../hooks/useTooltip';
 import DialogButton from '../styled/DialogButton';
 import Input from '../form/Input';
 import ClassPicker from '../form/ClassPicker';
 import useDebounced from '../hooks/useDebounced';
 import Spinner from '../styled/Spinner';
 import AuthorTag from '../styled/AuthorTag';
+import Tooltip from '../styled/Tooltip';
+import TextButton from '../styled/TextButton';
 
 const getLastUpdatedString = (date: Date) => {
 	if (!date) return 'Never';
@@ -50,16 +51,58 @@ const GridItem = ({ idx, ...item }: Item) => {
 		[`t${idx}`]: item.id
 	});
 
-	const { elementProps, tooltipProps } = useTooltip();
 	const classInfo = maskToClass(item.class);
 
 	return (
-		<>
+		<Tooltip
+			tooltip={
+				<div className="whitespace-nowrap">
+					<h4 className="tw-color text-lg">{item.name}</h4>
+					<p className="text-blueGray">
+						Points: <span>{getTalentSum(item.tree)}</span>
+					</p>
+					{item.createdBy && (
+						<>
+							<span className="text-blueGray">
+								Last updated:{' '}
+								<span>
+									{new Date(item.updatedAt ?? item.createdAt).toLocaleString(
+										'en-US'
+									)}
+								</span>
+							</span>
+							<div className="flex items-center gap-1.5 text-blueGray">
+								Author: <AuthorTag {...item.createdBy} />
+							</div>
+						</>
+					)}
+					{classInfo && (
+						<p className="flex items-center gap-1 text-blueGray">
+							Class:{' '}
+							<TalentIcon
+								icon={classInfo.icon}
+								showDefault
+								className="size-6"
+							/>{' '}
+							<span style={{ color: classInfo.color }}>{classInfo.name}</span>
+						</p>
+					)}
+				</div>
+			}
+			actions={() => (
+				<TextButton
+					icon={Workflow}
+					type="link"
+					href={`${pathname}?${newSearch}`}
+				>
+					Pick tree
+				</TextButton>
+			)}
+		>
 			<Link
 				href={`${pathname}?${newSearch}`}
 				className="tw-hocus -mb-2 flex items-center gap-3 p-2"
 				prefetch={false}
-				{...elementProps}
 			>
 				<div className="relative flex shrink-0 items-center">
 					<TalentIcon icon={item.icon} showDefault className="cursor-pointer" />
@@ -89,38 +132,7 @@ const GridItem = ({ idx, ...item }: Item) => {
 					)}
 				</div>
 			</Link>
-			<div
-				className="tw-surface max-w-[400px] whitespace-nowrap bg-darkerGray/90"
-				{...tooltipProps}
-			>
-				<h4 className="tw-color text-lg">{item.name}</h4>
-				<p className="text-blueGray">
-					Points: <span>{getTalentSum(item.tree)}</span>
-				</p>
-				{item.createdBy && (
-					<>
-						<span className="text-blueGray">
-							Last updated:{' '}
-							<span>
-								{new Date(item.updatedAt ?? item.createdAt).toLocaleString(
-									'en-US'
-								)}
-							</span>
-						</span>
-						<div className="flex items-center gap-1.5 text-blueGray">
-							Author: <AuthorTag {...item.createdBy} />
-						</div>
-					</>
-				)}
-				{classInfo && (
-					<p className="flex items-center gap-1 text-blueGray">
-						Class:{' '}
-						<TalentIcon icon={classInfo.icon} showDefault className="size-6" />{' '}
-						<span style={{ color: classInfo.color }}>{classInfo.name}</span>
-					</p>
-				)}
-			</div>
-		</>
+		</Tooltip>
 	);
 };
 

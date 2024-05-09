@@ -1,14 +1,15 @@
 'use client';
 
 import Link from 'next/link';
-import { CloudOff } from 'lucide-react';
+import { CloudOff, Workflow } from 'lucide-react';
 
 import { getTalentSum, maskToClass } from '~/utils';
 import { type talentTrees, type users } from '~/server/db/schema';
 
 import TalentIcon from '../styled/TalentIcon';
-import useTooltip from '../hooks/useTooltip';
 import AuthorTag from '../styled/AuthorTag';
+import Tooltip from '../styled/Tooltip';
+import TextButton from '../styled/TextButton';
 
 const getLastUpdatedString = (date: Date) => {
 	if (!date) return 'Never';
@@ -31,15 +32,53 @@ type Item = typeof talentTrees.$inferSelect & {
 };
 
 const GridItem = (item: Item) => {
-	const { elementProps, tooltipProps } = useTooltip();
 	const classInfo = maskToClass(item.class);
 	return (
-		<>
+		<Tooltip
+			tooltip={
+				<>
+					<h4 className="tw-color text-lg">{item.name}</h4>
+					<p className="text-blueGray">
+						Points: <span>{getTalentSum(item.tree)}</span>
+					</p>
+					{item.createdBy && (
+						<>
+							<span className="whitespace-nowrap text-blueGray">
+								Last updated:{' '}
+								<span>
+									{new Date(item.updatedAt ?? item.createdAt).toLocaleString(
+										'en-US'
+									)}
+								</span>
+							</span>
+							<div className="flex items-center gap-1.5 text-blueGray">
+								Author: <AuthorTag {...item.createdBy} />
+							</div>
+						</>
+					)}
+					{classInfo && (
+						<p className="flex items-center gap-1 text-blueGray">
+							Class:{' '}
+							<TalentIcon
+								icon={classInfo.icon}
+								showDefault
+								className="size-6"
+							/>{' '}
+							<span style={{ color: classInfo.color }}>{classInfo.name}</span>
+						</p>
+					)}
+				</>
+			}
+			actions={() => (
+				<TextButton type="link" href={item.href} icon={Workflow}>
+					Open tree
+				</TextButton>
+			)}
+		>
 			<Link
 				href={item.href}
 				className="tw-hocus -mb-2 flex items-center gap-3 p-2"
 				prefetch={false}
-				{...elementProps}
 			>
 				<div className="relative flex shrink-0 items-center">
 					<TalentIcon icon={item.icon} showDefault className="cursor-pointer" />
@@ -69,38 +108,7 @@ const GridItem = (item: Item) => {
 					)}
 				</div>
 			</Link>
-			<div
-				className="tw-surface max-w-[400px] whitespace-nowrap bg-darkerGray/90"
-				{...tooltipProps}
-			>
-				<h4 className="tw-color text-lg">{item.name}</h4>
-				<p className="text-blueGray">
-					Points: <span>{getTalentSum(item.tree)}</span>
-				</p>
-				{item.createdBy && (
-					<>
-						<span className="text-blueGray">
-							Last updated:{' '}
-							<span>
-								{new Date(item.updatedAt ?? item.createdAt).toLocaleString(
-									'en-US'
-								)}
-							</span>
-						</span>
-						<div className="flex items-center gap-1.5 text-blueGray">
-							Author: <AuthorTag {...item.createdBy} />
-						</div>
-					</>
-				)}
-				{classInfo && (
-					<p className="flex items-center gap-1 text-blueGray">
-						Class:{' '}
-						<TalentIcon icon={classInfo.icon} showDefault className="size-6" />{' '}
-						<span style={{ color: classInfo.color }}>{classInfo.name}</span>
-					</p>
-				)}
-			</div>
-		</>
+		</Tooltip>
 	);
 };
 

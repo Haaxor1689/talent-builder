@@ -28,7 +28,7 @@ const IconPicker = ({ name, required, disabled }: Props) => {
 	return (
 		<DialogButton
 			dialog={close => (
-				<div className="tw-surface flex flex-col gap-2 bg-darkGray/90">
+				<div className="tw-surface flex w-full max-w-[574px] flex-col gap-2 bg-darkGray/90">
 					<div className="flex items-center justify-between gap-4">
 						<h3 className="tw-color">Pick icon</h3>
 						<Input

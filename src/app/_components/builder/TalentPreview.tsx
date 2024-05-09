@@ -4,12 +4,14 @@ import { useMemo, useRef } from 'react';
 import { useWatch, useFormContext } from 'react-hook-form';
 import cls from 'classnames';
 import { cloneDeep } from 'lodash-es';
+import { Link2, Pointer } from 'lucide-react';
 
 import { EmptyTalent, type TalentFormT } from '~/server/api/types';
 import { isEmptyTalent } from '~/utils';
 
-import useTooltip from '../hooks/useTooltip';
 import TalentIcon from '../styled/TalentIcon';
+import Tooltip from '../styled/Tooltip';
+import TextButton from '../styled/TextButton';
 
 type Props = {
 	i: number;
@@ -27,7 +29,6 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 	const ref = useRef<HTMLButtonElement>(null);
 	const dragging = useRef(false);
 
-	const { tooltipProps, elementProps } = useTooltip(dragging.current);
 	const isEmpty = isEmptyTalent(field);
 
 	const description = useMemo(() => {
@@ -49,7 +50,11 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 			if (ranks.length !== field.ranks) {
 				result.push(match[0]);
 			} else {
-				result.push(<span className="text-blueGray">[{ranks.join('/')}]</span>);
+				result.push(
+					<span key={i} className="text-blueGray">
+						[{ranks.join('/')}]
+					</span>
+				);
 			}
 
 			if (i < arr.length - 1) {
@@ -72,11 +77,57 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 
 	if (!field) return null;
 	return (
-		<>
+		<Tooltip
+			hide={dragging.current || isEmpty}
+			hideMobile={false}
+			tooltip={
+				<>
+					{/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
+					<h4 className="tw-color">{field.name || '[Empty talent]'}</h4>
+					{/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
+					<p
+						className={cls('whitespace-pre-wrap', {
+							['text-blueGray']: !description
+						})}
+					>
+						{description ?? '[No description]'}
+					</p>
+				</>
+			}
+			actions={close =>
+				selected !== i && (
+					<>
+						{selected !== -1 && (
+							<TextButton
+								icon={Link2}
+								onClick={() => {
+									setValue(`tree.${selected}.requires`, i, {
+										shouldDirty: true,
+										shouldTouch: true
+									});
+									close();
+								}}
+							>
+								Link as requirement
+							</TextButton>
+						)}
+						<TextButton
+							icon={Pointer}
+							onClick={() => {
+								setSelected(i);
+								close();
+							}}
+						>
+							Select
+						</TextButton>
+					</>
+				)
+			}
+		>
 			<TalentIcon
 				ref={ref}
 				onClick={e => {
-					if (e.shiftKey && editable) {
+					if (e.shiftKey && editable && selected !== -1) {
 						setValue(`tree.${selected}.requires`, selected === i ? null : i, {
 							shouldDirty: true,
 							shouldTouch: true
@@ -137,26 +188,8 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 					setSelected(i);
 				}}
 				showDefault={!isEmpty}
-				{...elementProps}
 			/>
-			{!isEmpty && (
-				<div
-					className="tw-surface w-full max-w-[400px] bg-darkerGray/90"
-					{...tooltipProps}
-				>
-					{/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
-					<h4 className="tw-color">{field.name || '[Unnamed talent]'}</h4>
-					{/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
-					<p
-						className={cls('whitespace-pre-wrap', {
-							['text-blueGray']: !description
-						})}
-					>
-						{description ?? '[No description]'}
-					</p>
-				</div>
-			)}
-		</>
+		</Tooltip>
 	);
 };
 export default TalentPreview;

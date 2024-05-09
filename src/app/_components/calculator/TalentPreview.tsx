@@ -3,11 +3,13 @@
 import { Fragment, useMemo, useRef } from 'react';
 import cls from 'classnames';
 import { useFormContext, useWatch } from 'react-hook-form';
+import { Minus, Plus, X } from 'lucide-react';
 
 import { type CalculatorFormT, type TalentFormT } from '~/server/api/types';
 
-import useTooltip from '../hooks/useTooltip';
 import TalentIcon from '../styled/TalentIcon';
+import Tooltip from '../styled/Tooltip';
+import TextButton from '../styled/TextButton';
 
 type Props = TalentFormT['tree'][number] & {
 	i: number;
@@ -17,8 +19,6 @@ type Props = TalentFormT['tree'][number] & {
 
 const TalentPreview = ({ i, idx, tree, ...field }: Props) => {
 	const ref = useRef<HTMLButtonElement>(null);
-
-	const { tooltipProps, elementProps } = useTooltip();
 
 	const { setValue } = useFormContext<CalculatorFormT>();
 
@@ -97,7 +97,7 @@ const TalentPreview = ({ i, idx, tree, ...field }: Props) => {
 				result.push(match[0]);
 			} else {
 				result.push(
-					<span className="text-blueGray">
+					<span key={i} className="text-blueGray">
 						[
 						{ranks.map((r, i) => (
 							<Fragment key={i}>
@@ -132,8 +132,47 @@ const TalentPreview = ({ i, idx, tree, ...field }: Props) => {
 		return result;
 	}, [field.description, field.ranks, value]);
 
+	const setPoints = (diff: number) => {
+		if (diff < 0 && cantSubtract) return;
+		if (diff > 0 && noPointsLeft) return;
+		setValue(
+			`points.${idx}.${i}`,
+			Math.max(Math.min(value + diff, field.ranks ?? 1), 0)
+		);
+	};
+
 	return (
-		<>
+		<Tooltip
+			tooltip={
+				<>
+					{/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
+					<h4 className="tw-color">{field.name || '[Unnamed talent]'}</h4>
+					<p
+						className={cls('whitespace-pre-wrap', {
+							['text-blueGray']: !description
+						})}
+					>
+						{description ?? '[No description]'}
+					</p>
+				</>
+			}
+			actions={close => (
+				<>
+					<div className="flex items-center gap-2">
+						<TextButton
+							icon={Minus}
+							title="Plus"
+							onClick={() => setPoints(-1)}
+						/>
+						{value}
+						<TextButton icon={Plus} title="Plus" onClick={() => setPoints(1)} />
+					</div>
+					<TextButton icon={X} onClick={close}>
+						Close
+					</TextButton>
+				</>
+			)}
+		>
 			<TalentIcon
 				ref={ref}
 				icon={field.icon}
@@ -144,13 +183,7 @@ const TalentPreview = ({ i, idx, tree, ...field }: Props) => {
 					!disabled
 						? e => {
 								e.preventDefault();
-								if (cantSubtract && e.button !== 0) return;
-								if (noPointsLeft && e.button === 0) return;
-								const newValue = e.button === 0 ? value + 1 : value - 1;
-								setValue(
-									`points.${idx}.${i}`,
-									Math.max(Math.min(newValue, field.ranks ?? 1), 0)
-								);
+								setPoints(e.button === 0 ? 1 : -1);
 						  }
 						: undefined
 				}
@@ -162,23 +195,8 @@ const TalentPreview = ({ i, idx, tree, ...field }: Props) => {
 				}
 				highlightedArrow={!disabled}
 				className={cls({ grayscale: disabled })}
-				{...elementProps}
 			/>
-			<div
-				className="tw-surface w-full max-w-[400px] bg-darkerGray/90"
-				{...tooltipProps}
-			>
-				{/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
-				<h4 className="tw-color">{field.name || '[Unnamed talent]'}</h4>
-				<p
-					className={cls('whitespace-pre-wrap', {
-						['text-blueGray']: !description
-					})}
-				>
-					{description ?? '[No description]'}
-				</p>
-			</div>
-		</>
+		</Tooltip>
 	);
 };
 export default TalentPreview;

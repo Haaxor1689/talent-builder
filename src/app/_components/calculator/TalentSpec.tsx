@@ -56,7 +56,7 @@ const TalentSpec = ({ idx, value }: Props) => {
 
 			<hr className="!-mx-1" />
 
-			<div className="grid flex-shrink-0 grow select-none grid-cols-[repeat(4,_max-content)] content-center justify-center gap-6 pt-6">
+			<div className="-my-3 grid flex-shrink-0 grow select-none grid-cols-[repeat(4,_max-content)] content-center justify-center gap-6 overflow-x-auto pb-3 pt-6">
 				{value.tree.map((field, i) =>
 					isEmptyTalent(field) ? (
 						<div key={i} />

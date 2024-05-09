@@ -89,6 +89,7 @@ const TalentEdit = ({ selected, editable }: Props) => {
 				{...register(`tree.${selected}.description`)}
 				label="Text"
 				minRows={5}
+				maxRows={14}
 				disabled={!editable}
 			/>
 

@@ -6,6 +6,7 @@ import {
 	CloudOff,
 	Copy,
 	FileLock2,
+	NotebookPen,
 	Save,
 	Trash2,
 	UploadCloud
@@ -207,10 +208,10 @@ const TalentBuilder = (props: Props) => {
 				<hr />
 
 				<div className="flex flex-col gap-3 md:flex-row md:justify-center">
-					<div className="relative grid flex-shrink-0 grow select-none grid-cols-[repeat(4,_max-content)] content-center justify-center gap-6 py-[72px]">
+					<div className="relative grid grow select-none grid-cols-[repeat(4,_max-content)] content-center justify-center gap-6 overflow-x-auto py-9 md:py-[72px]">
 						{fields.map((field, i) => (
 							<TalentPreview
-								key={field.id}
+								key={field.id ?? i}
 								i={i}
 								selected={selected}
 								setSelected={setSelected}
@@ -220,27 +221,39 @@ const TalentBuilder = (props: Props) => {
 
 						{editable && <UndoRedo defaultValues={defaultValues} />}
 
+						<div className="absolute right-0 top-0 overflow-hidden">
+							<TextButton
+								icon={NotebookPen}
+								title="Notes"
+								onClick={() => setSelected(-1)}
+								className="-m-2"
+							/>
+						</div>
+
 						<div className="absolute bottom-0 left-0 flex flex-col gap-2">
 							{!editable ? (
-								<>
-									<p className="flex gap-1 text-pink">
-										<FileLock2 /> Read only
-									</p>
-									<div className="flex items-center gap-1.5 text-blueGray">
-										Author: <AuthorTag {...defaultValues.createdBy} />
-									</div>
-								</>
+								<p className="flex gap-1 text-pink">
+									<FileLock2 /> Read only
+								</p>
 							) : props.isLocal ? (
 								<p className="flex gap-1 text-blueGray">
 									<CloudOff size={24} />
 									Local only
 								</p>
 							) : (
-								<CheckboxInput
-									name="public"
-									label="Publicly visible"
-									disabled={!editable}
-								/>
+								<div className="overflow-hidden">
+									<CheckboxInput
+										name="public"
+										label="Publicly visible"
+										disabled={!editable}
+										className="!p-0"
+									/>
+								</div>
+							)}
+							{defaultValues.createdBy && (
+								<div className="flex items-center gap-1.5 text-blueGray">
+									Author: <AuthorTag {...defaultValues.createdBy} />
+								</div>
 							)}
 						</div>
 
@@ -257,6 +270,7 @@ const TalentBuilder = (props: Props) => {
 									label="Notes"
 									disabled={!editable}
 									className="grow"
+									maxRows={22}
 								/>
 							</div>
 						) : (

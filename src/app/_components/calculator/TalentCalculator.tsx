@@ -21,7 +21,7 @@ const PointsSpent = () => {
 	const sums = points.map(p => p.reduce((acc, curr) => acc + curr, 0));
 	const pointsLeft = 51 - sums.reduce((acc, curr) => acc + curr, 0);
 	return (
-		<>
+		<div className="flex flex-wrap justify-between md:contents">
 			<span className="h3 grow">{sums.join(' / ')}</span>
 			<span className="h4 text-blueGray">
 				Points left:{' '}
@@ -29,7 +29,7 @@ const PointsSpent = () => {
 					{pointsLeft}
 				</span>
 			</span>
-		</>
+		</div>
 	);
 };
 
@@ -87,7 +87,7 @@ const TalentCalculator = ({ trees, cls, points }: Props) => {
 		<FormProvider {...formProps}>
 			<form className="tw-surface flex flex-col gap-3">
 				<div className="flex flex-col gap-3 md:flex-row md:items-center">
-					<div className="flex grow items-center gap-4">
+					<div className="flex grow flex-col gap-4 md:flex-row md:items-center">
 						<ClassPicker name="class" large showEmpty />
 						<PointsSpent />
 						<UrlSync />

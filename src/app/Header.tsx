@@ -1,9 +1,11 @@
 import { Suspense } from 'react';
-import { PlusCircle, Workflow } from 'lucide-react';
+
+import { topNavigation } from '~/utils';
 
 import UserStatus from './_components/session/UserStatus';
 import Spinner from './_components/styled/Spinner';
 import TextButton from './_components/styled/TextButton';
+import MobileMenu from './MobileMenu';
 
 const Header = () => (
 	<header className="flex max-w-screen-xl items-center gap-3 p-2 md:px-6 md:py-2 xl:mx-auto xl:w-full">
@@ -16,12 +18,20 @@ const Header = () => (
 					TB
 				</span>
 			</TextButton>
-			<TextButton type="link" href="/new-tree" icon={PlusCircle}>
-				New tree
-			</TextButton>
-			<TextButton type="link" href="/calculator" icon={Workflow}>
-				Calculator
-			</TextButton>
+
+			{topNavigation.map(({ href, icon, text }) => (
+				<TextButton
+					key={href}
+					type="link"
+					href={href}
+					icon={icon}
+					className="hidden md:inline-flex"
+				>
+					{text}
+				</TextButton>
+			))}
+
+			<MobileMenu />
 		</nav>
 		<Suspense fallback={<Spinner size={26} />}>
 			<UserStatus />

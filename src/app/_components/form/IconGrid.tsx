@@ -7,7 +7,6 @@ import { listIcons } from '~/server/api/routers/icon';
 
 import TalentIcon from '../styled/TalentIcon';
 import Spinner from '../styled/Spinner';
-import useTooltip from '../hooks/useTooltip';
 
 type IconProps = {
 	item: { name: string; data: string };
@@ -15,25 +14,13 @@ type IconProps = {
 	setIcon: (icon: string) => void;
 };
 
-const Icon = ({ item, icon, setIcon }: IconProps) => {
-	const { elementProps, tooltipProps } = useTooltip();
-	return (
-		<>
-			<TalentIcon
-				icon={item.name}
-				selected={icon === item.name}
-				onClick={() => setIcon(item.name)}
-				{...elementProps}
-			/>
-			<div
-				className="tw-surface max-w-[400px] bg-darkerGray/90"
-				{...tooltipProps}
-			>
-				{item.name}
-			</div>
-		</>
-	);
-};
+const Icon = ({ item, icon, setIcon }: IconProps) => (
+	<TalentIcon
+		icon={item.name}
+		selected={icon === item.name}
+		onClick={() => setIcon(item.name)}
+	/>
+);
 
 type Props = {
 	filter?: string;
@@ -70,11 +57,11 @@ const IconGrid = ({ filter, required, icon, setIcon }: Props) => {
 
 	return (
 		<div
-			className="grid max-h-[520px] gap-1 overflow-auto"
-			style={{ gridTemplateColumns: 'repeat(8, 64px)' }}
+			className="grid max-h-[520px] gap-1 overflow-y-auto"
+			style={{ gridTemplateColumns: 'repeat(auto-fit, 64px)' }}
 		>
 			{icons.isLoading && (
-				<div className="col-span-8 flex h-32 items-center justify-center">
+				<div className="col-span-full flex h-32 items-center justify-center">
 					<Spinner size={32} />
 				</div>
 			)}
@@ -98,7 +85,7 @@ const IconGrid = ({ filter, required, icon, setIcon }: Props) => {
 
 			<div
 				ref={bottomRef}
-				className="col-span-8 flex h-16 items-center justify-center"
+				className="col-span-full flex h-16 items-center justify-center"
 			>
 				{icons.isFetchingNextPage && <Spinner size={32} />}
 			</div>
