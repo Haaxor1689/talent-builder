@@ -24,7 +24,6 @@ import {
 import ConfirmDialog from '../ConfirmDialog';
 import IconPicker from '../form/IconPicker';
 import Input from '../form/Input';
-import ImportDialog from '../ImportDialog';
 import {
 	type TalentFormT,
 	TalentForm,
@@ -166,8 +165,6 @@ const TalentBuilder = (props: Props) => {
 								disabled={disableInteractions}
 							/>
 						)}
-
-						{editable && <ImportDialog disabled={disableInteractions} />}
 
 						{editable && (
 							<ConfirmDialog
