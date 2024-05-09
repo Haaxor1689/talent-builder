@@ -207,7 +207,7 @@ const TreePickDialog = ({ idx, children }: Props) => {
 						}}
 					>
 						{trees.isLoading && (
-							<div className="col-span-3 flex h-32 items-center justify-center">
+							<div className="col-span-full flex h-32 items-center justify-center">
 								<Spinner size={32} />
 							</div>
 						)}
@@ -222,7 +222,7 @@ const TreePickDialog = ({ idx, children }: Props) => {
 
 						<div
 							ref={bottomRef}
-							className="col-span-3 flex h-16 items-center justify-center"
+							className="col-span-full flex h-16 items-center justify-center"
 						>
 							{trees.isFetchingNextPage && <Spinner size={32} />}
 						</div>
