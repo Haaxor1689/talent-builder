@@ -3,28 +3,13 @@
 import Link from 'next/link';
 import { CloudOff, Workflow } from 'lucide-react';
 
-import { getTalentSum, maskToClass } from '~/utils';
+import { getLastUpdatedString, getTalentSum, maskToClass } from '~/utils';
 import { type talentTrees, type users } from '~/server/db/schema';
 
 import TalentIcon from '../styled/TalentIcon';
 import AuthorTag from '../styled/AuthorTag';
 import Tooltip from '../styled/Tooltip';
 import TextButton from '../styled/TextButton';
-
-const getLastUpdatedString = (date: Date) => {
-	if (!date) return 'Never';
-	const now = new Date();
-	const diff = now.getTime() - new Date(date).getTime();
-	const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-	const hours = Math.floor(diff / (1000 * 60 * 60));
-	const minutes = Math.floor(diff / (1000 * 60));
-	const seconds = Math.floor(diff / 1000);
-	const plural = (n: number) => (n === 1 ? '' : 's');
-	if (days > 0) return `${days} day${plural(days)} ago`;
-	if (hours > 0) return `${hours} hour${plural(hours)} ago`;
-	if (minutes > 0) return `${minutes} minute${plural(minutes)} ago`;
-	return `${seconds} second${plural(seconds)} ago`;
-};
 
 type Item = typeof talentTrees.$inferSelect & {
 	href: string;

@@ -40,6 +40,7 @@ export const listIcons = publicProcedure({
 		cursor: z.number().optional(),
 		filter: z.string().optional()
 	}),
+	queryKey: 'listIcons',
 	query: async ({ input, db }) => {
 		const { limit = 32, cursor: offset = 0 } = input;
 		const items = await db.query.icons.findMany({
@@ -54,8 +55,7 @@ export const listIcons = publicProcedure({
 			items,
 			nextCursor: hasMore ? offset + items.length : undefined
 		};
-	},
-	noSession: true
+	}
 });
 
 export const getIcon = publicProcedure({
@@ -64,8 +64,7 @@ export const getIcon = publicProcedure({
 	query: async ({ db, input }) =>
 		db.query.icons.findFirst({
 			where: eq(icons.name, input)
-		}),
-	noSession: true
+		})
 });
 
 export const deleteIcon = adminProcedure({
@@ -141,6 +140,5 @@ export const getIconData = publicProcedure({
 			size
 		);
 		return Buffer.from(await img.arrayBuffer()).toString('base64');
-	},
-	noSession: true
+	}
 });

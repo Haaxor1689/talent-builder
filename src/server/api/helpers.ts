@@ -1,9 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { z } from 'zod';
 import { unstable_cache } from 'next/cache';
+import { cache } from 'react';
+import { type Session } from 'next-auth';
 
 import { db } from '../db';
 import { getServerAuthSession } from '../auth';
+
+type SessionTagType = 'user' | 'role' | 'any';
+
+const getSessionTag = (session: Session | null, sessionType?: SessionTagType) =>
+	`session:[${
+		(sessionType === 'user'
+			? session?.user?.id
+			: sessionType === 'role'
+			? session?.user.isAdmin
+				? 'admin'
+				: 'user'
+			: 'any') ?? 'none'
+	}]`;
 
 export const getQueryTag = (queryKey: string) => `api:[${queryKey}]`;
 
@@ -22,27 +37,30 @@ export const publicProcedure =
 		input,
 		queryKey,
 		query,
-		noSession
+		sessionType
 	}: {
 		input?: Input;
 		queryKey?: string;
 		query: Func;
-		noSession?: true;
+		sessionType?: SessionTagType;
 	}) =>
 	async (val: z.infer<Input>): Promise<Awaited<ReturnType<Func>>> => {
 		const values = (input ?? z.undefined()).parse(val);
-		const session = noSession ? null : await getServerAuthSession();
+		const session = !sessionType ? null : await getServerAuthSession();
 
-		if (!queryKey) return query({ input: values, db, session }) as never;
+		if (!queryKey)
+			return cache(() => query({ input: values, db, session }))() as never;
 
 		const queryTag = getQueryTag(queryKey);
 		const fullTag = getFullTag(queryKey, values);
-		const sessionTag = `session:[${session?.user?.id ?? 'null'}]`;
+		const sessionTag = getSessionTag(session, sessionType);
 
-		return unstable_cache(
-			async () => (await query({ input: values, db, session })) ?? null,
-			[fullTag, sessionTag],
-			{ tags: [queryTag, fullTag, sessionTag] }
+		return cache(
+			unstable_cache(
+				async () => (await query({ input: values, db, session })) ?? null,
+				[fullTag, sessionTag],
+				{ tags: [queryTag, fullTag, sessionTag] }
+			)
 		)() as never;
 	};
 
@@ -57,12 +75,12 @@ export const protectedProcedure = <
 	input,
 	queryKey,
 	query,
-	noSession
+	sessionType
 }: {
 	input?: Input;
 	queryKey?: string;
 	query: Func;
-	noSession?: true;
+	sessionType?: SessionTagType;
 }): ((val: z.infer<Input>) => ReturnType<Func>) =>
 	publicProcedure({
 		input,
@@ -72,7 +90,7 @@ export const protectedProcedure = <
 			if (!session) throw new Error('UNAUTHORIZED');
 			return query({ ...args, session }) as never;
 		},
-		noSession
+		sessionType: sessionType ?? 'any'
 	}) as never;
 
 export const adminProcedure = <
@@ -85,17 +103,21 @@ export const adminProcedure = <
 >({
 	input,
 	queryKey,
-	query
+	query,
+	sessionType
 }: {
 	input?: Input;
 	queryKey?: string;
 	query: Func;
+	sessionType?: SessionTagType;
 }): ((val: z.infer<Input>) => ReturnType<Func>) =>
 	publicProcedure({
 		input,
 		queryKey,
 		query: async args => {
-			if (!args.session?.user?.isAdmin) throw new Error('UNAUTHORIZED');
-			return query({ ...args, session: args.session }) as never;
-		}
+			const session = args.session ?? (await getServerAuthSession());
+			if (!session?.user.isAdmin) throw new Error('UNAUTHORIZED');
+			return query({ ...args, session }) as never;
+		},
+		sessionType: sessionType ?? 'role'
 	}) as never;

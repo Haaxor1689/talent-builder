@@ -9,7 +9,7 @@ type Props = React.DetailedHTMLProps<
 	HTMLButtonElement
 > & {
 	clickable?: boolean;
-	icon: string;
+	icon?: string;
 	value?: number;
 	ranks?: number | null;
 	arrow?: [number, number] | null;
@@ -56,7 +56,7 @@ const TalentIcon = forwardRef<HTMLButtonElement, Props>(
 						src={`/api/icon/${
 							showDefault && !icon ? 'inv_misc_questionmark' : icon
 						}`}
-						alt={icon === '' ? 'empty' : icon}
+						alt={!icon ? 'empty' : icon}
 						width={64}
 						height={64}
 						unoptimized

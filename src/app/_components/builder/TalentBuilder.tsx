@@ -1,7 +1,6 @@
 'use client';
 
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
-import { v4 } from 'uuid';
 import {
 	CloudOff,
 	Copy,
@@ -15,6 +14,7 @@ import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
+import { nanoid } from 'nanoid';
 
 import {
 	deleteTalentTree,
@@ -37,6 +37,7 @@ import ClassPicker from '../form/ClassPicker';
 import UndoRedo from '../form/UndoRedo';
 import AuthorTag from '../styled/AuthorTag';
 import Textarea from '../form/Textarea';
+import useAsyncAction from '../hooks/useAsyncAction';
 
 import TalentPreview from './TalentPreview';
 import PointsSummary from './PointsSummary';
@@ -47,15 +48,7 @@ type Props = {
 } & ({ isLocal?: false; isNew?: false } | { isLocal: true; isNew?: boolean });
 
 const TalentBuilder = (props: Props) => {
-	const [disableInteractions, setDisableInteractions] = useState(false);
-	const asyncTask =
-		<T extends unknown[]>(fn: (...args: T) => Promise<unknown>) =>
-		(...args: T) => {
-			setDisableInteractions(true);
-			return fn(...args)
-				.catch(e => toast.error(e?.message ?? JSON.stringify(e)))
-				.finally(() => setDisableInteractions(false));
-		};
+	const { disableInteractions, asyncAction } = useAsyncAction();
 
 	const session = useSession();
 	const router = useRouter();
@@ -102,7 +95,7 @@ const TalentBuilder = (props: Props) => {
 						<ClassPicker name="class" disabled={!editable} />
 						{editable && (
 							<TextButton
-								onClick={asyncTask(async () => {
+								onClick={asyncAction(async () => {
 									const values = getValues();
 									if (!props.isLocal) {
 										const newTree = await upsertTalentTree(values);
@@ -123,9 +116,9 @@ const TalentBuilder = (props: Props) => {
 
 						{props.isLocal && session.status === 'authenticated' && (
 							<TextButton
-								onClick={asyncTask(async () => {
+								onClick={asyncAction(async () => {
 									const values = getValues();
-									const newId = v4();
+									const newId = nanoid(10);
 									await upsertTalentTree({ ...values, id: newId });
 									setSavedSpecs(savedSpecs => {
 										const { [values.id]: _, ...newSpecs } = savedSpecs ?? {};
@@ -144,9 +137,9 @@ const TalentBuilder = (props: Props) => {
 
 						{!props.isNew && (
 							<TextButton
-								onClick={asyncTask(async () => {
+								onClick={asyncAction(async () => {
 									const values = getValues();
-									const newId = v4();
+									const newId = nanoid(10);
 									setSavedSpecs(savedSpecs => ({
 										...savedSpecs,
 										[newId]: {
@@ -171,7 +164,7 @@ const TalentBuilder = (props: Props) => {
 								title={`Are you sure you want to delete "${
 									getValues().name
 								}" tree?`}
-								confirm={asyncTask(async () => {
+								confirm={asyncAction(async () => {
 									if (props.isNew) {
 										reset(EmptyTalentTree());
 										return;

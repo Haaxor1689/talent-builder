@@ -15,6 +15,8 @@ import {
 	publicProcedure
 } from '../helpers';
 
+import { turtleWoWAccountId } from './general';
+
 export const upsertTalentTree = protectedProcedure({
 	input: TalentForm,
 	query: async ({ input, db, session }) => {
@@ -28,25 +30,27 @@ export const upsertTalentTree = protectedProcedure({
 				createdById: session.user.id,
 				createdAt: new Date()
 			});
-			return await db.query.talentTrees.findFirst({
-				where: eq(talentTrees.id, input.id)
-			});
+		} else {
+			if (!session.user.isAdmin && session.user.id !== entry.createdById)
+				throw new Error('UNAUTHORIZED');
+
+			await db
+				.update(talentTrees)
+				.set({
+					...omit(input, ['createdBy', 'createdById', 'createdAt']),
+					updatedAt: new Date()
+				})
+				.where(eq(talentTrees.id, input.id));
 		}
 
-		if (!session.user.isAdmin && session.user.id !== entry.createdById)
-			throw new Error('UNAUTHORIZED');
-
-		await db
-			.update(talentTrees)
-			.set({
-				...omit(input, ['createdBy', 'createdById', 'createdAt']),
-				updatedAt: new Date()
-			})
-			.where(eq(talentTrees.id, input.id));
-
-		if (entry.public || input.public) {
+		if (entry?.public || input.public) {
 			revalidateTag(getQueryTag('listPublicTalentTrees'));
 			revalidateTag(getQueryTag('listInfiniteTalentTrees'));
+		}
+
+		const turtleAccId = await turtleWoWAccountId(undefined);
+		if (input?.createdById === turtleAccId) {
+			revalidateTag(getQueryTag('listTurtleTalentTrees'));
 		}
 
 		revalidateTag(getFullTag('getTalentTree', input.id));
@@ -57,17 +61,6 @@ export const upsertTalentTree = protectedProcedure({
 			where: eq(talentTrees.id, input.id)
 		});
 	}
-});
-
-export const turtleWoWAccountId = publicProcedure({
-	queryKey: 'turtleWoWAccountId',
-	query: async ({ db }) => {
-		const turtleAcc = await db.query.users.findFirst({
-			where: eq(users.name, 'TurtleWoW')
-		});
-		return turtleAcc?.id ?? '';
-	},
-	noSession: true
 });
 
 export const listInfiniteTalentTrees = publicProcedure({
@@ -119,7 +112,8 @@ export const listInfiniteTalentTrees = publicProcedure({
 			items,
 			nextCursor: hasMore ? offset + items.length : undefined
 		};
-	}
+	},
+	sessionType: 'any'
 });
 
 export const listTurtleTalentTrees = publicProcedure({
@@ -138,8 +132,7 @@ export const listTurtleTalentTrees = publicProcedure({
 			),
 			with: { createdBy: true }
 		});
-	},
-	noSession: true
+	}
 });
 
 export const listPublicTalentTrees = protectedProcedure({
@@ -171,8 +164,7 @@ export const listPublicTalentTrees = protectedProcedure({
 			),
 			with: { createdBy: true }
 		});
-	},
-	noSession: true
+	}
 });
 
 export const listPersonalTalentTrees = protectedProcedure({
@@ -192,9 +184,11 @@ export const listPersonalTalentTrees = protectedProcedure({
 });
 
 export const getTalentTree = publicProcedure({
-	input: z.string(),
+	input: z.string().optional(),
 	queryKey: 'getTalentTree',
 	query: async ({ db, input, session }) => {
+		if (!input) return undefined;
+
 		const tree = await db.query.talentTrees.findFirst({
 			where: eq(talentTrees.id, input),
 			with: { createdBy: true }
@@ -204,7 +198,8 @@ export const getTalentTree = publicProcedure({
 		if (tree?.createdById !== turtleAccId && !session) return undefined;
 
 		return tree;
-	}
+	},
+	sessionType: 'any'
 });
 
 export const deleteTalentTree = protectedProcedure({

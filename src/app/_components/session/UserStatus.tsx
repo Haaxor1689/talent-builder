@@ -1,6 +1,9 @@
+import cls from 'classnames';
+
 import { getServerAuthSession } from '~/server/auth';
 
 import SignInOut from './SignInOut';
+import AdminPanel from './AdminPanel';
 
 const UserStatus = async () => {
 	const session = await getServerAuthSession();
@@ -8,7 +11,11 @@ const UserStatus = async () => {
 	return (
 		<>
 			<div className="flex items-center gap-3">
-				<span className="hidden select-none sm:inline">
+				<span
+					className={cls('hidden select-none sm:inline', {
+						'font-bold text-green': session.user.isAdmin
+					})}
+				>
 					{session.user.name}
 				</span>
 				<div
@@ -16,6 +23,7 @@ const UserStatus = async () => {
 					style={{ backgroundImage: `url(${session.user.image})` }}
 				/>
 			</div>
+			{session.user.isAdmin && <AdminPanel />}
 			<SignInOut signedIn />
 		</>
 	);

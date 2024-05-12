@@ -40,9 +40,10 @@ const getLastUpdatedString = (date: Date) => {
 type Item = typeof talentTrees.$inferSelect & {
 	idx: number;
 	createdBy: typeof users.$inferSelect;
+	close: () => void;
 };
 
-const GridItem = ({ idx, ...item }: Item) => {
+const GridItem = ({ idx, close, ...item }: Item) => {
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
 
@@ -94,6 +95,7 @@ const GridItem = ({ idx, ...item }: Item) => {
 					icon={Workflow}
 					type="link"
 					href={`${pathname}?${newSearch}`}
+					onClick={close}
 				>
 					Pick tree
 				</TextButton>
@@ -103,6 +105,7 @@ const GridItem = ({ idx, ...item }: Item) => {
 				href={`${pathname}?${newSearch}`}
 				className="tw-hocus -mb-2 flex items-center gap-3 p-2"
 				prefetch={false}
+				onClick={close}
 			>
 				<div className="relative flex shrink-0 items-center">
 					<TalentIcon icon={item.icon} showDefault className="cursor-pointer" />
@@ -151,12 +154,13 @@ const TreePickDialog = ({ idx, children }: Props) => {
 
 	const trees = useInfiniteQuery({
 		queryKey: ['talentTrees', values],
-		queryFn: ({ pageParam = 0 }) =>
+		queryFn: ({ pageParam }) =>
 			listInfiniteTalentTrees({
 				...values,
 				limit: 21,
 				cursor: pageParam
 			}),
+		initialPageParam: 0,
 		getNextPageParam: prev => prev.nextCursor,
 		staleTime: Infinity
 	});
@@ -177,7 +181,7 @@ const TreePickDialog = ({ idx, children }: Props) => {
 	return (
 		<DialogButton
 			clickAway
-			dialog={() => (
+			dialog={close => (
 				<form className="tw-surface max-w-screen-lg grow bg-darkerGray/90 p-0">
 					<div className="flex flex-col items-stretch gap-2 p-3 md:flex-row md:items-center">
 						<div className="flex grow items-center justify-between gap-2">
@@ -215,7 +219,7 @@ const TreePickDialog = ({ idx, children }: Props) => {
 						{trees.data?.pages.map((page, index) => (
 							<Fragment key={page.items[0]?.name ?? index}>
 								{page.items.map(item => (
-									<GridItem key={item.id} {...item} idx={idx} />
+									<GridItem key={item.id} {...item} idx={idx} close={close} />
 								))}
 							</Fragment>
 						))}

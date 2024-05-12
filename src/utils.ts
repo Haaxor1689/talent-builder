@@ -24,6 +24,20 @@ export const downloadBlob = (blob: Blob, title: string) => {
 	link.click();
 };
 
+export const getLastUpdatedString = (date: Date) => {
+	if (!date) return 'Never';
+	const now = new Date();
+	const diff = now.getTime() - new Date(date).getTime();
+	const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+	const hours = Math.floor(diff / (1000 * 60 * 60));
+	const minutes = Math.floor(diff / (1000 * 60));
+	const plural = (n: number) => (n === 1 ? '' : 's');
+	if (days > 0) return `${days} day${plural(days)} ago`;
+	if (hours > 0) return `${hours} hour${plural(hours)} ago`;
+	if (minutes > 0) return `${minutes} minute${plural(minutes)} ago`;
+	return `<1 minute ago`;
+};
+
 export const getTalentSum = (talentTree: TalentTreeT) =>
 	talentTree.reduce((p, n) => p + ((n?.ranks ?? 0) || 0), 0);
 
@@ -42,7 +56,7 @@ export const classMask = {
 	1024: { name: 'Druid', icon: 'classicon_druid', color: '#FF7D0A' }
 } as const;
 
-export const maskToClass = (mask: number) =>
+export const maskToClass = (mask?: number) =>
 	classMask[mask as never] as
 		| (typeof classMask)[keyof typeof classMask]
 		| undefined;

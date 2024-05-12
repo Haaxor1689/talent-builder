@@ -5,7 +5,7 @@ import cls from 'classnames';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { Minus, Plus, X } from 'lucide-react';
 
-import { type CalculatorFormT, type TalentFormT } from '~/server/api/types';
+import { type BuildFormT, type TalentFormT } from '~/server/api/types';
 
 import TalentIcon from '../styled/TalentIcon';
 import Tooltip from '../styled/Tooltip';
@@ -20,13 +20,13 @@ type Props = TalentFormT['tree'][number] & {
 const TalentPreview = ({ i, idx, tree, ...field }: Props) => {
 	const ref = useRef<HTMLButtonElement>(null);
 
-	const { setValue } = useFormContext<CalculatorFormT>();
+	const { setValue } = useFormContext<BuildFormT>();
 
-	const value = useWatch<CalculatorFormT, `points.${0 | 1 | 2}.${number}`>({
+	const value = useWatch<BuildFormT, `points.${0 | 1 | 2}.${number}`>({
 		name: `points.${idx}.${i}`
 	});
 
-	const points = useWatch<CalculatorFormT, `points`>({ name: 'points' });
+	const points = useWatch<BuildFormT, `points`>({ name: 'points' });
 
 	const { disabled, cantSubtract, noPointsLeft } = useMemo(() => {
 		const sum = points[idx].reduce((acc, curr) => acc + curr, 0);

@@ -7,7 +7,7 @@ import {
 	text
 } from 'drizzle-orm/sqlite-core';
 import { type AdapterAccount } from 'next-auth/adapters';
-import { v4 } from 'uuid';
+import { nanoid } from 'nanoid';
 
 import { type TalentTreeT } from '~/server/api/types';
 
@@ -20,7 +20,7 @@ import { type TalentTreeT } from '~/server/api/types';
 export const sqliteTable = sqliteTableCreator(name => `talent-builder_${name}`);
 
 export const users = sqliteTable('user', {
-	id: text('id', { length: 255 }).notNull().primaryKey(),
+	id: text('id', { length: 36 }).notNull().primaryKey(),
 	name: text('name', { length: 255 }),
 	email: text('email', { length: 255 }).notNull(),
 	emailVerified: integer('emailVerified', { mode: 'timestamp' }),
@@ -103,14 +103,16 @@ export const iconsRelations = relations(icons, ({ many }) => ({
 export const talentTrees = sqliteTable(
 	'talentTree',
 	{
-		id: text('id', { length: 128 }).primaryKey().$default(v4),
-		name: text('name', { length: 256 }).default('New talent tree').notNull(),
+		id: text('id', { length: 36 })
+			.primaryKey()
+			.$default(() => nanoid(10)),
+		name: text('name', { length: 255 }).notNull(),
 		public: integer('public', { mode: 'boolean' })
 			.default(0 as never)
 			.notNull(),
 		notes: text('notes'),
 		class: integer('class').notNull().default(0),
-		icon: text('icon', { length: 256 })
+		icon: text('icon', { length: 255 })
 			.default('inv_misc_questionmark')
 			.notNull(),
 		tree: text('tree', { mode: 'json' })
@@ -122,9 +124,9 @@ export const talentTrees = sqliteTable(
 		updatedAt: integer('updatedAt', { mode: 'timestamp' })
 	},
 	example => ({
-		createdByIdIdx: index('createdById_idx').on(example.createdById),
-		nameIndex: index('name_idx').on(example.name),
-		publicIndex: index('public_idx').on(example.public)
+		createdByIdIdx: index('trees_createdById_idx').on(example.createdById),
+		nameIndex: index('trees_name_idx').on(example.name),
+		publicIndex: index('trees_public_idx').on(example.public)
 	})
 );
 
@@ -136,5 +138,33 @@ export const treesRelations = relations(talentTrees, ({ one }) => ({
 	iconSource: one(icons, {
 		fields: [talentTrees.icon],
 		references: [icons.name]
+	})
+}));
+
+export const savedBuilds = sqliteTable(
+	'savedBuild',
+	{
+		id: text('id', { length: 10 })
+			.primaryKey()
+			.$default(() => nanoid(10)),
+		name: text('name', { length: 255 }).notNull(),
+		class: integer('class').notNull(),
+		tree0Id: text('tree0Id', { length: 36 }).notNull(),
+		tree1Id: text('tree1Id', { length: 36 }).notNull(),
+		tree2Id: text('tree2Id', { length: 36 }).notNull(),
+		talents: text('talents', { length: 86 }).notNull(),
+		createdById: text('createdById', { length: 255 }).notNull(),
+		createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
+		updatedAt: integer('updatedAt', { mode: 'timestamp' })
+	},
+	example => ({
+		createdByIdIdx: index('builds_createdById_idx').on(example.createdById)
+	})
+);
+
+export const savedBuildsRelations = relations(savedBuilds, ({ one }) => ({
+	createdBy: one(users, {
+		fields: [savedBuilds.createdById],
+		references: [users.id]
 	})
 }));

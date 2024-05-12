@@ -12,6 +12,7 @@ import TextButton from '../styled/TextButton';
 
 type Props = {
 	name: string;
+	title?: string;
 	disabled?: boolean;
 	showEmpty?: boolean;
 	large?: boolean;
@@ -19,7 +20,14 @@ type Props = {
 	control?: Control<any>;
 };
 
-const ClassPicker = ({ name, disabled, showEmpty, large, control }: Props) => {
+const ClassPicker = ({
+	name,
+	title,
+	disabled,
+	showEmpty,
+	large,
+	control
+}: Props) => {
 	const { field } = useController({ name, control });
 
 	const classInfo = maskToClass(field.value);
@@ -83,13 +91,15 @@ const ClassPicker = ({ name, disabled, showEmpty, large, control }: Props) => {
 					)}
 				>
 					<TalentIcon
-						icon={classInfo?.icon ?? 'inv_misc_questionmark'}
+						icon={classInfo?.icon}
+						showDefault
 						className={cls('cursor-pointer', large ? 'size-12' : 'size-8')}
 					/>
 					<span
 						className={cls('text-[inherit]', { h3: large })}
 						style={{ color: classInfo?.color }}
 					>
+						{title ? `${title} ` : ''}
 						{classInfo?.name ?? 'Any class'}
 					</span>
 				</div>

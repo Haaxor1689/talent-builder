@@ -32,12 +32,13 @@ type Props = {
 const IconGrid = ({ filter, required, icon, setIcon }: Props) => {
 	const icons = useInfiniteQuery({
 		queryKey: ['icons', filter],
-		queryFn: async ({ pageParam = 0 }) =>
+		queryFn: async ({ pageParam }) =>
 			await listIcons({
 				limit: 64,
 				filter,
 				cursor: pageParam
 			}),
+		initialPageParam: 0,
 		getNextPageParam: prev => prev.nextCursor,
 		staleTime: Infinity
 	});

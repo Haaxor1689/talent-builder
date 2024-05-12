@@ -1,23 +1,25 @@
 'use client';
 
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
-import { useEffect, useMemo } from 'react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useMemo } from 'react';
 import cls from 'classnames';
 
 import {
-	type TalentFormT,
-	EmptyCalculatorForm,
-	CalculatorForm,
-	type CalculatorFormT
-} from '../../../server/api/types';
-import { zodResolver } from '../../../utils';
+	EmptySavedBuild,
+	BuildForm,
+	type BuildFormT,
+	type TalentFormT
+} from '~/server/api/types';
+import { zodResolver } from '~/utils';
+
 import ClassPicker from '../form/ClassPicker';
 
 import TalentSpec from './TalentSpec';
+import UrlSync from './UrlSync';
+import Actions from './Actionts';
 
 const PointsSpent = () => {
-	const points = useWatch<CalculatorFormT, 'points'>({ name: 'points' });
+	const points = useWatch<BuildFormT, 'points'>({ name: 'points' });
 	const sums = points.map(p => p.reduce((acc, curr) => acc + curr, 0));
 	const pointsLeft = 51 - sums.reduce((acc, curr) => acc + curr, 0);
 	return (
@@ -33,54 +35,22 @@ const PointsSpent = () => {
 	);
 };
 
-const UrlSync = () => {
-	const router = useRouter();
-	const pathname = usePathname();
-	const searchParams = useSearchParams();
-
-	const points = useWatch<CalculatorFormT, 'points'>({ name: 'points' });
-	useEffect(() => {
-		const t = points.map(p => p.join('')).join('-');
-		const newUrl = `${pathname}?${new URLSearchParams({
-			...Object.fromEntries(searchParams.entries()),
-			t
-		}).toString()}`;
-		window.history.replaceState(
-			{ ...window.history.state, as: newUrl, url: newUrl },
-			'',
-			newUrl
-		);
-	}, [points, searchParams, pathname, router]);
-
-	const cls = useWatch<CalculatorFormT, 'class'>({ name: 'class' });
-	useEffect(() => {
-		if (searchParams.get('c') === cls.toString()) return;
-		const newUrl = `${pathname}?${new URLSearchParams({
-			...Object.fromEntries(searchParams.entries()),
-			c: cls.toString()
-		}).toString()}`;
-		router.replace(newUrl);
-	}, [cls, searchParams, pathname, router]);
-
-	return null;
-};
-
 type Props = {
+	defaultValues?: BuildFormT;
 	trees: [TalentFormT?, TalentFormT?, TalentFormT?];
-	points?: [number[], number[], number[]];
-	cls: number;
+	isNew?: boolean;
 };
 
-const TalentCalculator = ({ trees, cls, points }: Props) => {
+const TalentCalculator = ({ trees, isNew, ...props }: Props) => {
 	const defaultValues = useMemo(
-		() => EmptyCalculatorForm({ class: cls, points }),
+		() => BuildForm.parse(props.defaultValues ?? EmptySavedBuild()),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[]
 	);
 
 	const formProps = useForm({
 		defaultValues,
-		resolver: zodResolver(CalculatorForm)
+		resolver: zodResolver(BuildForm)
 	});
 
 	return (
@@ -88,9 +58,14 @@ const TalentCalculator = ({ trees, cls, points }: Props) => {
 			<form className="tw-surface flex flex-col gap-3">
 				<div className="flex flex-col gap-3 md:flex-row md:items-center">
 					<div className="flex grow flex-col gap-4 md:flex-row md:items-center">
-						<ClassPicker name="class" large showEmpty />
+						<ClassPicker
+							name="class"
+							title={defaultValues.name}
+							large
+							showEmpty
+						/>
 						<PointsSpent />
-						<UrlSync />
+						<UrlSync defaultValues={defaultValues} isNew={!!isNew} />
 					</div>
 
 					<div className="flex items-center" />
@@ -103,6 +78,8 @@ const TalentCalculator = ({ trees, cls, points }: Props) => {
 					<TalentSpec idx={1} value={trees[1]} />
 					<TalentSpec idx={2} value={trees[2]} />
 				</div>
+
+				<Actions trees={trees} isNew={isNew} />
 			</form>
 		</FormProvider>
 	);

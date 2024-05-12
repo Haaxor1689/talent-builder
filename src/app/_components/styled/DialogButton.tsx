@@ -44,8 +44,8 @@ const DialogButton = ({
 	useEffect(() => {
 		if (!clickAway) return;
 		const callback = (e: MouseEvent) => e.target === ref.current && close();
-		window.addEventListener('click', callback);
-		return () => window.removeEventListener('click', callback);
+		window.addEventListener('mousedown', callback);
+		return () => window.removeEventListener('mousedown', callback);
 	}, [clickAway, close]);
 
 	// Disable auto focus after close

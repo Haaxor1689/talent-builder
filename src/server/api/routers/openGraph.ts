@@ -28,6 +28,5 @@ export const getOgInfo = publicProcedure({
 			sum: getTalentSum(talentTree.tree),
 			user: { name, image }
 		};
-	},
-	noSession: true
+	}
 });

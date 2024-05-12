@@ -3,7 +3,7 @@
 import { Workflow, X } from 'lucide-react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
-import { type CalculatorFormT, type TalentFormT } from '~/server/api/types';
+import { type BuildFormT, type TalentFormT } from '~/server/api/types';
 import { isEmptyTalent } from '~/utils';
 
 import TextButton from '../styled/TextButton';
@@ -18,7 +18,7 @@ type Props = {
 };
 
 const PointsSpent = ({ idx, value }: Props) => {
-	const points = useWatch<CalculatorFormT, `points.${0 | 1 | 2}`>({
+	const points = useWatch<BuildFormT, `points.${0 | 1 | 2}`>({
 		name: `points.${idx}`
 	});
 	return (
@@ -30,7 +30,7 @@ const PointsSpent = ({ idx, value }: Props) => {
 };
 
 const TalentSpec = ({ idx, value }: Props) => {
-	const { setValue } = useFormContext<CalculatorFormT>();
+	const { setValue } = useFormContext<BuildFormT>();
 
 	if (!value)
 		return (

@@ -1,4 +1,4 @@
-import { v4 } from 'uuid';
+import { nanoid } from 'nanoid';
 import { z } from 'zod';
 
 export const EmptyTalent = () => ({
@@ -11,7 +11,7 @@ export const EmptyTalent = () => ({
 });
 
 export const EmptyTalentTree = (): TalentFormT => ({
-	id: v4(),
+	id: nanoid(10),
 	public: false,
 	icon: 'inv_misc_questionmark',
 	name: 'New talent tree',
@@ -24,15 +24,19 @@ export const EmptyTalentTree = (): TalentFormT => ({
 	updatedAt: null
 });
 
-export const EmptyCalculatorForm = (
-	p: Partial<CalculatorFormT>
-): CalculatorFormT => ({
-	class: p.class ?? 0,
-	points: p.points ?? [
+export const EmptySavedBuild = (): BuildFormT => ({
+	id: nanoid(10),
+	name: '',
+	class: 0,
+	points: [
 		[...Array(4 * 7).keys()].map(() => 0),
 		[...Array(4 * 7).keys()].map(() => 0),
 		[...Array(4 * 7).keys()].map(() => 0)
-	]
+	],
+	createdById: null,
+	createdBy: null,
+	createdAt: null,
+	updatedAt: null
 });
 
 const Talent = z.preprocess(
@@ -85,24 +89,37 @@ export const Filters = z.object({
 export type FiltersT = z.infer<typeof Filters>;
 
 export const CalculatorParams = z.object({
-	t0: z.string().default(''),
-	t1: z.string().default(''),
-	t2: z.string().default(''),
+	t0: z.string().optional(),
+	t1: z.string().optional(),
+	t2: z.string().optional(),
 	t: z
 		.string()
 		.regex(/^\d*-\d*-\d*$/)
 		.optional(),
-	c: z.coerce.number().default(0)
+	c: z.coerce.number().optional()
 });
 
 export type CalculatorParamsT = z.infer<typeof CalculatorParams>;
 
-export const CalculatorForm = z.object({
-	class: z.coerce.number().default(0),
+export const BuildForm = z.object({
+	id: z.string(),
+	name: z.string(),
+	class: z.number().default(0),
 	points: z.tuple([
 		z.array(z.number()).length(4 * 7),
 		z.array(z.number()).length(4 * 7),
 		z.array(z.number()).length(4 * 7)
-	])
+	]),
+	createdById: z.string().nullable().default(null),
+	createdBy: z
+		.object({
+			name: z.string().nullable(),
+			image: z.string().nullable(),
+			isAdmin: z.boolean().nullable().default(false)
+		})
+		.nullable()
+		.default(null),
+	createdAt: z.coerce.date().nullable().default(null),
+	updatedAt: z.coerce.date().nullable().default(null)
 });
-export type CalculatorFormT = z.infer<typeof CalculatorForm>;
+export type BuildFormT = z.infer<typeof BuildForm>;

@@ -14,6 +14,7 @@ import {
 	type OAuthConfig,
 	type OAuthUserConfig
 } from 'next-auth/providers/oauth';
+import { cache } from 'react';
 
 import { env } from '~/env';
 import { db } from '~/server/db';
@@ -77,9 +78,7 @@ declare module 'next-auth' {
 
 export const authOptions: NextAuthOptions = {
 	callbacks: {
-		signIn: async ({ user, account, profile }) => {
-			console.log('signIn', user, account, profile);
-
+		signIn: async ({ account }) => {
 			if (account?.provider === 'discord') {
 				const guilds = await fetch('https://discord.com/api/users/@me/guilds', {
 					headers: {
@@ -109,13 +108,12 @@ export const authOptions: NextAuthOptions = {
 	adapter: DrizzleAdapter(
 		db,
 		// Know issue workaround https://github.com/nextauthjs/next-auth/discussions/8758#discussioncomment-8833831
-		(name: string) =>
-			({
-				user: users,
-				account: accounts,
-				session: sessions,
-				verificationToken: verificationTokens
-			}[name] as never)
+		{
+			usersTable: users,
+			accountsTable: accounts,
+			sessionsTable: sessions,
+			verificationTokensTable: verificationTokens
+		} as never
 	) as Adapter,
 	providers: [
 		DiscordProvider({
@@ -155,4 +153,4 @@ export const authOptions: NextAuthOptions = {
  *
  * @see https://next-auth.js.org/configuration/nextjs
  */
-export const getServerAuthSession = () => getServerSession(authOptions);
+export const getServerAuthSession = cache(() => getServerSession(authOptions));

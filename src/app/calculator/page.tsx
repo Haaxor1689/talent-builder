@@ -1,62 +1,36 @@
-import { notFound } from 'next/navigation';
+import Link from 'next/link';
+import { Suspense } from 'react';
 
-import { getTalentTree } from '~/server/api/routers/talentTree';
-import { CalculatorParams, type CalculatorParamsT } from '~/server/api/types';
-import { maskToClass } from '~/utils';
-import { env } from '~/env';
+import PersonalBuilds from '../_components/builds-lists/PersonalBuilds';
+import TurtleBuilds from '../_components/builds-lists/TurtleBuilds';
+import Spinner from '../_components/styled/Spinner';
+import TalentIcon from '../_components/styled/TalentIcon';
 
-import TalentCalculator from '../_components/calculator/TalentCalculator';
+const Page = () => (
+	<>
+		<Suspense fallback={<Spinner className="my-6 self-center" />}>
+			<TurtleBuilds />
+		</Suspense>
 
-type PageProps = {
-	searchParams: CalculatorParamsT;
-};
+		<div className="flex items-center justify-center gap-2">
+			<Link
+				href="/calculator/custom"
+				className="tw-hocus flex shrink-0 items-center gap-3 p-2"
+			>
+				<TalentIcon showDefault className="shrink-0 cursor-pointer" />
+				<div className="flex flex-col gap-1 text-inherit">
+					<p className="truncate text-lg text-inherit">Custom</p>
+					<div className="flex items-center gap-1.5 truncate text-blueGray">
+						Create new custom tree
+					</div>
+				</div>
+			</Link>
+		</div>
 
-export const generateMetadata = async ({ searchParams }: PageProps) => {
-	const parsed = CalculatorParams.safeParse(searchParams);
-	if (!parsed.success) return null;
+		<Suspense fallback={<Spinner className="my-6 self-center" />}>
+			<PersonalBuilds />
+		</Suspense>
+	</>
+);
 
-	const trees = await Promise.all([
-		getTalentTree(parsed.data.t0),
-		getTalentTree(parsed.data.t1),
-		getTalentTree(parsed.data.t2)
-	] as const);
-
-	const classInfo = maskToClass(parsed.data.c);
-	const className = classInfo ? `${classInfo.name} ` : '';
-	return {
-		title: `${className}Talent Calculator | Talent Builder`,
-		description: `Custom ${className}talent tree calculator consisting of trees: ${trees
-			.map(t => t?.name)
-			.join(', ')}`,
-		icons: [
-			{
-				rel: 'icon',
-				url: `${env.DEPLOY_URL}/api/icon/${
-					classInfo?.icon ?? 'inv_misc_questionmark'
-				}`
-			}
-		]
-	};
-};
-
-const TalentCalculatorPage = async ({ searchParams }: PageProps) => {
-	const parsed = CalculatorParams.safeParse(searchParams);
-	if (!parsed.success) return notFound();
-
-	const trees = await Promise.all([
-		getTalentTree(parsed.data.t0),
-		getTalentTree(parsed.data.t1),
-		getTalentTree(parsed.data.t2)
-	] as const);
-
-	const points = parsed.data.t?.split('-').map(t => [...t].map(Number));
-	return (
-		<TalentCalculator
-			trees={trees}
-			cls={parsed.data.c}
-			points={points as never}
-		/>
-	);
-};
-
-export default TalentCalculatorPage;
+export default Page;
