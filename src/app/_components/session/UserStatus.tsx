@@ -1,12 +1,12 @@
 import cls from 'classnames';
 
-import { getServerAuthSession } from '~/server/auth';
+import { getSession } from '~/server/api/routers/general';
 
 import SignInOut from './SignInOut';
 import AdminPanel from './AdminPanel';
 
 const UserStatus = async () => {
-	const session = await getServerAuthSession();
+	const session = await getSession(undefined);
 	if (!session) return <SignInOut signedIn={false} />;
 	return (
 		<>

@@ -9,7 +9,7 @@ import {
 import { type Adapter } from 'next-auth/adapters';
 import { type DiscordProfile } from 'next-auth/providers/discord';
 import GithubProvider from 'next-auth/providers/github';
-import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import {
 	type OAuthConfig,
 	type OAuthUserConfig
@@ -148,13 +148,4 @@ export const authOptions: NextAuthOptions = {
 	}
 };
 
-/**
- * Wrapper for `getServerSession` so that you don't need to import the `authOptions` in every file.
- *
- * @see https://next-auth.js.org/configuration/nextjs
- */
-export const getServerAuthSession = cache(
-	unstable_cache(() => getServerSession(authOptions), ['session'], {
-		revalidate: 0
-	})
-);
+export const getServerAuthSession = cache(() => getServerSession(authOptions));
