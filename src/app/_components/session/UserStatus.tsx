@@ -1,29 +1,34 @@
-import cls from 'classnames';
+'use client';
 
-import { getSession } from '~/server/api/routers/general';
+import cls from 'classnames';
+import { useSession } from 'next-auth/react';
+
+import Spinner from '../styled/Spinner';
 
 import SignInOut from './SignInOut';
 import AdminPanel from './AdminPanel';
 
-const UserStatus = async () => {
-	const session = await getSession(undefined);
-	if (!session) return <SignInOut signedIn={false} />;
+const UserStatus = () => {
+	const session = useSession();
+	if (session.status === 'loading') return <Spinner size={26} />;
+	if (session.status === 'unauthenticated')
+		return <SignInOut signedIn={false} />;
 	return (
 		<>
 			<div className="flex items-center gap-3">
 				<span
 					className={cls('hidden select-none sm:inline', {
-						'font-bold text-green': session.user.isAdmin
+						'font-bold text-green': session.data?.user.isAdmin
 					})}
 				>
-					{session.user.name}
+					{session.data?.user.name}
 				</span>
 				<div
 					className="size-8 rounded-full bg-contain"
-					style={{ backgroundImage: `url(${session.user.image})` }}
+					style={{ backgroundImage: `url(${session.data?.user.image})` }}
 				/>
 			</div>
-			{session.user.isAdmin && <AdminPanel />}
+			{session.data?.user.isAdmin && <AdminPanel />}
 			<SignInOut signedIn />
 		</>
 	);

@@ -93,7 +93,3 @@ export const regenerateIds = adminProcedure({
 			.values(values.map(v => ({ ...v, id: nanoid(10) })));
 	}
 });
-
-export const getSession = publicProcedure({
-	query: async ({ session }) => session
-});

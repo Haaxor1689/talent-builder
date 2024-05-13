@@ -1,9 +1,6 @@
-import { Suspense } from 'react';
-
 import { topNavigation } from '~/utils';
 
 import UserStatus from './_components/session/UserStatus';
-import Spinner from './_components/styled/Spinner';
 import TextButton from './_components/styled/TextButton';
 import MobileMenu from './MobileMenu';
 
@@ -33,9 +30,7 @@ const Header = () => (
 
 			<MobileMenu />
 		</nav>
-		<Suspense fallback={<Spinner size={26} />}>
-			<UserStatus />
-		</Suspense>
+		<UserStatus />
 	</header>
 );
 
