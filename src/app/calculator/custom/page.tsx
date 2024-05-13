@@ -10,6 +10,8 @@ import { maskToClass } from '~/utils';
 import { env } from '~/env';
 import TalentCalculator from '~/app/_components/calculator/TalentCalculator';
 
+export const dynamic = 'force-dynamic';
+
 type PageProps = {
 	searchParams: CalculatorParamsT;
 };

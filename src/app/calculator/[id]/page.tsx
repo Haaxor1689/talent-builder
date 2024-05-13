@@ -7,6 +7,8 @@ import TalentCalculator from '~/app/_components/calculator/TalentCalculator';
 import { getTalentTree } from '~/server/api/routers/talentTree';
 import { CalculatorParams, type CalculatorParamsT } from '~/server/api/types';
 
+export const dynamic = 'force-dynamic';
+
 export type PageProps = {
 	params: { id: string };
 	searchParams: CalculatorParamsT;
