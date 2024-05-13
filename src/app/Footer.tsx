@@ -1,5 +1,3 @@
-'use client';
-
 import { Bug } from 'lucide-react';
 
 import TextButton from './_components/styled/TextButton';

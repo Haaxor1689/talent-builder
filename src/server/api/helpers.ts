@@ -11,13 +11,15 @@ type SessionTagType = 'user' | 'role' | 'any';
 
 const getSessionTag = (session: Session | null, sessionType?: SessionTagType) =>
 	`session:[${
-		(sessionType === 'user'
-			? session?.user?.id
+		sessionType === 'any'
+			? !!session
+			: sessionType === 'user'
+			? session?.user?.id ?? 'none'
 			: sessionType === 'role'
 			? session?.user.isAdmin
 				? 'admin'
 				: 'user'
-			: 'any') ?? 'none'
+			: 'none'
 	}]`;
 
 export const getQueryTag = (queryKey: string) => `api:[${queryKey}]`;
