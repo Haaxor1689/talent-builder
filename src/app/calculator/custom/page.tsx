@@ -10,6 +10,8 @@ import { maskToClass } from '~/utils';
 import { env } from '~/env';
 import TalentCalculator from '~/app/_components/calculator/TalentCalculator';
 
+export const fetchCache = 'default-no-store';
+
 type PageProps = {
 	searchParams: CalculatorParamsT;
 };
