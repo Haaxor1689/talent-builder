@@ -62,6 +62,6 @@ export const maskToClass = (mask?: number) =>
 		| undefined;
 
 export const topNavigation = [
-	{ href: '/new-tree', icon: PlusCircle, text: 'New tree' },
+	{ href: '/tree/new', icon: PlusCircle, text: 'New tree' },
 	{ href: '/calculator', icon: Workflow, text: 'Calculator' }
 ] as const;

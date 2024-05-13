@@ -6,8 +6,6 @@ import TurtleBuilds from '../_components/builds-lists/TurtleBuilds';
 import Spinner from '../_components/styled/Spinner';
 import TalentIcon from '../_components/styled/TalentIcon';
 
-export const fetchCache = 'default-no-store';
-
 const Page = () => (
 	<>
 		<Suspense fallback={<Spinner className="my-6 self-center" />}>
