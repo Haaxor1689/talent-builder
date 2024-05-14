@@ -7,10 +7,9 @@ import { useEffect } from 'react';
 
 import { zodResolver } from '~/utils';
 import { Filters, type FiltersT } from '~/server/api/types';
-
-import Input from './_components/form/Input';
-import ClassPicker from './_components/form/ClassPicker';
-import useDebounced from './_components/hooks/useDebounced';
+import Input from '~/components/form/Input';
+import ClassPicker from '~/components/form/ClassPicker';
+import useDebounced from '~/hooks/useDebounced';
 
 const FiltersSection = (defaultValues: FiltersT) => {
 	const router = useRouter();

@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import { Suspense } from 'react';
 
-import PersonalBuilds from '../_components/builds-lists/PersonalBuilds';
-import TurtleBuilds from '../_components/builds-lists/TurtleBuilds';
-import Spinner from '../_components/styled/Spinner';
-import TalentIcon from '../_components/styled/TalentIcon';
+import PersonalBuilds from '~/components/builds-lists/PersonalBuilds';
+import TurtleBuilds from '~/components/builds-lists/TurtleBuilds';
+import Spinner from '~/components/styled/Spinner';
+import TalentIcon from '~/components/styled/TalentIcon';
 
 const Page = () => (
 	<>

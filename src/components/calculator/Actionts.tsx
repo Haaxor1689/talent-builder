@@ -10,8 +10,8 @@ import {
 	deleteSavedBuild
 } from '~/server/api/routers/savedBuilds';
 import { maskToClass } from '~/utils';
+import useAsyncAction from '~/hooks/useAsyncAction';
 
-import useAsyncAction from '../hooks/useAsyncAction';
 import ConfirmDialog from '../ConfirmDialog';
 import Input from '../form/Input';
 import DialogButton from '../styled/DialogButton';

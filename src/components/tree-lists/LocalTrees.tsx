@@ -3,9 +3,9 @@
 import { type ComponentProps } from 'react';
 import { useSession } from 'next-auth/react';
 
-import { type FiltersT, type TalentFormT } from '../../../server/api/types';
-import useLocalStorage from '../hooks/useLocalStorage';
-import Spinner from '../styled/Spinner';
+import { type FiltersT, type TalentFormT } from '~/server/api/types';
+import useLocalStorage from '~/hooks/useLocalStorage';
+import Spinner from '~/components/styled/Spinner';
 
 import TalentTreeGrid from './TalentTreeGrid';
 

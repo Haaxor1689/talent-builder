@@ -4,9 +4,10 @@ import { useState } from 'react';
 import { HelpCircle, ListFilter } from 'lucide-react';
 import { useController } from 'react-hook-form';
 
+import useDebounced from '~/hooks/useDebounced';
+
 import DialogButton from '../styled/DialogButton';
 import TalentIcon from '../styled/TalentIcon';
-import useDebounced from '../hooks/useDebounced';
 
 import Input from './Input';
 import IconGrid from './IconGrid';

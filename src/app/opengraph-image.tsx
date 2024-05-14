@@ -20,7 +20,7 @@ export const contentType = 'image/png';
 const Image = async () => {
 	// Font
 	const fontinSans = fetch(
-		new URL('./_components/assets/FontinSans-Regular.otf', import.meta.url)
+		new URL('../assets/FontinSans-Regular.otf', import.meta.url)
 	).then(res => res.arrayBuffer());
 
 	return new ImageResponse(

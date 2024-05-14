@@ -29,7 +29,7 @@ const Image = async ({ params }: PageProps) => {
 
 	// Font
 	const fontinSans = await fetch(
-		new URL('../../_components/assets/FontinSans-Regular.otf', import.meta.url)
+		new URL('../../../assets/FontinSans-Regular.otf', import.meta.url)
 	).then(res => res.arrayBuffer());
 
 	return new ImageResponse(

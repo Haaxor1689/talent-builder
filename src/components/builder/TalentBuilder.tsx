@@ -20,24 +20,24 @@ import {
 	deleteTalentTree,
 	upsertTalentTree
 } from '~/server/api/routers/talentTree';
-
-import ConfirmDialog from '../ConfirmDialog';
-import IconPicker from '../form/IconPicker';
-import Input from '../form/Input';
 import {
 	type TalentFormT,
 	TalentForm,
 	EmptyTalentTree
-} from '../../../server/api/types';
-import { zodResolver } from '../../../utils';
+} from '~/server/api/types';
+import { zodResolver } from '~/utils';
+import useLocalStorage from '~/hooks/useLocalStorage';
+import useAsyncAction from '~/hooks/useAsyncAction';
+
+import ConfirmDialog from '../ConfirmDialog';
+import IconPicker from '../form/IconPicker';
+import Input from '../form/Input';
 import TextButton from '../styled/TextButton';
 import CheckboxInput from '../form/CheckboxInput';
-import useLocalStorage from '../hooks/useLocalStorage';
 import ClassPicker from '../form/ClassPicker';
 import UndoRedo from '../form/UndoRedo';
 import AuthorTag from '../styled/AuthorTag';
 import Textarea from '../form/Textarea';
-import useAsyncAction from '../hooks/useAsyncAction';
 
 import TalentPreview from './TalentPreview';
 import PointsSummary from './PointsSummary';

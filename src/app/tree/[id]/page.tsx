@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 
-import TalentBuilder from '~/app/_components/builder/TalentBuilder';
+import TalentBuilder from '~/components/builder/TalentBuilder';
 import { getTalentTree } from '~/server/api/routers/talentTree';
 import { getOgInfo } from '~/server/api/routers/openGraph';
 import { env } from '~/env';

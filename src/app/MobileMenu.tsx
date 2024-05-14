@@ -3,9 +3,8 @@
 import { Menu } from 'lucide-react';
 
 import { topNavigation } from '~/utils';
-
-import DialogButton from './_components/styled/DialogButton';
-import TextButton from './_components/styled/TextButton';
+import DialogButton from '~/components/styled/DialogButton';
+import TextButton from '~/components/styled/TextButton';
 
 const MobileMenu = () => (
 	<DialogButton

@@ -11,12 +11,12 @@ import Header from './Header';
 import Footer from './Footer';
 
 const fontin = localFont({
-	src: './_components/assets/FontinSans-Regular.otf',
+	src: '../assets/FontinSans-Regular.otf',
 	variable: '--fontin-font'
 });
 
 const din = localFont({
-	src: './_components/assets/DINPro-Regular.otf',
+	src: '../assets/DINPro-Regular.otf',
 	variable: '--din-font'
 });
 

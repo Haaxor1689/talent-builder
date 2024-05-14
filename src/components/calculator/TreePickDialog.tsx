@@ -11,12 +11,12 @@ import { getTalentSum, maskToClass, zodResolver } from '~/utils';
 import { type talentTrees, type users } from '~/server/db/schema';
 import { listInfiniteTalentTrees } from '~/server/api/routers/talentTree';
 import { Filters } from '~/server/api/types';
+import useDebounced from '~/hooks/useDebounced';
 
 import TalentIcon from '../styled/TalentIcon';
 import DialogButton from '../styled/DialogButton';
 import Input from '../form/Input';
 import ClassPicker from '../form/ClassPicker';
-import useDebounced from '../hooks/useDebounced';
 import Spinner from '../styled/Spinner';
 import AuthorTag from '../styled/AuthorTag';
 import Tooltip from '../styled/Tooltip';

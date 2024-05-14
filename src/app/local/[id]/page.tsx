@@ -2,16 +2,16 @@
 
 import { notFound } from 'next/navigation';
 
-import TalentBuilder from '~/app/_components/builder/TalentBuilder';
-import useLocalStorage from '~/app/_components/hooks/useLocalStorage';
-import Spinner from '~/app/_components/styled/Spinner';
+import TalentBuilder from '~/components/builder/TalentBuilder';
+import useLocalStorage from '~/hooks/useLocalStorage';
+import Spinner from '~/components/styled/Spinner';
 import { type TalentFormT } from '~/server/api/types';
 
 type PageProps = {
 	params: { id: string };
 };
 
-const LocalTreePage = ({ params }: PageProps) => {
+const Page = ({ params }: PageProps) => {
 	const [savedSpecs, _1, specsLoading] =
 		useLocalStorage<Record<string, TalentFormT>>('saved-specs');
 
@@ -27,4 +27,4 @@ const LocalTreePage = ({ params }: PageProps) => {
 	return <TalentBuilder defaultValues={localSpec} isLocal />;
 };
 
-export default LocalTreePage;
+export default Page;

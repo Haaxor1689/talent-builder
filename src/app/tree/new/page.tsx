@@ -1,4 +1,4 @@
-import TalentBuilder from '../../_components/builder/TalentBuilder';
+import TalentBuilder from '~/components/builder/TalentBuilder';
 
 const Page = () => <TalentBuilder isLocal isNew />;
 

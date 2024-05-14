@@ -1,7 +1,7 @@
 import { topNavigation } from '~/utils';
+import UserStatus from '~/components/session/UserStatus';
+import TextButton from '~/components/styled/TextButton';
 
-import UserStatus from './_components/session/UserStatus';
-import TextButton from './_components/styled/TextButton';
 import MobileMenu from './MobileMenu';
 
 const Header = () => (

@@ -6,7 +6,7 @@ import { type PropsWithChildren } from 'react';
 import { Toaster, resolveValue } from 'react-hot-toast';
 import { AlertCircle, CheckCircle, ClipboardCopy } from 'lucide-react';
 
-import TextButton from './_components/styled/TextButton';
+import TextButton from '~/components/styled/TextButton';
 
 const queryClient = new QueryClient();
 

@@ -4,7 +4,7 @@ import { useMemo, useRef } from 'react';
 import { useWatch, useFormContext } from 'react-hook-form';
 import cls from 'classnames';
 import { cloneDeep } from 'lodash-es';
-import { Link2, Pointer } from 'lucide-react';
+import { Link2, Pointer, Replace } from 'lucide-react';
 
 import { EmptyTalent, type TalentFormT } from '~/server/api/types';
 import { isEmptyTalent } from '~/utils';
@@ -75,6 +75,21 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 		return result;
 	}, [field.description, field.ranks]);
 
+	const swapTalents = (lhs: number, rhs: number) => {
+		if (lhs === rhs) return;
+		const cloned = cloneDeep(getValues().tree);
+
+		const [a, b] = [cloned[lhs], cloned[rhs]];
+		cloned[lhs] = { ...EmptyTalent(), ...b };
+		cloned[rhs] = { ...EmptyTalent(), ...a };
+
+		setValue('tree', cloned, {
+			shouldDirty: true,
+			shouldTouch: true
+		});
+		setSelected(i);
+	};
+
 	if (!field) return null;
 	return (
 		<Tooltip
@@ -98,18 +113,29 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 				selected !== i && (
 					<>
 						{selected !== -1 && (
-							<TextButton
-								icon={Link2}
-								onClick={() => {
-									setValue(`tree.${selected}.requires`, i, {
-										shouldDirty: true,
-										shouldTouch: true
-									});
-									close();
-								}}
-							>
-								Link as requirement
-							</TextButton>
+							<>
+								<TextButton
+									icon={Link2}
+									onClick={() => {
+										setValue(`tree.${selected}.requires`, i, {
+											shouldDirty: true,
+											shouldTouch: true
+										});
+										close();
+									}}
+								>
+									Link as requirement
+								</TextButton>
+								<TextButton
+									icon={Replace}
+									onClick={() => {
+										swapTalents(i, selected);
+										close();
+									}}
+								>
+									Swap with selected
+								</TextButton>
+							</>
 						)}
 						<TextButton
 							icon={Pointer}
@@ -173,19 +199,7 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 					dragging.current = false;
 					e.preventDefault();
 					const idx = Number(e.dataTransfer.getData('text/plain'));
-					if (i === idx) return;
-
-					const cloned = cloneDeep(getValues().tree);
-
-					const [a, b] = [cloned[i], cloned[idx]];
-					cloned[i] = { ...EmptyTalent(), ...b };
-					cloned[idx] = { ...EmptyTalent(), ...a };
-
-					setValue('tree', cloned, {
-						shouldDirty: true,
-						shouldTouch: true
-					});
-					setSelected(i);
+					swapTalents(i, idx);
 				}}
 				showDefault={!isEmpty}
 			/>

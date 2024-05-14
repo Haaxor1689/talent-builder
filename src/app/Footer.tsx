@@ -1,6 +1,6 @@
 import { Bug } from 'lucide-react';
 
-import TextButton from './_components/styled/TextButton';
+import TextButton from '~/components/styled/TextButton';
 
 const Footer = () => (
 	<footer className="flex max-w-screen-xl items-center justify-center gap-3 p-2 md:px-6 md:py-2 xl:mx-auto xl:w-full">

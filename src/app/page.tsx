@@ -2,11 +2,11 @@ import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 
 import { Filters, type FiltersT } from '~/server/api/types';
+import PersonalTrees from '~/components/tree-lists/PersonalTrees';
+import Spinner from '~/components/styled/Spinner';
+import PublicTrees from '~/components/tree-lists/PublicTrees';
+import TurtleTrees from '~/components/tree-lists/TurtleTrees';
 
-import PersonalTrees from './_components/tree-lists/PersonalTrees';
-import Spinner from './_components/styled/Spinner';
-import PublicTrees from './_components/tree-lists/PublicTrees';
-import TurtleTrees from './_components/tree-lists/TurtleTrees';
 import FiltersSection from './FiltersSection';
 
 const Home = async ({ searchParams }: { searchParams: FiltersT }) => {

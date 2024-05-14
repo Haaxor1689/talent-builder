@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { env } from '~/env';
 import { getSavedBuild } from '~/server/api/routers/savedBuilds';
 import { maskToClass } from '~/utils';
-import TalentCalculator from '~/app/_components/calculator/TalentCalculator';
+import TalentCalculator from '~/components/calculator/TalentCalculator';
 import { getTalentTree } from '~/server/api/routers/talentTree';
 import { CalculatorParams, type CalculatorParamsT } from '~/server/api/types';
 

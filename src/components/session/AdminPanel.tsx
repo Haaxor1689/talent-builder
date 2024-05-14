@@ -8,11 +8,11 @@ import {
 	importTable,
 	regenerateIds
 } from '~/server/api/routers/general';
+import useAsyncAction from '~/hooks/useAsyncAction';
 
 import DialogButton from '../styled/DialogButton';
 import TextButton from '../styled/TextButton';
 import Input from '../form/Input';
-import useAsyncAction from '../hooks/useAsyncAction';
 
 const AdminPanel = () => {
 	const [table, setTable] = useState('');
