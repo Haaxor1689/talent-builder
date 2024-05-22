@@ -1,22 +1,12 @@
 import { DrizzleAdapter } from '@auth/drizzle-adapter';
-import { eq } from 'drizzle-orm';
-import {
-	type DefaultUser,
-	getServerSession,
-	type DefaultSession,
-	type NextAuthOptions
-} from 'next-auth';
-import { type Adapter } from 'next-auth/adapters';
+import NextAuth, { type DefaultSession } from 'next-auth';
 import { type DiscordProfile } from 'next-auth/providers/discord';
-import GithubProvider from 'next-auth/providers/github';
+import GitHub from 'next-auth/providers/github';
+import Discord from 'next-auth/providers/discord';
 import { revalidatePath, revalidateTag } from 'next/cache';
-import {
-	type OAuthConfig,
-	type OAuthUserConfig
-} from 'next-auth/providers/oauth';
 import { cache } from 'react';
+import { eq } from 'drizzle-orm';
 
-import { env } from '~/env';
 import { db } from '~/server/db';
 import {
 	accounts,
@@ -28,39 +18,9 @@ import {
 
 import { getFullTag } from './api/helpers';
 
-const DiscordProvider = <P extends DiscordProfile>(
-	options: OAuthUserConfig<P>
-): OAuthConfig<P> => ({
-	id: 'discord',
-	name: 'Discord',
-	type: 'oauth',
-	authorization:
-		'https://discord.com/api/oauth2/authorize?scope=identify+email+guilds',
-	token: 'https://discord.com/api/oauth2/token',
-	userinfo: 'https://discord.com/api/users/@me',
-	profile: profile => {
-		if (profile.avatar === null) {
-			const defaultAvatarNumber = parseInt(profile.discriminator) % 5;
-			profile.image_url = `https://cdn.discordapp.com/embed/avatars/${defaultAvatarNumber}.png`;
-		} else {
-			const format = profile.avatar.startsWith('a_') ? 'gif' : 'png';
-			profile.image_url = `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.${format}`;
-		}
-
-		return {
-			id: profile.id,
-			name: profile.username,
-			email: profile.email,
-			image: profile.image_url
-		};
-	},
-	style: { logo: '/discord.svg', bg: '#5865F2', text: '#fff' },
-	options
-});
-
 declare module 'next-auth' {
 	// eslint-disable-next-line
-	interface User extends DefaultUser {
+	interface User {
 		isAdmin?: boolean;
 	}
 
@@ -76,7 +36,8 @@ declare module 'next-auth' {
 	interface Profile extends DiscordProfile {}
 }
 
-export const authOptions: NextAuthOptions = {
+export const { auth, handlers, signIn, signOut } = NextAuth({
+	trustHost: true,
 	callbacks: {
 		signIn: async ({ account }) => {
 			if (account?.provider === 'discord') {
@@ -105,35 +66,31 @@ export const authOptions: NextAuthOptions = {
 			}
 		})
 	},
-	adapter: DrizzleAdapter(
-		db,
-		// Know issue workaround https://github.com/nextauthjs/next-auth/discussions/8758#discussioncomment-8833831
-		{
-			usersTable: users,
-			accountsTable: accounts,
-			sessionsTable: sessions,
-			verificationTokensTable: verificationTokens
-		} as never
-	) as Adapter,
+	adapter: DrizzleAdapter(db, {
+		usersTable: users,
+		accountsTable: accounts,
+		sessionsTable: sessions,
+		verificationTokensTable: verificationTokens
+	}),
 	providers: [
-		DiscordProvider({
-			clientId: env.DISCORD_CLIENT_ID,
-			clientSecret: env.DISCORD_CLIENT_SECRET
+		Discord({
+			authorization:
+				'https://discord.com/api/oauth2/authorize?scope=identify+email+guilds'
 		}),
-		GithubProvider({
-			clientId: env.GITHUB_ID,
-			clientSecret: env.GITHUB_SECRET
-		})
+		GitHub
 	],
 	events: {
 		signIn: async ({ user, profile, isNewUser }) => {
+			console.log('signIn', user, profile, isNewUser);
+
 			if (isNewUser) return;
+			if (!user.id) return;
 			if (profile?.image === user.image && profile?.name === user.name) return;
 
 			// Update user profile
 			await db
 				.update(users)
-				.set({ image: profile?.image, name: profile?.name })
+				.set({ image: profile?.image_url, name: profile?.name })
 				.where(eq(users.id, user.id));
 
 			// Revalidate OG images
@@ -146,6 +103,6 @@ export const authOptions: NextAuthOptions = {
 			});
 		}
 	}
-};
+});
 
-export const getServerAuthSession = cache(() => getServerSession(authOptions));
+export const getServerAuthSession = cache(() => auth());

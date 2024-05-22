@@ -26,7 +26,7 @@
 		"lucide-react": "^0.378.0",
 		"nanoid": "^5.0.7",
 		"next": "14.3.0-canary.58",
-		"next-auth": "^4.24.7",
+		"next-auth": "5.0.0-beta.18",
 		"react": "19.0.0-beta-04b058868c-20240508",
 		"react-dom": "19.0.0-beta-4508873393-20240430",
 		"react-hook-form": "^7.51.4",
