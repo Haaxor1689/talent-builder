@@ -1,14 +1,10 @@
 import { notFound } from 'next/navigation';
 
 import { getTalentTree } from '~/server/api/routers/talentTree';
-import {
-	CalculatorParams,
-	EmptySavedBuild,
-	type CalculatorParamsT
-} from '~/server/api/types';
-import { maskToClass } from '~/utils';
-import { env } from '~/env';
+import { CalculatorParams, type CalculatorParamsT } from '~/server/api/types';
+import { getIconPath, maskToClass } from '~/utils';
 import TalentCalculator from '~/components/calculator/TalentCalculator';
+import { env } from '~/env';
 
 export const dynamic = 'force-dynamic';
 
@@ -33,14 +29,7 @@ export const generateMetadata = async ({ searchParams }: PageProps) => {
 		description: `Custom ${className}talent tree calculator consisting of trees: ${trees
 			.map(t => t?.name)
 			.join(', ')}`,
-		icons: [
-			{
-				rel: 'icon',
-				url: `${env.DEPLOY_URL}/api/icon/${
-					classInfo?.icon ?? 'inv_misc_questionmark'
-				}`
-			}
-		]
+		icons: [{ rel: 'icon', url: env.DEPLOY_URL + getIconPath(classInfo?.icon) }]
 	};
 };
 
@@ -58,7 +47,6 @@ const Page = async ({ searchParams }: PageProps) => {
 		<TalentCalculator
 			trees={trees}
 			defaultValues={{
-				...EmptySavedBuild(),
 				...(parsed.data.c !== undefined ? { class: parsed.data.c } : {}),
 				...(parsed.data.t !== undefined
 					? {

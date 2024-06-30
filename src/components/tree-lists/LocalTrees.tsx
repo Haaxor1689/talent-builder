@@ -3,9 +3,9 @@
 import { type ComponentProps } from 'react';
 import { useSession } from 'next-auth/react';
 
-import { type FiltersT, type TalentFormT } from '~/server/api/types';
-import useLocalStorage from '~/hooks/useLocalStorage';
+import { type FiltersT } from '~/server/api/types';
 import Spinner from '~/components/styled/Spinner';
+import useLocalTrees from '~/hooks/useLocalTrees';
 
 import TalentTreeGrid from './TalentTreeGrid';
 
@@ -14,8 +14,7 @@ type Props = FiltersT & {
 };
 
 const LocalTrees = ({ serverList, name, from, class: classId }: Props) => {
-	const [savedSpecs, _, loading] =
-		useLocalStorage<Record<string, TalentFormT>>('saved-specs');
+	const [savedSpecs, _, loading] = useLocalTrees();
 
 	const session = useSession();
 

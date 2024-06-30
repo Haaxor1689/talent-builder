@@ -4,6 +4,7 @@
 import { ImageResponse } from 'next/og';
 
 import { env } from '~/env';
+import { getIconPath } from '~/utils';
 
 import { type PageProps } from './page';
 
@@ -64,7 +65,7 @@ const Image = async ({ params }: PageProps) => {
 					}}
 				>
 					<img
-						src={`${env.DEPLOY_URL}/api/icon/${response.icon}`}
+						src={env.DEPLOY_URL + getIconPath(response.icon)}
 						width={64}
 						height={64}
 					/>

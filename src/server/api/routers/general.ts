@@ -1,16 +1,14 @@
 'use server';
 
-import { writeFile, readFile } from 'node:fs/promises';
-
 import { eq } from 'drizzle-orm';
 import { stringify, parse } from 'superjson';
 import { nanoid } from 'nanoid';
 import { type SQLiteTableWithColumns } from 'drizzle-orm/sqlite-core';
 import { z } from 'zod';
+import { revalidateTag } from 'next/cache';
 
 import {
 	accounts,
-	icons,
 	savedBuilds,
 	sessions,
 	talentTrees,
@@ -18,8 +16,26 @@ import {
 	verificationTokens
 } from '~/server/db/schema';
 import { type db } from '~/server/db';
+import { env } from '~/env';
 
 import { publicProcedure, adminProcedure } from '../helpers';
+import { Talent, TalentForm } from '../types';
+
+export const createTurtleWoWAccount = adminProcedure({
+	query: async ({ db }) => {
+		const exists = await db.query.users.findFirst({
+			where: eq(users.name, 'TurtleWoW')
+		});
+		if (exists) return;
+		await db.insert(users).values({
+			id: nanoid(10),
+			email: 'betkomaros@gmail.com',
+			name: 'TurtleWoW',
+			image: 'https://talent-builder.haaxor1689.dev/turtle.png',
+			isAdmin: true
+		});
+	}
+});
 
 export const turtleWoWAccountId = publicProcedure({
 	queryKey: 'turtleWoWAccountId',
@@ -32,16 +48,12 @@ export const turtleWoWAccountId = publicProcedure({
 });
 
 const TABLES = {
-	users: ['./migrations_users.json', users],
-	accounts: ['./migrations_accounts.json', accounts],
-	sessions: ['./migrations_sessions.json', sessions],
-	verificationTokens: [
-		'./migrations_verificationTokens.json',
-		verificationTokens
-	],
-	icons: ['./migrations_icons.json', icons],
-	talentTrees: ['./migrations_talentTrees.json', talentTrees],
-	savedBuilds: ['./migrations_savedBuilds.json', savedBuilds]
+	users,
+	accounts,
+	sessions,
+	verificationTokens,
+	talentTrees,
+	savedBuilds
 } as const;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -63,21 +75,22 @@ export const exportTable = adminProcedure({
 		Object.keys(TABLES) as [keyof typeof TABLES, ...(keyof typeof TABLES)[]]
 	),
 	query: async ({ input, db }) => {
-		if (!TABLES[input]) return;
-		const [path, table] = TABLES[input];
-		await writeFile(path, stringify(await selectAll(db, table)));
+		if (!TABLES[input]) throw new Error('Invalid table');
+		return stringify(await selectAll(db, TABLES[input]));
 	}
 });
 
 export const importTable = adminProcedure({
-	input: z.enum(
-		Object.keys(TABLES) as [keyof typeof TABLES, ...(keyof typeof TABLES)[]]
-	),
+	input: z.object({
+		data: z.string(),
+		table: z.enum(
+			Object.keys(TABLES) as [keyof typeof TABLES, ...(keyof typeof TABLES)[]]
+		)
+	}),
 	query: async ({ input, db }) => {
-		if (!TABLES[input]) return;
-		const [path, table] = TABLES[input];
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const values = parse<any[]>(await readFile(path, { encoding: 'utf-8' }));
+		if (!TABLES[input.table] || !input.data) return;
+		const table = TABLES[input.table];
+		const values = parse<unknown[]>(input.data);
 		if (!values.length) return;
 		await db.delete(table);
 		await db.insert(table).values(values);
@@ -91,5 +104,63 @@ export const regenerateIds = adminProcedure({
 		await db
 			.insert(talentTrees)
 			.values(values.map(v => ({ ...v, id: nanoid(10) })));
+	}
+});
+
+export const fixMissingIcons = adminProcedure({
+	query: async ({ db }) => {
+		const icons = await fetch(`${env.DEPLOY_URL}/icons/list.json`);
+		const list = await icons.json();
+		const set = new Set(list);
+
+		const trees = await selectAll(db, talentTrees);
+		for (const tree of trees) {
+			let changed = false;
+			if (tree.icon && !set.has(tree.icon.toLocaleLowerCase())) {
+				tree.icon = `_${tree.icon}`;
+				changed = true;
+			}
+
+			for (const talent of tree.talents) {
+				if (talent.icon && !set.has(talent.icon.toLocaleLowerCase())) {
+					talent.icon = `_${talent.icon}`;
+					changed = true;
+				}
+			}
+			if (!changed) continue;
+			await db.update(talentTrees).set(tree).where(eq(talentTrees.id, tree.id));
+		}
+	}
+});
+
+export const importClientTrees = adminProcedure({
+	input: z.string(),
+	query: async ({ input, db }) => {
+		const trees = z.array(TalentForm).safeParse(JSON.parse(input));
+		if (!trees.success) {
+			throw new Error(
+				`Invalid input: ${JSON.stringify(trees.error.errors, null, 2)}`
+			);
+		}
+		const turtleWoW = await turtleWoWAccountId(undefined);
+		await db.delete(talentTrees).where(eq(talentTrees.createdById, turtleWoW));
+		await db.insert(talentTrees).values(
+			trees.data.map(tree => ({
+				...tree,
+				id: nanoid(10),
+				talents: tree.talents.map(t => (!t ? Talent.parse({}) : t)),
+				createdById: turtleWoW,
+				createdAt: new Date()
+			}))
+		);
+	}
+});
+
+export const exportClientTrees = adminProcedure({
+	query: async ({ db }) => {
+		const trees = await db.query.proposalTrees.findMany({
+			with: { tree: true }
+		});
+		return JSON.stringify(trees.map(t => t.tree));
 	}
 });

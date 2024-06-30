@@ -25,7 +25,7 @@ export const users = sqliteTable('user', {
 	email: text('email', { length: 255 }).notNull(),
 	emailVerified: integer('emailVerified', { mode: 'timestamp' }),
 	image: text('image', { length: 255 }),
-	isAdmin: integer('isAdmin', { mode: 'boolean' }).default(0 as never)
+	isAdmin: integer('isAdmin', { mode: 'boolean' }).default(false)
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -91,15 +91,6 @@ export const verificationTokens = sqliteTable(
 	})
 );
 
-export const icons = sqliteTable('icon', {
-	name: text('name', { length: 255 }).notNull().primaryKey(),
-	data: text('data').notNull()
-});
-
-export const iconsRelations = relations(icons, ({ many }) => ({
-	trees: many(talentTrees)
-}));
-
 export const talentTrees = sqliteTable(
 	'talentTree',
 	{
@@ -107,18 +98,17 @@ export const talentTrees = sqliteTable(
 			.primaryKey()
 			.$default(() => nanoid(10)),
 		name: text('name', { length: 255 }).notNull(),
-		public: integer('public', { mode: 'boolean' })
-			.default(0 as never)
-			.notNull(),
+		public: integer('public', { mode: 'boolean' }).default(false).notNull(),
 		notes: text('notes'),
-		class: integer('class').notNull().default(0),
+		class: integer('class').default(0).notNull(),
+		index: integer('index').default(0).notNull(),
 		icon: text('icon', { length: 255 })
 			.default('inv_misc_questionmark')
 			.notNull(),
-		tree: text('tree', { mode: 'json' })
+		talents: text('talents', { mode: 'json' })
 			.default('[]')
-			.$type<TalentTreeT>()
-			.notNull(),
+			.notNull()
+			.$type<TalentTreeT>(),
 		createdById: text('createdById', { length: 255 }).notNull(),
 		createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
 		updatedAt: integer('updatedAt', { mode: 'timestamp' })
@@ -134,10 +124,6 @@ export const treesRelations = relations(talentTrees, ({ one }) => ({
 	createdBy: one(users, {
 		fields: [talentTrees.createdById],
 		references: [users.id]
-	}),
-	iconSource: one(icons, {
-		fields: [talentTrees.icon],
-		references: [icons.name]
 	})
 }));
 
@@ -166,5 +152,24 @@ export const savedBuildsRelations = relations(savedBuilds, ({ one }) => ({
 	createdBy: one(users, {
 		fields: [savedBuilds.createdById],
 		references: [users.id]
+	})
+}));
+
+export const proposalTrees = sqliteTable(
+	'proposalTree',
+	{
+		class: integer('class').notNull(),
+		index: integer('index').notNull(),
+		treeId: text('treeId', { length: 36 }).notNull()
+	},
+	example => ({
+		pk: primaryKey({ columns: [example.class, example.index] })
+	})
+);
+
+export const proposalTreesRelations = relations(proposalTrees, ({ one }) => ({
+	tree: one(talentTrees, {
+		fields: [proposalTrees.treeId],
+		references: [talentTrees.id]
 	})
 }));

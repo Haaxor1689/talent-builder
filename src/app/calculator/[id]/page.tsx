@@ -1,11 +1,11 @@
 import { notFound } from 'next/navigation';
 
-import { env } from '~/env';
 import { getSavedBuild } from '~/server/api/routers/savedBuilds';
-import { maskToClass } from '~/utils';
+import { getIconPath, maskToClass } from '~/utils';
 import TalentCalculator from '~/components/calculator/TalentCalculator';
 import { getTalentTree } from '~/server/api/routers/talentTree';
 import { CalculatorParams, type CalculatorParamsT } from '~/server/api/types';
+import { env } from '~/env';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,12 +21,7 @@ export const generateMetadata = async ({ params }: PageProps) => {
 	return {
 		title: `${savedBuild.name || cls?.name} | Talent Calculator`,
 		description: `Talent tree created by ${savedBuild.createdBy.name}`,
-		icons: [
-			{
-				rel: 'icon',
-				url: `${env.DEPLOY_URL}/api/icon/${cls?.icon}`
-			}
-		]
+		icons: [{ rel: 'icon', url: env.DEPLOY_URL + getIconPath(cls?.icon) }]
 	};
 };
 

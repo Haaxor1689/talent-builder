@@ -3,24 +3,8 @@
 import { Fragment, useEffect, useRef } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
-import { listIcons } from '~/server/api/routers/icon';
-
 import TalentIcon from '../styled/TalentIcon';
 import Spinner from '../styled/Spinner';
-
-type IconProps = {
-	item: { name: string; data: string };
-	icon?: string;
-	setIcon: (icon: string) => void;
-};
-
-const Icon = ({ item, icon, setIcon }: IconProps) => (
-	<TalentIcon
-		icon={item.name}
-		selected={icon === item.name}
-		onClick={() => setIcon(item.name)}
-	/>
-);
 
 type Props = {
 	filter?: string;
@@ -32,12 +16,16 @@ type Props = {
 const IconGrid = ({ filter, required, icon, setIcon }: Props) => {
 	const icons = useInfiniteQuery({
 		queryKey: ['icons', filter],
-		queryFn: async ({ pageParam }) =>
-			await listIcons({
-				limit: 64,
-				filter,
-				cursor: pageParam
-			}),
+		queryFn: async ({ pageParam }) => {
+			const response = await fetch('/icons/list.json');
+			const data: string[] = await response.json();
+			if (!data || !Array.isArray(data))
+				throw new Error('Failed to fetch icons');
+
+			const filtered = filter ? data.filter(v => v.includes(filter)) : data;
+			const nextCursor = pageParam + 64;
+			return { items: filtered.slice(pageParam, nextCursor), nextCursor };
+		},
 		initialPageParam: 0,
 		getNextPageParam: prev => prev.nextCursor,
 		staleTime: Infinity
@@ -68,18 +56,18 @@ const IconGrid = ({ filter, required, icon, setIcon }: Props) => {
 			)}
 
 			{!required && !icons.isLoading && (
-				<TalentIcon
-					showDefault
-					icon=""
-					selected={!icon}
-					onClick={() => setIcon('')}
-				/>
+				<TalentIcon showDefault selected={!icon} onClick={() => setIcon('')} />
 			)}
 
 			{icons.data?.pages.map((page, index) => (
-				<Fragment key={page.items[0]?.name ?? index}>
+				<Fragment key={page.items[0] ?? index}>
 					{page.items.map(item => (
-						<Icon key={item.name} icon={icon} setIcon={setIcon} item={item} />
+						<TalentIcon
+							key={item}
+							icon={item}
+							selected={icon === item}
+							onClick={() => setIcon(item)}
+						/>
 					))}
 				</Fragment>
 			))}

@@ -1,6 +1,6 @@
 'use client';
 
-import { Workflow, X } from 'lucide-react';
+import { ExternalLink, NotebookPen, Workflow, X } from 'lucide-react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
 import { type BuildFormT, type TalentFormT } from '~/server/api/types';
@@ -8,6 +8,7 @@ import { isEmptyTalent } from '~/utils';
 
 import TextButton from '../styled/TextButton';
 import TalentIcon from '../styled/TalentIcon';
+import DialogButton from '../styled/DialogButton';
 
 import TalentPreview from './TalentPreview';
 import TreePickDialog from './TreePickDialog';
@@ -24,7 +25,7 @@ const PointsSpent = ({ idx, value }: Props) => {
 	return (
 		<span className="h4 shrink-0 text-blueGray">
 			{points.reduce((acc, curr) => acc + curr, 0)} /{' '}
-			{value?.tree.reduce((acc, curr) => acc + (curr?.ranks ?? 0), 0)}
+			{value?.talents.reduce((acc, curr) => acc + (curr?.ranks ?? 0), 0)}
 		</span>
 	);
 };
@@ -50,14 +51,23 @@ const TalentSpec = ({ idx, value }: Props) => {
 		<div className="flex flex-col gap-3">
 			<div className="flex items-center gap-2 px-4">
 				<TalentIcon icon={value.icon} className="size-8" />
-				<span className="h4 grow truncate">{value.name}</span>
+				<span className="h4 grow truncate" title={value.name}>
+					{value.name}
+				</span>
+				<TextButton
+					icon={ExternalLink}
+					title="Open tree"
+					type="link"
+					href={`/tree/${value.id}`}
+					className="-m-2 shrink-0"
+				/>
 				<PointsSpent idx={idx} value={value} />
 			</div>
 
 			<hr className="!-mx-1" />
 
 			<div className="-my-3 grid flex-shrink-0 grow select-none grid-cols-[repeat(4,_max-content)] content-center justify-center gap-6 overflow-x-auto pb-3 pt-6">
-				{value.tree.map((field, i) =>
+				{value.talents.map((field, i) =>
 					isEmptyTalent(field) ? (
 						<div key={i} />
 					) : (
@@ -66,13 +76,13 @@ const TalentSpec = ({ idx, value }: Props) => {
 							{...field}
 							i={i}
 							idx={idx}
-							tree={value.tree}
+							talents={value.talents}
 						/>
 					)
 				)}
 			</div>
 
-			<div className="flex justify-around gap-2">
+			<div className="flex flex-wrap justify-center gap-x-2">
 				<TreePickDialog idx={idx}>
 					{open => (
 						<TextButton
@@ -85,6 +95,30 @@ const TalentSpec = ({ idx, value }: Props) => {
 						</TextButton>
 					)}
 				</TreePickDialog>
+				{value.notes && (
+					<DialogButton
+						dialog={
+							<div className="tw-surface flex max-w-screen-sm flex-col gap-2 overflow-auto bg-darkGray/90">
+								<h3 className="tw-color">{value.name} notes</h3>
+								<p className="max-h-[80vh] overflow-y-auto whitespace-pre-wrap">
+									{value.notes}
+								</p>
+							</div>
+						}
+						clickAway
+					>
+						{open => (
+							<TextButton
+								icon={NotebookPen}
+								onClick={open}
+								iconSize={14}
+								className="text-sm text-blueGray"
+							>
+								Notes
+							</TextButton>
+						)}
+					</DialogButton>
+				)}
 				<TextButton
 					onClick={() =>
 						setValue(

@@ -3,7 +3,7 @@
 import { Fragment, useMemo, useRef } from 'react';
 import cls from 'classnames';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { Minus, Plus, X } from 'lucide-react';
+import { Minus, Plus } from 'lucide-react';
 
 import { type BuildFormT, type TalentFormT } from '~/server/api/types';
 
@@ -11,13 +11,13 @@ import TalentIcon from '../styled/TalentIcon';
 import Tooltip from '../styled/Tooltip';
 import TextButton from '../styled/TextButton';
 
-type Props = TalentFormT['tree'][number] & {
+type Props = TalentFormT['talents'][number] & {
 	i: number;
 	idx: 0 | 1 | 2;
-	tree: TalentFormT['tree'];
+	talents: TalentFormT['talents'];
 };
 
-const TalentPreview = ({ i, idx, tree, ...field }: Props) => {
+const TalentPreview = ({ i, idx, talents, ...field }: Props) => {
 	const ref = useRef<HTMLButtonElement>(null);
 
 	const { setValue } = useFormContext<BuildFormT>();
@@ -38,7 +38,7 @@ const TalentPreview = ({ i, idx, tree, ...field }: Props) => {
 
 		const missingRowPoints = sum < row * 5;
 
-		const requiredTalent = tree[field.requires ?? -1];
+		const requiredTalent = talents[field.requires ?? -1];
 		const notMetRequirement =
 			requiredTalent &&
 			points[idx][field.requires ?? -1] !== requiredTalent.ranks;
@@ -46,7 +46,7 @@ const TalentPreview = ({ i, idx, tree, ...field }: Props) => {
 		const disabled =
 			(value === 0 && noPointsLeft) || missingRowPoints || notMetRequirement;
 
-		const requiredByTalents = tree
+		const requiredByTalents = talents
 			.map((t, idx) => ({ idx, requires: t.requires }))
 			.filter(t => t.requires === i);
 		const disabledByRequiredTalent = requiredByTalents.some(
@@ -156,22 +156,25 @@ const TalentPreview = ({ i, idx, tree, ...field }: Props) => {
 					</p>
 				</>
 			}
-			actions={close => (
-				<>
-					<div className="flex items-center gap-2">
+			actions={() =>
+				!!field.ranks && (
+					<div className="flex items-center gap-2 text-xl">
 						<TextButton
 							icon={Minus}
-							title="Plus"
+							title="Remove point"
 							onClick={() => setPoints(-1)}
+							iconSize={32}
 						/>
-						{value}
-						<TextButton icon={Plus} title="Plus" onClick={() => setPoints(1)} />
+						{value}/{field.ranks}
+						<TextButton
+							icon={Plus}
+							title="Add point"
+							onClick={() => setPoints(1)}
+							iconSize={32}
+						/>
 					</div>
-					<TextButton icon={X} onClick={close}>
-						Close
-					</TextButton>
-				</>
-			)}
+				)
+			}
 		>
 			<TalentIcon
 				ref={ref}
@@ -179,7 +182,7 @@ const TalentPreview = ({ i, idx, tree, ...field }: Props) => {
 				value={value}
 				ranks={noPointsLeft && value === 0 ? undefined : field.ranks}
 				clickable={!disabled}
-				onMouseDown={
+				onClick={
 					!disabled
 						? e => {
 								e.preventDefault();

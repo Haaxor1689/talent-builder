@@ -70,7 +70,9 @@ const GridItem = (item: Item) => {
 					<div className="flex items-center gap-1.5 truncate text-blueGray">
 						<div
 							className="size-6 shrink-0 rounded-full bg-contain"
-							style={{ backgroundImage: `url(${item.createdBy?.image})` }}
+							style={{
+								backgroundImage: `url(${item.createdBy?.image}), url(https://cdn.discordapp.com/embed/avatars/0.png)`
+							}}
 						/>
 						{item.createdBy.name === 'TurtleWoW'
 							? 'TurtleWoW'

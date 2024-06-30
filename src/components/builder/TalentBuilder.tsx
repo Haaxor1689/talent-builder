@@ -6,6 +6,7 @@ import {
 	Copy,
 	FileLock2,
 	NotebookPen,
+	Pin,
 	Save,
 	Trash2,
 	UploadCloud
@@ -18,16 +19,13 @@ import { nanoid } from 'nanoid';
 
 import {
 	deleteTalentTree,
+	promoteTalentTree,
 	upsertTalentTree
 } from '~/server/api/routers/talentTree';
-import {
-	type TalentFormT,
-	TalentForm,
-	EmptyTalentTree
-} from '~/server/api/types';
+import { type TalentFormT, TalentForm } from '~/server/api/types';
 import { zodResolver } from '~/utils';
-import useLocalStorage from '~/hooks/useLocalStorage';
 import useAsyncAction from '~/hooks/useAsyncAction';
+import useLocalTrees from '~/hooks/useLocalTrees';
 
 import ConfirmDialog from '../ConfirmDialog';
 import IconPicker from '../form/IconPicker';
@@ -42,6 +40,7 @@ import Textarea from '../form/Textarea';
 import TalentPreview from './TalentPreview';
 import PointsSummary from './PointsSummary';
 import TalentEdit from './TalentEdit';
+import IdxInput from './IdxInput';
 
 type Props = {
 	defaultValues?: TalentFormT;
@@ -53,8 +52,7 @@ const TalentBuilder = (props: Props) => {
 	const session = useSession();
 	const router = useRouter();
 
-	const setSavedSpecs =
-		useLocalStorage<Record<string, TalentFormT>>('saved-specs')[1];
+	const setSavedSpecs = useLocalTrees()[1];
 
 	const editable =
 		props.isLocal ||
@@ -63,7 +61,7 @@ const TalentBuilder = (props: Props) => {
 				session.data.user.id === props.defaultValues?.createdById));
 
 	const defaultValues = useMemo(
-		() => TalentForm.parse(props.defaultValues ?? EmptyTalentTree()),
+		() => TalentForm.parse(props.defaultValues ?? {}),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[]
 	);
@@ -75,7 +73,7 @@ const TalentBuilder = (props: Props) => {
 	const { register, getValues, reset, control, formState } = formProps;
 
 	const [selected, setSelected] = useState(-1);
-	const { fields } = useFieldArray({ control, name: 'tree' });
+	const { fields } = useFieldArray({ control, name: 'talents' });
 
 	return (
 		<FormProvider {...formProps}>
@@ -93,6 +91,18 @@ const TalentBuilder = (props: Props) => {
 
 					<div className="flex items-center">
 						<ClassPicker name="class" disabled={!editable} />
+						<IdxInput control={control} />
+						{!props.isLocal && session.data?.user.isAdmin && (
+							<TextButton
+								icon={Pin}
+								title="Promote to proposal"
+								onClick={asyncAction(async () => {
+									const values = getValues();
+									await promoteTalentTree(values.id);
+									toast.success('Success');
+								})}
+							/>
+						)}
 						{editable && (
 							<TextButton
 								onClick={asyncAction(async () => {
@@ -146,8 +156,11 @@ const TalentBuilder = (props: Props) => {
 											...values,
 											id: newId,
 											name: `${values.name} (copy)`,
+											public: false,
+											createdBy: null,
 											createdById: null,
-											public: false
+											createdAt: null,
+											updatedAt: null
 										}
 									}));
 									toast.success('New copy saved locally!');
@@ -166,7 +179,7 @@ const TalentBuilder = (props: Props) => {
 								}" tree?`}
 								confirm={asyncAction(async () => {
 									if (props.isNew) {
-										reset(EmptyTalentTree());
+										reset(TalentForm.parse({}));
 										return;
 									}
 									const values = getValues();
@@ -198,16 +211,18 @@ const TalentBuilder = (props: Props) => {
 				<hr />
 
 				<div className="flex flex-col gap-3 md:flex-row md:justify-center">
-					<div className="relative grid grow select-none grid-cols-[repeat(4,_max-content)] content-center justify-center gap-6 overflow-x-auto py-9 md:py-[72px]">
-						{fields.map((field, i) => (
-							<TalentPreview
-								key={field.id ?? i}
-								i={i}
-								selected={selected}
-								setSelected={setSelected}
-								editable={editable}
-							/>
-						))}
+					<div className="relative grow">
+						<div className="grid grow select-none grid-cols-[repeat(4,_max-content)] content-center justify-center gap-6 overflow-x-auto py-9 md:py-[72px]">
+							{fields.map((field, i) => (
+								<TalentPreview
+									key={field.id ?? i}
+									i={i}
+									selected={selected}
+									setSelected={setSelected}
+									editable={editable}
+								/>
+							))}
+						</div>
 
 						{editable && <UndoRedo defaultValues={defaultValues} />}
 
@@ -231,14 +246,12 @@ const TalentBuilder = (props: Props) => {
 									Local only
 								</p>
 							) : (
-								<div className="overflow-hidden">
-									<CheckboxInput
-										name="public"
-										label="Publicly visible"
-										disabled={!editable}
-										className="!p-0"
-									/>
-								</div>
+								<CheckboxInput
+									name="public"
+									label="Publicly visible"
+									disabled={!editable}
+									className="!p-0"
+								/>
 							)}
 							{defaultValues.createdBy && (
 								<div className="flex items-center gap-1.5 text-blueGray">

@@ -2,8 +2,9 @@
 
 import { useFormContext, useWatch } from 'react-hook-form';
 import { Link2Off, Trash2 } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 
-import { EmptyTalent, type TalentFormT } from '~/server/api/types';
+import { Talent, type TalentFormT } from '~/server/api/types';
 
 import IconPicker from '../form/IconPicker';
 import Input from '../form/Input';
@@ -20,7 +21,7 @@ const RequiredTalent = ({
 	editable?: boolean;
 }) => {
 	const { setValue } = useFormContext<TalentFormT>();
-	const fields = useWatch<TalentFormT, 'tree'>({ name: 'tree' });
+	const fields = useWatch<TalentFormT, 'talents'>({ name: 'talents' });
 	const requires = fields[fields[selected ?? -1]?.requires ?? -1];
 	if (!requires && !editable) return <p className="text-blueGray">Nothing</p>;
 	if (!requires) return null;
@@ -36,7 +37,7 @@ const RequiredTalent = ({
 					icon={Link2Off}
 					title="Remove link"
 					onClick={() =>
-						setValue(`tree.${selected}.requires`, null, {
+						setValue(`talents.${selected}.requires`, null, {
 							shouldDirty: true,
 							shouldTouch: true
 						})
@@ -53,20 +54,21 @@ type Props = {
 };
 
 const TalentEdit = ({ selected, editable }: Props) => {
+	const session = useSession();
 	const { register, setValue } = useFormContext<TalentFormT>();
 	return (
 		<div className="flex w-full flex-col gap-4 md:max-w-md">
 			<div className="flex items-center gap-2">
-				<IconPicker name={`tree.${selected}.icon`} disabled={!editable} />
+				<IconPicker name={`talents.${selected}.icon`} disabled={!editable} />
 				<Input
-					{...register(`tree.${selected}.name`)}
+					{...register(`talents.${selected}.name`)}
 					disabled={!editable}
 					className="grow"
 				/>
 				{editable && (
 					<TextButton
 						onClick={() =>
-							setValue(`tree.${selected}`, EmptyTalent(), {
+							setValue(`talents.${selected}`, Talent.parse({}), {
 								shouldDirty: true,
 								shouldTouch: true
 							})
@@ -79,14 +81,14 @@ const TalentEdit = ({ selected, editable }: Props) => {
 			</div>
 
 			<Input
-				{...register(`tree.${selected}.ranks`, { valueAsNumber: true })}
+				{...register(`talents.${selected}.ranks`, { valueAsNumber: true })}
 				label="Ranks"
 				type="number"
 				disabled={!editable}
 			/>
 
 			<Textarea
-				{...register(`tree.${selected}.description`)}
+				{...register(`talents.${selected}.description`)}
 				label="Text"
 				minRows={5}
 				maxRows={14}
@@ -103,14 +105,23 @@ const TalentEdit = ({ selected, editable }: Props) => {
 				)}
 			</div>
 
-			<div className="flex flex-col">
-				<span>Other options:</span>
-				<CheckboxInput
-					name={`tree.${selected}.highlight`}
-					label="Highlight change"
-					disabled={!editable}
-				/>
-			</div>
+			{session.data?.user.isAdmin && (
+				<>
+					<CheckboxInput
+						name={`talents.${selected}.highlight`}
+						label="Highlight change"
+						disabled={!editable}
+					/>
+
+					<Input
+						{...register(`talents.${selected}.spellIds`)}
+						label="Spell Ids"
+					/>
+					<span className="-mt-2 text-sm text-blueGray">
+						Comma separated list of spell ids for each rank
+					</span>
+				</>
+			)}
 		</div>
 	);
 };

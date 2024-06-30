@@ -8,13 +8,13 @@ const PersonalTrees = async (props: FiltersT) => {
 	const session = await getServerAuthSession();
 	if (!session) return <LocalTrees {...props} serverList={[]} />;
 
-	const listPersonal = await listPersonalTalentTrees(props);
-	if (!listPersonal.length) return <LocalTrees {...props} serverList={[]} />;
+	const list = await listPersonalTalentTrees(props);
+	if (!list.length) return <LocalTrees {...props} serverList={[]} />;
 
 	return (
 		<LocalTrees
 			{...props}
-			serverList={listPersonal.map(s => ({
+			serverList={list.map(s => ({
 				href: `/tree/${s.id}`,
 				...s
 			}))}

@@ -2,6 +2,8 @@ import cls from 'classnames';
 import { forwardRef } from 'react';
 import Image from 'next/image';
 
+import { getIconPath } from '~/utils';
+
 import TalentArrow from './TalentArrow';
 
 type Props = React.DetailedHTMLProps<
@@ -53,9 +55,7 @@ const TalentIcon = forwardRef<HTMLButtonElement, Props>(
 			>
 				{showDefault || icon ? (
 					<Image
-						src={`/api/icon/${
-							showDefault && !icon ? 'inv_misc_questionmark' : icon
-						}`}
+						src={getIconPath(icon)}
 						alt={!icon ? 'empty' : icon}
 						width={64}
 						height={64}

@@ -6,6 +6,7 @@ import PersonalTrees from '~/components/tree-lists/PersonalTrees';
 import Spinner from '~/components/styled/Spinner';
 import PublicTrees from '~/components/tree-lists/PublicTrees';
 import TurtleTrees from '~/components/tree-lists/TurtleTrees';
+import ProposalTrees from '~/components/tree-lists/ProposalTrees';
 
 import FiltersSection from './FiltersSection';
 
@@ -23,6 +24,10 @@ const Home = async ({ searchParams }: { searchParams: FiltersT }) => {
 
 			<Suspense fallback={<Spinner className="my-6 self-center" />}>
 				<PublicTrees {...params.data} />
+			</Suspense>
+
+			<Suspense fallback={<Spinner className="my-6 self-center" />}>
+				<ProposalTrees {...params.data} />
 			</Suspense>
 
 			<Suspense fallback={<Spinner className="my-6 self-center" />}>

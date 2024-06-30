@@ -10,7 +10,7 @@ type Props = ComponentProps<typeof TextareaAutosize> & {
 	minRows?: number;
 };
 
-const Input = forwardRef<HTMLTextAreaElement, Props>(
+const Textarea = forwardRef<HTMLTextAreaElement, Props>(
 	({ label, name, id = name, className, error, ...props }, ref) => (
 		<div className={cls('flex flex-col gap-2', className)}>
 			{label && <label htmlFor={id}>{label}</label>}
@@ -24,10 +24,13 @@ const Input = forwardRef<HTMLTextAreaElement, Props>(
 					}
 				}}
 				{...props}
-				className={cls('tw-input-underline', { 'tw-input-error': error })}
+				className={cls('tw-input-underline', {
+					'tw-input-hocus': !props.disabled,
+					'tw-input-error': error
+				})}
 			/>
 		</div>
 	)
 );
 
-export default Input;
+export default Textarea;

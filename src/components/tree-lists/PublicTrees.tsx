@@ -4,13 +4,13 @@ import { type FiltersT } from '~/server/api/types';
 import TalentTreeGrid from './TalentTreeGrid';
 
 const PublicTrees = async (props: FiltersT) => {
-	const listPublic = await listPublicTalentTrees(props).catch(() => []);
-	if (!listPublic.length) return null;
+	const list = await listPublicTalentTrees(props).catch(() => []);
+	if (!list.length) return null;
 
 	return (
 		<TalentTreeGrid
 			title="Public"
-			list={listPublic.map(s => ({
+			list={list.map(s => ({
 				href: `/tree/${s.id}`,
 				...s
 			}))}

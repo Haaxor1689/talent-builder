@@ -6,7 +6,7 @@ import cls from 'classnames';
 import { cloneDeep } from 'lodash-es';
 import { Link2, Pointer, Replace } from 'lucide-react';
 
-import { EmptyTalent, type TalentFormT } from '~/server/api/types';
+import { Talent, type TalentFormT } from '~/server/api/types';
 import { isEmptyTalent } from '~/utils';
 
 import TalentIcon from '../styled/TalentIcon';
@@ -21,8 +21,8 @@ type Props = {
 };
 
 const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
-	const field = useWatch<TalentFormT, `tree.${number}`>({
-		name: `tree.${i}`
+	const field = useWatch<TalentFormT, `talents.${number}`>({
+		name: `talents.${i}`
 	});
 	const { setValue, getValues } = useFormContext<TalentFormT>();
 
@@ -77,13 +77,13 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 
 	const swapTalents = (lhs: number, rhs: number) => {
 		if (lhs === rhs) return;
-		const cloned = cloneDeep(getValues().tree);
+		const cloned = cloneDeep(getValues().talents);
 
 		const [a, b] = [cloned[lhs], cloned[rhs]];
-		cloned[lhs] = { ...EmptyTalent(), ...b };
-		cloned[rhs] = { ...EmptyTalent(), ...a };
+		cloned[lhs] = { ...Talent.parse({}), ...b };
+		cloned[rhs] = { ...Talent.parse({}), ...a };
 
-		setValue('tree', cloned, {
+		setValue('talents', cloned, {
 			shouldDirty: true,
 			shouldTouch: true
 		});
@@ -117,7 +117,7 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 								<TextButton
 									icon={Link2}
 									onClick={() => {
-										setValue(`tree.${selected}.requires`, i, {
+										setValue(`talents.${selected}.requires`, i, {
 											shouldDirty: true,
 											shouldTouch: true
 										});
@@ -154,17 +154,21 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 				ref={ref}
 				onClick={e => {
 					if (e.shiftKey && editable && selected !== -1) {
-						setValue(`tree.${selected}.requires`, selected === i ? null : i, {
-							shouldDirty: true,
-							shouldTouch: true
-						});
+						setValue(
+							`talents.${selected}.requires`,
+							selected === i ? null : i,
+							{
+								shouldDirty: true,
+								shouldTouch: true
+							}
+						);
 					} else {
 						setSelected(selected === i ? -1 : i);
 					}
 				}}
 				onKeyDown={e => {
 					if (!editable || e.key !== 'Delete') return;
-					setValue(`tree.${selected}`, EmptyTalent(), {
+					setValue(`talents.${selected}`, Talent.parse({}), {
 						shouldDirty: true,
 						shouldTouch: true
 					});

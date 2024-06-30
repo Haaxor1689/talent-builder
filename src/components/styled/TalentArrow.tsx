@@ -13,9 +13,7 @@ const TalentArrow = ({ start, end, highlighted }: Props) => {
 	const [x2, y2] = getXY(end);
 
 	const url = (name: string) =>
-		`url("https://wow.zamimg.com/images/TalentCalc/arrows/${name}${
-			highlighted ? '2' : ''
-		}.png")`;
+		`url("/arrows/${name}${highlighted ? '2' : ''}.png")`;
 
 	if (y1 > y2)
 		return (

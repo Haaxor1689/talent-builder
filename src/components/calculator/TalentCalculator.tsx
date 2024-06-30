@@ -5,7 +5,6 @@ import { useMemo } from 'react';
 import cls from 'classnames';
 
 import {
-	EmptySavedBuild,
 	BuildForm,
 	type BuildFormT,
 	type TalentFormT
@@ -36,14 +35,14 @@ const PointsSpent = () => {
 };
 
 type Props = {
-	defaultValues?: BuildFormT;
+	defaultValues?: Partial<BuildFormT>;
 	trees: [TalentFormT?, TalentFormT?, TalentFormT?];
 	isNew?: boolean;
 };
 
 const TalentCalculator = ({ trees, isNew, ...props }: Props) => {
 	const defaultValues = useMemo(
-		() => BuildForm.parse(props.defaultValues ?? EmptySavedBuild()),
+		() => BuildForm.parse(props.defaultValues ?? {}),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[]
 	);

@@ -2,7 +2,7 @@ import { useCallback, useEffect } from 'react';
 import { useWatch } from 'react-hook-form';
 import { usePathname, useSearchParams } from 'next/navigation';
 
-import { EmptySavedBuild, type BuildFormT } from '~/server/api/types';
+import { BuildForm, type BuildFormT } from '~/server/api/types';
 
 const UrlSync = ({
 	defaultValues,
@@ -39,7 +39,7 @@ const UrlSync = ({
 
 		const t = serializePoints(points);
 		const defaultPoints = serializePoints(
-			defaultValues?.points ?? EmptySavedBuild().points
+			defaultValues?.points ?? BuildForm.parse({}).points
 		);
 
 		replaceUrl('t', isNew || t !== defaultPoints, t);

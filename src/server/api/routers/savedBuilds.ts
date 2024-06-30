@@ -1,6 +1,6 @@
 'use server';
 
-import { desc, eq } from 'drizzle-orm';
+import { asc, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { revalidateTag } from 'next/cache';
 import { omit } from 'lodash-es';
@@ -73,7 +73,7 @@ export const listTurtleSavedBuilds = publicProcedure({
 	query: async ({ db }) => {
 		const turtleAccId = await turtleWoWAccountId(undefined);
 		return db.query.savedBuilds.findMany({
-			orderBy: [desc(savedBuilds.class)],
+			orderBy: [asc(savedBuilds.class)],
 			where: eq(savedBuilds.createdById, turtleAccId),
 			with: { createdBy: true }
 		});
@@ -83,7 +83,7 @@ export const listTurtleSavedBuilds = publicProcedure({
 export const listPersonalSavedBuilds = protectedProcedure({
 	query: async ({ db, session }) =>
 		db.query.savedBuilds.findMany({
-			orderBy: [desc(savedBuilds.class)],
+			orderBy: [asc(savedBuilds.class)],
 			where: eq(savedBuilds.createdById, session.user.id),
 			with: { createdBy: true }
 		})

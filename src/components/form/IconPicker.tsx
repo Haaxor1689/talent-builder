@@ -65,6 +65,16 @@ const IconPicker = ({ name, required, disabled }: Props) => {
 							name="wowhead"
 							value={wowhead}
 							onChange={e => setWowhead((e.target as HTMLInputElement).value)}
+							onKeyDownCapture={e => {
+								if (e.key !== 'Enter') return;
+								e.preventDefault();
+								e.stopPropagation();
+
+								field.onChange(`_${wowhead}`);
+								setWowhead('');
+								close();
+								return false;
+							}}
 							icon={HelpCircle}
 							onIconClick={() => {
 								// Open wowhead in new tab

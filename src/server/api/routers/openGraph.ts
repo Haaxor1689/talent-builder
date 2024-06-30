@@ -25,7 +25,7 @@ export const getOgInfo = publicProcedure({
 		return {
 			icon: talentTree.icon,
 			name: talentTree.name,
-			sum: getTalentSum(talentTree.tree),
+			sum: getTalentSum(talentTree.talents),
 			user: { name, image }
 		};
 	}

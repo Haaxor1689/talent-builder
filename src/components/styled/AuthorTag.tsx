@@ -9,7 +9,7 @@ const AuthorTag = ({ image, name, isAdmin }: Props) => (
 		<div
 			className="size-7 rounded-full bg-contain"
 			style={{
-				backgroundImage: `url(${image})`
+				backgroundImage: `url(${image}), url(https://cdn.discordapp.com/embed/avatars/0.png)`
 			}}
 		/>
 		<span className={isAdmin ? 'font-semibold text-green' : undefined}>

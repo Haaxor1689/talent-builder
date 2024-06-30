@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import TalentBuilder from '~/components/builder/TalentBuilder';
 import { getTalentTree } from '~/server/api/routers/talentTree';
 import { getOgInfo } from '~/server/api/routers/openGraph';
+import { getIconPath } from '~/utils';
 import { env } from '~/env';
 
 export type PageProps = {
@@ -15,7 +16,7 @@ export const generateMetadata = async ({ params }: PageProps) => {
 	return {
 		title: `${info.name} | Talent Builder`,
 		description: `Talent tree created by ${info.user.name}`,
-		icons: [{ rel: 'icon', url: `${env.DEPLOY_URL}/api/icon/${info.icon}` }]
+		icons: [{ rel: 'icon', url: env.DEPLOY_URL + getIconPath(info.icon) }]
 	};
 };
 

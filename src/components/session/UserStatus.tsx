@@ -2,11 +2,12 @@
 
 import cls from 'classnames';
 import { useSession } from 'next-auth/react';
+import { Settings } from 'lucide-react';
 
 import Spinner from '../styled/Spinner';
+import TextButton from '../styled/TextButton';
 
 import SignInOut from './SignInOut';
-import AdminPanel from './AdminPanel';
 
 const UserStatus = () => {
 	const session = useSession();
@@ -25,10 +26,19 @@ const UserStatus = () => {
 				</span>
 				<div
 					className="size-8 rounded-full bg-contain"
-					style={{ backgroundImage: `url(${session.data?.user.image})` }}
+					style={{
+						backgroundImage: `url(${session.data?.user.image}), url(https://cdn.discordapp.com/embed/avatars/0.png)`
+					}}
 				/>
 			</div>
-			{session.data?.user.isAdmin && <AdminPanel />}
+			{session.data?.user.isAdmin && (
+				<TextButton
+					icon={Settings}
+					title="Admin panel"
+					type="link"
+					href="/admin"
+				/>
+			)}
 			<SignInOut signedIn />
 		</>
 	);
