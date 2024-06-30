@@ -1,11 +1,10 @@
 'use server';
 
 import { eq } from 'drizzle-orm';
-import { stringify, parse } from 'superjson';
+import { stringify } from 'superjson';
 import { nanoid } from 'nanoid';
 import { type SQLiteTableWithColumns } from 'drizzle-orm/sqlite-core';
 import { z } from 'zod';
-import { revalidateTag } from 'next/cache';
 
 import {
 	accounts,
@@ -90,10 +89,16 @@ export const importTable = adminProcedure({
 	query: async ({ input, db }) => {
 		if (!TABLES[input.table] || !input.data) return;
 		const table = TABLES[input.table];
-		const values = parse<unknown[]>(input.data);
-		if (!values.length) return;
+		const values = JSON.parse(input.data);
+		if (!values?.length) throw new Error('Invalid data');
 		await db.delete(table);
-		await db.insert(table).values(values);
+		await db.insert(table).values(
+			values.map(v => ({
+				...v,
+				createdAt: 'createdAt' in v ? new Date(v.createdAt) : undefined,
+				updatedAt: 'updatedAt' in v ? new Date(v.updatedAt) : undefined
+			}))
+		);
 	}
 });
 

@@ -3,8 +3,6 @@ import { ImageResponse } from 'next/og';
 
 import { env } from '~/env';
 
-export const dynamic = 'force-static';
-
 export const GET = async (
 	_: NextRequest,
 	{ params }: { params: { id: string } }
