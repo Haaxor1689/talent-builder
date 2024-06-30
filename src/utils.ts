@@ -64,5 +64,5 @@ export const topNavigation = [
 
 export const getIconPath = (icon?: string) =>
 	icon?.startsWith('_')
-		? `/api/wowhead-icons/${icon}`
-		: `/icons/${icon ?? 'inv_misc_questionmark'}.png`;
+		? `/api/wowhead-icons/${icon.toLocaleLowerCase()}`
+		: `/icons/${icon?.toLocaleLowerCase() ?? 'inv_misc_questionmark'}.png`;
