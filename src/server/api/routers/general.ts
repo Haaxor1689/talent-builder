@@ -89,14 +89,15 @@ export const importTable = adminProcedure({
 	query: async ({ input, db }) => {
 		if (!TABLES[input.table] || !input.data) return;
 		const table = TABLES[input.table];
-		const values = JSON.parse(input.data);
+		const values = JSON.parse(input.data) as (typeof table)['$inferSelect'][];
 		if (!values?.length) throw new Error('Invalid data');
 		await db.delete(table);
 		await db.insert(table).values(
 			values.map(v => ({
 				...v,
 				createdAt: 'createdAt' in v ? new Date(v.createdAt) : undefined,
-				updatedAt: 'updatedAt' in v ? new Date(v.updatedAt) : undefined
+				updatedAt:
+					'updatedAt' in v && v.updatedAt ? new Date(v.updatedAt) : undefined
 			}))
 		);
 	}
