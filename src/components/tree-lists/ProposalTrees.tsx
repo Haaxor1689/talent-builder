@@ -4,7 +4,7 @@ import { type FiltersT } from '~/server/api/types';
 import TalentTreeGrid from './TalentTreeGrid';
 
 const ProposalTrees = async (props: FiltersT) => {
-	const list = await listProposalTalentTrees(props);
+	const list = await listProposalTalentTrees(props).catch(() => []);
 
 	if (!list.length) return null;
 
