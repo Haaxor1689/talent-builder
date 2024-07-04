@@ -6,6 +6,7 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { Minus, Plus } from 'lucide-react';
 
 import { type BuildFormT, type TalentFormT } from '~/server/api/types';
+import useIsMobile from '~/hooks/useIsMobile';
 
 import TalentIcon from '../styled/TalentIcon';
 import Tooltip from '../styled/Tooltip';
@@ -19,6 +20,7 @@ type Props = TalentFormT['talents'][number] & {
 
 const TalentPreview = ({ i, idx, talents, ...field }: Props) => {
 	const ref = useRef<HTMLButtonElement>(null);
+	const isMobile = useIsMobile();
 
 	const { setValue } = useFormContext<BuildFormT>();
 
@@ -133,6 +135,7 @@ const TalentPreview = ({ i, idx, talents, ...field }: Props) => {
 	}, [field.description, field.ranks, value]);
 
 	const setPoints = (diff: number) => {
+		if (disabled) return;
 		if (diff < 0 && cantSubtract) return;
 		if (diff > 0 && noPointsLeft) return;
 		setValue(
@@ -182,15 +185,15 @@ const TalentPreview = ({ i, idx, talents, ...field }: Props) => {
 				value={value}
 				ranks={noPointsLeft && value === 0 ? undefined : field.ranks}
 				clickable={!disabled}
-				onClick={
-					!disabled
-						? e => {
-								e.preventDefault();
-								setPoints(e.button === 0 ? 1 : -1);
-						  }
-						: undefined
-				}
-				onContextMenu={e => e.preventDefault()}
+				onClick={e => {
+					e.preventDefault();
+					setPoints(1);
+				}}
+				onContextMenu={e => {
+					e.preventDefault();
+					if (isMobile) return;
+					setPoints(-1);
+				}}
 				arrow={
 					!field.requires && field.requires !== 0
 						? undefined

@@ -12,6 +12,8 @@ import {
 } from 'react';
 import { X } from 'lucide-react';
 
+import useIsMobile from '~/hooks/useIsMobile';
+
 import TextButton from './TextButton';
 
 const PADDING = 8;
@@ -33,7 +35,7 @@ const Tooltip = ({
 	hideMobile = hide,
 	offset = 20
 }: Props) => {
-	const [isMobile, setIsMobile] = useState(false);
+	const isMobile = useIsMobile();
 	const [open, setOpen] = useState(false);
 
 	const [mouse, setMouse] = useState<Record<'x' | 'y', number>>();
@@ -46,7 +48,6 @@ const Tooltip = ({
 
 	useEffect(() => {
 		if (typeof window === 'undefined') return;
-		setIsMobile(window.innerWidth < 768);
 
 		const elem = tooltipRef.current;
 		if (!elem) return;
