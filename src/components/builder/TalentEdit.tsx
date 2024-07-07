@@ -105,14 +105,14 @@ const TalentEdit = ({ selected, editable }: Props) => {
 				)}
 			</div>
 
+			<CheckboxInput
+				name={`talents.${selected}.highlight`}
+				label="Highlight change"
+				disabled={!editable}
+			/>
+
 			{session.data?.user.isAdmin && (
 				<>
-					<CheckboxInput
-						name={`talents.${selected}.highlight`}
-						label="Highlight change"
-						disabled={!editable}
-					/>
-
 					<Input
 						{...register(`talents.${selected}.spellIds`)}
 						label="Spell Ids"
