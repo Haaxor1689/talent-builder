@@ -4,7 +4,7 @@ import { zodResolver as resolver } from '@hookform/resolvers/zod';
 import { isEqual } from 'lodash-es';
 import { PlusCircle, Workflow } from 'lucide-react';
 
-import { Talent, type TalentFormT, type TalentTreeT } from '~/server/api/types';
+import { type TalentFormT, type TalentTreeT } from '~/server/api/types';
 
 export const zodResolver = <In extends FieldValues, Out extends FieldValues>(
 	schema: z.ZodType<In, z.ZodTypeDef, Out>
@@ -38,7 +38,9 @@ export const getTalentSum = (talentTree: TalentTreeT) =>
 	talentTree.reduce((p, n) => p + ((n?.ranks ?? 0) || 0), 0);
 
 export const isEmptyTalent = (talent?: TalentFormT['talents'][number]) =>
-	!talent || isEqual(talent, {}) || isEqual(talent, Talent.parse({}));
+	!talent ||
+	isEqual(talent, {}) ||
+	(!talent.name && !talent.description && !talent.ranks);
 
 export const classMask = {
 	1: { name: 'Warrior', icon: 'class_warrior', color: '#C79C6E' },
@@ -65,4 +67,5 @@ export const topNavigation = [
 export const getIconPath = (icon?: string) =>
 	icon?.startsWith('_')
 		? `/api/wowhead-icons/${icon.toLocaleLowerCase()}`
-		: `/icons/${icon?.toLocaleLowerCase() ?? 'inv_misc_questionmark'}.png`;
+		: // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+		  `/icons/${(icon || 'inv_misc_questionmark').toLocaleLowerCase()}.png`;
