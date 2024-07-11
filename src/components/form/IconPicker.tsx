@@ -19,12 +19,16 @@ type Props = {
 };
 
 const IconPicker = ({ name, required, disabled }: Props) => {
-	const [filter, setFilter] = useState('');
-	const [wowhead, setWowhead] = useState('');
+	const { field } = useController({ name });
+
+	const [filter, setFilter] = useState(
+		field.value.startsWith('_') ? '' : field.value
+	);
+	const [wowhead, setWowhead] = useState(
+		field.value.startsWith('_') ? field.value.slice(1) : ''
+	);
 
 	const debouncedFilter = useDebounced(filter);
-
-	const { field } = useController({ name });
 
 	return (
 		<DialogButton
@@ -36,6 +40,7 @@ const IconPicker = ({ name, required, disabled }: Props) => {
 							value={filter}
 							icon={ListFilter}
 							onChange={e => setFilter((e.target as HTMLInputElement).value)}
+							className="grow"
 						/>
 					</div>
 
@@ -92,6 +97,7 @@ const IconPicker = ({ name, required, disabled }: Props) => {
 					icon={field.value}
 					showDefault
 					onClick={!disabled ? open : undefined}
+					title={field.value}
 				/>
 			)}
 		</DialogButton>
