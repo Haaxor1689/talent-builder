@@ -111,17 +111,10 @@ const TalentEdit = ({ selected, editable }: Props) => {
 				disabled={!editable}
 			/>
 
-			{session.data?.user.isAdmin && (
-				<>
-					<Input
-						{...register(`talents.${selected}.spellIds`)}
-						label="Spell Ids"
-					/>
-					<span className="-mt-2 text-sm text-blueGray">
-						Comma separated list of spell ids for each rank
-					</span>
-				</>
-			)}
+			<Input {...register(`talents.${selected}.spellIds`)} label="Spell Ids" />
+			<span className="-mt-2 text-sm text-blueGray">
+				Comma separated list of spell ids for each rank
+			</span>
 		</div>
 	);
 };
