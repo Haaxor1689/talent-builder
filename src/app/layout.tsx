@@ -38,7 +38,7 @@ const RootLayout = async ({ children }: Props) => (
 		>
 			<div
 				className="pointer-events-none fixed left-1/2 top-0 -z-10 aspect-video w-full min-w-[1024px] -translate-x-1/2 bg-cover bg-top bg-no-repeat"
-				style={{ backgroundImage: 'url("/page_background.png")' }}
+				style={{ backgroundImage: 'url("/page_background_min.png")' }}
 			/>
 			<Providers>
 				<Header />

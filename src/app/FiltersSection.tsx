@@ -25,8 +25,6 @@ const FiltersSection = (defaultValues: FiltersT) => {
 	const values = useDebounced(watch());
 	useEffect(() => {
 		const params = new URLSearchParams();
-		params.set('f', '');
-
 		if (values.name) params.set('name', values.name);
 		if (values.from) params.set('from', values.from);
 		if (values.class) params.set('class', values.class.toString());

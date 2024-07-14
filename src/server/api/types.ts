@@ -44,9 +44,9 @@ export const TalentForm = z.object({
 export type TalentFormT = z.infer<typeof TalentForm>;
 
 export const Filters = z.object({
-	name: z.string().default(''),
-	from: z.string().default(''),
-	class: z.coerce.number().default(0)
+	name: z.string().optional().default(''),
+	from: z.string().optional().default(''),
+	class: z.coerce.number().optional().default(0)
 });
 export type FiltersT = z.infer<typeof Filters>;
 
