@@ -18,11 +18,11 @@ const IconGrid = ({ filter, required, icon, setIcon }: Props) => {
 		queryKey: ['icons', filter],
 		queryFn: async ({ pageParam }) => {
 			const response = await fetch('/icons/list.json');
-			const data: string[] = await response.json();
+			const data: [number, string][] = await response.json();
 			if (!data || !Array.isArray(data))
 				throw new Error('Failed to fetch icons');
 
-			const filtered = filter ? data.filter(v => v.includes(filter)) : data;
+			const filtered = filter ? data.filter(v => v[1].includes(filter)) : data;
 			const nextCursor = pageParam + 64;
 			return { items: filtered.slice(pageParam, nextCursor), nextCursor };
 		},
@@ -60,13 +60,14 @@ const IconGrid = ({ filter, required, icon, setIcon }: Props) => {
 			)}
 
 			{icons.data?.pages.map((page, index) => (
-				<Fragment key={page.items[0] ?? index}>
+				<Fragment key={page.items[0]?.[1] ?? index}>
 					{page.items.map(item => (
 						<TalentIcon
-							key={item}
-							icon={item}
-							selected={icon === item}
-							onClick={() => setIcon(item)}
+							key={item[1]}
+							icon={item[1]}
+							selected={icon === item[1]}
+							onClick={() => setIcon(item[1])}
+							title={`#${item[0]} ${item[1]}`}
 						/>
 					))}
 				</Fragment>

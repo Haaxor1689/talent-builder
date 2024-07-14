@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { HelpCircle, ListFilter } from 'lucide-react';
 import { useController } from 'react-hook-form';
+import { useQuery } from '@tanstack/react-query';
 
 import useDebounced from '~/hooks/useDebounced';
 
@@ -19,16 +20,29 @@ type Props = {
 };
 
 const IconPicker = ({ name, required, disabled }: Props) => {
+	const query = useQuery({
+		queryKey: ['icons'],
+		queryFn: async () => {
+			const response = await fetch('/icons/list.json');
+			const data: [number, string][] = await response.json();
+			if (!data || !Array.isArray(data))
+				throw new Error('Failed to fetch icons');
+			return data;
+		}
+	});
+
 	const { field } = useController({ name });
 
 	const [filter, setFilter] = useState(
-		field.value.startsWith('_') ? '' : field.value
+		field.value.startsWith('_') ? '' : field.value.toLowerCase()
 	);
 	const [wowhead, setWowhead] = useState(
 		field.value.startsWith('_') ? field.value.slice(1) : ''
 	);
 
 	const debouncedFilter = useDebounced(filter);
+
+	const item = query.data?.find(([, i]) => i === field.value);
 
 	return (
 		<DialogButton
@@ -97,7 +111,9 @@ const IconPicker = ({ name, required, disabled }: Props) => {
 					icon={field.value}
 					showDefault
 					onClick={!disabled ? open : undefined}
-					title={field.value}
+					title={
+						item ? `#${item[0]} ${item[1]}` : `#wowhead ${field.value.slice(1)}`
+					}
 				/>
 			)}
 		</DialogButton>
