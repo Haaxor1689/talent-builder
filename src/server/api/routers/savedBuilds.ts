@@ -55,6 +55,7 @@ export const upsertSavedBuild = protectedProcedure({
 		}
 
 		revalidateTag(getFullTag('getSavedBuild', input.id));
+		revalidateTag(getQueryTag('listPersonalSavedBuilds'));
 
 		const build = await db.query.savedBuilds.findFirst({
 			where: eq(savedBuilds.id, input.id)
@@ -81,6 +82,8 @@ export const listTurtleSavedBuilds = publicProcedure({
 });
 
 export const listPersonalSavedBuilds = protectedProcedure({
+	sessionType: 'user',
+	queryKey: 'listPersonalSavedBuilds',
 	query: async ({ db, session }) =>
 		db.query.savedBuilds.findMany({
 			orderBy: [asc(savedBuilds.class)],
