@@ -7,7 +7,7 @@ import { type BuildFormT, type TalentFormT } from '~/server/api/types';
 import { isEmptyTalent } from '~/utils';
 
 import TextButton from '../styled/TextButton';
-import TalentIcon from '../styled/TalentIcon';
+import SpellIcon from '../styled/SpellIcon';
 import DialogButton from '../styled/DialogButton';
 
 import TalentPreview from './TalentPreview';
@@ -50,7 +50,7 @@ const TalentSpec = ({ idx, value }: Props) => {
 	return (
 		<div className="flex flex-col gap-3">
 			<div className="flex items-center gap-2 px-4">
-				<TalentIcon icon={value.icon} className="size-8" />
+				<SpellIcon icon={value.icon} className="size-8" />
 				<span className="h4 grow truncate" title={value.name}>
 					{value.name}
 				</span>

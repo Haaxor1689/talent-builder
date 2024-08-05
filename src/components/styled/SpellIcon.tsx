@@ -22,7 +22,7 @@ type Props = React.DetailedHTMLProps<
 	highlighted?: boolean;
 };
 
-const TalentIcon = forwardRef<HTMLButtonElement, Props>(
+const SpellIcon = forwardRef<HTMLButtonElement, Props>(
 	(
 		{
 			icon,
@@ -120,4 +120,4 @@ const TalentIcon = forwardRef<HTMLButtonElement, Props>(
 	}
 );
 
-export default TalentIcon;
+export default SpellIcon;

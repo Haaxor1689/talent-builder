@@ -13,7 +13,7 @@ import { listInfiniteTalentTrees } from '~/server/api/routers/talentTree';
 import { Filters } from '~/server/api/types';
 import useDebounced from '~/hooks/useDebounced';
 
-import TalentIcon from '../styled/TalentIcon';
+import SpellIcon from '../styled/SpellIcon';
 import DialogButton from '../styled/DialogButton';
 import Input from '../form/Input';
 import ClassPicker from '../form/ClassPicker';
@@ -80,11 +80,7 @@ const GridItem = ({ idx, close, ...item }: Item) => {
 					{classInfo && (
 						<p className="flex items-center gap-1 text-blueGray">
 							Class:{' '}
-							<TalentIcon
-								icon={classInfo.icon}
-								showDefault
-								className="size-6"
-							/>{' '}
+							<SpellIcon icon={classInfo.icon} showDefault className="size-6" />{' '}
 							<span style={{ color: classInfo.color }}>{classInfo.name}</span>
 						</p>
 					)}
@@ -108,10 +104,10 @@ const GridItem = ({ idx, close, ...item }: Item) => {
 				onClick={close}
 			>
 				<div className="relative flex shrink-0 items-center">
-					<TalentIcon icon={item.icon} showDefault className="cursor-pointer" />
+					<SpellIcon icon={item.icon} showDefault className="cursor-pointer" />
 					{classInfo && (
 						<div className="pointer-events-none absolute -bottom-4 -right-2">
-							<TalentIcon icon={classInfo.icon} className="size-6" />
+							<SpellIcon icon={classInfo.icon} className="size-6" />
 						</div>
 					)}
 				</div>

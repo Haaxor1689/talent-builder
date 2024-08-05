@@ -9,7 +9,7 @@ import { Link2, Pointer, Replace } from 'lucide-react';
 import { Talent, type TalentFormT } from '~/server/api/types';
 import { isEmptyTalent } from '~/utils';
 
-import TalentIcon from '../styled/TalentIcon';
+import SpellIcon from '../styled/SpellIcon';
 import Tooltip from '../styled/Tooltip';
 import TextButton from '../styled/TextButton';
 
@@ -150,7 +150,7 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 				)
 			}
 		>
-			<TalentIcon
+			<SpellIcon
 				ref={ref}
 				onClick={e => {
 					if (e.shiftKey && editable && selected !== -1) {

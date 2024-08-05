@@ -4,7 +4,7 @@ import { Suspense } from 'react';
 import PersonalBuilds from '~/components/builds-lists/PersonalBuilds';
 import TurtleBuilds from '~/components/builds-lists/TurtleBuilds';
 import Spinner from '~/components/styled/Spinner';
-import TalentIcon from '~/components/styled/TalentIcon';
+import SpellIcon from '~/components/styled/TalentIcon';
 
 const Page = () => (
 	<>
@@ -17,7 +17,7 @@ const Page = () => (
 				href="/calculator/custom"
 				className="tw-hocus flex shrink-0 items-center gap-3 p-2"
 			>
-				<TalentIcon showDefault className="shrink-0 cursor-pointer" />
+				<SpellIcon showDefault className="shrink-0 cursor-pointer" />
 				<div className="flex flex-col gap-1 text-inherit">
 					<p className="truncate text-lg text-inherit">Custom</p>
 					<div className="flex items-center gap-1.5 truncate text-blueGray">

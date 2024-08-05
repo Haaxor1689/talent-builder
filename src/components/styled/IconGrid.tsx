@@ -3,8 +3,8 @@
 import { Fragment, useEffect, useRef } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
-import TalentIcon from '../styled/TalentIcon';
-import Spinner from '../styled/Spinner';
+import SpellIcon from './SpellIcon';
+import Spinner from './Spinner';
 
 type Props = {
 	filter?: string;
@@ -56,13 +56,13 @@ const IconGrid = ({ filter, required, icon, setIcon }: Props) => {
 			)}
 
 			{!required && !icons.isLoading && (
-				<TalentIcon showDefault selected={!icon} onClick={() => setIcon('')} />
+				<SpellIcon showDefault selected={!icon} onClick={() => setIcon('')} />
 			)}
 
 			{icons.data?.pages.map((page, index) => (
 				<Fragment key={page.items[0]?.[1] ?? index}>
 					{page.items.map(item => (
-						<TalentIcon
+						<SpellIcon
 							key={item[1]}
 							icon={item[1]}
 							selected={icon === item[1]}

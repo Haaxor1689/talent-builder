@@ -8,7 +8,7 @@ import { Minus, Plus } from 'lucide-react';
 import { type BuildFormT, type TalentFormT } from '~/server/api/types';
 import useIsMobile from '~/hooks/useIsMobile';
 
-import TalentIcon from '../styled/TalentIcon';
+import SpellIcon from '../styled/SpellIcon';
 import Tooltip from '../styled/Tooltip';
 import TextButton from '../styled/TextButton';
 
@@ -179,7 +179,7 @@ const TalentPreview = ({ i, idx, talents, ...field }: Props) => {
 				)
 			}
 		>
-			<TalentIcon
+			<SpellIcon
 				ref={ref}
 				icon={field.icon}
 				value={value}

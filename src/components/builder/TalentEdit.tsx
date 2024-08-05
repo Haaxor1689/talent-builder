@@ -11,7 +11,7 @@ import Input from '../form/Input';
 import Textarea from '../form/Textarea';
 import TextButton from '../styled/TextButton';
 import CheckboxInput from '../form/CheckboxInput';
-import TalentIcon from '../styled/TalentIcon';
+import SpellIcon from '../styled/SpellIcon';
 
 const RequiredTalent = ({
 	selected,
@@ -27,7 +27,7 @@ const RequiredTalent = ({
 	if (!requires) return null;
 	return (
 		<div className="flex items-center gap-3">
-			<TalentIcon icon={requires.icon} className="!size-12" showDefault />
+			<SpellIcon icon={requires.icon} className="!size-12" showDefault />
 			<p className="tw-color grow font-bold">
 				{/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
 				{requires.name || '[Unnamed talent]'}

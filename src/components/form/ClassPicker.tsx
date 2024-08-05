@@ -7,7 +7,7 @@ import { X } from 'lucide-react';
 import { maskToClass, classMask } from '~/utils';
 
 import DialogButton from '../styled/DialogButton';
-import TalentIcon from '../styled/TalentIcon';
+import SpellIcon from '../styled/SpellIcon';
 import TextButton from '../styled/TextButton';
 
 type Props = {
@@ -47,7 +47,7 @@ const ClassPicker = ({
 						style={{ gridTemplateColumns: 'repeat(3, 64px)' }}
 					>
 						{Object.entries(classMask).map(([mask, classInfo]) => (
-							<TalentIcon
+							<SpellIcon
 								key={mask}
 								icon={classInfo.icon}
 								selected={field.value === Number(mask)}
@@ -90,7 +90,7 @@ const ClassPicker = ({
 						}
 					)}
 				>
-					<TalentIcon
+					<SpellIcon
 						icon={classInfo?.icon}
 						showDefault
 						className={cls('cursor-pointer', large ? 'size-12' : 'size-8')}

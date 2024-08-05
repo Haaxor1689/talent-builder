@@ -8,10 +8,10 @@ import { useQuery } from '@tanstack/react-query';
 import useDebounced from '~/hooks/useDebounced';
 
 import DialogButton from '../styled/DialogButton';
-import TalentIcon from '../styled/TalentIcon';
+import SpellIcon from '../styled/SpellIcon';
+import IconGrid from '../styled/IconGrid';
 
 import Input from './Input';
-import IconGrid from './IconGrid';
 
 type Props = {
 	name: string;
@@ -107,7 +107,7 @@ const IconPicker = ({ name, required, disabled }: Props) => {
 			clickAway
 		>
 			{open => (
-				<TalentIcon
+				<SpellIcon
 					icon={field.value}
 					showDefault
 					onClick={!disabled ? open : undefined}

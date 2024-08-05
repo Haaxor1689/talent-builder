@@ -6,7 +6,7 @@ import { Workflow } from 'lucide-react';
 import { type savedBuilds, type users } from '~/server/db/schema';
 import { getLastUpdatedString, maskToClass } from '~/utils';
 
-import TalentIcon from '../styled/TalentIcon';
+import SpellIcon from '../styled/SpellIcon';
 import Tooltip from '../styled/Tooltip';
 import AuthorTag from '../styled/AuthorTag';
 import TextButton from '../styled/TextButton';
@@ -54,7 +54,7 @@ const GridItem = (item: Item) => {
 				className="tw-hocus -mb-2 flex items-center gap-3 p-2"
 				prefetch={false}
 			>
-				<TalentIcon
+				<SpellIcon
 					icon={classInfo?.icon}
 					showDefault
 					className="shrink-0 cursor-pointer"
