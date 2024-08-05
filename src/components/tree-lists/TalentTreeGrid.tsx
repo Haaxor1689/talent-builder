@@ -96,28 +96,18 @@ const GridItem = (item: Item) => {
 };
 
 type Props = {
-	title: string;
 	list: Item[];
 };
 
-const TalentTreeGrid = ({ title, list }: Props) => (
-	<div className="flex flex-col items-stretch gap-2 md:flex-row">
-		<h3
-			className="tw-color hidden py-3 md:block"
-			style={{ textOrientation: 'mixed', writingMode: 'vertical-rl' }}
+const TalentTreeGrid = ({ list }: Props) => (
+	<div className="tw-surface grow p-2 md:p-4">
+		<div
+			className="grid items-start gap-3"
+			style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}
 		>
-			{title}
-		</h3>
-		<h3 className="tw-color px-2 md:hidden">{title}</h3>
-		<div className="tw-surface grow p-2 md:p-4">
-			<div
-				className="grid items-start gap-3"
-				style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}
-			>
-				{list.map(item => (
-					<GridItem key={item.href} {...item} />
-				))}
-			</div>
+			{list.map(item => (
+				<GridItem key={item.href} {...item} />
+			))}
 		</div>
 	</div>
 );

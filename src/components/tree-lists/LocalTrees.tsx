@@ -7,6 +7,8 @@ import { type FiltersT } from '~/server/api/types';
 import Spinner from '~/components/styled/Spinner';
 import useLocalTrees from '~/hooks/useLocalTrees';
 
+import NoResults from '../NoResults';
+
 import TalentTreeGrid from './TalentTreeGrid';
 
 type Props = FiltersT & {
@@ -22,11 +24,10 @@ const LocalTrees = ({ serverList, name, from, class: classId }: Props) => {
 		return <Spinner className="self-center" />;
 
 	if (!serverList.length && !Object.values(savedSpecs ?? {}).length)
-		return null;
+		return <NoResults />;
 
 	return (
 		<TalentTreeGrid
-			title="Personal"
 			list={[
 				...serverList,
 				...Object.values(savedSpecs ?? {})

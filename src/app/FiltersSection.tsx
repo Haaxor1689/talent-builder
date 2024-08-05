@@ -24,10 +24,13 @@ const FiltersSection = (defaultValues: FiltersT) => {
 
 	const values = useDebounced(watch());
 	useEffect(() => {
-		const params = new URLSearchParams();
+		const params = new URLSearchParams(searchParams.toString());
 		if (values.name) params.set('name', values.name);
+		else params.delete('name');
 		if (values.from) params.set('from', values.from);
+		else params.delete('from');
 		if (values.class) params.set('class', values.class.toString());
+		else params.delete('class');
 
 		if (searchParams.toString() === params.toString()) return;
 		router.push(`${window.location.origin}${pathname}?${params.toString()}`);
@@ -35,10 +38,8 @@ const FiltersSection = (defaultValues: FiltersT) => {
 
 	return (
 		<FormProvider {...formProps}>
-			<div className="flex flex-col items-stretch gap-2 md:flex-row">
-				<div className="px-2 md:px-0">
-					<ListFilter size={38} className="text-orange" />
-				</div>
+			<div className="flex flex-row items-stretch gap-2">
+				<ListFilter size={38} className="w-[41px] shrink-0 text-orange" />
 				<form className="tw-surface flex grow flex-col items-stretch gap-2 md:flex-row md:items-center md:p-4">
 					<Input
 						{...register('name')}

@@ -58,7 +58,8 @@ export const CalculatorParams = z.object({
 		.string()
 		.regex(/^\d*-\d*-\d*$/)
 		.optional(),
-	c: z.coerce.number().optional()
+	c: z.coerce.number().optional(),
+	tab: z.string().optional()
 });
 
 export type CalculatorParamsT = z.infer<typeof CalculatorParams>;

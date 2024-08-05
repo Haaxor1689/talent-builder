@@ -7,6 +7,7 @@ import Spinner from '~/components/styled/Spinner';
 import PublicTrees from '~/components/tree-lists/PublicTrees';
 import TurtleTrees from '~/components/tree-lists/TurtleTrees';
 import ProposalTrees from '~/components/tree-lists/ProposalTrees';
+import Tabs from '~/components/Tabs';
 
 import FiltersSection from './FiltersSection';
 
@@ -19,19 +20,26 @@ const Home = async ({ searchParams }: { searchParams: FiltersT }) => {
 			<FiltersSection {...params.data} />
 
 			<Suspense fallback={<Spinner className="my-6 self-center" />}>
-				<PersonalTrees {...params.data} />
-			</Suspense>
-
-			<Suspense fallback={<Spinner className="my-6 self-center" />}>
-				<PublicTrees {...params.data} />
-			</Suspense>
-
-			<Suspense fallback={<Spinner className="my-6 self-center" />}>
-				<ProposalTrees {...params.data} />
-			</Suspense>
-
-			<Suspense fallback={<Spinner className="my-6 self-center" />}>
-				<TurtleTrees {...params.data} />
+				<Tabs
+					tabs={{
+						turtle: {
+							title: 'Turtle WoW',
+							component: <TurtleTrees {...params.data} />
+						},
+						proposals: {
+							title: 'Proposals',
+							component: <ProposalTrees {...params.data} />
+						},
+						personal: {
+							title: 'Personal',
+							component: <PersonalTrees {...params.data} />
+						},
+						public: {
+							title: 'Public',
+							component: <PublicTrees {...params.data} />
+						}
+					}}
+				/>
 			</Suspense>
 		</>
 	);
