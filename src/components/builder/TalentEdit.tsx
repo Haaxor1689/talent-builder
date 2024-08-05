@@ -2,7 +2,6 @@
 
 import { useFormContext, useWatch } from 'react-hook-form';
 import { Link2Off, Trash2 } from 'lucide-react';
-import { useSession } from 'next-auth/react';
 
 import { Talent, type TalentFormT } from '~/server/api/types';
 
@@ -54,7 +53,6 @@ type Props = {
 };
 
 const TalentEdit = ({ selected, editable }: Props) => {
-	const session = useSession();
 	const { register, setValue } = useFormContext<TalentFormT>();
 	return (
 		<div className="flex w-full flex-col gap-4 md:max-w-md">

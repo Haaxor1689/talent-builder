@@ -4,7 +4,7 @@ import { Suspense } from 'react';
 import PersonalBuilds from '~/components/builds-lists/PersonalBuilds';
 import TurtleBuilds from '~/components/builds-lists/TurtleBuilds';
 import Spinner from '~/components/styled/Spinner';
-import SpellIcon from '~/components/styled/TalentIcon';
+import SpellIcon from '~/components/styled/SpellIcon';
 
 const Page = () => (
 	<>
