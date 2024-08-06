@@ -22,49 +22,49 @@ dependencies:
     version: 0.0.0-insiders.565cd3e(postcss@8.4.38)
   '@tanstack/react-query':
     specifier: ^5.35.5
-    version: 5.35.5(react@19.0.0-beta-04b058868c-20240508)
+    version: 5.35.5(react@19.0.0-rc.0)
   '@vercel/analytics':
     specifier: ^1.2.2
-    version: 1.2.2(next@14.3.0-canary.58)(react@19.0.0-beta-04b058868c-20240508)
+    version: 1.2.2(next@14.3.0-canary.58)(react@19.0.0-rc.0)
   '@vercel/speed-insights':
     specifier: ^1.0.10
-    version: 1.0.10(next@14.3.0-canary.58)(react@19.0.0-beta-04b058868c-20240508)
+    version: 1.0.10(next@14.3.0-canary.58)(react@19.0.0-rc.0)
   classnames:
     specifier: ^2.5.1
     version: 2.5.1
   drizzle-orm:
     specifier: ^0.31.2
-    version: 0.31.2(@libsql/client@0.6.0)(@types/react@18.3.2)(mysql2@3.9.7)(react@19.0.0-beta-04b058868c-20240508)
+    version: 0.31.2(@libsql/client@0.6.0)(@types/react@18.3.2)(mysql2@3.9.7)(react@19.0.0-rc.0)
   lodash-es:
     specifier: ^4.17.21
     version: 4.17.21
   lucide-react:
     specifier: ^0.378.0
-    version: 0.378.0(react@19.0.0-beta-04b058868c-20240508)
+    version: 0.378.0(react@19.0.0-rc.0)
   nanoid:
     specifier: ^5.0.7
     version: 5.0.7
   next:
     specifier: 14.3.0-canary.58
-    version: 14.3.0-canary.58(react-dom@19.0.0-beta-4508873393-20240430)(react@19.0.0-beta-04b058868c-20240508)
+    version: 14.3.0-canary.58(react-dom@19.0.0-beta-4508873393-20240430)(react@19.0.0-rc.0)
   next-auth:
     specifier: 5.0.0-beta.18
-    version: 5.0.0-beta.18(next@14.3.0-canary.58)(react@19.0.0-beta-04b058868c-20240508)
+    version: 5.0.0-beta.18(next@14.3.0-canary.58)(react@19.0.0-rc.0)
   react:
-    specifier: 19.0.0-beta-04b058868c-20240508
-    version: 19.0.0-beta-04b058868c-20240508
+    specifier: 19.0.0-rc.0
+    version: 19.0.0-rc.0
   react-dom:
     specifier: 19.0.0-beta-4508873393-20240430
-    version: 19.0.0-beta-4508873393-20240430(react@19.0.0-beta-04b058868c-20240508)
+    version: 19.0.0-beta-4508873393-20240430(react@19.0.0-rc.0)
   react-hook-form:
     specifier: ^7.51.4
-    version: 7.51.4(react@19.0.0-beta-04b058868c-20240508)
+    version: 7.51.4(react@19.0.0-rc.0)
   react-hot-toast:
     specifier: ^2.4.1
-    version: 2.4.1(csstype@3.1.3)(react-dom@19.0.0-beta-4508873393-20240430)(react@19.0.0-beta-04b058868c-20240508)
+    version: 2.4.1(csstype@3.1.3)(react-dom@19.0.0-beta-4508873393-20240430)(react@19.0.0-rc.0)
   react-textarea-autosize:
     specifier: ^8.5.3
-    version: 8.5.3(@types/react@18.3.2)(react@19.0.0-beta-04b058868c-20240508)
+    version: 8.5.3(@types/react@18.3.2)(react@19.0.0-rc.0)
   server-only:
     specifier: ^0.0.1
     version: 0.0.1
@@ -716,7 +716,7 @@ packages:
     peerDependencies:
       react-hook-form: ^7.0.0
     dependencies:
-      react-hook-form: 7.51.4(react@19.0.0-beta-04b058868c-20240508)
+      react-hook-form: 7.51.4(react@19.0.0-rc.0)
     dev: false
 
   /@humanwhocodes/config-array@0.11.14:
@@ -1246,13 +1246,13 @@ packages:
     resolution: {integrity: sha512-OMWvlEqG01RfGj+XZb/piDzPp0eZkkHWSDHt2LvE/fd1zWburP/xwm0ghk6Iv8cuPlP+ACFkZviKXK0OVt6lhg==}
     dev: false
 
-  /@tanstack/react-query@5.35.5(react@19.0.0-beta-04b058868c-20240508):
+  /@tanstack/react-query@5.35.5(react@19.0.0-rc.0):
     resolution: {integrity: sha512-sppX7L+PVn5GBV3In6zzj0zcKfnZRKhXbX1MfIfKo1OjIq2GMaopvAFOP0x1bRYTUk2ikrdYcQYOozX7PWkb8A==}
     peerDependencies:
       react: ^18.0.0
     dependencies:
       '@tanstack/query-core': 5.35.5
-      react: 19.0.0-beta-04b058868c-20240508
+      react: 19.0.0-rc.0
     dev: false
 
   /@types/cookie@0.6.0:
@@ -1452,7 +1452,7 @@ packages:
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
     dev: true
 
-  /@vercel/analytics@1.2.2(next@14.3.0-canary.58)(react@19.0.0-beta-04b058868c-20240508):
+  /@vercel/analytics@1.2.2(next@14.3.0-canary.58)(react@19.0.0-rc.0):
     resolution: {integrity: sha512-X0rctVWkQV1e5Y300ehVNqpOfSOufo7ieA5PIdna8yX/U7Vjz0GFsGf4qvAhxV02uQ2CVt7GYcrFfddXXK2Y4A==}
     peerDependencies:
       next: '>= 13'
@@ -1463,12 +1463,12 @@ packages:
       react:
         optional: true
     dependencies:
-      next: 14.3.0-canary.58(react-dom@19.0.0-beta-4508873393-20240430)(react@19.0.0-beta-04b058868c-20240508)
-      react: 19.0.0-beta-04b058868c-20240508
+      next: 14.3.0-canary.58(react-dom@19.0.0-beta-4508873393-20240430)(react@19.0.0-rc.0)
+      react: 19.0.0-rc.0
       server-only: 0.0.1
     dev: false
 
-  /@vercel/speed-insights@1.0.10(next@14.3.0-canary.58)(react@19.0.0-beta-04b058868c-20240508):
+  /@vercel/speed-insights@1.0.10(next@14.3.0-canary.58)(react@19.0.0-rc.0):
     resolution: {integrity: sha512-4uzdKB0RW6Ff2FkzshzjZ+RlJfLPxgm/00i0XXgxfMPhwnnsk92YgtqsxT9OcPLdJUyVU1DqFlSWWjIQMPkh0g==}
     requiresBuild: true
     peerDependencies:
@@ -1492,8 +1492,8 @@ packages:
       vue-router:
         optional: true
     dependencies:
-      next: 14.3.0-canary.58(react-dom@19.0.0-beta-4508873393-20240430)(react@19.0.0-beta-04b058868c-20240508)
-      react: 19.0.0-beta-04b058868c-20240508
+      next: 14.3.0-canary.58(react-dom@19.0.0-beta-4508873393-20240430)(react@19.0.0-rc.0)
+      react: 19.0.0-rc.0
     dev: false
 
   /acorn-jsx@5.3.2(acorn@8.11.3):
@@ -2022,7 +2022,7 @@ packages:
       - supports-color
     dev: true
 
-  /drizzle-orm@0.31.2(@libsql/client@0.6.0)(@types/react@18.3.2)(mysql2@3.9.7)(react@19.0.0-beta-04b058868c-20240508):
+  /drizzle-orm@0.31.2(@libsql/client@0.6.0)(@types/react@18.3.2)(mysql2@3.9.7)(react@19.0.0-rc.0):
     resolution: {integrity: sha512-QnenevbnnAzmbNzQwbhklvIYrDE8YER8K7kSrAWQSV1YvFCdSQPzj+jzqRdTSsV2cDqSpQ0NXGyL1G9I43LDLg==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
@@ -2108,7 +2108,7 @@ packages:
       '@libsql/client': 0.6.0
       '@types/react': 18.3.2
       mysql2: 3.9.7
-      react: 19.0.0-beta-04b058868c-20240508
+      react: 19.0.0-rc.0
     dev: false
 
   /eastasianwidth@0.2.0:
@@ -3363,12 +3363,12 @@ packages:
     resolution: {integrity: sha512-MhWWlVnuab1RG5/zMRRcVGXZLCXrZTgfwMikgzCegsPnG62yDQo5JnqKkrK4jO5iKqDAZGItAqN5CtKBCBWRUA==}
     engines: {node: '>=16.14'}
 
-  /lucide-react@0.378.0(react@19.0.0-beta-04b058868c-20240508):
+  /lucide-react@0.378.0(react@19.0.0-rc.0):
     resolution: {integrity: sha512-u6EPU8juLUk9ytRcyapkWI18epAv3RU+6+TC23ivjR0e+glWKBobFeSgRwOIJihzktILQuy6E0E80P2jVTDR5g==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0
     dependencies:
-      react: 19.0.0-beta-04b058868c-20240508
+      react: 19.0.0-rc.0
     dev: false
 
   /merge2@1.4.1:
@@ -3460,7 +3460,7 @@ packages:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
     dev: true
 
-  /next-auth@5.0.0-beta.18(next@14.3.0-canary.58)(react@19.0.0-beta-04b058868c-20240508):
+  /next-auth@5.0.0-beta.18(next@14.3.0-canary.58)(react@19.0.0-rc.0):
     resolution: {integrity: sha512-x55L8wZb8PcPGCYA3e/l9tdpd7YL3FDuhas4W8pxq3PjrWJ9OoDxNN0otK9axJamJBbBgjfzTJjVQB6hXoe0ZQ==}
     peerDependencies:
       '@simplewebauthn/browser': ^9.0.1
@@ -3477,11 +3477,11 @@ packages:
         optional: true
     dependencies:
       '@auth/core': 0.31.0
-      next: 14.3.0-canary.58(react-dom@19.0.0-beta-4508873393-20240430)(react@19.0.0-beta-04b058868c-20240508)
-      react: 19.0.0-beta-04b058868c-20240508
+      next: 14.3.0-canary.58(react-dom@19.0.0-beta-4508873393-20240430)(react@19.0.0-rc.0)
+      react: 19.0.0-rc.0
     dev: false
 
-  /next@14.3.0-canary.58(react-dom@19.0.0-beta-4508873393-20240430)(react@19.0.0-beta-04b058868c-20240508):
+  /next@14.3.0-canary.58(react-dom@19.0.0-beta-4508873393-20240430)(react@19.0.0-rc.0):
     resolution: {integrity: sha512-cuG0KhlxFWJmyvP/ZjTk6FOm4jj/3YP1Irvbb/TcFFW42Fr+59j8MJsjUKeikK/EuIim9tylXbqPBn+Ftlb99A==}
     engines: {node: '>=18.17.0'}
     hasBin: true
@@ -3505,9 +3505,9 @@ packages:
       caniuse-lite: 1.0.30001617
       graceful-fs: 4.2.11
       postcss: 8.4.31
-      react: 19.0.0-beta-04b058868c-20240508
-      react-dom: 19.0.0-beta-4508873393-20240430(react@19.0.0-beta-04b058868c-20240508)
-      styled-jsx: 5.1.3(react@19.0.0-beta-04b058868c-20240508)
+      react: 19.0.0-rc.0
+      react-dom: 19.0.0-beta-4508873393-20240430(react@19.0.0-rc.0)
+      styled-jsx: 5.1.3(react@19.0.0-rc.0)
     optionalDependencies:
       '@next/swc-darwin-arm64': 14.3.0-canary.58
       '@next/swc-darwin-x64': 14.3.0-canary.58
@@ -3916,25 +3916,25 @@ packages:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
     dev: true
 
-  /react-dom@19.0.0-beta-4508873393-20240430(react@19.0.0-beta-04b058868c-20240508):
+  /react-dom@19.0.0-beta-4508873393-20240430(react@19.0.0-rc.0):
     resolution: {integrity: sha512-/j97ai1qF3c6O3XV0nVzzExPV/0U2v8M75Sq6ThXYxePCi33kAnm+xRsCDpZOZOrIjz6nurLU/FzzPZIzXVvKQ==}
     peerDependencies:
       react: 19.0.0-beta-4508873393-20240430
     dependencies:
-      react: 19.0.0-beta-04b058868c-20240508
+      react: 19.0.0-rc.0
       scheduler: 0.25.0-beta-4508873393-20240430
     dev: false
 
-  /react-hook-form@7.51.4(react@19.0.0-beta-04b058868c-20240508):
+  /react-hook-form@7.51.4(react@19.0.0-rc.0):
     resolution: {integrity: sha512-V14i8SEkh+V1gs6YtD0hdHYnoL4tp/HX/A45wWQN15CYr9bFRmmRdYStSO5L65lCCZRF+kYiSKhm9alqbcdiVA==}
     engines: {node: '>=12.22.0'}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18
     dependencies:
-      react: 19.0.0-beta-04b058868c-20240508
+      react: 19.0.0-rc.0
     dev: false
 
-  /react-hot-toast@2.4.1(csstype@3.1.3)(react-dom@19.0.0-beta-4508873393-20240430)(react@19.0.0-beta-04b058868c-20240508):
+  /react-hot-toast@2.4.1(csstype@3.1.3)(react-dom@19.0.0-beta-4508873393-20240430)(react@19.0.0-rc.0):
     resolution: {integrity: sha512-j8z+cQbWIM5LY37pR6uZR6D4LfseplqnuAO4co4u8917hBUvXlEqyP1ZzqVLcqoyUesZZv/ImreoCeHVDpE5pQ==}
     engines: {node: '>=10'}
     peerDependencies:
@@ -3942,8 +3942,8 @@ packages:
       react-dom: '>=16'
     dependencies:
       goober: 2.1.14(csstype@3.1.3)
-      react: 19.0.0-beta-04b058868c-20240508
-      react-dom: 19.0.0-beta-4508873393-20240430(react@19.0.0-beta-04b058868c-20240508)
+      react: 19.0.0-rc.0
+      react-dom: 19.0.0-beta-4508873393-20240430(react@19.0.0-rc.0)
     transitivePeerDependencies:
       - csstype
     dev: false
@@ -3952,22 +3952,22 @@ packages:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
     dev: true
 
-  /react-textarea-autosize@8.5.3(@types/react@18.3.2)(react@19.0.0-beta-04b058868c-20240508):
+  /react-textarea-autosize@8.5.3(@types/react@18.3.2)(react@19.0.0-rc.0):
     resolution: {integrity: sha512-XT1024o2pqCuZSuBt9FwHlaDeNtVrtCXu0Rnz88t1jUGheCLa3PhjE1GH8Ctm2axEtvdCl5SUHYschyQ0L5QHQ==}
     engines: {node: '>=10'}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
       '@babel/runtime': 7.24.5
-      react: 19.0.0-beta-04b058868c-20240508
-      use-composed-ref: 1.3.0(react@19.0.0-beta-04b058868c-20240508)
-      use-latest: 1.2.1(@types/react@18.3.2)(react@19.0.0-beta-04b058868c-20240508)
+      react: 19.0.0-rc.0
+      use-composed-ref: 1.3.0(react@19.0.0-rc.0)
+      use-latest: 1.2.1(@types/react@18.3.2)(react@19.0.0-rc.0)
     transitivePeerDependencies:
       - '@types/react'
     dev: false
 
-  /react@19.0.0-beta-04b058868c-20240508:
-    resolution: {integrity: sha512-Mch4EeDejk1ZgH/O3TIH6KtELBUzcJdTZujQGWFA6tz9Y9J+X7ZgY9WS2VhUCS/alOlEcIdCXAz0Cb/JET1QVg==}
+  /react@19.0.0-rc.0:
+    resolution: {integrity: sha512-8nrDCl5uE54FHeKqKrEO0TS+10bT4cxutJGb2okiJc0FHMQ6I3FeItaqly/1nbijlhSO3HmAVyPIexIQQWYAtQ==}
     engines: {node: '>=0.10.0'}
     dev: false
 
@@ -4303,7 +4303,7 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /styled-jsx@5.1.3(react@19.0.0-beta-04b058868c-20240508):
+  /styled-jsx@5.1.3(react@19.0.0-rc.0):
     resolution: {integrity: sha512-qLRShOWTE/Mf6Bvl72kFeKBl8N2Eq9WIFfoAuvbtP/6tqlnj1SCjv117n2MIjOPpa1jTorYqLJgsHKy5Y3ziww==}
     engines: {node: '>= 12.0.0'}
     peerDependencies:
@@ -4317,7 +4317,7 @@ packages:
         optional: true
     dependencies:
       client-only: 0.0.1
-      react: 19.0.0-beta-04b058868c-20240508
+      react: 19.0.0-rc.0
     dev: false
 
   /sucrase@3.35.0:
@@ -4534,15 +4534,15 @@ packages:
       punycode: 2.3.1
     dev: true
 
-  /use-composed-ref@1.3.0(react@19.0.0-beta-04b058868c-20240508):
+  /use-composed-ref@1.3.0(react@19.0.0-rc.0):
     resolution: {integrity: sha512-GLMG0Jc/jiKov/3Ulid1wbv3r54K9HlMW29IWcDFPEqFkSO2nS0MuefWgMJpeHQ9YJeXDL3ZUF+P3jdXlZX/cQ==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
-      react: 19.0.0-beta-04b058868c-20240508
+      react: 19.0.0-rc.0
     dev: false
 
-  /use-isomorphic-layout-effect@1.1.2(@types/react@18.3.2)(react@19.0.0-beta-04b058868c-20240508):
+  /use-isomorphic-layout-effect@1.1.2(@types/react@18.3.2)(react@19.0.0-rc.0):
     resolution: {integrity: sha512-49L8yCO3iGT/ZF9QttjwLF/ZD9Iwto5LnH5LmEdk/6cFmXddqi2ulF0edxTwjj+7mqvpVVGQWvbXZdn32wRSHA==}
     peerDependencies:
       '@types/react': '*'
@@ -4552,10 +4552,10 @@ packages:
         optional: true
     dependencies:
       '@types/react': 18.3.2
-      react: 19.0.0-beta-04b058868c-20240508
+      react: 19.0.0-rc.0
     dev: false
 
-  /use-latest@1.2.1(@types/react@18.3.2)(react@19.0.0-beta-04b058868c-20240508):
+  /use-latest@1.2.1(@types/react@18.3.2)(react@19.0.0-rc.0):
     resolution: {integrity: sha512-xA+AVm/Wlg3e2P/JiItTziwS7FK92LWrDB0p+hgXloIMuVCeJJ8v6f0eeHyPZaJrM+usM1FkFfbNCrJGs8A/zw==}
     peerDependencies:
       '@types/react': '*'
@@ -4565,8 +4565,8 @@ packages:
         optional: true
     dependencies:
       '@types/react': 18.3.2
-      react: 19.0.0-beta-04b058868c-20240508
-      use-isomorphic-layout-effect: 1.1.2(@types/react@18.3.2)(react@19.0.0-beta-04b058868c-20240508)
+      react: 19.0.0-rc.0
+      use-isomorphic-layout-effect: 1.1.2(@types/react@18.3.2)(react@19.0.0-rc.0)
     dev: false
 
   /util-deprecate@1.0.2:
