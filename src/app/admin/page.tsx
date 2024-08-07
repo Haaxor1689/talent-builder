@@ -1,7 +1,15 @@
 'use client';
 
-import { Download, Upload, RotateCcw, User, CircleDashed } from 'lucide-react';
+import {
+	Download,
+	Upload,
+	RotateCcw,
+	User,
+	CircleDashed,
+	Images
+} from 'lucide-react';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 
 import Input from '~/components/form/Input';
 import Textarea from '~/components/form/Textarea';
@@ -11,7 +19,7 @@ import {
 	createTurtleWoWAccount,
 	exportClientTrees,
 	exportTable,
-	fixMissingIcons,
+	exportMissingIcons,
 	importClientTrees,
 	importTable,
 	regenerateIds
@@ -47,11 +55,15 @@ const Page = () => {
 						Regenerate IDs
 					</TextButton>
 					<TextButton
-						icon={CircleDashed}
-						onClick={asyncAction(() => fixMissingIcons(undefined))}
+						icon={Images}
+						onClick={asyncAction(async () => {
+							const response = await exportMissingIcons(undefined);
+							window.navigator.clipboard.writeText(response);
+							toast.success('Copied to clipboard');
+						})}
 						disabled={disableInteractions}
 					>
-						Fix missing icons
+						Export WoWHead icons
 					</TextButton>
 				</AdminModule>
 
@@ -115,7 +127,8 @@ const Page = () => {
 							icon={Download}
 							onClick={asyncAction(async () => {
 								const response = await exportClientTrees(undefined);
-								downloadBlob(new Blob([response]), 'talent-trees.json');
+								window.navigator.clipboard.writeText(response);
+								toast.success('Copied to clipboard');
 							})}
 							disabled={disableInteractions}
 							className="self-end"

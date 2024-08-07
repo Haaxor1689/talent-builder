@@ -1,6 +1,6 @@
 'use server';
 
-import { eq } from 'drizzle-orm';
+import { asc, eq } from 'drizzle-orm';
 import { stringify } from 'superjson';
 import { nanoid } from 'nanoid';
 import { type SQLiteTableWithColumns } from 'drizzle-orm/sqlite-core';
@@ -19,6 +19,8 @@ import { env } from '~/env';
 
 import { publicProcedure, adminProcedure } from '../helpers';
 import { Talent, TalentForm } from '../types';
+
+import { listTurtleTalentTrees } from './talentTree';
 
 export const createTurtleWoWAccount = adminProcedure({
 	query: async ({ db }) => {
@@ -113,29 +115,24 @@ export const regenerateIds = adminProcedure({
 	}
 });
 
-export const fixMissingIcons = adminProcedure({
+export const exportMissingIcons = adminProcedure({
 	query: async ({ db }) => {
-		const icons = await fetch(`${env.DEPLOY_URL}/icons/list.json`);
-		const list = await icons.json();
-		const set = new Set(list);
+		const list: [number, string][] = await fetch(
+			`${env.DEPLOY_URL}/icons/list.json`
+		).then(r => r.json());
 
-		const trees = await selectAll(db, talentTrees);
-		for (const tree of trees) {
-			let changed = false;
-			if (tree.icon && !set.has(tree.icon.toLocaleLowerCase())) {
-				tree.icon = `_${tree.icon}`;
-				changed = true;
-			}
-
-			for (const talent of tree.talents) {
-				if (talent.icon && !set.has(talent.icon.toLocaleLowerCase())) {
-					talent.icon = `_${talent.icon}`;
-					changed = true;
-				}
-			}
-			if (!changed) continue;
-			await db.update(talentTrees).set(tree).where(eq(talentTrees.id, tree.id));
-		}
+		const trees = await db.query.proposalTrees.findMany({
+			with: { tree: true }
+		});
+		const icons = new Set<string>();
+		trees
+			.flatMap(t => t.tree.talents)
+			.filter(t => t.icon)
+			.forEach(t => {
+				const item = list.find(i => i[1] === t.icon);
+				if (!item || item[0] === -1) icons.add(t.icon);
+			});
+		return [...icons].join(',');
 	}
 });
 
@@ -165,8 +162,21 @@ export const importClientTrees = adminProcedure({
 export const exportClientTrees = adminProcedure({
 	query: async ({ db }) => {
 		const trees = await db.query.proposalTrees.findMany({
-			with: { tree: true }
+			with: { tree: true },
+			orderBy: [asc(talentTrees.class), asc(talentTrees.index)]
 		});
-		return JSON.stringify(trees.map(t => t.tree));
+		const turtle = await listTurtleTalentTrees({
+			name: '',
+			class: 0,
+			from: ''
+		});
+		return JSON.stringify(
+			trees.map((t, i) => {
+				console.log({ turtle: turtle[i]?.name, tree: t.tree.name });
+				return [0, 1, 2, 6, 7, 8, 9, 10, 11, 18, 19, 20, 21, 22, 23].includes(i)
+					? turtle[i]
+					: t.tree;
+			})
+		);
 	}
 });

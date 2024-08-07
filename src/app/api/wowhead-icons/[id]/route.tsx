@@ -50,10 +50,9 @@ export const GET = async (
 				<div
 					style={{
 						position: 'absolute',
-						bottom: 2,
-						right: 2,
-						width: '100%',
-						height: '100%',
+						top: 0,
+						left: 0,
+						...size,
 						backgroundImage: `url("${env.DEPLOY_URL}/icon_frame.png")`
 					}}
 				/>
