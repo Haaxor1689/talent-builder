@@ -55,7 +55,7 @@ const Tabs = ({ tabs, noTabsContent }: Props) => {
 						<button
 							onClick={() => setCurrent(key)}
 							className={cls(
-								'tw-hocus tw-color block px-2 py-3 font-fontin text-2xl uppercase'
+								'tw-hocus tw-color block w-[48px] px-2 py-3 font-fontin text-2xl uppercase'
 							)}
 							style={{ textOrientation: 'mixed', writingMode: 'vertical-rl' }}
 						>

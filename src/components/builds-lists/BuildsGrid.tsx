@@ -92,7 +92,7 @@ type Props = {
 const BuildsGrid = ({ title, list }: Props) => (
 	<div className="flex flex-col items-stretch gap-2 md:flex-row">
 		<h3
-			className="tw-color hidden py-3 md:block"
+			className="tw-color hidden w-[48px] py-3 md:block"
 			style={{ textOrientation: 'mixed', writingMode: 'vertical-rl' }}
 		>
 			{title}
