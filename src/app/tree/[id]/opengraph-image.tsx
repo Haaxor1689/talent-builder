@@ -46,7 +46,7 @@ const Image = async ({ params }: PageProps) => {
 					gap: 8,
 					color: 'white',
 					background: '#181412',
-					backgroundImage: `url("${env.DEPLOY_URL}/page_background_min.png")`
+					backgroundImage: `url("${env.DEPLOY_URL}/page_background.png")`
 				}}
 			>
 				<div style={{ fontSize: 32, textTransform: 'uppercase' }}>

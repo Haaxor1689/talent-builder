@@ -37,7 +37,7 @@ const Image = async () => {
 					color: 'white',
 					textTransform: 'uppercase',
 					background: '#181412',
-					backgroundImage: `url("${env.DEPLOY_URL}/page_background_min.png")`,
+					backgroundImage: `url("${env.DEPLOY_URL}/page_background.png")`,
 					backgroundSize: 'cover',
 					backgroundPosition: 'top'
 				}}
