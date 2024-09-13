@@ -9,6 +9,7 @@ import { env } from '~/env';
 import Providers from './Providers';
 import Header from './Header';
 import Footer from './Footer';
+import PageBackground from './PageBackground';
 
 const fontin = localFont({
 	src: '../assets/FontinSans-Regular.otf',
@@ -36,10 +37,7 @@ const RootLayout = async ({ children }: Props) => (
 		<body
 			className={`${fontin.variable} ${din.variable} flex min-h-screen flex-col items-stretch overflow-auto overflow-x-hidden bg-darkGray`}
 		>
-			<div
-				className="pointer-events-none fixed left-1/2 top-0 -z-10 aspect-video w-full min-w-[1024px] -translate-x-1/2 bg-cover bg-top bg-no-repeat"
-				style={{ backgroundImage: 'url("/page_background_min.png")' }}
-			/>
+			<PageBackground />
 			<Providers>
 				<Header />
 				<main className="flex max-w-screen-xl grow flex-col gap-6 p-2 pt-0 md:px-6 xl:mx-auto xl:w-full">
