@@ -41,6 +41,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 	callbacks: {
 		signIn: async ({ account }) => {
 			if (account?.provider === 'discord') {
+				console.log(`Fetching: https://discord.com/api/users/@me/guilds`);
 				const guilds = await fetch('https://discord.com/api/users/@me/guilds', {
 					headers: {
 						Authorization: `Bearer ${account.access_token}`
@@ -76,8 +77,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 		Discord({
 			authorization:
 				'https://discord.com/api/oauth2/authorize?scope=identify+email+guilds'
-		}),
-		GitHub
+		})
 	],
 	events: {
 		signIn: async ({ user, profile, isNewUser }) => {

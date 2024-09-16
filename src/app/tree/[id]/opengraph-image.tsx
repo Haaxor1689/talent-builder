@@ -22,69 +22,58 @@ export const contentType = 'image/png';
 
 // Image generation
 const Image = async ({ params }: PageProps) => {
-	const response = await fetch(`${env.DEPLOY_URL}/api/og/${params.id}`).then(
-		r => r.json()
-	);
+	try {
+		console.log(`Fetching: ${env.DEPLOY_URL}/api/og/${params.id}`);
+		const response = await fetch(`${env.DEPLOY_URL}/api/og/${params.id}`).then(
+			r => r.json()
+		);
 
-	if (!response) return undefined;
+		if (!response) return undefined;
 
-	// Font
-	const fontinSans = await fetch(
-		new URL('../../../assets/FontinSans-Regular.otf', import.meta.url)
-	).then(res => res.arrayBuffer());
+		// Font
+		const fontinSans = await fetch(
+			new URL('../../../assets/FontinSans-Regular.otf', import.meta.url)
+		).then(res => res.arrayBuffer());
 
-	return new ImageResponse(
-		(
-			<div
-				style={{
-					width: '100%',
-					height: '100%',
-					display: 'flex',
-					flexDirection: 'column',
-					alignItems: 'center',
-					justifyContent: 'center',
-					gap: 8,
-					color: 'white',
-					background: '#181412',
-					backgroundImage: `url("${env.DEPLOY_URL}/page_background.png")`
-				}}
-			>
-				<div style={{ fontSize: 32, textTransform: 'uppercase' }}>
-					Talent builder
-				</div>
-
+		return new ImageResponse(
+			(
 				<div
 					style={{
+						width: '100%',
+						height: '100%',
 						display: 'flex',
-						gap: 8,
+						flexDirection: 'column',
 						alignItems: 'center',
-						paddingTop: 16,
-						paddingBottom: 8,
-						maxWidth: '90%',
-						textAlign: 'center'
+						justifyContent: 'center',
+						gap: 8,
+						color: 'white',
+						background: '#181412',
+						backgroundImage: `url("${env.DEPLOY_URL}/page_background.png")`
 					}}
 				>
-					<img
-						src={env.DEPLOY_URL + getIconPath(response.icon)}
-						width={64}
-						height={64}
-					/>
-					<div style={{ fontSize: 86 }}>{response.name}</div>
-				</div>
+					<div style={{ fontSize: 32, textTransform: 'uppercase' }}>
+						Talent builder
+					</div>
 
-				<div
-					style={{
-						display: 'flex',
-						alignItems: 'center',
-						gap: 8,
-						fontSize: 42
-					}}
-				>
-					<span style={{ color: '#929391' }}>Total points: </span>
-					{response.sum}
-				</div>
+					<div
+						style={{
+							display: 'flex',
+							gap: 8,
+							alignItems: 'center',
+							paddingTop: 16,
+							paddingBottom: 8,
+							maxWidth: '90%',
+							textAlign: 'center'
+						}}
+					>
+						<img
+							src={env.DEPLOY_URL + getIconPath(response.icon)}
+							width={64}
+							height={64}
+						/>
+						<div style={{ fontSize: 86 }}>{response.name}</div>
+					</div>
 
-				{response.user?.name && (
 					<div
 						style={{
 							display: 'flex',
@@ -93,40 +82,57 @@ const Image = async ({ params }: PageProps) => {
 							fontSize: 42
 						}}
 					>
-						<span style={{ color: '#929391' }}>Author:</span>
-						{response.user?.image && (
-							<img
-								src={response.user?.image ?? ''}
-								width={42}
-								height={42}
-								style={{ borderRadius: '100%' }}
-							/>
-						)}
-						<span
-							style={
-								response.user.isAdmin
-									? { color: '#8DD958', fontWeight: 600 }
-									: undefined
-							}
-						>
-							{response.user?.name}
-						</span>
+						<span style={{ color: '#929391' }}>Total points: </span>
+						{response.sum}
 					</div>
-				)}
-			</div>
-		),
-		{
-			...size,
-			fonts: [
-				{
-					name: 'Inter',
-					data: await fontinSans,
-					style: 'normal',
-					weight: 400
-				}
-			]
-		}
-	);
+
+					{response.user?.name && (
+						<div
+							style={{
+								display: 'flex',
+								alignItems: 'center',
+								gap: 8,
+								fontSize: 42
+							}}
+						>
+							<span style={{ color: '#929391' }}>Author:</span>
+							{response.user?.image && (
+								<img
+									src={response.user?.image ?? ''}
+									width={42}
+									height={42}
+									style={{ borderRadius: '100%' }}
+								/>
+							)}
+							<span
+								style={
+									response.user.isAdmin
+										? { color: '#8DD958', fontWeight: 600 }
+										: undefined
+								}
+							>
+								{response.user?.name}
+							</span>
+						</div>
+					)}
+				</div>
+			),
+			{
+				...size,
+				fonts: [
+					{
+						name: 'Inter',
+						data: await fontinSans,
+						style: 'normal',
+						weight: 400
+					}
+				]
+			}
+		);
+	} catch (error) {
+		console.trace(error);
+		return null;
+	}
 };
 
 export default Image;
