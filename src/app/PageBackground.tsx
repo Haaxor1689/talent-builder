@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-const images = ['gnarlmoon', 'anomalus'];
+const images = ['gnarlmoon', 'anomalus', 'druid'];
 
 const PageBackground = () => {
 	const [image, setImage] = useState(0);
