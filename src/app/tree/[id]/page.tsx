@@ -6,7 +6,7 @@ import { getOgInfo } from '~/server/api/routers/openGraph';
 import { getIconPath } from '~/utils';
 import { env } from '~/env';
 
-export const experimental_ppr = true;
+// export const experimental_ppr = true;
 
 export type PageProps = {
 	params: { id: string };

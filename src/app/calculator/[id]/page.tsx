@@ -7,7 +7,7 @@ import { getTalentTree } from '~/server/api/routers/talentTree';
 import { CalculatorParams, type CalculatorParamsT } from '~/server/api/types';
 import { env } from '~/env';
 
-export const experimental_ppr = true;
+// export const experimental_ppr = true;
 
 export type PageProps = {
 	params: { id: string };

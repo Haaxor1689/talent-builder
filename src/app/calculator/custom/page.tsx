@@ -6,7 +6,7 @@ import { getIconPath, maskToClass } from '~/utils';
 import TalentCalculator from '~/components/calculator/TalentCalculator';
 import { env } from '~/env';
 
-export const experimental_ppr = true;
+// export const experimental_ppr = true;
 
 type PageProps = {
 	searchParams: CalculatorParamsT;

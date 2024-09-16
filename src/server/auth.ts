@@ -1,7 +1,6 @@
 import { DrizzleAdapter } from '@auth/drizzle-adapter';
 import NextAuth, { type DefaultSession } from 'next-auth';
 import { type DiscordProfile } from 'next-auth/providers/discord';
-import GitHub from 'next-auth/providers/github';
 import Discord from 'next-auth/providers/discord';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { cache } from 'react';
@@ -41,7 +40,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 	callbacks: {
 		signIn: async ({ account }) => {
 			if (account?.provider === 'discord') {
-				console.log(`Fetching: https://discord.com/api/users/@me/guilds`);
 				const guilds = await fetch('https://discord.com/api/users/@me/guilds', {
 					headers: {
 						Authorization: `Bearer ${account.access_token}`

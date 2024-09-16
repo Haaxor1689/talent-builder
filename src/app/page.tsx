@@ -11,7 +11,7 @@ import Tabs from '~/components/Tabs';
 
 import FiltersSection from './FiltersSection';
 
-export const experimental_ppr = true;
+// export const experimental_ppr = true;
 
 const Home = async ({ searchParams }: { searchParams: FiltersT }) => {
 	const params = Filters.safeParse(searchParams);
