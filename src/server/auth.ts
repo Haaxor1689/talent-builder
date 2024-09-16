@@ -81,8 +81,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 	],
 	events: {
 		signIn: async ({ user, profile, isNewUser }) => {
-			console.log('signIn', user, profile, isNewUser);
-
 			if (isNewUser) return;
 			if (!user.id) return;
 			if (profile?.image === user.image && profile?.name === user.name) return;

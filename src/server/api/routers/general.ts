@@ -171,12 +171,9 @@ export const exportClientTrees = adminProcedure({
 			from: ''
 		});
 		return JSON.stringify(
-			trees.map((t, i) => {
-				console.log({ turtle: turtle[i]?.name, tree: t.tree.name });
-				return [0, 1, 2, 9, 10, 11, 20, 21, 22, 23].includes(i)
-					? turtle[i]
-					: t.tree;
-			})
+			trees.map((t, i) =>
+				[0, 1, 2, 9, 10, 11, 20, 21, 22, 23].includes(i) ? turtle[i] : t.tree
+			)
 		);
 	}
 });

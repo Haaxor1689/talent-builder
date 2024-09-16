@@ -6,6 +6,8 @@ import TurtleBuilds from '~/components/builds-lists/TurtleBuilds';
 import Spinner from '~/components/styled/Spinner';
 import SpellIcon from '~/components/styled/SpellIcon';
 
+export const experimental_ppr = true;
+
 const Page = () => (
 	<>
 		<Suspense fallback={<Spinner className="my-6 self-center" />}>

@@ -11,7 +11,6 @@ const PageBackground = () => {
 		if (typeof window === 'undefined') return;
 		const interval = setInterval(() => {
 			const newLocal = Math.floor(Math.random() * images.length);
-			console.log(newLocal);
 			setImage(newLocal);
 		}, 30000);
 		return () => clearInterval(interval);

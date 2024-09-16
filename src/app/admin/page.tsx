@@ -1,13 +1,6 @@
 'use client';
 
-import {
-	Download,
-	Upload,
-	RotateCcw,
-	User,
-	CircleDashed,
-	Images
-} from 'lucide-react';
+import { Download, Upload, RotateCcw, User, Images } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
