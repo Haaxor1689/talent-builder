@@ -6,10 +6,10 @@ await import('./src/env.js');
 
 /** @type {import("next").NextConfig} */
 const config = {
-	experimental: {
-		ppr: true,
-		reactCompiler: true
-	},
+	// experimental: {
+	// 	ppr: true,
+	// 	reactCompiler: true
+	// },
 	logging: {
 		fetches: {
 			fullUrl: true
