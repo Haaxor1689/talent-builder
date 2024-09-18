@@ -4,10 +4,23 @@ import Link from 'next/link';
 import { CloudOff, ListFilter, Workflow } from 'lucide-react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { useEffect, useRef, type ReactElement, Fragment } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
+import {
+	useEffect,
+	useRef,
+	Fragment,
+	createContext,
+	type PropsWithChildren,
+	useContext,
+	useState
+} from 'react';
 
-import { getTalentSum, maskToClass, zodResolver } from '~/utils';
+import {
+	getLastUpdatedString,
+	getTalentSum,
+	maskToClass,
+	zodResolver
+} from '~/utils';
 import { type talentTrees, type users } from '~/server/db/schema';
 import { listInfiniteTalentTrees } from '~/server/api/routers/talentTree';
 import { Filters } from '~/server/api/types';
@@ -22,20 +35,17 @@ import AuthorTag from '../styled/AuthorTag';
 import Tooltip from '../styled/Tooltip';
 import TextButton from '../styled/TextButton';
 
-const getLastUpdatedString = (date: Date) => {
-	if (!date) return 'Never';
-	const now = new Date();
-	const diff = now.getTime() - new Date(date).getTime();
-	const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-	const hours = Math.floor(diff / (1000 * 60 * 60));
-	const minutes = Math.floor(diff / (1000 * 60));
-	const seconds = Math.floor(diff / 1000);
-	const plural = (n: number) => (n === 1 ? '' : 's');
-	if (days > 0) return `${days} day${plural(days)} ago`;
-	if (hours > 0) return `${hours} hour${plural(hours)} ago`;
-	if (minutes > 0) return `${minutes} minute${plural(minutes)} ago`;
-	return `${seconds} second${plural(seconds)} ago`;
+type TreePickContextValue = {
+	open: (idx: number) => void;
 };
+
+const TreePickContext = createContext<TreePickContextValue>({
+	open: () => {
+		throw new Error('TreePickContext not provided');
+	}
+});
+
+export const useTreePick = () => useContext(TreePickContext);
 
 type Item = typeof talentTrees.$inferSelect & {
 	idx: number;
@@ -137,16 +147,20 @@ const GridItem = ({ idx, close, ...item }: Item) => {
 	);
 };
 
-type Props = {
-	idx: number;
-	children: (open: () => void) => ReactElement;
-};
+const TreePickDialogProvider = ({ children }: PropsWithChildren) => {
+	const [openIdx, setOpenIdx] = useState<number | null>(null);
 
-const TreePickDialog = ({ idx, children }: Props) => {
+	const calculatorClass = useWatch({ name: 'class' });
+
 	const formProps = useForm({
+		defaultValues: { class: calculatorClass },
 		resolver: zodResolver(Filters)
 	});
-	const { register, watch, control } = formProps;
+	const { register, watch, setValue, control } = formProps;
+
+	useEffect(() => {
+		setValue('class', calculatorClass);
+	}, [calculatorClass, setValue]);
 
 	const values = useDebounced(watch());
 
@@ -217,7 +231,12 @@ const TreePickDialog = ({ idx, children }: Props) => {
 						{trees.data?.pages.map((page, index) => (
 							<Fragment key={page.items[0]?.name ?? index}>
 								{page.items.map(item => (
-									<GridItem key={item.id} {...item} idx={idx} close={close} />
+									<GridItem
+										key={item.id}
+										{...item}
+										idx={openIdx ?? 0}
+										close={close}
+									/>
 								))}
 							</Fragment>
 						))}
@@ -232,9 +251,20 @@ const TreePickDialog = ({ idx, children }: Props) => {
 				</form>
 			)}
 		>
-			{children}
+			{open => (
+				<TreePickContext.Provider
+					value={{
+						open: idx => {
+							setOpenIdx(idx);
+							open();
+						}
+					}}
+				>
+					{children}
+				</TreePickContext.Provider>
+			)}
 		</DialogButton>
 	);
 };
 
-export default TreePickDialog;
+export default TreePickDialogProvider;

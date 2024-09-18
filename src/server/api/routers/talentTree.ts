@@ -89,7 +89,11 @@ export const listInfiniteTalentTrees = publicProcedure({
 		const items = await db.query.talentTrees.findMany({
 			limit: limit + 1,
 			offset,
-			orderBy: [desc(talentTrees.updatedAt)],
+			orderBy: [
+				asc(talentTrees.class),
+				asc(talentTrees.index),
+				desc(talentTrees.updatedAt)
+			],
 			where: and(
 				or(
 					eq(talentTrees.public, true),

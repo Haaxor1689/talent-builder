@@ -24,7 +24,10 @@ const IconGrid = ({ filter, required, icon, setIcon }: Props) => {
 
 			const filtered = filter ? data.filter(v => v[1].includes(filter)) : data;
 			const nextCursor = pageParam + 64;
-			return { items: filtered.slice(pageParam, nextCursor), nextCursor };
+			return {
+				items: filtered.slice(pageParam, nextCursor),
+				nextCursor: nextCursor <= filtered.length ? nextCursor : undefined
+			};
 		},
 		initialPageParam: 0,
 		getNextPageParam: prev => prev.nextCursor,

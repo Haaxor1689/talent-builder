@@ -16,6 +16,7 @@ import ClassPicker from '../form/ClassPicker';
 import TalentSpec from './TalentSpec';
 import UrlSync from './UrlSync';
 import Actions from './Actionts';
+import TreePickDialogProvider from './TreePickDialog';
 
 const PointsSpent = () => {
 	const points = useWatch<BuildFormT, 'points'>({ name: 'points' });
@@ -54,32 +55,34 @@ const TalentCalculator = ({ trees, isNew, ...props }: Props) => {
 
 	return (
 		<FormProvider {...formProps}>
-			<form className="tw-surface flex flex-col gap-3">
-				<div className="flex flex-col gap-3 md:flex-row md:items-center">
-					<div className="flex grow flex-col gap-4 md:flex-row md:items-center">
-						<ClassPicker
-							name="class"
-							title={defaultValues.name}
-							large
-							showEmpty
-						/>
-						<PointsSpent />
-						<UrlSync defaultValues={defaultValues} isNew={!!isNew} />
+			<TreePickDialogProvider>
+				<form className="tw-surface flex flex-col gap-3">
+					<div className="flex flex-col gap-3 md:flex-row md:items-center">
+						<div className="flex grow flex-col gap-4 md:flex-row md:items-center">
+							<ClassPicker
+								name="class"
+								title={defaultValues.name}
+								large
+								showEmpty
+							/>
+							<PointsSpent />
+							<UrlSync defaultValues={defaultValues} isNew={!!isNew} />
+						</div>
+
+						<div className="flex items-center" />
 					</div>
 
-					<div className="flex items-center" />
-				</div>
+					<hr />
 
-				<hr />
+					<div className="-m-2 mt-0 grid grid-cols-1 items-center justify-center gap-2 lg:grid-cols-3">
+						<TalentSpec idx={0} value={trees[0]} />
+						<TalentSpec idx={1} value={trees[1]} />
+						<TalentSpec idx={2} value={trees[2]} />
+					</div>
 
-				<div className="-m-2 mt-0 grid grid-cols-1 items-center justify-center gap-2 lg:grid-cols-3">
-					<TalentSpec idx={0} value={trees[0]} />
-					<TalentSpec idx={1} value={trees[1]} />
-					<TalentSpec idx={2} value={trees[2]} />
-				</div>
-
-				<Actions trees={trees} isNew={isNew} />
-			</form>
+					<Actions trees={trees} isNew={isNew} />
+				</form>
+			</TreePickDialogProvider>
 		</FormProvider>
 	);
 };

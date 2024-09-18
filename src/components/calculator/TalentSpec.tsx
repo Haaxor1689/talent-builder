@@ -11,7 +11,7 @@ import SpellIcon from '../styled/SpellIcon';
 import DialogButton from '../styled/DialogButton';
 
 import TalentPreview from './TalentPreview';
-import TreePickDialog from './TreePickDialog';
+import { useTreePick } from './TreePickDialog';
 
 type Props = {
 	idx: 0 | 1 | 2;
@@ -32,18 +32,15 @@ const PointsSpent = ({ idx, value }: Props) => {
 
 const TalentSpec = ({ idx, value }: Props) => {
 	const { setValue } = useFormContext<BuildFormT>();
+	const { open } = useTreePick();
 
 	if (!value)
 		return (
 			<div className="flex min-h-[50vh] flex-col items-center justify-center p-8">
-				<TreePickDialog idx={idx}>
-					{open => (
-						<TextButton onClick={open}>
-							<p className="h1 text-inherit">+</p>
-							<p className="h4 text-inherit">Pick a tree</p>
-						</TextButton>
-					)}
-				</TreePickDialog>
+				<TextButton onClick={() => open(idx)}>
+					<p className="h1 text-inherit">+</p>
+					<p className="h4 text-inherit">Pick a tree</p>
+				</TextButton>
 			</div>
 		);
 
@@ -83,18 +80,14 @@ const TalentSpec = ({ idx, value }: Props) => {
 			</div>
 
 			<div className="flex flex-wrap justify-center gap-x-2">
-				<TreePickDialog idx={idx}>
-					{open => (
-						<TextButton
-							onClick={open}
-							icon={Workflow}
-							iconSize={14}
-							className="text-sm text-blueGray"
-						>
-							Change tree
-						</TextButton>
-					)}
-				</TreePickDialog>
+				<TextButton
+					onClick={() => open(idx)}
+					icon={Workflow}
+					iconSize={14}
+					className="text-sm text-blueGray"
+				>
+					Change tree
+				</TextButton>
 				{value.notes && (
 					<DialogButton
 						dialog={
