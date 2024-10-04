@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-const images = ['gnarlmoon', 'anomalus', 'druid'];
+const images = ['anniversary', 'gnarlmoon', 'anomalus', 'druid'];
 
 const PageBackground = () => {
 	const [image, setImage] = useState(0);
@@ -10,8 +10,7 @@ const PageBackground = () => {
 	useEffect(() => {
 		if (typeof window === 'undefined') return;
 		const interval = setInterval(() => {
-			const newLocal = Math.floor(Math.random() * images.length);
-			setImage(newLocal);
+			setImage(Math.floor(Math.random() * images.length));
 		}, 30000);
 		return () => clearInterval(interval);
 	}, [image]);
