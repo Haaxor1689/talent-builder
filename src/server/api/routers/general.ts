@@ -165,15 +165,6 @@ export const exportClientTrees = adminProcedure({
 			with: { tree: true },
 			orderBy: [asc(talentTrees.class), asc(talentTrees.index)]
 		});
-		const turtle = await listTurtleTalentTrees({
-			name: '',
-			class: 0,
-			from: ''
-		});
-		return JSON.stringify(
-			trees.map((t, i) =>
-				[0, 1, 2, 9, 10, 11, 20, 21, 22, 23].includes(i) ? turtle[i] : t.tree
-			)
-		);
+		return JSON.stringify(trees.map(t => t.tree));
 	}
 });
