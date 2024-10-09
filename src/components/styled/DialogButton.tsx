@@ -10,6 +10,8 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 
+import ToastProvider from '../ToastProvider';
+
 type Props = {
 	clickAway?: boolean;
 	noBlur?: boolean;
@@ -77,6 +79,7 @@ const DialogButton = ({
 						)}
 					>
 						{typeof dialog === 'function' ? dialog(close) : dialog}
+						<ToastProvider />
 					</dialog>,
 					document.body
 				)}
