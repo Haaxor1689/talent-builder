@@ -3,6 +3,7 @@ import type { z } from 'zod';
 import { zodResolver as resolver } from '@hookform/resolvers/zod';
 import { isEqual } from 'lodash-es';
 import { PlusCircle, Workflow } from 'lucide-react';
+import { toPng } from 'html-to-image';
 
 import { type TalentFormT, type TalentTreeT } from '~/server/api/types';
 
@@ -69,3 +70,13 @@ export const getIconPath = (icon?: string) =>
 		? `/api/wowhead-icons/${icon.toLocaleLowerCase()}`
 		: // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
 		  `/icons/${(icon || 'inv_misc_questionmark').toLocaleLowerCase()}.png`;
+
+export const elementToPng = async (element: HTMLElement, name: string) => {
+	const dataUrl = await toPng(element, {
+		backgroundColor: 'transparent'
+	});
+	const link = document.createElement('a');
+	link.download = `${name}.png`;
+	link.href = dataUrl;
+	link.click();
+};

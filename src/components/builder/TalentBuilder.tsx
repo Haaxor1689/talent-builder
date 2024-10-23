@@ -2,16 +2,16 @@
 
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import {
+	Camera,
 	CloudOff,
 	Copy,
 	FileLock2,
 	NotebookPen,
-	Pin,
 	Save,
 	Trash2,
 	UploadCloud
 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
@@ -19,11 +19,10 @@ import { nanoid } from 'nanoid';
 
 import {
 	deleteTalentTree,
-	promoteTalentTree,
 	upsertTalentTree
 } from '~/server/api/routers/talentTree';
 import { type TalentFormT, TalentForm } from '~/server/api/types';
-import { zodResolver } from '~/utils';
+import { elementToPng, zodResolver } from '~/utils';
 import useAsyncAction from '~/hooks/useAsyncAction';
 import useLocalTrees from '~/hooks/useLocalTrees';
 
@@ -47,6 +46,8 @@ type Props = {
 } & ({ isLocal?: false; isNew?: false } | { isLocal: true; isNew?: boolean });
 
 const TalentBuilder = (props: Props) => {
+	const treeElemRef = useRef<HTMLDivElement>(null);
+
 	const { disableInteractions, asyncAction } = useAsyncAction();
 
 	const session = useSession();
@@ -91,18 +92,7 @@ const TalentBuilder = (props: Props) => {
 
 					<div className="flex items-center">
 						<ClassPicker name="class" disabled={!editable} />
-						<IdxInput control={control} />
-						{!props.isLocal && session.data?.user.isAdmin && (
-							<TextButton
-								icon={Pin}
-								title="Promote to proposal"
-								onClick={asyncAction(async () => {
-									const values = getValues();
-									await promoteTalentTree(values.id);
-									toast.success('Success');
-								})}
-							/>
-						)}
+						<IdxInput control={control} disabled={!editable} />
 						{editable && (
 							<TextButton
 								onClick={asyncAction(async () => {
@@ -212,7 +202,10 @@ const TalentBuilder = (props: Props) => {
 
 				<div className="flex flex-col gap-3 md:flex-row md:justify-center">
 					<div className="relative grow">
-						<div className="grid grow select-none grid-cols-[repeat(4,_max-content)] content-center justify-center gap-6 overflow-x-auto py-9 md:py-[72px]">
+						<div
+							ref={treeElemRef}
+							className="grid grow select-none grid-cols-[repeat(4,_max-content)] content-center justify-center gap-6 overflow-x-auto py-9 md:py-[72px]"
+						>
 							{fields.map((field, i) => (
 								<TalentPreview
 									key={field.id ?? i}
@@ -223,10 +216,17 @@ const TalentBuilder = (props: Props) => {
 								/>
 							))}
 						</div>
-
 						{editable && <UndoRedo defaultValues={defaultValues} />}
-
-						<div className="absolute right-0 top-0 overflow-hidden">
+						<div className="absolute right-0 top-0 flex gap-2 overflow-hidden">
+							<TextButton
+								icon={Camera}
+								title="Screenshot"
+								onClick={() => {
+									if (!treeElemRef.current) return;
+									elementToPng(treeElemRef.current, getValues().name);
+								}}
+								className="-m-2"
+							/>
 							<TextButton
 								icon={NotebookPen}
 								title="Notes"
@@ -234,7 +234,6 @@ const TalentBuilder = (props: Props) => {
 								className="-m-2"
 							/>
 						</div>
-
 						<div className="absolute bottom-0 left-0 flex flex-col gap-2">
 							{!editable ? (
 								<p className="flex gap-1 text-pink">
@@ -259,7 +258,6 @@ const TalentBuilder = (props: Props) => {
 								</div>
 							)}
 						</div>
-
 						<PointsSummary />
 					</div>
 

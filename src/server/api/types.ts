@@ -26,6 +26,7 @@ export const TalentForm = z.object({
 	name: z.string().default('New talent tree'),
 	class: z.number().default(0),
 	index: z.number().default(0),
+	collection: z.string().nullable().default(null),
 	talents: TalentTree.default(
 		[...Array(4 * 7).keys()].map(() => Talent.parse({}))
 	),
@@ -46,7 +47,9 @@ export type TalentFormT = z.infer<typeof TalentForm>;
 export const Filters = z.object({
 	name: z.string().optional().default(''),
 	from: z.string().optional().default(''),
-	class: z.coerce.number().optional().default(0)
+	class: z.coerce.number().optional().default(0),
+	sort: z.enum(['newest', 'class']).default('newest'),
+	collection: z.string().optional().default('')
 });
 export type FiltersT = z.infer<typeof Filters>;
 

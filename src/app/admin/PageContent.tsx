@@ -1,6 +1,6 @@
 'use client';
 
-import { Download, Upload, RotateCcw, User, Images } from 'lucide-react';
+import { Download, Upload, User, Images } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -10,14 +10,15 @@ import TextButton from '~/components/styled/TextButton';
 import useAsyncAction from '~/hooks/useAsyncAction';
 import {
 	createTurtleWoWAccount,
-	exportClientTrees,
 	exportTable,
 	exportMissingIcons,
-	importClientTrees,
-	importTable,
-	regenerateIds
+	importTable
 } from '~/server/api/routers/general';
 import { downloadBlob } from '~/utils';
+import {
+	exportCollection,
+	importCollection
+} from '~/server/api/routers/collection';
 
 import AdminModule from './AdminModule';
 
@@ -26,6 +27,8 @@ const PageContent = () => {
 
 	const [table, setTable] = useState('');
 	const [dbImport, setDbImport] = useState('');
+
+	const [collection, setCollection] = useState('');
 	const [clientImport, setClientImport] = useState('');
 
 	return (
@@ -39,13 +42,6 @@ const PageContent = () => {
 						disabled={disableInteractions}
 					>
 						Create TurtleWoW account
-					</TextButton>
-					<TextButton
-						icon={RotateCcw}
-						onClick={asyncAction(() => regenerateIds(undefined))}
-						disabled={disableInteractions}
-					>
-						Regenerate IDs
 					</TextButton>
 					<TextButton
 						icon={Images}
@@ -99,7 +95,12 @@ const PageContent = () => {
 					</div>
 				</AdminModule>
 
-				<AdminModule title="Import trees from client">
+				<AdminModule title="Import/export collection">
+					<Input
+						placeholder="Collection name"
+						value={collection}
+						onChange={e => setCollection(e.currentTarget.value)}
+					/>
 					<Textarea
 						value={clientImport}
 						onChange={e => setClientImport(e.currentTarget.value)}
@@ -110,7 +111,9 @@ const PageContent = () => {
 					<div className="flex gap-2 self-end">
 						<TextButton
 							icon={Upload}
-							onClick={asyncAction(() => importClientTrees(clientImport))}
+							onClick={asyncAction(() =>
+								importCollection({ collection, json: clientImport })
+							)}
 							disabled={disableInteractions}
 							className="self-end"
 						>
@@ -119,7 +122,7 @@ const PageContent = () => {
 						<TextButton
 							icon={Download}
 							onClick={asyncAction(async () => {
-								const response = await exportClientTrees(undefined);
+								const response = await exportCollection(collection);
 								window.navigator.clipboard.writeText(response);
 								toast.success('Copied to clipboard');
 							})}

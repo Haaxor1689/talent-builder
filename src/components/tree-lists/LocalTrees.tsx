@@ -21,7 +21,11 @@ const LocalTrees = ({ serverList, name, from, class: classId }: Props) => {
 	const session = useSession();
 
 	if (loading || session.status === 'loading')
-		return <Spinner className="self-center" />;
+		return (
+			<div className="tw-surface flex grow items-center justify-center p-2 md:p-4">
+				<Spinner className="my-6" />
+			</div>
+		);
 
 	if (!serverList.length && !Object.values(savedSpecs ?? {}).length)
 		return <NoResults />;

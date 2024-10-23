@@ -1,5 +1,7 @@
 'use server';
 
+import 'server-only';
+
 import { asc, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { revalidateTag } from 'next/cache';

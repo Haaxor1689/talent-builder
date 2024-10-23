@@ -38,6 +38,9 @@ dependencies:
   drizzle-orm:
     specifier: ^0.33.0
     version: 0.33.0(@libsql/client@0.6.0)(@types/react@18.3.5)(mysql2@3.11.2)(react@18.2.0)
+  html-to-image:
+    specifier: ^1.11.11
+    version: 1.11.11
   lodash-es:
     specifier: ^4.17.21
     version: 4.17.21
@@ -2920,6 +2923,10 @@ packages:
     dependencies:
       function-bind: 1.1.2
     dev: true
+
+  /html-to-image@1.11.11:
+    resolution: {integrity: sha512-9gux8QhvjRO/erSnDPv28noDZcPZmYE7e1vFsBLKLlRlKDSqNJYebj6Qz1TGd5lsRV+X+xYyjCKjuZdABinWjA==}
+    dev: false
 
   /iconv-lite@0.6.3:
     resolution: {integrity: sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==}

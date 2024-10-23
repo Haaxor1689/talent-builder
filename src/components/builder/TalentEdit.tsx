@@ -1,9 +1,11 @@
 'use client';
 
 import { useFormContext, useWatch } from 'react-hook-form';
-import { Link2Off, Trash2 } from 'lucide-react';
+import { Camera, Link2Off, Trash2 } from 'lucide-react';
+import { useRef } from 'react';
 
 import { Talent, type TalentFormT } from '~/server/api/types';
+import { elementToPng } from '~/utils';
 
 import IconPicker from '../form/IconPicker';
 import Input from '../form/Input';
@@ -11,6 +13,7 @@ import Textarea from '../form/Textarea';
 import TextButton from '../styled/TextButton';
 import CheckboxInput from '../form/CheckboxInput';
 import SpellIcon from '../styled/SpellIcon';
+import DialogButton from '../styled/DialogButton';
 
 const RequiredTalent = ({
 	selected,
@@ -47,6 +50,45 @@ const RequiredTalent = ({
 	);
 };
 
+const TalentScreenshot = ({ selected }: { selected: number }) => {
+	const ref = useRef<HTMLDivElement>(null);
+
+	const item = useWatch({ name: `talents.${selected}` });
+
+	return (
+		<div className="flex justify-end">
+			<DialogButton
+				clickAway
+				dialog={close => (
+					<div className="flex flex-col items-center gap-4">
+						<TextButton
+							icon={Camera}
+							onClick={async () => {
+								if (!ref.current) return;
+								await elementToPng(ref.current, item.name);
+								close();
+							}}
+						>
+							Save screenshot
+						</TextButton>
+						<div ref={ref} className="flex items-start gap-2">
+							<SpellIcon icon={item.icon} showDefault />
+							<div className="tw-surface pointer-events-none z-10 min-w-[250px] max-w-[400px] bg-darkerGray/90">
+								<h4 className="tw-color">{item.name || '[Empty talent]'}</h4>
+								<p className="whitespace-pre-wrap">
+									{item.description ?? '[No description]'}
+								</p>
+							</div>
+						</div>
+					</div>
+				)}
+			>
+				{open => <TextButton icon={Camera} title="Screenshot" onClick={open} />}
+			</DialogButton>
+		</div>
+	);
+};
+
 type Props = {
 	selected: number;
 	editable?: boolean;
@@ -63,6 +105,7 @@ const TalentEdit = ({ selected, editable }: Props) => {
 					disabled={!editable}
 					className="grow"
 				/>
+
 				{editable && (
 					<TextButton
 						onClick={() =>
@@ -71,7 +114,7 @@ const TalentEdit = ({ selected, editable }: Props) => {
 								shouldTouch: true
 							})
 						}
-						className="text-red-500"
+						className="text-red"
 						icon={Trash2}
 						title="Delete"
 					/>
@@ -113,6 +156,8 @@ const TalentEdit = ({ selected, editable }: Props) => {
 			<span className="-mt-2 text-sm text-blueGray">
 				Comma separated list of spell ids for each rank
 			</span>
+
+			<TalentScreenshot selected={selected} />
 		</div>
 	);
 };

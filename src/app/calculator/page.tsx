@@ -2,18 +2,11 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 
 import PersonalBuilds from '~/components/builds-lists/PersonalBuilds';
-import TurtleBuilds from '~/components/builds-lists/TurtleBuilds';
 import Spinner from '~/components/styled/Spinner';
 import SpellIcon from '~/components/styled/SpellIcon';
 
-// export const experimental_ppr = true;
-
 const Page = () => (
 	<>
-		<Suspense fallback={<Spinner className="my-6 self-center" />}>
-			<TurtleBuilds />
-		</Suspense>
-
 		<div className="flex items-center justify-center gap-2">
 			<Link
 				href="/calculator/custom"

@@ -1,15 +1,16 @@
 'use server';
 
-import { and, asc, desc, eq, inArray, like, not, or } from 'drizzle-orm';
+import 'server-only';
+
+import { and, asc, desc, eq, inArray, like, or } from 'drizzle-orm';
 import { z } from 'zod';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { omit } from 'lodash-es';
 
-import { proposalTrees, talentTrees, users } from '~/server/db/schema';
+import { talentTrees, users } from '~/server/db/schema';
 
 import { Filters, TalentForm } from '../types';
 import {
-	adminProcedure,
 	getFullTag,
 	getQueryTag,
 	protectedProcedure,
@@ -70,6 +71,7 @@ export const listInfiniteTalentTrees = publicProcedure({
 		cursor: z.number().optional()
 	}),
 	queryKey: 'listInfiniteTalentTrees',
+	sessionType: 'user',
 	query: async ({ input, db, session }) => {
 		const { limit = 32, cursor: offset = 0 } = input;
 
@@ -83,8 +85,6 @@ export const listInfiniteTalentTrees = publicProcedure({
 
 		if (input.from && !whereAcc.length)
 			return { items: [], nextCursor: undefined };
-
-		const turtleAccId = await turtleWoWAccountId(undefined);
 
 		const items = await db.query.talentTrees.findMany({
 			limit: limit + 1,
@@ -106,7 +106,9 @@ export const listInfiniteTalentTrees = publicProcedure({
 					? inArray(talentTrees.createdById, whereAcc)
 					: undefined,
 				input.class ? eq(talentTrees.class, input.class) : undefined,
-				!session ? eq(talentTrees.createdById, turtleAccId) : undefined
+				input.collection
+					? eq(talentTrees.collection, input.collection)
+					: undefined
 			),
 			with: { createdBy: true }
 		});
@@ -117,72 +119,36 @@ export const listInfiniteTalentTrees = publicProcedure({
 			items,
 			nextCursor: hasMore ? offset + items.length : undefined
 		};
-	},
-	sessionType: 'any'
-});
-
-export const listTurtleTalentTrees = publicProcedure({
-	input: Filters,
-	queryKey: 'listTurtleTalentTrees',
-	query: async ({ input, db }) => {
-		if (input.from) return [];
-
-		const turtleAccId = await turtleWoWAccountId(undefined);
-		return db.query.talentTrees.findMany({
-			orderBy: [asc(talentTrees.class), asc(talentTrees.index)],
-			where: and(
-				eq(talentTrees.createdById, turtleAccId),
-				input.name ? like(talentTrees.name, `%${input.name}%`) : undefined,
-				input.class ? eq(talentTrees.class, input.class) : undefined
-			),
-			with: { createdBy: true }
-		});
 	}
 });
 
-export const listProposalTalentTrees = protectedProcedure({
-	input: Filters,
-	queryKey: 'listProposalTalentTrees',
-	query: async ({ input, db }) => {
-		const proposals = await db.query.proposalTrees.findMany({
-			orderBy: [asc(proposalTrees.class), asc(proposalTrees.index)],
-			where: input.class ? eq(proposalTrees.class, input.class) : undefined,
-			with: { tree: { with: { createdBy: true } } }
-		});
-		return proposals.map(p => p.tree);
-	}
-});
-
-export const listPublicTalentTrees = protectedProcedure({
+export const listPublicTalentTrees = publicProcedure({
 	input: Filters,
 	queryKey: 'listPublicTalentTrees',
-	query: async ({ input, db }) => {
-		const turtleAccId = await turtleWoWAccountId(undefined);
-
-		const whereAcc = input.from
-			? (
-					await db.query.users.findMany({
-						where: like(users.name, `%${input.from}%`)
-					})
-			  ).map(a => a.id)
-			: [];
-
-		if (input.from && !whereAcc.length) return [];
-
-		return db.query.talentTrees.findMany({
-			orderBy: [desc(talentTrees.updatedAt)],
+	query: async ({ input, db }) =>
+		db.query.talentTrees.findMany({
+			orderBy:
+				input.sort === 'class'
+					? [
+							asc(talentTrees.class),
+							asc(talentTrees.index),
+							desc(talentTrees.updatedAt)
+					  ]
+					: [desc(talentTrees.updatedAt)],
 			where: and(
 				eq(talentTrees.public, true),
-				not(eq(talentTrees.createdById, turtleAccId)),
 				input.name ? like(talentTrees.name, `%${input.name}%`) : undefined,
-				whereAcc.length
-					? inArray(talentTrees.createdById, whereAcc)
-					: undefined,
-				input.class ? eq(talentTrees.class, input.class) : undefined
+				input.from ? like(users.name, `%${input.from}%`) : undefined,
+				input.class ? eq(talentTrees.class, input.class) : undefined,
+				input.collection
+					? like(
+							talentTrees.collection,
+							`%${input.collection.replaceAll(' ', '-').toLocaleLowerCase()}%`
+					  )
+					: undefined
 			),
 			with: { createdBy: true }
-		});
-	}
+		})
 });
 
 export const listPersonalTalentTrees = protectedProcedure({
@@ -194,7 +160,10 @@ export const listPersonalTalentTrees = protectedProcedure({
 			where: and(
 				eq(talentTrees.createdById, session.user.id),
 				input.name ? like(talentTrees.name, `%${input.name}%`) : undefined,
-				input.class ? eq(talentTrees.class, input.class) : undefined
+				input.class ? eq(talentTrees.class, input.class) : undefined,
+				input.collection
+					? eq(talentTrees.collection, input.collection)
+					: undefined
 			),
 			with: { createdBy: true }
 		});
@@ -204,20 +173,14 @@ export const listPersonalTalentTrees = protectedProcedure({
 export const getTalentTree = publicProcedure({
 	input: z.string().optional(),
 	queryKey: 'getTalentTree',
-	query: async ({ db, input, session }) => {
+	query: async ({ db, input }) => {
 		if (!input) return undefined;
 
-		const tree = await db.query.talentTrees.findFirst({
+		return await db.query.talentTrees.findFirst({
 			where: eq(talentTrees.id, input),
 			with: { createdBy: true }
 		});
-
-		const turtleAccId = await turtleWoWAccountId(undefined);
-		if (tree?.createdById !== turtleAccId && !session) return undefined;
-
-		return tree;
-	},
-	sessionType: 'any'
+	}
 });
 
 export const deleteTalentTree = protectedProcedure({
@@ -247,44 +210,5 @@ export const deleteTalentTree = protectedProcedure({
 		revalidateTag(getFullTag('getTalentTree', entry.id));
 		revalidateTag(getFullTag('getOgInfo', entry.id));
 		revalidatePath(`/api/og/${entry.id}`);
-	}
-});
-
-export const promoteTalentTree = adminProcedure({
-	input: z.string(),
-	query: async ({ input, db }) => {
-		const entry = await db.query.talentTrees.findFirst({
-			where: eq(talentTrees.id, input)
-		});
-
-		if (!entry) throw new Error('NOT_FOUND');
-
-		if (!entry.class) throw new Error('Class not selected');
-
-		const inGame = await db.query.proposalTrees.findFirst({
-			where: and(
-				eq(proposalTrees.index, entry.index),
-				eq(proposalTrees.class, entry.class)
-			)
-		});
-
-		if (!inGame) {
-			await db.insert(proposalTrees).values({
-				class: entry.class,
-				index: entry.index,
-				treeId: entry.id
-			});
-		} else {
-			await db
-				.update(proposalTrees)
-				.set({ treeId: entry.id })
-				.where(
-					and(
-						eq(proposalTrees.index, entry.index),
-						eq(proposalTrees.class, entry.class)
-					)
-				);
-		}
-		revalidateTag(getQueryTag('listProposalTalentTrees'));
 	}
 });

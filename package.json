@@ -24,6 +24,7 @@
 		"babel-plugin-react-compiler": "0.0.0-experimental-fe484b5-20240912",
 		"classnames": "^2.5.1",
 		"drizzle-orm": "^0.33.0",
+		"html-to-image": "^1.11.11",
 		"lodash-es": "^4.17.21",
 		"lucide-react": "^0.441.0",
 		"nanoid": "^5.0.7",

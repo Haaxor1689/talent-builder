@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { CloudOff, Workflow } from 'lucide-react';
+import cls from 'classnames';
 
 import { getLastUpdatedString, getTalentSum, maskToClass } from '~/utils';
 import { type talentTrees, type users } from '~/server/db/schema';
@@ -97,10 +98,11 @@ const GridItem = (item: Item) => {
 
 type Props = {
 	list: Item[];
+	className?: cls.Value;
 };
 
-const TalentTreeGrid = ({ list }: Props) => (
-	<div className="tw-surface grow p-2 md:p-4">
+const TalentTreeGrid = ({ list, className }: Props) => (
+	<div className={cls('tw-surface grow p-2 md:p-4', className)}>
 		<div
 			className="grid items-start gap-3"
 			style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}

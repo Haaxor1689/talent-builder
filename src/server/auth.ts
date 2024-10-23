@@ -38,24 +38,20 @@ declare module 'next-auth' {
 export const { auth, handlers, signIn, signOut } = NextAuth({
 	trustHost: true,
 	callbacks: {
-		signIn: async ({ account }) => {
-			if (account?.provider === 'discord') {
-				const guilds = await fetch('https://discord.com/api/users/@me/guilds', {
-					headers: {
-						Authorization: `Bearer ${account.access_token}`
-					}
-				}).then(res => res.json());
-				const isClassChangesMember = !!(guilds as { id: string }[])?.find(
-					g => g?.id === '1034290945597902878'
-				);
-				if (!isClassChangesMember) return '/unauthorized';
-			}
-			if (account?.provider === 'github') {
-				// Hardcoded workaround for Muigin's GitHub account
-				if (account.providerAccountId !== '166345821') return '/unauthorized';
-			}
-			return true;
-		},
+		// signIn: async ({ account }) => {
+		// 	if (account?.provider === 'discord') {
+		// 		const guilds = await fetch('https://discord.com/api/users/@me/guilds', {
+		// 			headers: {
+		// 				Authorization: `Bearer ${account.access_token}`
+		// 			}
+		// 		}).then(res => res.json());
+		// 		const isClassChangesMember = !!(guilds as { id: string }[])?.find(
+		// 			g => g?.id === '1034290945597902878'
+		// 		);
+		// 		if (!isClassChangesMember) return '/unauthorized';
+		// 	}
+		// 	return true;
+		// },
 		session: ({ session, user }) => ({
 			...session,
 			user: {
@@ -72,10 +68,11 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 		verificationTokensTable: verificationTokens
 	}),
 	providers: [
-		Discord({
-			authorization:
-				'https://discord.com/api/oauth2/authorize?scope=identify+email+guilds'
-		})
+		Discord
+		// Discord({
+		// 	authorization:
+		// 		'https://discord.com/api/oauth2/authorize?scope=identify+email+guilds'
+		// })
 	],
 	events: {
 		signIn: async ({ user, profile, isNewUser }) => {

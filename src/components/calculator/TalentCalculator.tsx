@@ -17,6 +17,7 @@ import TalentSpec from './TalentSpec';
 import UrlSync from './UrlSync';
 import Actions from './Actionts';
 import TreePickDialogProvider from './TreePickDialog';
+import ClassCalculatorsLinks from './ClassCalculatorsLinks';
 
 const PointsSpent = () => {
 	const points = useWatch<BuildFormT, 'points'>({ name: 'points' });
@@ -36,12 +37,13 @@ const PointsSpent = () => {
 };
 
 type Props = {
+	urlBase?: string;
 	defaultValues?: Partial<BuildFormT>;
 	trees: [TalentFormT?, TalentFormT?, TalentFormT?];
 	isNew?: boolean;
 };
 
-const TalentCalculator = ({ trees, isNew, ...props }: Props) => {
+const TalentCalculator = ({ urlBase, trees, isNew, ...props }: Props) => {
 	const defaultValues = useMemo(
 		() => BuildForm.parse(props.defaultValues ?? {}),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -55,6 +57,7 @@ const TalentCalculator = ({ trees, isNew, ...props }: Props) => {
 
 	return (
 		<FormProvider {...formProps}>
+			{urlBase && <ClassCalculatorsLinks urlBase={urlBase} />}
 			<TreePickDialogProvider>
 				<form className="tw-surface flex flex-col gap-3">
 					<div className="flex flex-col gap-3 md:flex-row md:items-center">

@@ -11,7 +11,7 @@ type Props = React.DetailedHTMLProps<
 	HTMLButtonElement
 > & {
 	clickable?: boolean;
-	icon?: string;
+	icon?: string | null;
 	value?: number;
 	ranks?: number | null;
 	arrow?: [number, number] | null;
@@ -20,6 +20,7 @@ type Props = React.DetailedHTMLProps<
 	showDefault?: boolean;
 	selected?: boolean;
 	highlighted?: boolean;
+	size?: number;
 };
 
 const SpellIcon = forwardRef<HTMLButtonElement, Props>(
@@ -36,6 +37,7 @@ const SpellIcon = forwardRef<HTMLButtonElement, Props>(
 			frameClass,
 			className,
 			clickable,
+			size = 64,
 			...props
 		},
 		ref
@@ -47,7 +49,7 @@ const SpellIcon = forwardRef<HTMLButtonElement, Props>(
 				type="button"
 				tabIndex={!isClickable ? -1 : undefined}
 				className={cls(
-					'cursor group relative size-16 flex-shrink-0 focus:outline-none',
+					'cursor group relative flex-shrink-0 focus:outline-none',
 					!isClickable ? 'cursor-default' : 'cursor-pointer',
 					className
 				)}
@@ -55,41 +57,39 @@ const SpellIcon = forwardRef<HTMLButtonElement, Props>(
 			>
 				{showDefault || icon ? (
 					<Image
-						src={getIconPath(icon)}
+						src={getIconPath(icon ?? undefined)}
 						alt={!icon ? 'empty' : icon}
-						width={64}
-						height={64}
-						unoptimized
-						className="rounded-lg"
+						width={size}
+						height={size}
 					/>
 				) : (
 					<Image
 						src="/icon_frame.png"
 						alt="frame"
-						width={64}
-						height={64}
+						width={size}
+						height={size}
 						className={cls('absolute inset-0', frameClass)}
 					/>
 				)}
 				<Image
-					className={cls('absolute inset-0 rounded-lg p-[5%]', {
+					className={cls('absolute inset-0 p-[5%]', {
 						'group-hover:block group-focus:block': isClickable,
 						'hidden': !selected,
 						'hue-rotate-180': selected
 					})}
 					src="/icon_hover.png"
 					alt="hover"
-					width={64}
-					height={64}
+					width={size}
+					height={size}
 				/>
 
 				{highlighted && (
 					<Image
-						className={cls('absolute inset-0 scale-125 rounded-lg')}
+						className={cls('absolute inset-0 scale-125 ')}
 						src="/icon_hover.png"
 						alt="hover"
-						width={64}
-						height={64}
+						width={size}
+						height={size}
 					/>
 				)}
 

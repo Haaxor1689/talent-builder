@@ -1,6 +1,8 @@
 'use server';
 
-import { asc, eq } from 'drizzle-orm';
+import 'server-only';
+
+import { eq } from 'drizzle-orm';
 import { stringify } from 'superjson';
 import { nanoid } from 'nanoid';
 import { type SQLiteTableWithColumns } from 'drizzle-orm/sqlite-core';
@@ -18,9 +20,6 @@ import { type db } from '~/server/db';
 import { env } from '~/env';
 
 import { publicProcedure, adminProcedure } from '../helpers';
-import { Talent, TalentForm } from '../types';
-
-import { listTurtleTalentTrees } from './talentTree';
 
 export const createTurtleWoWAccount = adminProcedure({
 	query: async ({ db }) => {
@@ -105,66 +104,23 @@ export const importTable = adminProcedure({
 	}
 });
 
-export const regenerateIds = adminProcedure({
-	query: async ({ db }) => {
-		const values = await selectAll(db, talentTrees);
-		await db.delete(talentTrees);
-		await db
-			.insert(talentTrees)
-			.values(values.map(v => ({ ...v, id: nanoid(10) })));
-	}
-});
-
 export const exportMissingIcons = adminProcedure({
 	query: async ({ db }) => {
 		const list: [number, string][] = await fetch(
 			`${env.DEPLOY_URL}/icons/list.json`
 		).then(r => r.json());
 
-		const trees = await db.query.proposalTrees.findMany({
-			with: { tree: true }
+		const trees = await db.query.talentTrees.findMany({
+			where: eq(talentTrees.collection, 'cc2-proposal')
 		});
 		const icons = new Set<string>();
 		trees
-			.flatMap(t => t.tree.talents)
+			.flatMap(t => t.talents)
 			.filter(t => t.icon)
 			.forEach(t => {
 				const item = list.find(i => i[1] === t.icon);
 				if (!item || item[0] === -1) icons.add(t.icon);
 			});
 		return [...icons].join(',');
-	}
-});
-
-export const importClientTrees = adminProcedure({
-	input: z.string(),
-	query: async ({ input, db }) => {
-		const trees = z.array(TalentForm).safeParse(JSON.parse(input));
-		if (!trees.success) {
-			throw new Error(
-				`Invalid input: ${JSON.stringify(trees.error.errors, null, 2)}`
-			);
-		}
-		const turtleWoW = await turtleWoWAccountId(undefined);
-		await db.delete(talentTrees).where(eq(talentTrees.createdById, turtleWoW));
-		await db.insert(talentTrees).values(
-			trees.data.map(tree => ({
-				...tree,
-				id: nanoid(10),
-				talents: tree.talents.map(t => (!t ? Talent.parse({}) : t)),
-				createdById: turtleWoW,
-				createdAt: new Date()
-			}))
-		);
-	}
-});
-
-export const exportClientTrees = adminProcedure({
-	query: async ({ db }) => {
-		const trees = await db.query.proposalTrees.findMany({
-			with: { tree: true },
-			orderBy: [asc(talentTrees.class), asc(talentTrees.index)]
-		});
-		return JSON.stringify(trees.map(t => t.tree));
 	}
 });

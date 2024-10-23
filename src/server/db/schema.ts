@@ -109,6 +109,7 @@ export const talentTrees = sqliteTable(
 			.default('[]')
 			.notNull()
 			.$type<TalentTreeT>(),
+		collection: text('collection', { length: 255 }),
 		createdById: text('createdById', { length: 255 }).notNull(),
 		createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
 		updatedAt: integer('updatedAt', { mode: 'timestamp' })
@@ -152,24 +153,5 @@ export const savedBuildsRelations = relations(savedBuilds, ({ one }) => ({
 	createdBy: one(users, {
 		fields: [savedBuilds.createdById],
 		references: [users.id]
-	})
-}));
-
-export const proposalTrees = sqliteTable(
-	'proposalTree',
-	{
-		class: integer('class').notNull(),
-		index: integer('index').notNull(),
-		treeId: text('treeId', { length: 36 }).notNull()
-	},
-	example => ({
-		pk: primaryKey({ columns: [example.class, example.index] })
-	})
-);
-
-export const proposalTreesRelations = relations(proposalTrees, ({ one }) => ({
-	tree: one(talentTrees, {
-		fields: [proposalTrees.treeId],
-		references: [talentTrees.id]
 	})
 }));

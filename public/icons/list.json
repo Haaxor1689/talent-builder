@@ -61,6 +61,10 @@
   ],
   [
     -1,
+    "inv_jewelry_ring_gilneas"
+  ],
+  [
+    -1,
     "inv_jewelry_ring_gold"
   ],
   [
@@ -161,6 +165,10 @@
   ],
   [
     -1,
+    "inv_pvppandarenserpentmount"
+  ],
+  [
+    -1,
     "inv_redgem"
   ],
   [
@@ -181,11 +189,43 @@
   ],
   [
     -1,
+    "inv_bishophat"
+  ],
+  [
+    -1,
     "inv_censer"
   ],
   [
     -1,
+    "inv_demonaxe"
+  ],
+  [
+    -1,
+    "inv_demonhornhelmet"
+  ],
+  [
+    -1,
+    "inv_demonhornshoulders"
+  ],
+  [
+    -1,
     "inv_mallet"
+  ],
+  [
+    -1,
+    "ability_mage_firestarter"
+  ],
+  [
+    2340,
+    "ability_warlock_power_overwhelming"
+  ],
+  [
+    2349,
+    "ability_warrior_reprisal"
+  ],
+  [
+    2341,
+    "ability_warrior_stalwartprotector"
   ],
   [
     -1,
@@ -222,6 +262,14 @@
   [
     -1,
     "class_warrior"
+  ],
+  [
+    2333,
+    "inv_corgi2"
+  ],
+  [
+    2342,
+    "inv_misc_gem_felstone"
   ],
   [
     -1,
@@ -708,7 +756,7 @@
     "spell_fire_bluefire"
   ],
   [
-    -1,
+    2337,
     "trade_archaeology_highbornesoulmirror"
   ],
   [
@@ -2252,7 +2300,7 @@
     "spell_holy_surgeoflight"
   ],
   [
-    -1,
+    2335,
     "spell_mage_focusingcrystal"
   ],
   [
@@ -2496,7 +2544,7 @@
     "garrison_upgrade"
   ],
   [
-    -1,
+    2336,
     "garrison_weaponupgrade"
   ],
   [
@@ -2800,7 +2848,7 @@
     "inv_pet_mechanicalchicken"
   ],
   [
-    -1,
+    2344,
     "inv_pet_monkey"
   ],
   [
@@ -7176,7 +7224,7 @@
     "inv_enchant_essencemagicsmall"
   ],
   [
-    -1,
+    2334,
     "inv_enchant_essencemysticallarge"
   ],
   [
@@ -8840,7 +8888,7 @@
     "inv_misc_book_07"
   ],
   [
-    -1,
+    2331,
     "inv_misc_book_08"
   ],
   [
@@ -9532,7 +9580,7 @@
     "inv_misc_gear_07"
   ],
   [
-    -1,
+    2345,
     "inv_misc_gear_08"
   ],
   [
@@ -9828,7 +9876,7 @@
     "inv_misc_herb_01"
   ],
   [
-    -1,
+    2328,
     "inv_misc_herb_02"
   ],
   [
@@ -10040,7 +10088,7 @@
     "inv_misc_leatherscrap_08"
   ],
   [
-    -1,
+    2332,
     "inv_misc_map_01"
   ],
   [
@@ -10376,11 +10424,11 @@
     "inv_misc_quiver_02"
   ],
   [
-    -1,
+    2330,
     "inv_misc_quiver_03"
   ],
   [
-    -1,
+    2343,
     "inv_misc_quiver_04"
   ],
   [
@@ -11900,7 +11948,7 @@
     "inv_sword_30"
   ],
   [
-    -1,
+    2325,
     "inv_sword_31"
   ],
   [
