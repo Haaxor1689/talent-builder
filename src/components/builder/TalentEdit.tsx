@@ -2,7 +2,7 @@
 
 import { useFormContext, useWatch } from 'react-hook-form';
 import { Camera, Link2Off, Trash2 } from 'lucide-react';
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 
 import { Talent, type TalentFormT } from '~/server/api/types';
 import { elementToPng } from '~/utils';
@@ -14,6 +14,7 @@ import TextButton from '../styled/TextButton';
 import CheckboxInput from '../form/CheckboxInput';
 import SpellIcon from '../styled/SpellIcon';
 import DialogButton from '../styled/DialogButton';
+import { formatTalentDescription } from '../calculator/formatTalentDescription';
 
 const RequiredTalent = ({
 	selected,
@@ -55,6 +56,11 @@ const TalentScreenshot = ({ selected }: { selected: number }) => {
 
 	const item = useWatch({ name: `talents.${selected}` });
 
+	const description = useMemo(
+		() => formatTalentDescription(item),
+		[item.description, item.ranks]
+	);
+
 	return (
 		<div className="flex justify-end">
 			<DialogButton
@@ -76,7 +82,7 @@ const TalentScreenshot = ({ selected }: { selected: number }) => {
 							<div className="tw-surface pointer-events-none z-10 min-w-[250px] max-w-[400px] bg-darkerGray/90">
 								<h4 className="tw-color">{item.name || '[Empty talent]'}</h4>
 								<p className="whitespace-pre-wrap">
-									{item.description ?? '[No description]'}
+									{description ?? '[No description]'}
 								</p>
 							</div>
 						</div>
