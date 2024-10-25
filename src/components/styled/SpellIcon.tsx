@@ -1,6 +1,6 @@
+/* eslint-disable @next/next/no-img-element */
 import cls from 'classnames';
 import { forwardRef } from 'react';
-import Image from 'next/image';
 
 import { getIconPath } from '~/utils';
 
@@ -56,14 +56,14 @@ const SpellIcon = forwardRef<HTMLButtonElement, Props>(
 				{...props}
 			>
 				{showDefault || icon ? (
-					<Image
+					<img
 						src={getIconPath(icon ?? undefined)}
 						alt={!icon ? 'empty' : icon}
 						width={size}
 						height={size}
 					/>
 				) : (
-					<Image
+					<img
 						src="/icon_frame.png"
 						alt="frame"
 						width={size}
@@ -71,7 +71,7 @@ const SpellIcon = forwardRef<HTMLButtonElement, Props>(
 						className={cls('absolute inset-0', frameClass)}
 					/>
 				)}
-				<Image
+				<img
 					className={cls('absolute inset-0 p-[5%]', {
 						'group-hover:block group-focus:block': isClickable,
 						'hidden': !selected,
@@ -84,7 +84,7 @@ const SpellIcon = forwardRef<HTMLButtonElement, Props>(
 				/>
 
 				{highlighted && (
-					<Image
+					<img
 						className={cls('absolute inset-0 scale-125 ')}
 						src="/icon_hover.png"
 						alt="hover"
