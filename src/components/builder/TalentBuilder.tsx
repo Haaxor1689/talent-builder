@@ -146,6 +146,7 @@ const TalentBuilder = (props: Props) => {
 											...values,
 											id: newId,
 											name: `${values.name} (copy)`,
+											collection: null,
 											public: false,
 											createdBy: null,
 											createdById: null,

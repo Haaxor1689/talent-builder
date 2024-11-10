@@ -111,7 +111,8 @@ export const exportCollection = adminProcedure({
 								name: l.name,
 								ranks: l.ranks,
 								description: l.description,
-								requires: l.requires
+								requires: l.requires,
+								spellIds: l.spellIds
 						  }
 				)
 			}))
