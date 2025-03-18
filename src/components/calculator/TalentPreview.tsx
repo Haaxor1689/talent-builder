@@ -83,6 +83,7 @@ const TalentPreview = ({ i, idx, talents, ...field }: Props) => {
 
 	const description = useMemo(
 		() => formatTalentDescription(field, value),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[field.description, field.ranks, value]
 	);
 
@@ -102,10 +103,14 @@ const TalentPreview = ({ i, idx, talents, ...field }: Props) => {
 				<>
 					{/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
 					<h4 className="tw-color">{field.name || '[Unnamed talent]'}</h4>
+					<p className="font-bold">
+						Rank {value}/{field.ranks}
+					</p>
 					<p
-						className={cls('whitespace-pre-wrap', {
-							['text-blueGray']: !description
-						})}
+						className={cls(
+							'whitespace-pre-wrap',
+							!description && 'text-blueGray'
+						)}
 					>
 						{description ?? '[No description]'}
 					</p>

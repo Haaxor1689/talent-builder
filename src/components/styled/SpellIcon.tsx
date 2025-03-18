@@ -18,11 +18,11 @@ type Props = React.DetailedHTMLProps<
 	highlightedArrow?: boolean;
 	frameClass?: string;
 	showDefault?: boolean;
+	showEmpty?: boolean;
 	selected?: boolean;
 	highlighted?: boolean;
 	size?: number;
 };
-
 const SpellIcon = forwardRef<HTMLButtonElement, Props>(
 	(
 		{
@@ -68,7 +68,7 @@ const SpellIcon = forwardRef<HTMLButtonElement, Props>(
 						alt="frame"
 						width={size}
 						height={size}
-						className={cls('absolute inset-0', frameClass)}
+						className={frameClass}
 					/>
 				)}
 				<img

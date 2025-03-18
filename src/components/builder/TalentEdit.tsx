@@ -58,6 +58,7 @@ const TalentScreenshot = ({ selected }: { selected: number }) => {
 
 	const description = useMemo(
 		() => formatTalentDescription(item),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[item.description, item.ranks]
 	);
 

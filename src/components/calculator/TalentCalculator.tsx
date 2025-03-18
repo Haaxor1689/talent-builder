@@ -22,16 +22,21 @@ import ClassCalculatorsLinks from './ClassCalculatorsLinks';
 const PointsSpent = () => {
 	const points = useWatch<BuildFormT, 'points'>({ name: 'points' });
 	const sums = points.map(p => p.reduce((acc, curr) => acc + curr, 0));
-	const pointsLeft = 51 - sums.reduce((acc, curr) => acc + curr, 0);
+	const reqLvl = sums.reduce((acc, curr) => acc + curr, 0);
+	const pointsLeft = 51 - reqLvl;
 	return (
 		<div className="flex flex-wrap justify-between md:contents">
 			<span className="h3 grow">{sums.join(' / ')}</span>
-			<span className="h4 text-blueGray">
-				Points left:{' '}
-				<span className={cls('h3', { 'text-blueGray': !pointsLeft })}>
-					{pointsLeft}
+			{!!reqLvl && (
+				<span className="h4 text-blueGray">
+					Level: <span className="h3">{reqLvl + 9}</span>
 				</span>
-			</span>
+			)}
+			{!!pointsLeft && (
+				<span className="h4 text-blueGray">
+					Points left: <span className="h3">{pointsLeft}</span>
+				</span>
+			)}
 		</div>
 	);
 };

@@ -19,7 +19,7 @@ export const listCollections = publicProcedure({
 		const response = await db
 			.selectDistinct({ collection: talentTrees.collection })
 			.from(talentTrees);
-		return response.map(t => t.collection);
+		return response.map(t => t.collection).filter(v => v !== null);
 	}
 });
 
