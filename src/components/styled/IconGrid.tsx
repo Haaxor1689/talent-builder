@@ -50,7 +50,10 @@ const IconGrid = ({ filter, required, icon, setIcon }: Props) => {
 	return (
 		<div
 			className="grid max-h-[520px] gap-1 overflow-y-auto"
-			style={{ gridTemplateColumns: 'repeat(auto-fit, 64px)' }}
+			style={{
+				gridTemplateColumns: 'repeat(auto-fit, 64px)',
+				gridAutoRows: '64px'
+			}}
 		>
 			{icons.isLoading && (
 				<div className="col-span-full flex h-32 items-center justify-center">
