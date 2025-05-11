@@ -20,16 +20,17 @@ export type TalentTreeT = z.infer<typeof TalentTree>;
 
 export const TalentForm = z.object({
 	id: z.string().default(nanoid(10)),
-	public: z.boolean().default(false),
-	notes: z.string().nullable().default(null),
 	icon: z.string().default('inv_misc_questionmark'),
 	name: z.string().default('New talent tree'),
 	class: z.number().default(0),
 	index: z.number().default(0),
-	collection: z.string().nullable().default(null),
 	talents: TalentTree.default(
 		[...Array(4 * 7).keys()].map(() => Talent.parse({}))
 	),
+	// Builder specific
+	collection: z.string().nullable().default(null),
+	public: z.boolean().default(false),
+	notes: z.string().nullable().default(null),
 	createdById: z.string().nullable().default(null),
 	createdBy: z
 		.object({

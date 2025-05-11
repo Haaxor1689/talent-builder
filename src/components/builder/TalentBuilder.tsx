@@ -48,7 +48,7 @@ type Props = {
 const TalentBuilder = (props: Props) => {
 	const treeElemRef = useRef<HTMLDivElement>(null);
 
-	const { disableInteractions, asyncAction } = useAsyncAction();
+	const a = useAsyncAction();
 
 	const session = useSession();
 	const router = useRouter();
@@ -95,7 +95,7 @@ const TalentBuilder = (props: Props) => {
 						<IdxInput control={control} disabled={!editable} />
 						{editable && (
 							<TextButton
-								onClick={asyncAction(async () => {
+								onClick={a.action(async () => {
 									const values = getValues();
 									if (!props.isLocal) {
 										const newTree = await upsertTalentTree(values);
@@ -110,13 +110,13 @@ const TalentBuilder = (props: Props) => {
 								})}
 								icon={Save}
 								title={props.isLocal ? 'Save locally' : 'Save changes'}
-								disabled={!formState.isDirty || disableInteractions}
+								disabled={!formState.isDirty || a.loading}
 							/>
 						)}
 
 						{props.isLocal && session.status === 'authenticated' && (
 							<TextButton
-								onClick={asyncAction(async () => {
+								onClick={a.action(async () => {
 									const values = getValues();
 									const newId = nanoid(10);
 									await upsertTalentTree({ ...values, id: newId });
@@ -129,15 +129,13 @@ const TalentBuilder = (props: Props) => {
 								})}
 								icon={UploadCloud}
 								title="Save online"
-								disabled={
-									(props.isNew && !formState.isDirty) || disableInteractions
-								}
+								disabled={(props.isNew && !formState.isDirty) || a.loading}
 							/>
 						)}
 
 						{!props.isNew && (
 							<TextButton
-								onClick={asyncAction(async () => {
+								onClick={a.action(async () => {
 									const values = getValues();
 									const newId = nanoid(10);
 									setSavedSpecs(savedSpecs => ({
@@ -159,7 +157,7 @@ const TalentBuilder = (props: Props) => {
 								})}
 								icon={Copy}
 								title="Clone locally"
-								disabled={disableInteractions}
+								disabled={a.loading}
 							/>
 						)}
 
@@ -168,7 +166,7 @@ const TalentBuilder = (props: Props) => {
 								title={`Are you sure you want to delete "${
 									getValues().name
 								}" tree?`}
-								confirm={asyncAction(async () => {
+								confirm={a.action(async () => {
 									if (props.isNew) {
 										reset(TalentForm.parse({}));
 										return;
@@ -191,7 +189,7 @@ const TalentBuilder = (props: Props) => {
 										icon={Trash2}
 										title="Delete"
 										className={editable ? 'text-red' : undefined}
-										disabled={disableInteractions}
+										disabled={a.loading}
 									/>
 								)}
 							</ConfirmDialog>

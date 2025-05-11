@@ -2,8 +2,8 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 
 const useAsyncAction = () => {
-	const [disableInteractions, setDisableInteractions] = useState(false);
-	const asyncAction =
+	const [loading, setDisableInteractions] = useState(false);
+	const action =
 		<T extends unknown[]>(fn: (...args: T) => Promise<unknown>) =>
 		(...args: T) => {
 			setDisableInteractions(true);
@@ -12,7 +12,7 @@ const useAsyncAction = () => {
 				.finally(() => setDisableInteractions(false));
 		};
 
-	return { disableInteractions, asyncAction };
+	return { loading, action };
 };
 
 export default useAsyncAction;

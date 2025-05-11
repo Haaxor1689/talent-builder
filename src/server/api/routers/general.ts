@@ -111,7 +111,7 @@ export const exportMissingIcons = adminProcedure({
 		).then(r => r.json());
 
 		const trees = await db.query.talentTrees.findMany({
-			where: eq(talentTrees.collection, 'cc2-proposal')
+			where: eq(talentTrees.collection, 'class-changes-2')
 		});
 		const icons = new Set<string>();
 		trees

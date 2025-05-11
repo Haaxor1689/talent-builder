@@ -5,7 +5,6 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 
 import Input from '~/components/form/Input';
-import Textarea from '~/components/form/Textarea';
 import TextButton from '~/components/styled/TextButton';
 import useAsyncAction from '~/hooks/useAsyncAction';
 import {
@@ -23,13 +22,11 @@ import {
 import AdminModule from './AdminModule';
 
 const PageContent = () => {
-	const { asyncAction, disableInteractions } = useAsyncAction();
+	const a = useAsyncAction();
 
 	const [table, setTable] = useState('');
-	const [dbImport, setDbImport] = useState('');
 
 	const [collection, setCollection] = useState('');
-	const [clientImport, setClientImport] = useState('');
 
 	return (
 		<>
@@ -38,19 +35,19 @@ const PageContent = () => {
 				<AdminModule title="Utilities">
 					<TextButton
 						icon={User}
-						onClick={asyncAction(() => createTurtleWoWAccount(undefined))}
-						disabled={disableInteractions}
+						onClick={a.action(() => createTurtleWoWAccount(undefined))}
+						disabled={a.loading}
 					>
 						Create TurtleWoW account
 					</TextButton>
 					<TextButton
 						icon={Images}
-						onClick={asyncAction(async () => {
+						onClick={a.action(async () => {
 							const response = await exportMissingIcons(undefined);
 							window.navigator.clipboard.writeText(response);
 							toast.success('Copied to clipboard');
 						})}
-						disabled={disableInteractions}
+						disabled={a.loading}
 					>
 						Export WoWHead icons
 					</TextButton>
@@ -62,33 +59,33 @@ const PageContent = () => {
 						value={table}
 						onChange={e => setTable(e.currentTarget.value)}
 					/>
-					<Textarea
-						value={dbImport}
-						onChange={e => setDbImport(e.currentTarget.value)}
-						placeholder="Paste JSON here..."
-						maxRows={5}
-						className="flex-grow"
-					/>
 					<div className="flex gap-2 self-end">
 						<TextButton
 							icon={Upload}
-							onClick={asyncAction(() =>
-								importTable({ data: dbImport, table: table as never })
-							)}
-							disabled={disableInteractions}
+							onClick={a.action(async () => {
+								const [file] = await window.showOpenFilePicker({
+									multiple: false
+								});
+								if (!file) return;
+								return importTable({
+									data: await file.getFile().then(f => f.text()),
+									table: table as never
+								});
+							})}
+							disabled={a.loading}
 						>
 							Import
 						</TextButton>
 						<TextButton
 							icon={Download}
-							onClick={asyncAction(async () => {
+							onClick={a.action(async () => {
 								const response = await exportTable(table as never);
 								downloadBlob(
 									new Blob([response]),
 									`talent-builder_${table}.json`
 								);
 							})}
-							disabled={disableInteractions}
+							disabled={a.loading}
 						>
 							Export
 						</TextButton>
@@ -101,32 +98,32 @@ const PageContent = () => {
 						value={collection}
 						onChange={e => setCollection(e.currentTarget.value)}
 					/>
-					<Textarea
-						value={clientImport}
-						onChange={e => setClientImport(e.currentTarget.value)}
-						placeholder="Paste JSON here..."
-						maxRows={5}
-						className="flex-grow"
-					/>
 					<div className="flex gap-2 self-end">
 						<TextButton
 							icon={Upload}
-							onClick={asyncAction(() =>
-								importCollection({ collection, json: clientImport })
-							)}
-							disabled={disableInteractions}
+							onClick={a.action(async () => {
+								const [file] = await window.showOpenFilePicker({
+									multiple: false
+								});
+								if (!file) return;
+								return importCollection({
+									collection,
+									json: await file.getFile().then(f => f.text())
+								});
+							})}
+							disabled={a.loading}
 							className="self-end"
 						>
 							Import
 						</TextButton>
 						<TextButton
 							icon={Download}
-							onClick={asyncAction(async () => {
+							onClick={a.action(async () => {
 								const response = await exportCollection(collection);
 								window.navigator.clipboard.writeText(response);
 								toast.success('Copied to clipboard');
 							})}
-							disabled={disableInteractions}
+							disabled={a.loading}
 							className="self-end"
 						>
 							Export

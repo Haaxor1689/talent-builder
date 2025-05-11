@@ -27,7 +27,10 @@
 		"baseUrl": ".",
 		"paths": {
 			"~/*": ["./src/*"]
-		}
+		},
+
+		/* Fix for FileSystemAPI types */
+		"types": ["@types/wicg-file-system-access"]
 	},
 	"include": [
 		".eslintrc.cjs",

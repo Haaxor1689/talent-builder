@@ -24,7 +24,7 @@ type Props = {
 
 const Actions = ({ trees, isNew }: Props) => {
 	const { register, getValues, reset, watch } = useFormContext<BuildFormT>();
-	const { disableInteractions, asyncAction } = useAsyncAction();
+	const a = useAsyncAction();
 
 	const session = useSession();
 	const router = useRouter();
@@ -50,7 +50,7 @@ const Actions = ({ trees, isNew }: Props) => {
 							<h3 className="tw-color">Save build</h3>
 							<Input {...register('name')} label="Build name" />
 							<TextButton
-								onClick={asyncAction(async () => {
+								onClick={a.action(async () => {
 									const values = getValues();
 									const newBuild = await upsertSavedBuild({
 										...values,
@@ -76,14 +76,14 @@ const Actions = ({ trees, isNew }: Props) => {
 							onClick={open}
 							icon={Save}
 							title="Save build"
-							disabled={disableInteractions || trees.some(t => !t)}
+							disabled={a.loading || trees.some(t => !t)}
 						/>
 					)}
 				</DialogButton>
 
 				{!isNew && (
 					<TextButton
-						onClick={asyncAction(async () => {
+						onClick={a.action(async () => {
 							const values = getValues();
 							const newUrl = `/calculator/custom?${new URLSearchParams({
 								c: values.class.toString(),
@@ -97,14 +97,14 @@ const Actions = ({ trees, isNew }: Props) => {
 						})}
 						icon={Copy}
 						title="Clone"
-						disabled={disableInteractions || trees.some(t => !t)}
+						disabled={a.loading || trees.some(t => !t)}
 					/>
 				)}
 
 				{!isNew && editable && (
 					<ConfirmDialog
 						title={`Are you sure you want to delete "${fullName}" build?`}
-						confirm={asyncAction(async () => {
+						confirm={a.action(async () => {
 							const values = getValues();
 							await deleteSavedBuild(values.id);
 
@@ -117,7 +117,7 @@ const Actions = ({ trees, isNew }: Props) => {
 								icon={Trash2}
 								title="Delete"
 								className={editable ? 'text-red' : undefined}
-								disabled={disableInteractions}
+								disabled={a.loading}
 							/>
 						)}
 					</ConfirmDialog>
