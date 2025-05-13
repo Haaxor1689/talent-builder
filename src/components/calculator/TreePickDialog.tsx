@@ -21,7 +21,7 @@ import {
 	maskToClass,
 	zodResolver
 } from '~/utils';
-import { type talentTrees, type users } from '~/server/db/schema';
+import { type talentTrees } from '~/server/db/schema';
 import { listInfiniteTalentTrees } from '~/server/api/routers/talentTree';
 import { Filters } from '~/server/api/types';
 import useDebounced from '~/hooks/useDebounced';
@@ -31,7 +31,7 @@ import DialogButton from '../styled/DialogButton';
 import Input from '../form/Input';
 import ClassPicker from '../form/ClassPicker';
 import Spinner from '../styled/Spinner';
-import AuthorTag from '../styled/AuthorTag';
+import AuthorTag, { type AuthorTagProps } from '../styled/AuthorTag';
 import Tooltip from '../styled/Tooltip';
 import TextButton from '../styled/TextButton';
 
@@ -49,7 +49,7 @@ export const useTreePick = () => useContext(TreePickContext);
 
 type Item = typeof talentTrees.$inferSelect & {
 	idx: number;
-	createdBy: typeof users.$inferSelect;
+	createdBy: AuthorTagProps;
 	close: () => void;
 };
 

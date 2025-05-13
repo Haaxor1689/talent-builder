@@ -5,16 +5,16 @@ import { CloudOff, Workflow } from 'lucide-react';
 import cls from 'classnames';
 
 import { getLastUpdatedString, getTalentSum, maskToClass } from '~/utils';
-import { type talentTrees, type users } from '~/server/db/schema';
+import { type talentTrees } from '~/server/db/schema';
 
 import SpellIcon from '../styled/SpellIcon';
-import AuthorTag from '../styled/AuthorTag';
+import AuthorTag, { type AuthorTagProps } from '../styled/AuthorTag';
 import Tooltip from '../styled/Tooltip';
 import TextButton from '../styled/TextButton';
 
 type Item = typeof talentTrees.$inferSelect & {
 	href: string;
-	createdBy: typeof users.$inferSelect;
+	createdBy: AuthorTagProps;
 };
 
 const GridItem = (item: Item) => {

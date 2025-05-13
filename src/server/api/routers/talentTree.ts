@@ -78,7 +78,8 @@ export const listInfiniteTalentTrees = publicProcedure({
 		const whereAcc = input.from
 			? (
 					await db.query.users.findMany({
-						where: like(users.name, `%${input.from}%`)
+						where: like(users.name, `%${input.from}%`),
+						columns: { id: true }
 					})
 			  ).map(a => a.id)
 			: [];
@@ -147,7 +148,9 @@ export const listPublicTalentTrees = publicProcedure({
 					  )
 					: undefined
 			),
-			with: { createdBy: true }
+			with: {
+				createdBy: { columns: { name: true, image: true, isAdmin: true } }
+			}
 		})
 });
 
@@ -165,7 +168,9 @@ export const listPersonalTalentTrees = protectedProcedure({
 					? eq(talentTrees.collection, input.collection)
 					: undefined
 			),
-			with: { createdBy: true }
+			with: {
+				createdBy: { columns: { name: true, image: true, isAdmin: true } }
+			}
 		});
 	}
 });
@@ -178,7 +183,9 @@ export const getTalentTree = publicProcedure({
 
 		return await db.query.talentTrees.findFirst({
 			where: eq(talentTrees.id, input),
-			with: { createdBy: true }
+			with: {
+				createdBy: { columns: { name: true, image: true, isAdmin: true } }
+			}
 		});
 	}
 });

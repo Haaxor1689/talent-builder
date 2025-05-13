@@ -3,17 +3,17 @@
 import Link from 'next/link';
 import { Workflow } from 'lucide-react';
 
-import { type savedBuilds, type users } from '~/server/db/schema';
+import { type savedBuilds } from '~/server/db/schema';
 import { getLastUpdatedString, maskToClass } from '~/utils';
 
 import SpellIcon from '../styled/SpellIcon';
 import Tooltip from '../styled/Tooltip';
-import AuthorTag from '../styled/AuthorTag';
+import AuthorTag, { type AuthorTagProps } from '../styled/AuthorTag';
 import TextButton from '../styled/TextButton';
 
 type Item = typeof savedBuilds.$inferSelect & {
 	href: string;
-	createdBy: typeof users.$inferSelect;
+	createdBy: AuthorTagProps;
 };
 
 const GridItem = (item: Item) => {

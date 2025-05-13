@@ -16,7 +16,9 @@ export const getOgInfo = publicProcedure({
 	query: async ({ db, input }) => {
 		const talentTree = await db.query.talentTrees.findFirst({
 			where: eq(talentTrees.id, input),
-			with: { createdBy: true }
+			with: {
+				createdBy: { columns: { name: true, image: true, isAdmin: true } }
+			}
 		});
 
 		if (!talentTree) return null;

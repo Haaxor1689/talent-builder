@@ -1,10 +1,10 @@
-type Props = {
+export type AuthorTagProps = {
 	image?: string | null;
 	name?: string | null;
 	isAdmin?: boolean | null;
 };
 
-const AuthorTag = ({ image, name, isAdmin }: Props) => (
+const AuthorTag = ({ image, name, isAdmin }: AuthorTagProps) => (
 	<>
 		<div
 			className="size-7 rounded-full bg-contain"

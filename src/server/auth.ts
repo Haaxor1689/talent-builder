@@ -38,20 +38,6 @@ declare module 'next-auth' {
 export const { auth, handlers, signIn, signOut } = NextAuth({
 	trustHost: true,
 	callbacks: {
-		// signIn: async ({ account }) => {
-		// 	if (account?.provider === 'discord') {
-		// 		const guilds = await fetch('https://discord.com/api/users/@me/guilds', {
-		// 			headers: {
-		// 				Authorization: `Bearer ${account.access_token}`
-		// 			}
-		// 		}).then(res => res.json());
-		// 		const isClassChangesMember = !!(guilds as { id: string }[])?.find(
-		// 			g => g?.id === '1034290945597902878'
-		// 		);
-		// 		if (!isClassChangesMember) return '/unauthorized';
-		// 	}
-		// 	return true;
-		// },
 		session: ({ session, user }) => ({
 			...session,
 			user: {
@@ -67,13 +53,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 		sessionsTable: sessions,
 		verificationTokensTable: verificationTokens
 	}),
-	providers: [
-		Discord
-		// Discord({
-		// 	authorization:
-		// 		'https://discord.com/api/oauth2/authorize?scope=identify+email+guilds'
-		// })
-	],
+	providers: [Discord],
 	events: {
 		signIn: async ({ user, profile, isNewUser }) => {
 			if (isNewUser) return;

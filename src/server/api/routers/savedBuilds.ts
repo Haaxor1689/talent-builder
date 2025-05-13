@@ -78,7 +78,9 @@ export const listTurtleSavedBuilds = publicProcedure({
 		return db.query.savedBuilds.findMany({
 			orderBy: [asc(savedBuilds.class)],
 			where: eq(savedBuilds.createdById, turtleAccId),
-			with: { createdBy: true }
+			with: {
+				createdBy: { columns: { name: true, image: true, isAdmin: true } }
+			}
 		});
 	}
 });
@@ -90,7 +92,9 @@ export const listPersonalSavedBuilds = protectedProcedure({
 		db.query.savedBuilds.findMany({
 			orderBy: [asc(savedBuilds.class)],
 			where: eq(savedBuilds.createdById, session.user.id),
-			with: { createdBy: true }
+			with: {
+				createdBy: { columns: { name: true, image: true, isAdmin: true } }
+			}
 		})
 });
 
@@ -100,7 +104,9 @@ export const getSavedBuild = publicProcedure({
 	query: async ({ db, input, session }) => {
 		const build = await db.query.savedBuilds.findFirst({
 			where: eq(savedBuilds.id, input),
-			with: { createdBy: true }
+			with: {
+				createdBy: { columns: { name: true, image: true, isAdmin: true } }
+			}
 		});
 
 		const turtleAccId = await turtleWoWAccountId(undefined);

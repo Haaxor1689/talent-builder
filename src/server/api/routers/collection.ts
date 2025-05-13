@@ -38,7 +38,9 @@ export const getCollectionTree = publicProcedure({
 				eq(talentTrees.index, input.index)
 			),
 			orderBy: [asc(talentTrees.class), asc(talentTrees.index)],
-			with: { createdBy: true }
+			with: {
+				createdBy: { columns: { name: true, image: true, isAdmin: true } }
+			}
 		})
 });
 
