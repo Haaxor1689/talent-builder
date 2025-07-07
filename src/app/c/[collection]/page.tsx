@@ -17,7 +17,11 @@ const TalentTreePage = async ({ params: { collection } }: PageProps) => {
 	const trees = await Promise.all(
 		[...new Array(9).keys()].flatMap(classIdx =>
 			[...new Array(3).keys()].map(index =>
-				getCollectionTree({ class: Math.pow(2, classIdx), index, collection })
+				getCollectionTree({
+					class: Math.pow(2, classIdx + 1),
+					index,
+					collection
+				})
 			)
 		)
 	);
