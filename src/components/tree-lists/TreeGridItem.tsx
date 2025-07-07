@@ -1,8 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { CloudOff, Workflow } from 'lucide-react';
-import cls from 'classnames';
+import { CloudOff, EyeOff, Workflow } from 'lucide-react';
 
 import { getLastUpdatedString, getTalentSum, maskToClass } from '~/utils';
 import { type talentTrees } from '~/server/db/schema';
@@ -17,13 +16,19 @@ type Item = typeof talentTrees.$inferSelect & {
 	createdBy: AuthorTagProps;
 };
 
-const GridItem = (item: Item) => {
+const TreeGridItem = (item: Item) => {
 	const classInfo = maskToClass(item.class);
 	return (
 		<Tooltip
 			tooltip={
 				<>
 					<h4 className="tw-color text-lg">{item.name}</h4>
+					{!item.public && (
+						<span className="flex items-center gap-1 text-lg text-warmGreen">
+							<EyeOff className="w-4 shrink-0" />
+							Private
+						</span>
+					)}
 					<p className="text-blueGray">
 						Points: <span>{getTalentSum(item.talents)}</span>
 					</p>
@@ -70,19 +75,27 @@ const GridItem = (item: Item) => {
 						</div>
 					)}
 				</div>
-				<div className="flex flex-col gap-1 text-inherit">
+				<div className="flex grow flex-col gap-1 text-inherit">
 					<p className="truncate text-lg text-inherit">{item.name}</p>
 					{item.createdBy ? (
-						<div className="flex items-center gap-1.5 truncate text-blueGray">
+						<div className="flex items-center gap-1.5 truncate">
 							<div
 								className="size-6 shrink-0 rounded-full bg-contain"
 								style={{
 									backgroundImage: `url(${item.createdBy?.image}), url(https://cdn.discordapp.com/embed/avatars/0.png)`
 								}}
 							/>
-							{item.createdBy.name === 'TurtleWoW'
-								? 'TurtleWoW'
-								: getLastUpdatedString(item.updatedAt ?? item.createdAt)}
+							<span className="grow text-blueGray">
+								{item.createdBy.name === 'TurtleWoW'
+									? 'TurtleWoW'
+									: getLastUpdatedString(item.updatedAt ?? item.createdAt)}
+							</span>
+							{!item.public && (
+								<span className="flex items-center gap-1 text-xs text-warmGreen">
+									<EyeOff className="w-4 shrink-0" />
+									Private
+								</span>
+							)}
 						</div>
 					) : (
 						<div className="flex items-center gap-1.5 text-blueGray">
@@ -96,22 +109,4 @@ const GridItem = (item: Item) => {
 	);
 };
 
-type Props = {
-	list: Item[];
-	className?: cls.Value;
-};
-
-const TalentTreeGrid = ({ list, className }: Props) => (
-	<div className={cls('tw-surface grow p-2 md:p-4', className)}>
-		<div
-			className="grid items-start gap-3"
-			style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}
-		>
-			{list.map(item => (
-				<GridItem key={item.href} {...item} />
-			))}
-		</div>
-	</div>
-);
-
-export default TalentTreeGrid;
+export default TreeGridItem;

@@ -1,4 +1,4 @@
-import { type NextRequest } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 
 import { getOgInfo } from '~/server/api/routers/openGraph';
 
@@ -8,6 +8,7 @@ export const GET = async (
 	_: NextRequest,
 	{ params }: { params: { id: string } }
 ) => {
-	if (!params.id) return new Response(null, { status: 404 });
-	return Response.json(await getOgInfo(params.id));
+	if (!params.id)
+		return NextResponse.json({ error: 'No id provided' }, { status: 404 });
+	return NextResponse.json(await getOgInfo(params.id));
 };

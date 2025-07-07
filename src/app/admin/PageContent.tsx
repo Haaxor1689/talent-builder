@@ -1,18 +1,13 @@
 'use client';
 
-import { Download, Upload, User, Images } from 'lucide-react';
+import { Download, Upload } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
 import Input from '~/components/form/Input';
 import TextButton from '~/components/styled/TextButton';
 import useAsyncAction from '~/hooks/useAsyncAction';
-import {
-	createTurtleWoWAccount,
-	exportTable,
-	exportMissingIcons,
-	importTable
-} from '~/server/api/routers/general';
+import { exportTable, importTable } from '~/server/api/routers/general';
 import { downloadBlob } from '~/utils';
 import {
 	exportCollection,
@@ -32,28 +27,7 @@ const PageContent = () => {
 		<>
 			<h2 className="self-center">Admin panel</h2>
 			<div className="flex flex-wrap gap-2">
-				<AdminModule title="Utilities">
-					<TextButton
-						icon={User}
-						onClick={a.action(() => createTurtleWoWAccount(undefined))}
-						disabled={a.loading}
-					>
-						Create TurtleWoW account
-					</TextButton>
-					<TextButton
-						icon={Images}
-						onClick={a.action(async () => {
-							const response = await exportMissingIcons(undefined);
-							window.navigator.clipboard.writeText(response);
-							toast.success('Copied to clipboard');
-						})}
-						disabled={a.loading}
-					>
-						Export WoWHead icons
-					</TextButton>
-				</AdminModule>
-
-				<AdminModule title="Table export and import">
+				<AdminModule title="Import/export DB table">
 					<Input
 						placeholder="Table name"
 						value={table}
@@ -92,7 +66,7 @@ const PageContent = () => {
 					</div>
 				</AdminModule>
 
-				<AdminModule title="Import/export collection">
+				<AdminModule title="Import/export talent collection">
 					<Input
 						placeholder="Collection name"
 						value={collection}
@@ -114,7 +88,7 @@ const PageContent = () => {
 							disabled={a.loading}
 							className="self-end"
 						>
-							Import
+							Import from JSON
 						</TextButton>
 						<TextButton
 							icon={Download}
@@ -126,7 +100,7 @@ const PageContent = () => {
 							disabled={a.loading}
 							className="self-end"
 						>
-							Export
+							Export to CSV
 						</TextButton>
 					</div>
 				</AdminModule>

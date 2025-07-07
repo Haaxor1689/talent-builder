@@ -4,7 +4,6 @@ import 'server-only';
 
 import { eq } from 'drizzle-orm';
 import { stringify } from 'superjson';
-import { nanoid } from 'nanoid';
 import { type SQLiteTableWithColumns } from 'drizzle-orm/sqlite-core';
 import { z } from 'zod';
 
@@ -17,25 +16,8 @@ import {
 	verificationTokens
 } from '~/server/db/schema';
 import { type db } from '~/server/db';
-import { env } from '~/env';
 
 import { publicProcedure, adminProcedure } from '../helpers';
-
-export const createTurtleWoWAccount = adminProcedure({
-	query: async ({ db }) => {
-		const exists = await db.query.users.findFirst({
-			where: eq(users.name, 'TurtleWoW')
-		});
-		if (exists) return;
-		await db.insert(users).values({
-			id: nanoid(10),
-			email: 'betkomaros@gmail.com',
-			name: 'TurtleWoW',
-			image: 'https://talent-builder.haaxor1689.dev/turtle.png',
-			isAdmin: true
-		});
-	}
-});
 
 export const turtleWoWAccountId = publicProcedure({
 	queryKey: 'turtleWoWAccountId',
@@ -101,26 +83,5 @@ export const importTable = adminProcedure({
 					'updatedAt' in v && v.updatedAt ? new Date(v.updatedAt) : undefined
 			}))
 		);
-	}
-});
-
-export const exportMissingIcons = adminProcedure({
-	query: async ({ db }) => {
-		const list: [number, string][] = await fetch(
-			`${env.DEPLOY_URL}/icons/list.json`
-		).then(r => r.json());
-
-		const trees = await db.query.talentTrees.findMany({
-			where: eq(talentTrees.collection, 'class-changes-2')
-		});
-		const icons = new Set<string>();
-		trees
-			.flatMap(t => t.talents)
-			.filter(t => t.icon)
-			.forEach(t => {
-				const item = list.find(i => i[1] === t.icon);
-				if (!item || item[0] === -1) icons.add(t.icon);
-			});
-		return [...icons].join(',');
 	}
 });

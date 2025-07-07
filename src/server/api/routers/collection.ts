@@ -13,13 +13,17 @@ import { Talent } from '../types';
 
 import { turtleWoWAccountId } from './general';
 
+const FallbackCollection = 'class-changes-2';
+
 export const listCollections = publicProcedure({
 	queryKey: 'listCollections',
 	query: async ({ db }) => {
 		const response = await db
 			.selectDistinct({ collection: talentTrees.collection })
 			.from(talentTrees);
-		return response.map(t => t.collection).filter(v => v !== null);
+		return response
+			.map(t => t.collection)
+			.filter(v => v !== null && !v.startsWith('_'));
 	}
 });
 
@@ -31,17 +35,26 @@ export const getCollectionTree = publicProcedure({
 	}),
 	queryKey: 'getCollectionTree',
 	query: async ({ db, input }) =>
-		db.query.talentTrees.findFirst({
+		(await db.query.talentTrees.findFirst({
 			where: and(
 				eq(talentTrees.collection, input.collection),
 				eq(talentTrees.class, input.class),
 				eq(talentTrees.index, input.index)
 			),
-			orderBy: [asc(talentTrees.class), asc(talentTrees.index)],
 			with: {
 				createdBy: { columns: { name: true, image: true, isAdmin: true } }
 			}
-		})
+		})) ??
+		(await db.query.talentTrees.findFirst({
+			where: and(
+				eq(talentTrees.collection, FallbackCollection),
+				eq(talentTrees.class, input.class),
+				eq(talentTrees.index, input.index)
+			),
+			with: {
+				createdBy: { columns: { name: true, image: true, isAdmin: true } }
+			}
+		}))
 });
 
 export const importCollection = adminProcedure({
@@ -168,10 +181,21 @@ export const exportCollection = adminProcedure({
 	input: z.string(),
 	query: async ({ db, input }) => {
 		if (!input) return '';
-		const trees = await db.query.talentTrees.findMany({
+		let trees = await db.query.talentTrees.findMany({
 			where: eq(talentTrees.collection, input),
 			orderBy: [asc(talentTrees.class), asc(talentTrees.index)]
 		});
+
+		if (trees.length !== 3 * 9) {
+			const fallbackTrees = await db.query.talentTrees.findMany({
+				where: eq(talentTrees.collection, FallbackCollection),
+				orderBy: [asc(talentTrees.class), asc(talentTrees.index)]
+			});
+			trees = fallbackTrees.map(
+				t => trees.find(tt => tt.class === t.class && tt.index === t.index) ?? t
+			);
+		}
+
 		return JSON.stringify(
 			trees.map(t => ({
 				icon: t.icon,

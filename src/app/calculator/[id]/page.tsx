@@ -7,8 +7,6 @@ import { getTalentTree } from '~/server/api/routers/talentTree';
 import { CalculatorParams, type CalculatorParamsT } from '~/server/api/types';
 import { env } from '~/env';
 
-// export const experimental_ppr = true;
-
 export type PageProps = {
 	params: { id: string };
 	searchParams: CalculatorParamsT;
@@ -39,22 +37,7 @@ const Page = async ({ params, searchParams }: PageProps) => {
 		getTalentTree(parsed.data.t2 ?? savedBuild.tree2Id)
 	] as const);
 
-	return (
-		<TalentCalculator
-			defaultValues={{
-				...savedBuild,
-				...(parsed.data.c !== undefined ? { class: parsed.data.c } : {}),
-				...(parsed.data.t !== undefined
-					? {
-							points: parsed.data.t
-								?.split('-')
-								.map(t => [...t].map(Number)) as never
-					  }
-					: {})
-			}}
-			trees={trees}
-		/>
-	);
+	return <TalentCalculator trees={trees} values={savedBuild} />;
 };
 
 export default Page;

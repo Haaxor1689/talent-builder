@@ -2,10 +2,11 @@
 
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useMemo } from 'react';
-import cls from 'classnames';
+import { useSearchParams } from 'next/navigation';
 
 import {
 	BuildForm,
+	CalculatorParams,
 	type BuildFormT,
 	type TalentFormT
 } from '~/server/api/types';
@@ -43,17 +44,25 @@ const PointsSpent = () => {
 
 type Props = {
 	urlBase?: string;
-	defaultValues?: Partial<BuildFormT>;
+	values?: Partial<BuildFormT>;
 	trees: [TalentFormT?, TalentFormT?, TalentFormT?];
 	isNew?: boolean;
 };
 
-const TalentCalculator = ({ urlBase, trees, isNew, ...props }: Props) => {
-	const defaultValues = useMemo(
-		() => BuildForm.parse(props.defaultValues ?? {}),
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[]
-	);
+const TalentCalculator = ({ urlBase, trees, isNew, values }: Props) => {
+	const searchParams = useSearchParams();
+	const defaultValues = useMemo(() => {
+		const search = CalculatorParams.safeParse(
+			Object.fromEntries(searchParams.entries())
+		);
+		const data = search.success ? search.data : CalculatorParams.parse({});
+		const p = BuildForm.safeParse({
+			...values,
+			class: data.class ?? values?.class,
+			points: data.points ?? values?.points
+		});
+		return p.success ? p.data : BuildForm.parse({});
+	}, [values, searchParams]);
 
 	const formProps = useForm({
 		defaultValues,
@@ -72,9 +81,10 @@ const TalentCalculator = ({ urlBase, trees, isNew, ...props }: Props) => {
 								title={defaultValues.name}
 								large
 								showEmpty
+								disabled={values?.class !== undefined}
 							/>
 							<PointsSpent />
-							<UrlSync defaultValues={defaultValues} isNew={!!isNew} />
+							<UrlSync values={values} />
 						</div>
 
 						<div className="flex items-center" />

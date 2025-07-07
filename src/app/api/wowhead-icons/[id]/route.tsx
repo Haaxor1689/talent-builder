@@ -1,4 +1,4 @@
-import { type NextRequest } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 import { ImageResponse } from 'next/og';
 
 import { env } from '~/env';
@@ -7,14 +7,19 @@ export const GET = async (
 	_: NextRequest,
 	{ params }: { params: { id: string } }
 ) => {
-	if (!params.id) return new Response(null, { status: 404 });
+	if (!params.id)
+		return NextResponse.json({ error: 'No name provided' }, { status: 404 });
 
 	try {
 		const input = params.id.slice(1);
+		if (env.NODE_ENV === 'development')
+			return NextResponse.redirect(
+				`https://wow.zamimg.com/images/wow/icons/large/${input}.jpg`
+			);
+
 		const wowHeadIcon = await fetch(
 			`https://wow.zamimg.com/images/wow/icons/large/${input}.jpg`
-		);
-
+		).catch(() => ({ ok: false }));
 		const size = { width: 64, height: 64 };
 		return new ImageResponse(
 			(
@@ -62,7 +67,9 @@ export const GET = async (
 			size
 		);
 	} catch (error) {
-		console.trace(error);
-		return new Response(null, { status: 404 });
+		return NextResponse.json(
+			{ error: error instanceof Error ? error.message : 'Unknown error' },
+			{ status: 404 }
+		);
 	}
 };

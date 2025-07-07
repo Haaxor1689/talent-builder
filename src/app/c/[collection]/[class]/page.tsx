@@ -17,16 +17,8 @@ const ParamsSchema = z.object({
 	)
 });
 
-const SearchSchema = z.object({
-	t: z
-		.string()
-		.regex(/^\d*-\d*-\d*$/)
-		.optional()
-});
-
 type PageProps = {
 	params: z.infer<typeof ParamsSchema>;
-	searchParams: z.infer<typeof SearchSchema>;
 };
 
 export const generateMetadata = async ({ params }: PageProps) => {
@@ -45,14 +37,9 @@ export const generateMetadata = async ({ params }: PageProps) => {
 	};
 };
 
-const TalentTreePage = async ({ params, searchParams }: PageProps) => {
+const TalentTreePage = async ({ params }: PageProps) => {
 	const parsed = ParamsSchema.safeParse(params);
 	if (!parsed.success) {
-		return notFound();
-	}
-
-	const parsedS = SearchSchema.safeParse(searchParams);
-	if (!parsedS.success) {
 		return notFound();
 	}
 
@@ -66,16 +53,7 @@ const TalentTreePage = async ({ params, searchParams }: PageProps) => {
 		<TalentCalculator
 			urlBase={`/c/${parsed.data.collection}/`}
 			trees={trees}
-			defaultValues={{
-				class: parsed.data.class,
-				...(parsedS.data.t !== undefined
-					? {
-							points: parsedS.data.t
-								?.split('-')
-								.map(t => [...t].map(Number)) as never
-					  }
-					: {})
-			}}
+			values={{ class: parsed.data.class }}
 		/>
 	);
 };

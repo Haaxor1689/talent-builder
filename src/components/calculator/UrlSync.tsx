@@ -1,54 +1,53 @@
-import { useCallback, useEffect } from 'react';
+'use client';
+
+import { useEffect } from 'react';
 import { useWatch } from 'react-hook-form';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 import { BuildForm, type BuildFormT } from '~/server/api/types';
 
-const UrlSync = ({
-	defaultValues,
-	isNew
-}: {
-	defaultValues: BuildFormT;
-	isNew: boolean;
-}) => {
-	const pathname = usePathname();
+import { bitPack } from './utils';
+
+const UrlSync = ({ values }: { values?: Partial<BuildFormT> }) => {
 	const searchParams = useSearchParams();
 
-	const replaceUrl = useCallback(
-		(key: string, condition: boolean, value: string) => {
-			const params = new URLSearchParams(
-				Object.fromEntries(searchParams.entries())
-			);
-			params.delete(key);
-			if (condition) params.append(key, value);
-
-			const newUrl = `${pathname}?${params.toString()}`;
-			window.history.replaceState(
-				{ ...window.history.state, as: newUrl, url: newUrl },
-				'',
-				newUrl
-			);
-		},
-		[pathname, searchParams]
-	);
-
+	// Update points in URL
 	const points = useWatch<BuildFormT, 'points'>({ name: 'points' });
-	useEffect(() => {
-		const serializePoints = (points: number[][]) =>
-			points.map(p => p.join('')).join('-');
+	const cls = useWatch<BuildFormT, 'class'>({ name: 'class' });
 
-		const t = serializePoints(points);
-		const defaultPoints = serializePoints(
-			defaultValues?.points ?? BuildForm.parse({}).points
+	useEffect(() => {
+		const params = new URLSearchParams(
+			Object.fromEntries(searchParams.entries())
 		);
 
-		replaceUrl('t', isNew || t !== defaultPoints, t);
-	}, [points, isNew, defaultValues?.points, replaceUrl]);
+		const defaults = BuildForm.parse(values ?? {});
 
-	const cls = useWatch<BuildFormT, 'class'>({ name: 'class' });
-	useEffect(() => {
-		replaceUrl('c', isNew || cls !== defaultValues?.class, cls.toString());
-	}, [cls, isNew, defaultValues?.class, replaceUrl]);
+		// Remove old points and class params
+		params.delete('c');
+		params.delete('t');
+		params.delete('class');
+		params.delete('points');
+
+		if (cls !== defaults.class) {
+			params.append('class', cls.toString());
+		}
+
+		const t = bitPack(points);
+		if (t !== bitPack(defaults.points)) {
+			params.append('points', t);
+		}
+
+		window.history.replaceState(
+			null,
+			'',
+			[
+				location.origin,
+				location.pathname,
+				params.toString() === '' ? '' : `?${params.toString()}`
+			].join('')
+		);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [points, cls, values]);
 
 	return null;
 };

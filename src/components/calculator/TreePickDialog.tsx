@@ -217,7 +217,7 @@ const TreePickDialogProvider = ({ children }: PropsWithChildren) => {
 					<hr className="!mx-0" />
 
 					<div
-						className="grid max-h-[520px] items-start gap-3 overflow-auto p-2 md:p-4"
+						className="grid max-h-[540px] items-start gap-3 overflow-auto p-2 md:p-4"
 						style={{
 							gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))'
 						}}
@@ -241,12 +241,14 @@ const TreePickDialogProvider = ({ children }: PropsWithChildren) => {
 							</Fragment>
 						))}
 
-						<div
-							ref={bottomRef}
-							className="col-span-full flex h-16 items-center justify-center"
-						>
-							{trees.isFetchingNextPage && <Spinner size={32} />}
-						</div>
+						{trees.hasNextPage && (
+							<div
+								ref={bottomRef}
+								className="col-span-full flex h-16 items-center justify-center"
+							>
+								{trees.isFetchingNextPage && <Spinner size={32} />}
+							</div>
+						)}
 					</div>
 				</form>
 			)}

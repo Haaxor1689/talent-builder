@@ -1,6 +1,8 @@
 import { nanoid } from 'nanoid';
 import { z } from 'zod';
 
+import { bitUnpack, legacyBitUnpack } from '~/components/calculator/utils';
+
 export const Talent = z.object({
 	icon: z.string().default(''),
 	name: z.string().default(''),
@@ -50,21 +52,35 @@ export const Filters = z.object({
 	from: z.string().optional().default(''),
 	class: z.coerce.number().optional().default(0),
 	sort: z.enum(['newest', 'class']).default('newest'),
-	collection: z.string().optional().default('')
+	collection: z.string().optional().default(''),
+	onlyPersonal: z.coerce.boolean().optional().default(false)
 });
 export type FiltersT = z.infer<typeof Filters>;
 
-export const CalculatorParams = z.object({
-	t0: z.string().optional(),
-	t1: z.string().optional(),
-	t2: z.string().optional(),
-	t: z
-		.string()
-		.regex(/^\d*-\d*-\d*$/)
-		.optional(),
-	c: z.coerce.number().optional(),
-	tab: z.string().optional()
-});
+export const CalculatorParams = z
+	.object({
+		t0: z.string().optional(),
+		t1: z.string().optional(),
+		t2: z.string().optional(),
+		t: z
+			.string()
+			.regex(/^\d*-\d*-\d*$/)
+			.optional(),
+		points: z.string().optional(),
+		c: z.coerce.number().optional(),
+		class: z.coerce.number().optional()
+	})
+	.transform(val => ({
+		t0: val.t0,
+		t1: val.t1,
+		t2: val.t2,
+		points: val.points
+			? bitUnpack(val.points)
+			: val.t
+			? legacyBitUnpack(val.t)
+			: undefined,
+		class: val.class ?? val.c
+	}));
 
 export type CalculatorParamsT = z.infer<typeof CalculatorParams>;
 

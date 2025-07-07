@@ -70,8 +70,7 @@ export const listInfiniteTalentTrees = publicProcedure({
 		limit: z.number().min(1).max(100).optional(),
 		cursor: z.number().optional()
 	}),
-	queryKey: 'listInfiniteTalentTrees',
-	sessionType: 'user',
+	sessionType: 'role',
 	query: async ({ input, db, session }) => {
 		const { limit = 32, cursor: offset = 0 } = input;
 
@@ -90,44 +89,6 @@ export const listInfiniteTalentTrees = publicProcedure({
 		const items = await db.query.talentTrees.findMany({
 			limit: limit + 1,
 			offset,
-			orderBy: [
-				asc(talentTrees.class),
-				asc(talentTrees.index),
-				desc(talentTrees.updatedAt)
-			],
-			where: and(
-				or(
-					eq(talentTrees.public, true),
-					session?.user.id
-						? eq(talentTrees.createdById, session?.user.id)
-						: undefined
-				),
-				input.name ? like(talentTrees.name, `%${input.name}%`) : undefined,
-				whereAcc.length
-					? inArray(talentTrees.createdById, whereAcc)
-					: undefined,
-				input.class ? eq(talentTrees.class, input.class) : undefined,
-				input.collection
-					? eq(talentTrees.collection, input.collection)
-					: undefined
-			),
-			with: { createdBy: true }
-		});
-
-		const hasMore = items.length > limit;
-		if (hasMore) items.pop();
-		return {
-			items,
-			nextCursor: hasMore ? offset + items.length : undefined
-		};
-	}
-});
-
-export const listPublicTalentTrees = publicProcedure({
-	input: Filters,
-	queryKey: 'listPublicTalentTrees',
-	query: async ({ input, db }) =>
-		db.query.talentTrees.findMany({
 			orderBy:
 				input.sort === 'class'
 					? [
@@ -137,32 +98,20 @@ export const listPublicTalentTrees = publicProcedure({
 					  ]
 					: [desc(talentTrees.updatedAt)],
 			where: and(
-				eq(talentTrees.public, true),
-				input.name ? like(talentTrees.name, `%${input.name}%`) : undefined,
-				input.from ? like(users.name, `%${input.from}%`) : undefined,
-				input.class ? eq(talentTrees.class, input.class) : undefined,
-				input.collection
-					? like(
-							talentTrees.collection,
-							`%${input.collection.replaceAll(' ', '-').toLocaleLowerCase()}%`
+				!session?.user.isAdmin
+					? or(
+							eq(talentTrees.public, true),
+							session?.user.id
+								? eq(talentTrees.createdById, session?.user.id)
+								: undefined
 					  )
-					: undefined
-			),
-			with: {
-				createdBy: { columns: { name: true, image: true, isAdmin: true } }
-			}
-		})
-});
-
-export const listPersonalTalentTrees = protectedProcedure({
-	input: Filters,
-	query: async ({ input, db, session }) => {
-		if (input.from && !session.user.name?.match(input.from)) return [];
-		return db.query.talentTrees.findMany({
-			orderBy: [desc(talentTrees.updatedAt)],
-			where: and(
-				eq(talentTrees.createdById, session.user.id),
+					: undefined,
 				input.name ? like(talentTrees.name, `%${input.name}%`) : undefined,
+				session?.user.id && input.onlyPersonal
+					? eq(talentTrees.createdById, session.user.id)
+					: whereAcc.length
+					? inArray(talentTrees.createdById, whereAcc)
+					: undefined,
 				input.class ? eq(talentTrees.class, input.class) : undefined,
 				input.collection
 					? eq(talentTrees.collection, input.collection)
@@ -172,6 +121,13 @@ export const listPersonalTalentTrees = protectedProcedure({
 				createdBy: { columns: { name: true, image: true, isAdmin: true } }
 			}
 		});
+
+		const hasMore = items.length > limit;
+		if (hasMore) items.pop();
+		return {
+			items,
+			nextCursor: hasMore ? offset + items.length : undefined
+		};
 	}
 });
 

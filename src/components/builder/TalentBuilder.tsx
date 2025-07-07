@@ -93,6 +93,9 @@ const TalentBuilder = (props: Props) => {
 					<div className="flex items-center">
 						<ClassPicker name="class" disabled={!editable} />
 						<IdxInput control={control} disabled={!editable} />
+						{session.data?.user.isAdmin && (
+							<Input placeholder="Collection" {...register('collection')} />
+						)}
 						{editable && (
 							<TextButton
 								onClick={a.action(async () => {

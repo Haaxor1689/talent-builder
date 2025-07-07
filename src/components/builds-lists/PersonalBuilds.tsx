@@ -10,7 +10,7 @@ const PersonalBuilds = async () => {
 	if (!builds.length) return null;
 	return (
 		<BuildsGrid
-			title="Personal"
+			title="Saved"
 			list={builds.map(s => ({
 				href: `/calculator/${s.id}`,
 				...s

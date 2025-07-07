@@ -85,7 +85,7 @@ const Actions = ({ trees, isNew }: Props) => {
 					<TextButton
 						onClick={a.action(async () => {
 							const values = getValues();
-							const newUrl = `/calculator/custom?${new URLSearchParams({
+							const newUrl = `/calculator?${new URLSearchParams({
 								c: values.class.toString(),
 								t: values.points.map(p => p.join('')).join('-'),
 								t0: trees[0]?.id ?? '',

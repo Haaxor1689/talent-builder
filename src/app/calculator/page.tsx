@@ -1,31 +1,47 @@
-import Link from 'next/link';
-import { Suspense } from 'react';
+import { notFound } from 'next/navigation';
 
-import PersonalBuilds from '~/components/builds-lists/PersonalBuilds';
-import Spinner from '~/components/styled/Spinner';
-import SpellIcon from '~/components/styled/SpellIcon';
+import { getTalentTree } from '~/server/api/routers/talentTree';
+import { CalculatorParams, type CalculatorParamsT } from '~/server/api/types';
+import { getIconPath, maskToClass } from '~/utils';
+import TalentCalculator from '~/components/calculator/TalentCalculator';
+import { env } from '~/env';
 
-const Page = () => (
-	<>
-		<div className="flex items-center justify-center gap-2">
-			<Link
-				href="/calculator/custom"
-				className="tw-hocus flex shrink-0 items-center gap-3 p-2"
-			>
-				<SpellIcon showDefault className="shrink-0 cursor-pointer" />
-				<div className="flex flex-col gap-1 text-inherit">
-					<p className="truncate text-lg text-inherit">Custom</p>
-					<div className="flex items-center gap-1.5 truncate text-blueGray">
-						Create new custom tree
-					</div>
-				</div>
-			</Link>
-		</div>
+type PageProps = {
+	searchParams: CalculatorParamsT;
+};
 
-		<Suspense fallback={<Spinner className="my-6 self-center" />}>
-			<PersonalBuilds />
-		</Suspense>
-	</>
-);
+export const generateMetadata = async ({ searchParams }: PageProps) => {
+	const parsed = CalculatorParams.safeParse(searchParams);
+	if (!parsed.success) return null;
+
+	const trees = await Promise.all([
+		getTalentTree(parsed.data.t0),
+		getTalentTree(parsed.data.t1),
+		getTalentTree(parsed.data.t2)
+	] as const);
+
+	const classInfo = maskToClass(parsed.data.class);
+	const className = classInfo ? `${classInfo.name} ` : '';
+	return {
+		title: `${className}Talent Calculator | Talent Builder`,
+		description: `Custom ${className}talent tree calculator consisting of trees: ${trees
+			.map(t => t?.name)
+			.join(', ')}`,
+		icons: [{ rel: 'icon', url: env.DEPLOY_URL + getIconPath(classInfo?.icon) }]
+	};
+};
+
+const Page = async ({ searchParams }: PageProps) => {
+	const parsed = CalculatorParams.safeParse(searchParams);
+	if (!parsed.success) return notFound();
+
+	const trees = await Promise.all([
+		getTalentTree(parsed.data.t0),
+		getTalentTree(parsed.data.t1),
+		getTalentTree(parsed.data.t2)
+	] as const);
+
+	return <TalentCalculator trees={trees} isNew />;
+};
 
 export default Page;
