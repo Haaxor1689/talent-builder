@@ -11,6 +11,7 @@ import { talentTrees, users } from '~/server/db/schema';
 
 import { Filters, TalentForm } from '../types';
 import {
+	createdBySelect,
 	getFullTag,
 	getQueryTag,
 	protectedProcedure,
@@ -117,9 +118,7 @@ export const listInfiniteTalentTrees = publicProcedure({
 					? eq(talentTrees.collection, input.collection)
 					: undefined
 			),
-			with: {
-				createdBy: { columns: { name: true, image: true, isAdmin: true } }
-			}
+			with: { createdBy: createdBySelect }
 		});
 
 		const hasMore = items.length > limit;
@@ -139,9 +138,7 @@ export const getTalentTree = publicProcedure({
 
 		return await db.query.talentTrees.findFirst({
 			where: eq(talentTrees.id, input),
-			with: {
-				createdBy: { columns: { name: true, image: true, isAdmin: true } }
-			}
+			with: { createdBy: createdBySelect }
 		});
 	}
 });

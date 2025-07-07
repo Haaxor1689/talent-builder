@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { talentTrees } from '~/server/db/schema';
 import { getTalentSum } from '~/utils';
 
-import { publicProcedure } from '../helpers';
+import { createdBySelect, publicProcedure } from '../helpers';
 
 export const getOgInfo = publicProcedure({
 	input: z.string(),
@@ -16,9 +16,7 @@ export const getOgInfo = publicProcedure({
 	query: async ({ db, input }) => {
 		const talentTree = await db.query.talentTrees.findFirst({
 			where: eq(talentTrees.id, input),
-			with: {
-				createdBy: { columns: { name: true, image: true, isAdmin: true } }
-			}
+			with: { createdBy: createdBySelect }
 		});
 
 		if (!talentTree) return null;

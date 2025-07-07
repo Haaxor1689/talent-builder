@@ -8,7 +8,7 @@ import { z } from 'zod';
 
 import { talentTrees } from '~/server/db/schema';
 
-import { adminProcedure, publicProcedure } from '../helpers';
+import { adminProcedure, createdBySelect, publicProcedure } from '../helpers';
 import { Talent } from '../types';
 
 import { turtleWoWAccountId } from './general';
@@ -34,16 +34,16 @@ export const getCollectionTree = publicProcedure({
 		index: z.number()
 	}),
 	queryKey: 'getCollectionTree',
-	query: async ({ db, input }) =>
+	sessionType: 'role',
+	query: async ({ db, input, session }) =>
 		(await db.query.talentTrees.findFirst({
 			where: and(
 				eq(talentTrees.collection, input.collection),
 				eq(talentTrees.class, input.class),
-				eq(talentTrees.index, input.index)
+				eq(talentTrees.index, input.index),
+				session?.user?.isAdmin ? undefined : eq(talentTrees.public, true)
 			),
-			with: {
-				createdBy: { columns: { name: true, image: true, isAdmin: true } }
-			}
+			with: { createdBy: createdBySelect }
 		})) ??
 		(await db.query.talentTrees.findFirst({
 			where: and(
@@ -51,9 +51,7 @@ export const getCollectionTree = publicProcedure({
 				eq(talentTrees.class, input.class),
 				eq(talentTrees.index, input.index)
 			),
-			with: {
-				createdBy: { columns: { name: true, image: true, isAdmin: true } }
-			}
+			with: { createdBy: createdBySelect }
 		}))
 });
 

@@ -10,6 +10,7 @@ import { omit } from 'lodash-es';
 import { savedBuilds } from '~/server/db/schema';
 
 import {
+	createdBySelect,
 	getFullTag,
 	getQueryTag,
 	protectedProcedure,
@@ -78,9 +79,7 @@ export const listTurtleSavedBuilds = publicProcedure({
 		return db.query.savedBuilds.findMany({
 			orderBy: [asc(savedBuilds.class)],
 			where: eq(savedBuilds.createdById, turtleAccId),
-			with: {
-				createdBy: { columns: { name: true, image: true, isAdmin: true } }
-			}
+			with: { createdBy: createdBySelect }
 		});
 	}
 });
@@ -92,9 +91,7 @@ export const listPersonalSavedBuilds = protectedProcedure({
 		db.query.savedBuilds.findMany({
 			orderBy: [asc(savedBuilds.class)],
 			where: eq(savedBuilds.createdById, session.user.id),
-			with: {
-				createdBy: { columns: { name: true, image: true, isAdmin: true } }
-			}
+			with: { createdBy: createdBySelect }
 		})
 });
 
@@ -104,9 +101,7 @@ export const getSavedBuild = publicProcedure({
 	query: async ({ db, input, session }) => {
 		const build = await db.query.savedBuilds.findFirst({
 			where: eq(savedBuilds.id, input),
-			with: {
-				createdBy: { columns: { name: true, image: true, isAdmin: true } }
-			}
+			with: { createdBy: createdBySelect }
 		});
 
 		const turtleAccId = await turtleWoWAccountId(undefined);

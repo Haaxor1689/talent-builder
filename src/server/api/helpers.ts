@@ -123,3 +123,7 @@ export const adminProcedure = <
 		},
 		sessionType: sessionType ?? 'role'
 	}) as never;
+
+export const createdBySelect = {
+	columns: { name: true, image: true, isAdmin: true }
+} as const;
