@@ -1,6 +1,7 @@
 import ClassCalculatorsLinks from '~/components/calculator/ClassCalculatorsLinks';
 import { getCollectionTree } from '~/server/api/routers/collection';
 import TreeGridItem from '~/components/tree-lists/TreeGridItem';
+import { classMask } from '~/utils';
 
 type PageProps = { params: { collection: string } };
 
@@ -18,7 +19,7 @@ const TalentTreePage = async ({ params: { collection } }: PageProps) => {
 		[...new Array(9).keys()].flatMap(classIdx =>
 			[...new Array(3).keys()].map(index =>
 				getCollectionTree({
-					class: Math.pow(2, classIdx + 1),
+					class: Number(Object.keys(classMask)[classIdx]),
 					index,
 					collection
 				})
