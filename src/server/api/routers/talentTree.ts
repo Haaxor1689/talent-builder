@@ -60,6 +60,8 @@ export const upsertTalentTree = protectedProcedure({
 		revalidateTag(getFullTag('getOgInfo', input.id));
 		revalidatePath(`/api/og/${input.id}`);
 
+		if (input.collection) revalidateTag(getQueryTag('getCollectionTree'));
+
 		return await db.query.talentTrees.findFirst({
 			where: eq(talentTrees.id, input.id)
 		});
