@@ -22,7 +22,11 @@ const IconGrid = ({ filter, required, icon, setIcon }: Props) => {
 			if (!data || !Array.isArray(data))
 				throw new Error('Failed to fetch icons');
 
-			const filtered = filter ? data.filter(v => v[1].includes(filter)) : data;
+			const filtered = filter
+				? data.filter(v =>
+						v[1].toLocaleLowerCase().includes(filter.toLocaleLowerCase())
+				  )
+				: data;
 			const nextCursor = pageParam + 64;
 			return {
 				items: filtered.slice(pageParam, nextCursor),
