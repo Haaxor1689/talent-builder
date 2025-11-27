@@ -13,7 +13,7 @@ import { Talent } from '../types';
 
 import { turtleWoWAccountId } from './general';
 
-const FallbackCollection = 'class-changes-2';
+const FallbackCollection = '1.18.0';
 
 export const listCollections = publicProcedure({
 	queryKey: 'listCollections',
