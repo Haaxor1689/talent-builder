@@ -60,23 +60,19 @@ export const importCollection = adminProcedure({
 	query: async ({ input, db }) => {
 		if (!input.collection) return;
 
-		const LocalesEnum = z.enum(['en', 'cn', 'es', 'ru', 'pt', 'de']);
-		const Localized = <T extends z.ZodTypeAny>(type: T) =>
-			z.record(LocalesEnum, type);
-
 		const DbTalent = z.object({
 			id: z.number(),
 			icon: z.string(),
-			name: Localized(z.string()),
+			name_enUS: z.string(),
 			ranks: z.number(),
-			description: Localized(z.array(z.array(z.string()))),
+			description_enUS: z.array(z.array(z.string())),
 			requires: z.number().optional(),
 			spellIds: z.array(z.number())
 		});
 
 		const DbTalentTree = z.object({
 			icon: z.string(),
-			name: Localized(z.string()),
+			name_enUS: z.string(),
 			class: z.number(),
 			index: z.number(),
 			talents: z.array(DbTalent.nullable()).length(4 * 7)
@@ -103,7 +99,7 @@ export const importCollection = adminProcedure({
 			const talents = tree.talents.map(t => {
 				if (!t) return Talent.parse({});
 
-				const arr = t.description.en ?? [];
+				const arr = t.description_enUS ?? [];
 				const description = (arr[0] ?? [])
 					.flatMap((desc, idx) => {
 						if (arr.every(v => v[idx] === desc)) return [desc];
@@ -146,25 +142,25 @@ export const importCollection = adminProcedure({
 					? null
 					: tree.talents.findIndex(r => r?.id === t.requires);
 
-				return {
+				return Talent.parse({
 					...t,
-					name: t.name.en ?? '',
+					name: t.name_enUS,
 					description,
 					highlight: false,
 					spellIds: t.spellIds.join(','),
 					requires
-				};
+				});
 			});
 
 			if (exists)
 				await db
 					.update(talentTrees)
-					.set({ ...tree, name: tree.name.en ?? '', talents })
+					.set({ ...tree, name: tree.name_enUS, talents })
 					.where(eq(talentTrees.id, exists.id));
 			else
 				await db.insert(talentTrees).values({
 					...tree,
-					name: tree.name.en ?? '',
+					name: tree.name_enUS,
 					id: nanoid(10),
 					talents,
 					collection: input.collection,

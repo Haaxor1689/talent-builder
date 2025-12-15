@@ -6,10 +6,11 @@ await import('./src/env.js');
 
 /** @type {import("next").NextConfig} */
 const config = {
-	// experimental: {
-	// 	ppr: true,
-	// 	reactCompiler: true
-	// },
+	experimental: {
+		serverActions: {
+			bodySizeLimit: '4mb'
+		}
+	},
 	logging: {
 		fetches: {
 			fullUrl: true

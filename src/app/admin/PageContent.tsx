@@ -100,7 +100,7 @@ const PageContent = () => {
 							disabled={a.loading}
 							className="self-end"
 						>
-							Export to CSV
+							Export to JSON
 						</TextButton>
 					</div>
 				</AdminModule>
