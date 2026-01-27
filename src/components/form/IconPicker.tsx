@@ -34,7 +34,9 @@ const IconPicker = ({ name, required, disabled }: Props) => {
 	const { field } = useController({ name });
 
 	const [filter, setFilter] = useState(
-		field.value.startsWith('_') ? '' : field.value.toLowerCase()
+		field.value.startsWith('_') || field.value === 'inv_misc_questionmark'
+			? ''
+			: field.value.toLowerCase()
 	);
 	const [wowhead, setWowhead] = useState(
 		field.value.startsWith('_') ? field.value.slice(1) : ''

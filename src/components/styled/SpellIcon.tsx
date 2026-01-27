@@ -72,7 +72,7 @@ const SpellIcon = forwardRef<HTMLButtonElement, Props>(
 					/>
 				)}
 				<img
-					className={cls('absolute inset-0 p-[5%]', {
+					className={cls('pointer-events-none absolute inset-0 p-[5%]', {
 						'group-hover:block group-focus:block': isClickable,
 						'hidden': !selected,
 						'hue-rotate-180': selected
@@ -85,7 +85,7 @@ const SpellIcon = forwardRef<HTMLButtonElement, Props>(
 
 				{highlighted && (
 					<img
-						className={cls('absolute inset-0 scale-125 ')}
+						className={cls('pointer-events-none absolute inset-0 scale-125')}
 						src="/icon_hover.png"
 						alt="hover"
 						width={size}
