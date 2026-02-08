@@ -34,6 +34,9 @@ type Props = {
 
 const RootLayout = async ({ children }: Props) => (
 	<html lang="en">
+		<head>
+			<meta name="google-adsense-account" content="ca-pub-8795217129609015" />
+		</head>
 		<body
 			className={`${fontin.variable} ${din.variable} flex min-h-screen flex-col items-stretch overflow-auto overflow-x-hidden bg-darkGray`}
 		>
