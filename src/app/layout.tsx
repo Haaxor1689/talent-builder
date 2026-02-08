@@ -3,6 +3,7 @@ import '~/styles/globals.css';
 import localFont from 'next/font/local';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/react';
+import Script from 'next/script';
 
 import { env } from '~/env';
 
@@ -36,6 +37,13 @@ const RootLayout = async ({ children }: Props) => (
 	<html lang="en">
 		<head>
 			<meta name="google-adsense-account" content="ca-pub-8795217129609015" />
+			<Script
+				id="adsense-global"
+				async
+				strategy="afterInteractive"
+				src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8795217129609015"
+				crossOrigin="anonymous"
+			/>
 		</head>
 		<body
 			className={`${fontin.variable} ${din.variable} flex min-h-screen flex-col items-stretch overflow-auto overflow-x-hidden bg-darkGray`}
