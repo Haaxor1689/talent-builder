@@ -36,6 +36,7 @@ type Props = {
 const RootLayout = async ({ children }: Props) => (
 	<html lang="en">
 		<head>
+			{/* Google Ads */}
 			<meta name="google-adsense-account" content="ca-pub-8795217129609015" />
 			<Script
 				id="adsense-global"
@@ -44,6 +45,10 @@ const RootLayout = async ({ children }: Props) => (
 				src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8795217129609015"
 				crossOrigin="anonymous"
 			/>
+			{/* Anti AI scrape */}
+			<meta name="robots" content="noai, noimageai" />
+			<meta name="googlebot" content="noai" />
+			<meta httpEquiv="X-Robots-Tag" content="noai, noimageai" />
 		</head>
 		<body
 			className={`${fontin.variable} ${din.variable} flex min-h-screen flex-col items-stretch overflow-auto overflow-x-hidden bg-darkGray`}
