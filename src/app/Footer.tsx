@@ -4,7 +4,7 @@ import TextButton from '~/components/styled/TextButton';
 
 const Footer = async () => (
 	<footer className="text-blue-gray flex max-w-7xl flex-wrap items-center justify-center gap-3 p-2 md:px-6 md:py-2 xl:mx-auto xl:w-full">
-		<p className="text-blue-gray text-sm">Created by Haaxor1689</p>•
+		<p className="text-sm text-blueGray">Created by Haaxor1689</p>•
 		<TextButton
 			type="link"
 			icon={() => (
@@ -26,7 +26,7 @@ const Footer = async () => (
 			href="https://discord.gg/pDeTHQH99B"
 			icon={Bug}
 			iconSize={18}
-			className="  text-sm text-orange text-orange"
+			className="-m-2 shrink-0 text-sm text-orange"
 		>
 			Report a bug
 		</TextButton>
@@ -34,7 +34,7 @@ const Footer = async () => (
 		<TextButton
 			type="link"
 			href="https://haaxor1689.dev/privacy-policy"
-			className="text-blue-gray -m-2 shrink-0 text-sm"
+			className="-m-2 shrink-0 text-sm text-blueGray"
 		>
 			Privacy Policy
 		</TextButton>
