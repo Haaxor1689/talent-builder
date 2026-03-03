@@ -3,13 +3,13 @@
 import Link from 'next/link';
 import { Workflow } from 'lucide-react';
 
-import { type savedBuilds } from '~/server/db/schema';
-import { getLastUpdatedString, maskToClass } from '~/utils';
+import { type savedBuilds } from '#server/db/schema.ts';
+import { getLastUpdatedString, maskToClass } from '#utils.ts';
 
-import SpellIcon from '../styled/SpellIcon';
-import Tooltip from '../styled/Tooltip';
 import AuthorTag, { type AuthorTagProps } from '../styled/AuthorTag';
+import SpellIcon from '../styled/SpellIcon';
 import TextButton from '../styled/TextButton';
+import Tooltip from '../styled/Tooltip';
 
 type Item = typeof savedBuilds.$inferSelect & {
 	href: string;
@@ -22,13 +22,13 @@ const GridItem = (item: Item) => {
 		<Tooltip
 			tooltip={
 				<>
-					<h4 className="tw-color text-lg">
+					<h4 className="haax-color text-lg">
 						{item.name ? `${item.name} ` : ''}
 						{classInfo?.name}
 					</h4>
 					{item.createdBy && (
 						<>
-							<p className="whitespace-nowrap text-blueGray">
+							<p className="text-blue-gray whitespace-nowrap">
 								Last updated:{' '}
 								<span>
 									{new Date(item.updatedAt ?? item.createdAt).toLocaleString(
@@ -36,28 +36,28 @@ const GridItem = (item: Item) => {
 									)}
 								</span>
 							</p>
-							<div className="flex items-center gap-1.5 text-blueGray">
+							<div className="text-blue-gray flex items-center gap-1.5">
 								Author: <AuthorTag {...item.createdBy} />
 							</div>
 						</>
 					)}
 				</>
 			}
-			actions={() => (
+			actions={
 				<TextButton type="link" href={item.href} icon={Workflow}>
 					Open build
 				</TextButton>
-			)}
+			}
 		>
 			<Link
 				href={item.href}
-				className="tw-hocus -mb-2 flex items-center gap-3 p-2"
+				className="hocus:haax-highlight -mb-2 flex items-center gap-3 p-2"
 				prefetch={false}
 			>
 				<SpellIcon
 					icon={classInfo?.icon}
 					showDefault
-					className="shrink-0 cursor-pointer"
+					className="cursor-pointer"
 				/>
 				<div className="flex flex-col gap-1 text-inherit">
 					<p
@@ -67,9 +67,9 @@ const GridItem = (item: Item) => {
 						{item.name ? `${item.name} ` : ''}
 						{classInfo?.name}
 					</p>
-					<div className="flex items-center gap-1.5 truncate text-blueGray">
+					<div className="text-blue-gray flex items-center gap-1.5 truncate">
 						<div
-							className="size-6 shrink-0 rounded-full bg-contain"
+							className="size-6 rounded-full bg-contain"
 							style={{
 								backgroundImage: `url(${item.createdBy?.image}), url(https://cdn.discordapp.com/embed/avatars/0.png)`
 							}}
@@ -92,13 +92,13 @@ type Props = {
 const BuildsGrid = ({ title, list }: Props) => (
 	<div className="flex flex-col items-stretch gap-2 md:flex-row">
 		<h3
-			className="tw-color hidden w-[48px] py-3 md:block"
+			className="haax-color hidden w-12 py-3 md:block"
 			style={{ textOrientation: 'mixed', writingMode: 'vertical-rl' }}
 		>
 			{title}
 		</h3>
-		<h3 className="tw-color px-2 md:hidden">{title}</h3>
-		<div className="tw-surface grow p-2 md:p-4">
+		<h3 className="haax-color px-2 md:hidden">{title}</h3>
+		<div className="haax-surface-3 grow p-2 md:p-4">
 			<div
 				className="grid items-start gap-3"
 				style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}

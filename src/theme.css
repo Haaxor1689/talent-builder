@@ -1,0 +1,198 @@
+@import 'tailwindcss';
+
+@theme {
+	--color-*: initial;
+	--color-inherit: inherit;
+	--color-current: currentColor;
+	--color-white: #fff;
+	--color-yellow: #f1c22d;
+	--color-pink: #ff7757;
+	--color-orange: #fb8a4c;
+	--color-brown: #764502;
+	--color-red: #ee3333;
+	--color-dark-brown: #291105;
+	--color-dark-gray: #0f0d0c;
+	--color-darker-gray: #181412;
+	--color-dark-purple: #271f30;
+	--color-purple: #403561;
+	--color-gray: #5e5b55;
+	--color-light-gray: #9e9783;
+	--color-blue-gray: #929391;
+	--color-warm-green: #c5cb63;
+	--color-green: #8dd958;
+	--color-dark-green: #358d3e;
+	--color-tooltip-yellow: #ffd100;
+	--color-tooltip-green: #1eff00;
+	--color-tooltip-gray: #9d9d9d;
+}
+
+@theme inline {
+	--font-sans: var(--font-din);
+	--font-serif: var(--font-fontin);
+}
+
+@custom-variant hocus {
+	&:hover,
+	&:focus {
+		@slot;
+	}
+}
+
+@custom-variant hocus-within {
+	&:hover,
+	&:focus-within {
+		@slot;
+	}
+}
+
+@custom-variant dev-hidden {
+	&:is(:where(.group):is(.haax-dev) *) {
+		@slot;
+	}
+}
+
+@utility h1 {
+	@apply font-serif text-5xl;
+}
+
+@utility h2 {
+	@apply font-serif text-4xl;
+}
+
+@utility h3 {
+	@apply font-serif text-2xl;
+}
+
+@utility h4 {
+	@apply font-serif text-lg;
+}
+
+@utility haax-color {
+	display: inline;
+	@apply from-yellow to-pink bg-linear-to-t;
+	-webkit-box-decoration-break: clone;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+
+@utility haax-surface-* {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	padding: calc(var(--spacing) * --value(integer, [integer]));
+	gap: calc(var(--spacing) * --value(integer, [integer]));
+	box-shadow: rgb(0 0 0 / 45%) 0px 25px 20px -20px;
+	@apply border-blue-gray/20 bg-dark-gray/70 border backdrop-blur-xs;
+
+	& hr {
+		margin-left: calc(-1 * var(--spacing) * --value(integer, [integer]));
+		margin-right: calc(-1 * var(--spacing) * --value(integer, [integer]));
+		@apply text-blue-gray/20;
+	}
+}
+
+@utility haax-backdrop-blur {
+	@apply fixed inset-0;
+
+	@supports (backdrop-filter: blur(0)) {
+		@apply bg-dark-gray/50 backdrop-blur-xs;
+	}
+
+	@supports not (backdrop-filter: blur(0)) {
+		@apply bg-dark-gray/80;
+	}
+}
+
+@utility haax-highlight {
+	@apply text-green drop-shadow-[0px_0px_25px_white];
+}
+
+@utility haax-table-row {
+	@apply col-start-1 -col-end-1 grid grid-cols-subgrid items-center;
+	& > * {
+		@apply px-2 py-1 whitespace-nowrap;
+	}
+}
+
+@utility haax-table-body {
+	@apply col-start-1 -col-end-1 row-start-2 -row-end-1 grid grid-cols-subgrid grid-rows-subgrid;
+}
+
+@utility haax-input {
+	@apply rounded-xs;
+	@apply border-gray/40 bg-darker-gray/50 border;
+	@apply grow cursor-text p-2;
+	@apply placeholder-blue-gray/70;
+}
+
+@utility haax-input-hocus {
+	@apply hocus:border-blue-gray hocus:bg-dark-gray transition-colors;
+}
+
+@utility haax-input-underline {
+	@apply haax-input border-0 border-b;
+}
+
+@utility haax-input-error {
+	@apply border-red/60 hocus:border-red hocus:bg-red/5 transition-colors;
+}
+
+@layer components {
+	/* Default text styles */
+	:not(svg, svg *) {
+		@apply font-sans;
+		color: white;
+		font-style: normal;
+		font-weight: 400;
+		font-size: 16px;
+		line-height: 26px;
+	}
+
+	* {
+		min-width: 0;
+		min-height: 0;
+		flex-shrink: 0;
+	}
+
+	h1 {
+		@apply h1;
+	}
+
+	h2 {
+		@apply h2;
+	}
+
+	h3 {
+		@apply h3;
+	}
+
+	h4 {
+		@apply h4;
+	}
+
+	*:focus {
+		outline: none;
+	}
+
+	input {
+		&:-webkit-autofill,
+		&:-webkit-autofill:hover,
+		&:-webkit-autofill:focus,
+		&:-webkit-autofill:active {
+			-webkit-text-fill-color: white;
+			-webkit-box-shadow: 0 0 0 30px #0e0c0b inset !important;
+		}
+	}
+
+	input::-webkit-outer-spin-button,
+	input::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		appearance: none;
+		margin: 0;
+	}
+
+	input[type='number'] {
+		-moz-appearance: textfield;
+		appearance: textfield;
+	}
+}

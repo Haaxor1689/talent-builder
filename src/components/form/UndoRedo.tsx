@@ -1,7 +1,7 @@
-import { cloneDeep, isEqual } from 'lodash-es';
 import { useEffect, useRef, useState } from 'react';
 import { type FieldValues, useFormContext } from 'react-hook-form';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { cloneDeep, isEqual } from 'es-toolkit';
+import { Redo2, Undo2 } from 'lucide-react';
 
 import TextButton from '../styled/TextButton';
 
@@ -13,23 +13,23 @@ const UndoRedo = <T extends FieldValues>({
 	const [disabled, setDisabled] = useState([true, true]);
 
 	const { watch, reset } = useFormContext<T>();
-	const history = useRef<T[]>([defaultValues]);
-	const index = useRef(0);
-	const isReset = useRef(false);
+	const historyRef = useRef<T[]>([defaultValues]);
+	const indexRef = useRef(0);
+	const isResetRef = useRef(false);
 
 	const updateDisabled = () => {
 		setDisabled([
-			index.current === history.current.length - 1,
-			index.current === 0
+			indexRef.current === historyRef.current.length - 1,
+			indexRef.current === 0
 		]);
 	};
 
 	const undo = () => {
-		if (index.current === history.current.length - 1) return;
-		index.current += 1;
-		isReset.current = true;
+		if (indexRef.current === historyRef.current.length - 1) return;
+		indexRef.current += 1;
+		isResetRef.current = true;
 
-		reset(history.current[index.current], {
+		reset(historyRef.current[indexRef.current], {
 			keepDefaultValues: true
 		});
 
@@ -37,10 +37,10 @@ const UndoRedo = <T extends FieldValues>({
 	};
 
 	const redo = () => {
-		if (index.current === 0) return;
-		index.current -= 1;
-		isReset.current = true;
-		reset(history.current[index.current], {
+		if (indexRef.current === 0) return;
+		indexRef.current -= 1;
+		isResetRef.current = true;
+		reset(historyRef.current[indexRef.current], {
 			keepDefaultValues: true
 		});
 
@@ -49,19 +49,19 @@ const UndoRedo = <T extends FieldValues>({
 
 	useEffect(() => {
 		const { unsubscribe } = watch(v => {
-			if (isReset.current) {
-				isReset.current = false;
+			if (isResetRef.current) {
+				isResetRef.current = false;
 				return;
 			}
 
-			if (isEqual(v, history.current[index.current])) return;
+			if (isEqual(v, historyRef.current[indexRef.current])) return;
 
-			history.current = [
+			historyRef.current = [
 				cloneDeep(v) as never,
-				...history.current.slice(index.current)
+				...historyRef.current.slice(indexRef.current)
 			];
 
-			index.current = 0;
+			indexRef.current = 0;
 			updateDisabled();
 		});
 		return () => unsubscribe();
@@ -84,17 +84,17 @@ const UndoRedo = <T extends FieldValues>({
 	}, [reset]);
 
 	return (
-		<div className="absolute left-0 top-0 flex gap-1">
+		<div className="absolute top-3 left-3 flex gap-1">
 			<TextButton
 				onClick={undo}
-				icon={ArrowLeft}
+				icon={Undo2}
 				title="Undo"
 				disabled={disabled[0]}
 				className="-m-2"
 			/>
 			<TextButton
 				onClick={redo}
-				icon={ArrowRight}
+				icon={Redo2}
 				title="Redo"
 				disabled={disabled[1]}
 				className="-m-2"

@@ -5,8 +5,8 @@ import 'server-only';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 
-import { talentTrees } from '~/server/db/schema';
-import { getTalentSum } from '~/utils';
+import { talentTrees } from '#server/db/schema.ts';
+import { getTalentSum } from '#utils.ts';
 
 import { createdBySelect, publicProcedure } from '../helpers';
 

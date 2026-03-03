@@ -1,18 +1,19 @@
+import { type Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { getTalentTree } from '~/server/api/routers/talentTree';
-import { CalculatorParams, type CalculatorParamsT } from '~/server/api/types';
-import { getIconPath, maskToClass } from '~/utils';
-import TalentCalculator from '~/components/calculator/TalentCalculator';
-import { env } from '~/env';
+import TalentCalculator from '#components/calculator/TalentCalculator.tsx';
+import { env } from '#env.js';
+import { getTalentTree } from '#server/api/routers/talentTree.ts';
+import { CalculatorParams } from '#server/api/types.ts';
+import { getIconPath, maskToClass } from '#utils.ts';
 
-type PageProps = {
-	searchParams: CalculatorParamsT;
-};
+type Props = PageProps<'/calculator'>;
 
-export const generateMetadata = async ({ searchParams }: PageProps) => {
-	const parsed = CalculatorParams.safeParse(searchParams);
-	if (!parsed.success) return null;
+export const generateMetadata = async ({
+	searchParams
+}: Props): Promise<Metadata> => {
+	const parsed = CalculatorParams.safeParse(await searchParams);
+	if (!parsed.success) return {};
 
 	const trees = await Promise.all([
 		getTalentTree(parsed.data.t0),
@@ -31,8 +32,8 @@ export const generateMetadata = async ({ searchParams }: PageProps) => {
 	};
 };
 
-const Page = async ({ searchParams }: PageProps) => {
-	const parsed = CalculatorParams.safeParse(searchParams);
+const Page = async ({ searchParams }: Props) => {
+	const parsed = CalculatorParams.safeParse(await searchParams);
 	if (!parsed.success) return notFound();
 
 	const trees = await Promise.all([
@@ -41,7 +42,12 @@ const Page = async ({ searchParams }: PageProps) => {
 		getTalentTree(parsed.data.t2)
 	] as const);
 
-	return <TalentCalculator trees={trees} isNew />;
+	return (
+		<>
+			<h2 className="haax-color mt-4 -mb-2 text-center">Talent Calculator</h2>
+			<TalentCalculator trees={trees} isNew />
+		</>
+	);
 };
 
 export default Page;

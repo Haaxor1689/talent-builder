@@ -1,3 +1,4 @@
+import { type AdapterAccount } from 'next-auth/adapters';
 import { relations } from 'drizzle-orm';
 import {
 	index,
@@ -6,10 +7,9 @@ import {
 	sqliteTableCreator,
 	text
 } from 'drizzle-orm/sqlite-core';
-import { type AdapterAccount } from 'next-auth/adapters';
 import { nanoid } from 'nanoid';
 
-import { type TalentTreeT } from '~/server/api/types';
+import { type TalentTreeT } from '#server/api/types.ts';
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same

@@ -1,15 +1,15 @@
 'use client';
 
+import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useMemo } from 'react';
 
-import { zodResolver } from '~/utils';
-import { Filters } from '~/server/api/types';
-import Input from '~/components/form/Input';
-import ClassPicker from '~/components/form/ClassPicker';
-import useDebounced from '~/hooks/useDebounced';
-import CheckboxInput from '~/components/form/CheckboxInput';
+import CheckboxInput from '#components/form/CheckboxInput.tsx';
+import ClassPicker from '#components/form/ClassPicker.tsx';
+import Input from '#components/form/Input.tsx';
+import useDebounced from '#hooks/useDebounced.ts';
+import { Filters } from '#server/api/types.ts';
+import { zodResolver } from '#utils.ts';
 
 const FiltersSection = () => {
 	const searchParams = useSearchParams();
@@ -22,6 +22,7 @@ const FiltersSection = () => {
 	const formProps = useForm({ defaultValues, resolver: zodResolver(Filters) });
 	const { register, watch } = formProps;
 
+	// eslint-disable-next-line react-hooks/incompatible-library
 	const values = useDebounced(watch(), 500);
 	useEffect(() => {
 		const params = new URLSearchParams(searchParams.toString());
@@ -44,7 +45,7 @@ const FiltersSection = () => {
 
 	return (
 		<FormProvider {...formProps}>
-			<form className="tw-surface flex flex-col items-stretch gap-2 md:flex-row md:items-center md:p-4">
+			<form className="haax-surface-3 flex flex-col items-stretch gap-2 md:flex-row md:items-center md:p-4">
 				<Input
 					{...register('name')}
 					placeholder="Tree name"
@@ -55,7 +56,7 @@ const FiltersSection = () => {
 						{...register('from')}
 						placeholder="Author"
 						disabled={values.onlyPersonal}
-						className="grow"
+						className="shrink grow"
 					/>
 					<CheckboxInput name="onlyPersonal" label="Mine" />
 					<ClassPicker name="class" />

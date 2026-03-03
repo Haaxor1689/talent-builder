@@ -2,14 +2,13 @@
 
 import 'server-only';
 
+import { revalidatePath, updateTag } from 'next/cache';
 import { and, asc, desc, eq, inArray, like, or } from 'drizzle-orm';
+import { omit } from 'es-toolkit';
 import { z } from 'zod';
-import { revalidatePath, revalidateTag } from 'next/cache';
-import { omit } from 'lodash-es';
 
-import { talentTrees, users } from '~/server/db/schema';
+import { talentTrees, users } from '#server/db/schema.ts';
 
-import { Filters, TalentForm } from '../types';
 import {
 	createdBySelect,
 	getFullTag,
@@ -17,7 +16,7 @@ import {
 	protectedProcedure,
 	publicProcedure
 } from '../helpers';
-
+import { Filters, TalentForm } from '../types';
 import { turtleWoWAccountId } from './general';
 
 export const upsertTalentTree = protectedProcedure({
@@ -47,20 +46,20 @@ export const upsertTalentTree = protectedProcedure({
 		}
 
 		if (entry?.public || input.public) {
-			revalidateTag(getQueryTag('listPublicTalentTrees'));
-			revalidateTag(getQueryTag('listInfiniteTalentTrees'));
+			updateTag(getQueryTag('listPublicTalentTrees'));
+			updateTag(getQueryTag('listInfiniteTalentTrees'));
 		}
 
 		const turtleAccId = await turtleWoWAccountId(undefined);
 		if (input?.createdById === turtleAccId) {
-			revalidateTag(getQueryTag('listTurtleTalentTrees'));
+			updateTag(getQueryTag('listTurtleTalentTrees'));
 		}
 
-		revalidateTag(getFullTag('getTalentTree', input.id));
-		revalidateTag(getFullTag('getOgInfo', input.id));
+		updateTag(getFullTag('getTalentTree', input.id));
+		updateTag(getFullTag('getOgInfo', input.id));
 		revalidatePath(`/api/og/${input.id}`);
 
-		if (input.collection) revalidateTag(getQueryTag('getCollectionTree'));
+		if (input.collection) updateTag(getQueryTag('getCollectionTree'));
 
 		return await db.query.talentTrees.findFirst({
 			where: eq(talentTrees.id, input.id)
@@ -83,7 +82,7 @@ export const listInfiniteTalentTrees = publicProcedure({
 						where: like(users.name, `%${input.from}%`),
 						columns: { id: true }
 					})
-			  ).map(a => a.id)
+				).map(a => a.id)
 			: [];
 
 		if (input.from && !whereAcc.length)
@@ -98,7 +97,7 @@ export const listInfiniteTalentTrees = publicProcedure({
 							asc(talentTrees.class),
 							asc(talentTrees.index),
 							desc(talentTrees.updatedAt)
-					  ]
+						]
 					: [desc(talentTrees.updatedAt)],
 			where: and(
 				!session?.user.isAdmin
@@ -107,14 +106,14 @@ export const listInfiniteTalentTrees = publicProcedure({
 							session?.user.id
 								? eq(talentTrees.createdById, session?.user.id)
 								: undefined
-					  )
+						)
 					: undefined,
 				input.name ? like(talentTrees.name, `%${input.name}%`) : undefined,
 				session?.user.id && input.onlyPersonal
 					? eq(talentTrees.createdById, session.user.id)
 					: whereAcc.length
-					? inArray(talentTrees.createdById, whereAcc)
-					: undefined,
+						? inArray(talentTrees.createdById, whereAcc)
+						: undefined,
 				input.class ? eq(talentTrees.class, input.class) : undefined,
 				input.collection
 					? eq(talentTrees.collection, input.collection)
@@ -160,17 +159,17 @@ export const deleteTalentTree = protectedProcedure({
 		await db.delete(talentTrees).where(eq(talentTrees.id, input));
 
 		if (entry.public) {
-			revalidateTag(getQueryTag('listPublicTalentTrees'));
-			revalidateTag(getQueryTag('listInfiniteTalentTrees'));
+			updateTag(getQueryTag('listPublicTalentTrees'));
+			updateTag(getQueryTag('listInfiniteTalentTrees'));
 		}
 
 		const turtleAccId = await turtleWoWAccountId(undefined);
 		if (entry.createdById === turtleAccId) {
-			revalidateTag(getQueryTag('listTurtleTalentTrees'));
+			updateTag(getQueryTag('listTurtleTalentTrees'));
 		}
 
-		revalidateTag(getFullTag('getTalentTree', entry.id));
-		revalidateTag(getFullTag('getOgInfo', entry.id));
+		updateTag(getFullTag('getTalentTree', entry.id));
+		updateTag(getFullTag('getOgInfo', entry.id));
 		revalidatePath(`/api/og/${entry.id}`);
 	}
 });

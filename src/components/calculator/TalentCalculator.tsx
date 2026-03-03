@@ -1,24 +1,23 @@
 'use client';
 
-import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useMemo } from 'react';
+import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useSearchParams } from 'next/navigation';
 
 import {
 	BuildForm,
-	CalculatorParams,
 	type BuildFormT,
+	CalculatorParams,
 	type TalentFormT
-} from '~/server/api/types';
-import { zodResolver } from '~/utils';
+} from '#server/api/types.ts';
+import { zodResolver } from '#utils.ts';
 
 import ClassPicker from '../form/ClassPicker';
-
+import ScrollArea from '../styled/ScrollArea';
+import Actions from './Actions';
+import ClassCalculatorsLinks from './ClassCalculatorsLinks';
 import TalentSpec from './TalentSpec';
 import UrlSync from './UrlSync';
-import Actions from './Actionts';
-import TreePickDialogProvider from './TreePickDialog';
-import ClassCalculatorsLinks from './ClassCalculatorsLinks';
 
 const PointsSpent = () => {
 	const points = useWatch<BuildFormT, 'points'>({ name: 'points' });
@@ -26,19 +25,21 @@ const PointsSpent = () => {
 	const reqLvl = sums.reduce((acc, curr) => acc + curr, 0);
 	const pointsLeft = 51 - reqLvl;
 	return (
-		<div className="flex flex-wrap justify-between md:contents">
+		<>
 			<span className="h3 grow">{sums.join(' / ')}</span>
-			{!!reqLvl && (
-				<span className="h4 text-blueGray">
-					Level: <span className="h3">{reqLvl + 9}</span>
-				</span>
-			)}
-			{!!pointsLeft && (
-				<span className="h4 text-blueGray">
-					Points left: <span className="h3">{pointsLeft}</span>
-				</span>
-			)}
-		</div>
+			<div className="flex gap-3">
+				{!!reqLvl && (
+					<span className="h4 text-blue-gray">
+						Level: <span className="h3">{reqLvl + 9}</span>
+					</span>
+				)}
+				{!!pointsLeft && (
+					<span className="h4 text-blue-gray">
+						Points left: <span className="h3">{pointsLeft}</span>
+					</span>
+				)}
+			</div>
+		</>
 	);
 };
 
@@ -71,36 +72,38 @@ const TalentCalculator = ({ urlBase, trees, isNew, values }: Props) => {
 
 	return (
 		<FormProvider {...formProps}>
+			<UrlSync values={values} />
 			{urlBase && <ClassCalculatorsLinks urlBase={urlBase} />}
-			<TreePickDialogProvider>
-				<form className="tw-surface flex flex-col gap-3">
-					<div className="flex flex-col gap-3 md:flex-row md:items-center">
-						<div className="flex grow flex-col gap-4 md:flex-row md:items-center">
-							<ClassPicker
-								name="class"
-								title={defaultValues.name}
-								large
-								showEmpty
-								disabled={values?.class !== undefined}
-							/>
-							<PointsSpent />
-							<UrlSync values={values} />
-						</div>
+			<form className="haax-surface-3">
+				<div className="flex grow flex-wrap items-center gap-3">
+					<ClassPicker
+						name="class"
+						title={defaultValues.name}
+						large
+						showEmpty
+						disabled={values?.class !== undefined}
+					/>
+					<PointsSpent />
+				</div>
 
-						<div className="flex items-center" />
-					</div>
+				<hr />
 
-					<hr />
+				<ScrollArea
+					containerClassName="-m-3"
+					contentClassName="grid grid-cols-[repeat(3,minmax(min-content,1fr))]"
+				>
+					{([0, 1, 2] as const).map(i => (
+						<TalentSpec
+							key={i}
+							idx={i}
+							value={trees[i]}
+							canChangeTree={!urlBase}
+						/>
+					))}
+				</ScrollArea>
 
-					<div className="-m-2 mt-0 grid grid-cols-1 items-center justify-center gap-2 lg:grid-cols-3">
-						<TalentSpec idx={0} value={trees[0]} />
-						<TalentSpec idx={1} value={trees[1]} />
-						<TalentSpec idx={2} value={trees[2]} />
-					</div>
-
-					<Actions trees={trees} isNew={isNew} />
-				</form>
-			</TreePickDialogProvider>
+				<Actions trees={trees} isNew={isNew} />
+			</form>
 		</FormProvider>
 	);
 };

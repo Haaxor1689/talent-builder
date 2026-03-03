@@ -1,6 +1,6 @@
-import cls from 'classnames';
 import { type ReactNode } from 'react';
 import { useController } from 'react-hook-form';
+import cls from 'classnames';
 
 import TextButton from '../styled/TextButton';
 
@@ -36,8 +36,8 @@ const CheckboxInput = ({ name, label, disabled, className }: Props) => {
 			icon={Checkbox as never}
 			disabled={disabled}
 			className={cls(
-				'text-blueGray',
-				{ '[&_*]:fill-none': !field.value },
+				'text-blue-gray',
+				{ '**:fill-none': !field.value },
 				className
 			)}
 		>

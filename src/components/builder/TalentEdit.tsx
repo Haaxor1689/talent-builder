@@ -1,20 +1,21 @@
 'use client';
 
+import { useMemo, useRef } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { Camera, Link2Off, Trash2 } from 'lucide-react';
-import { useMemo, useRef } from 'react';
 
-import { Talent, type TalentFormT } from '~/server/api/types';
-import { elementToPng } from '~/utils';
+import { Talent, type TalentFormT } from '#server/api/types.ts';
+import { elementToPng } from '#utils.ts';
 
+import { formatTalentDescription } from '../calculator/formatTalentDescription';
+import CheckboxInput from '../form/CheckboxInput';
 import IconPicker from '../form/IconPicker';
 import Input from '../form/Input';
 import Textarea from '../form/Textarea';
-import TextButton from '../styled/TextButton';
-import CheckboxInput from '../form/CheckboxInput';
+import Dialog, { closeDialog } from '../styled/Dialog';
+import ScrollArea from '../styled/ScrollArea';
 import SpellIcon from '../styled/SpellIcon';
-import DialogButton from '../styled/DialogButton';
-import { formatTalentDescription } from '../calculator/formatTalentDescription';
+import TextButton from '../styled/TextButton';
 
 const RequiredTalent = ({
 	selected,
@@ -26,13 +27,12 @@ const RequiredTalent = ({
 	const { setValue } = useFormContext<TalentFormT>();
 	const fields = useWatch<TalentFormT, 'talents'>({ name: 'talents' });
 	const requires = fields[fields[selected ?? -1]?.requires ?? -1];
-	if (!requires && !editable) return <p className="text-blueGray">Nothing</p>;
+	if (!requires && !editable) return <p className="text-blue-gray">Nothing</p>;
 	if (!requires) return null;
 	return (
 		<div className="flex items-center gap-3">
-			<SpellIcon icon={requires.icon} className="!size-12" showDefault />
-			<p className="tw-color grow font-bold">
-				{/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
+			<SpellIcon icon={requires.icon} className="size-12!" showDefault />
+			<p className="haax-color grow font-bold">
 				{requires.name || '[Unnamed talent]'}
 			</p>
 			{editable && (
@@ -64,34 +64,34 @@ const TalentScreenshot = ({ selected }: { selected: number }) => {
 
 	return (
 		<div className="flex justify-end">
-			<DialogButton
-				clickAway
-				dialog={close => (
-					<div className="flex flex-col items-center gap-4">
-						<TextButton
-							icon={Camera}
-							onClick={async () => {
-								if (!ref.current) return;
-								await elementToPng(ref.current, item.name);
-								close();
-							}}
-						>
-							Save screenshot
-						</TextButton>
-						<div ref={ref} className="flex items-start gap-2">
-							<SpellIcon icon={item.icon} showDefault />
-							<div className="tw-surface pointer-events-none z-10 min-w-[250px] max-w-[400px] bg-darkerGray/90">
-								<h4 className="tw-color">{item.name || '[Empty talent]'}</h4>
-								<p className="whitespace-pre-wrap">
-									{description ?? '[No description]'}
-								</p>
-							</div>
-						</div>
-					</div>
+			<Dialog
+				unstyled
+				trigger={open => (
+					<TextButton icon={Camera} title="Screenshot" onClick={open} />
 				)}
 			>
-				{open => <TextButton icon={Camera} title="Screenshot" onClick={open} />}
-			</DialogButton>
+				<div className="flex flex-col items-center gap-4">
+					<TextButton
+						icon={Camera}
+						onClick={async e => {
+							if (!ref.current) return;
+							await elementToPng(ref.current, item.name);
+							closeDialog(e);
+						}}
+					>
+						Save screenshot
+					</TextButton>
+					<div ref={ref} className="flex items-start gap-2">
+						<SpellIcon icon={item.icon} showDefault />
+						<div className="haax-surface-3 pointer-events-none z-10 max-w-100 min-w-62.5">
+							<h4 className="haax-color">{item.name || '[Empty talent]'}</h4>
+							<p className="whitespace-pre-wrap">
+								{description ?? '[No description]'}
+							</p>
+						</div>
+					</div>
+				</div>
+			</Dialog>
 		</div>
 	);
 };
@@ -104,13 +104,16 @@ type Props = {
 const TalentEdit = ({ selected, editable }: Props) => {
 	const { register, setValue } = useFormContext<TalentFormT>();
 	return (
-		<div className="flex w-full flex-col gap-4 md:max-w-md">
+		<ScrollArea
+			containerClassName="h-full"
+			contentClassName="flex flex-col gap-4 p-3"
+		>
 			<div className="flex items-center gap-2">
 				<IconPicker name={`talents.${selected}.icon`} disabled={!editable} />
 				<Input
 					{...register(`talents.${selected}.name`)}
 					disabled={!editable}
-					className="grow"
+					className="shrink grow"
 				/>
 
 				{editable && (
@@ -147,7 +150,7 @@ const TalentEdit = ({ selected, editable }: Props) => {
 				<span>Requires:</span>
 				<RequiredTalent selected={selected} editable={editable} />
 				{editable && (
-					<p className="text-blueGray">
+					<p className="text-blue-gray">
 						Shift + click other talent to set dependency
 					</p>
 				)}
@@ -160,12 +163,12 @@ const TalentEdit = ({ selected, editable }: Props) => {
 			/>
 
 			<Input {...register(`talents.${selected}.spellIds`)} label="Spell Ids" />
-			<span className="-mt-2 text-sm text-blueGray">
+			<span className="text-blue-gray -mt-2 text-sm">
 				Comma separated list of spell ids for each rank
 			</span>
 
 			<TalentScreenshot selected={selected} />
-		</div>
+		</ScrollArea>
 	);
 };
 

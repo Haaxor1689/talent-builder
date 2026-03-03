@@ -3,10 +3,11 @@
 import 'server-only';
 
 import { eq } from 'drizzle-orm';
-import { stringify } from 'superjson';
 import { type SQLiteTableWithColumns } from 'drizzle-orm/sqlite-core';
+import { stringify } from 'superjson';
 import { z } from 'zod';
 
+import { type db } from '#server/db/index.ts';
 import {
 	accounts,
 	savedBuilds,
@@ -14,10 +15,9 @@ import {
 	talentTrees,
 	users,
 	verificationTokens
-} from '~/server/db/schema';
-import { type db } from '~/server/db';
+} from '#server/db/schema.ts';
 
-import { publicProcedure, adminProcedure } from '../helpers';
+import { adminProcedure, publicProcedure } from '../helpers';
 
 export const turtleWoWAccountId = publicProcedure({
 	queryKey: 'turtleWoWAccountId',

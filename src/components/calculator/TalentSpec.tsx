@@ -1,21 +1,23 @@
 'use client';
 
-import { ExternalLink, NotebookPen, Workflow, X } from 'lucide-react';
 import { useFormContext, useWatch } from 'react-hook-form';
+import { ExternalLink, NotebookPen, Workflow, X } from 'lucide-react';
 
-import { type BuildFormT, type TalentFormT } from '~/server/api/types';
-import { isEmptyTalent } from '~/utils';
+import { type BuildFormT, type TalentFormT } from '#server/api/types.ts';
+import { isEmptyTalent } from '#utils.ts';
 
-import TextButton from '../styled/TextButton';
+import Dialog from '../styled/Dialog';
+import Md from '../styled/Md';
+import ScrollArea from '../styled/ScrollArea';
 import SpellIcon from '../styled/SpellIcon';
-import DialogButton from '../styled/DialogButton';
-
+import TextButton from '../styled/TextButton';
 import TalentPreview from './TalentPreview';
-import { useTreePick } from './TreePickDialog';
+import TreePickDialog from './TreePickDialog';
 
 type Props = {
 	idx: 0 | 1 | 2;
 	value?: TalentFormT;
+	canChangeTree?: boolean;
 };
 
 const PointsSpent = ({ idx, value }: Props) => {
@@ -23,47 +25,56 @@ const PointsSpent = ({ idx, value }: Props) => {
 		name: `points.${idx}`
 	});
 	return (
-		<span className="h4 shrink-0 text-blueGray">
+		<span className="h3 text-blue-gray">
 			{points.reduce((acc, curr) => acc + curr, 0)} /{' '}
 			{value?.talents.reduce((acc, curr) => acc + (curr?.ranks ?? 0), 0)}
 		</span>
 	);
 };
 
-const TalentSpec = ({ idx, value }: Props) => {
+const TalentSpec = ({ idx, value, canChangeTree }: Props) => {
 	const { setValue } = useFormContext<BuildFormT>();
-	const { open } = useTreePick();
 
 	if (!value)
 		return (
-			<div className="flex min-h-[50vh] flex-col items-center justify-center p-8">
-				<TextButton onClick={() => open(idx)}>
-					<p className="h1 text-inherit">+</p>
-					<p className="h4 text-inherit">Pick a tree</p>
-				</TextButton>
+			<div className="border-blue-gray/20 min-h-[50vh] grow first:border-r last:border-l">
+				<TreePickDialog
+					idx={idx}
+					trigger={open => (
+						<TextButton
+							onClick={open}
+							className="h-full w-full items-center justify-center"
+						>
+							<p className="h1 text-7xl text-inherit">+</p>
+							<p className="h3 text-inherit">Pick a tree</p>
+						</TextButton>
+					)}
+				/>
 			</div>
 		);
 
 	return (
-		<div className="flex flex-col gap-3">
-			<div className="flex items-center gap-2 px-4">
+		<div className="border-blue-gray/20 flex grow flex-col first:border-r last:border-l">
+			<div className="flex items-center gap-2 p-3">
 				<SpellIcon icon={value.icon} className="size-8" />
-				<span className="h4 grow truncate" title={value.name}>
-					{value.name}
-				</span>
+				<div className="relative h-full grow overflow-hidden">
+					<span className="h3 absolute inset-0 truncate" title={value.name}>
+						{value.name}
+					</span>
+				</div>
 				<TextButton
 					icon={ExternalLink}
 					title="Open tree"
 					type="link"
 					href={`/tree/${value.id}`}
-					className="-m-2 shrink-0"
+					className="-m-2"
 				/>
 				<PointsSpent idx={idx} value={value} />
 			</div>
 
-			<hr className="!-mx-1" />
+			<hr className="mx-0!" />
 
-			<div className="-my-3 grid flex-shrink-0 grow select-none grid-cols-[repeat(4,_max-content)] content-center justify-center gap-6 overflow-x-auto pb-3 pt-6">
+			<div className="grid grid-cols-[repeat(4,max-content)] content-center justify-center gap-6 p-3 select-none">
 				{value.talents.map((field, i) =>
 					isEmptyTalent(field) ? (
 						<div key={i} />
@@ -79,38 +90,44 @@ const TalentSpec = ({ idx, value }: Props) => {
 				)}
 			</div>
 
-			<div className="flex flex-wrap justify-center gap-x-2">
-				<TextButton
-					onClick={() => open(idx)}
-					icon={Workflow}
-					iconSize={14}
-					className="text-sm text-blueGray"
-				>
-					Change tree
-				</TextButton>
+			<div className="flex justify-center gap-2">
+				{canChangeTree && (
+					<TreePickDialog
+						idx={idx}
+						trigger={open => (
+							<TextButton
+								onClick={open}
+								icon={Workflow}
+								iconSize={14}
+								className="text-blue-gray text-sm"
+							>
+								Change tree
+							</TextButton>
+						)}
+					/>
+				)}
 				{value.notes && (
-					<DialogButton
-						dialog={
-							<div className="tw-surface flex max-w-screen-sm flex-col gap-2 overflow-auto bg-darkGray/90">
-								<h3 className="tw-color">{value.name} notes</h3>
-								<p className="max-h-[80vh] overflow-y-auto whitespace-pre-wrap">
-									{value.notes}
-								</p>
-							</div>
-						}
-						clickAway
-					>
-						{open => (
+					<Dialog
+						trigger={open => (
 							<TextButton
 								icon={NotebookPen}
 								onClick={open}
 								iconSize={14}
-								className="text-sm text-blueGray"
+								className="text-blue-gray text-sm"
 							>
 								Notes
 							</TextButton>
 						)}
-					</DialogButton>
+					>
+						<h3 className="haax-color">{value.name} notes</h3>
+						<hr />
+						<ScrollArea
+							containerClassName="-m-3"
+							contentClassName="p-3 flex flex-col gap-3"
+						>
+							<Md text={value.notes} />
+						</ScrollArea>
+					</Dialog>
 				)}
 				<TextButton
 					onClick={() =>
@@ -121,7 +138,7 @@ const TalentSpec = ({ idx, value }: Props) => {
 					}
 					icon={X}
 					iconSize={14}
-					className="text-sm text-red"
+					className="text-red text-sm"
 				>
 					Clear points
 				</TextButton>

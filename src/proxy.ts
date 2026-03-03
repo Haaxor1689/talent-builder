@@ -17,7 +17,7 @@ export const config = {
 	matcher: ['/((?!_next/|favicon.ico|robots.txt|sitemap.xml).*)']
 };
 
-export const middleware = (req: NextRequest) => {
+export const proxy = (req: NextRequest) => {
 	const ua = req.headers.get('user-agent') ?? '';
 
 	// 1. Block known AI / heavy scrapers by UA

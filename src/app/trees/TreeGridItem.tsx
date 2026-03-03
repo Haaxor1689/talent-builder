@@ -3,17 +3,22 @@
 import Link from 'next/link';
 import { CloudOff, EyeOff, Workflow } from 'lucide-react';
 
-import { getLastUpdatedString, getTalentSum, maskToClass } from '~/utils';
-import { type talentTrees } from '~/server/db/schema';
-
-import SpellIcon from '../styled/SpellIcon';
-import AuthorTag, { type AuthorTagProps } from '../styled/AuthorTag';
-import Tooltip from '../styled/Tooltip';
-import TextButton from '../styled/TextButton';
+import AuthorTag, {
+	type AuthorTagProps
+} from '#components/styled/AuthorTag.tsx';
+import SpellIcon from '#components/styled/SpellIcon.tsx';
+import TextButton from '#components/styled/TextButton.tsx';
+import Tooltip from '#components/styled/Tooltip.tsx';
+import { type talentTrees } from '#server/db/schema.ts';
+import { getLastUpdatedString, getTalentSum, maskToClass } from '#utils.ts';
 
 type Item = typeof talentTrees.$inferSelect & {
 	href: string;
 	createdBy: AuthorTagProps;
+	label?: string;
+	onClick?: (
+		e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement, MouseEvent>
+	) => void;
 };
 
 const TreeGridItem = (item: Item) => {
@@ -22,19 +27,19 @@ const TreeGridItem = (item: Item) => {
 		<Tooltip
 			tooltip={
 				<>
-					<h4 className="tw-color text-lg">{item.name}</h4>
+					<h4 className="haax-color text-xl">{item.name}</h4>
 					{!item.public && (
-						<span className="flex items-center gap-1 text-lg text-warmGreen">
+						<span className="text-warm-green flex items-center gap-1 text-lg">
 							<EyeOff className="w-4 shrink-0" />
 							Private
 						</span>
 					)}
-					<p className="text-blueGray">
+					<p className="text-blue-gray">
 						Points: <span>{getTalentSum(item.talents)}</span>
 					</p>
 					{item.createdBy && (
 						<>
-							<span className="whitespace-nowrap text-blueGray">
+							<span className="text-blue-gray whitespace-nowrap">
 								Last updated:{' '}
 								<span>
 									{new Date(item.updatedAt ?? item.createdAt).toLocaleString(
@@ -42,13 +47,13 @@ const TreeGridItem = (item: Item) => {
 									)}
 								</span>
 							</span>
-							<div className="flex items-center gap-1.5 text-blueGray">
+							<div className="text-blue-gray flex items-center gap-1.5">
 								Author: <AuthorTag {...item.createdBy} />
 							</div>
 						</>
 					)}
 					{classInfo && (
-						<p className="flex items-center gap-1 text-blueGray">
+						<p className="text-blue-gray flex items-center gap-1">
 							Class:{' '}
 							<SpellIcon icon={classInfo.icon} showDefault className="size-6" />{' '}
 							<span style={{ color: classInfo.color }}>{classInfo.name}</span>
@@ -56,49 +61,56 @@ const TreeGridItem = (item: Item) => {
 					)}
 				</>
 			}
-			actions={() => (
-				<TextButton type="link" href={item.href} icon={Workflow}>
-					Open tree
+			actions={
+				<TextButton
+					type="link"
+					href={item.href}
+					onClick={item.onClick}
+					icon={Workflow}
+				>
+					{item.label ?? 'Open tree'}
 				</TextButton>
-			)}
+			}
 		>
 			<Link
 				href={item.href}
-				className="tw-hocus -mb-2 flex items-center gap-3 p-2"
+				className="hocus:haax-highlight -mb-2 flex items-center gap-3 p-2"
 				prefetch={false}
+				onClick={item.onClick}
 			>
-				<div className="relative flex shrink-0 items-center">
+				<div className="relative flex">
 					<SpellIcon icon={item.icon} showDefault className="cursor-pointer" />
 					{classInfo && (
-						<div className="pointer-events-none absolute -bottom-4 -right-2">
+						<div className="pointer-events-none absolute -right-2 -bottom-4">
 							<SpellIcon icon={classInfo.icon} className="size-6" />
 						</div>
 					)}
 				</div>
-				<div className="flex grow flex-col gap-1 text-inherit">
+
+				<div className="flex shrink grow flex-col gap-1 text-inherit">
 					<p className="truncate text-lg text-inherit">{item.name}</p>
 					{item.createdBy ? (
-						<div className="flex items-center gap-1.5 truncate">
+						<div className="flex items-center gap-1.5">
 							<div
-								className="size-6 shrink-0 rounded-full bg-contain"
+								className="size-6 truncate rounded-full bg-contain"
 								style={{
 									backgroundImage: `url(${item.createdBy?.image}), url(https://cdn.discordapp.com/embed/avatars/0.png)`
 								}}
 							/>
-							<span className="grow text-blueGray">
+							<span className="text-blue-gray shrink grow truncate overflow-hidden whitespace-nowrap">
 								{item.createdBy.name === 'TurtleWoW'
 									? 'TurtleWoW'
 									: getLastUpdatedString(item.updatedAt ?? item.createdAt)}
 							</span>
 							{!item.public && (
-								<span className="flex items-center gap-1 text-xs text-warmGreen">
-									<EyeOff className="w-4 shrink-0" />
+								<span className="text-warm-green flex items-center gap-1.5">
+									<EyeOff className="w-4" />
 									Private
 								</span>
 							)}
 						</div>
 					) : (
-						<div className="flex items-center gap-1.5 text-blueGray">
+						<div className="text-blue-gray flex items-center gap-1.5">
 							<CloudOff size={24} />
 							Local only
 						</div>

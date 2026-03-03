@@ -1,4 +1,6 @@
-import { type TalentFormT } from '~/server/api/types';
+import { type JSX } from 'react';
+
+import { type TalentFormT } from '#server/api/types.ts';
 
 export const formatTalentDescription = (
 	field: TalentFormT['talents'][number],
@@ -18,7 +20,7 @@ export const formatTalentDescription = (
 						<span className="font-bold">
 							{value !== 0 && `\n\nNext rank:\n`}
 						</span>
-						<span className="text-blueGray">{ranks[value]}</span>
+						<span className="text-blue-gray">{ranks[value]}</span>
 					</>
 				)}
 			</>
@@ -43,7 +45,7 @@ export const formatTalentDescription = (
 
 			return [
 				...prev,
-				<span key={i} className="text-blueGray">
+				<span key={i} className="text-blue-gray">
 					[
 					{ranks.flatMap((r, i) => [
 						i + 1 === value ? (

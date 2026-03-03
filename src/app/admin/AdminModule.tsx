@@ -6,8 +6,8 @@ type Props = HTMLAttributes<HTMLFormElement> & {
 };
 
 const AdminModule = ({ title, children, ...props }: Props) => (
-	<form {...props} className="tw-surface flex flex-grow flex-col gap-2">
-		<h4 className="tw-color">{title}</h4>
+	<form {...props} className="haax-surface-3 grow">
+		<h3 className="haax-color">{title}</h3>
 		<hr />
 		{children}
 	</form>

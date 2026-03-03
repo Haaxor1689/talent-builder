@@ -4,9 +4,9 @@ import { type Control, useController } from 'react-hook-form';
 import cls from 'classnames';
 import { X } from 'lucide-react';
 
-import { maskToClass, classMask } from '~/utils';
+import { classMask, maskToClass } from '#utils.ts';
 
-import DialogButton from '../styled/DialogButton';
+import Dialog, { closeDialog } from '../styled/Dialog';
 import SpellIcon from '../styled/SpellIcon';
 import TextButton from '../styled/TextButton';
 
@@ -35,59 +35,16 @@ const ClassPicker = ({
 	if (disabled && !showEmpty && !classInfo) return null;
 
 	return (
-		<DialogButton
-			dialog={close => (
-				<div className="tw-surface flex flex-col gap-2 bg-darkGray/90">
-					<div className="flex items-center justify-between gap-4">
-						<h3 className="tw-color">Pick Class</h3>
-					</div>
-
-					<div
-						className="grid gap-1"
-						style={{ gridTemplateColumns: 'repeat(3, 64px)' }}
-					>
-						{Object.entries(classMask).map(([mask, classInfo]) => (
-							<SpellIcon
-								key={mask}
-								icon={classInfo.icon}
-								selected={field.value === Number(mask)}
-								onClick={() => {
-									field.onChange(Number(mask));
-									close();
-								}}
-								className={
-									field.value !== Number(mask)
-										? 'grayscale hover:grayscale-0'
-										: undefined
-								}
-							/>
-						))}
-					</div>
-					<TextButton
-						icon={X}
-						onClick={() => {
-							field.onChange(0);
-							close();
-						}}
-						className="-m-1"
-					>
-						Clear
-					</TextButton>
-				</div>
-			)}
-			clickAway
-		>
-			{open => (
+		<Dialog
+			trigger={open => (
 				<div
 					role="button"
 					onClick={open}
 					onKeyDown={e => e.key === 'Enter' && open()}
 					tabIndex={disabled ? -1 : 0}
 					className={cls(
-						'tw-hocus flex shrink-0 items-center gap-2 p-2 text-blueGray',
-						{
-							'pointer-events-none': disabled
-						}
+						'hocus:haax-highlight flex cursor-pointer items-center gap-2 p-2',
+						{ 'pointer-events-none': disabled }
 					)}
 				>
 					<SpellIcon
@@ -96,7 +53,7 @@ const ClassPicker = ({
 						className={cls('cursor-pointer', large ? 'size-12' : 'size-8')}
 					/>
 					<span
-						className={cls('text-[inherit]', { h3: large })}
+						className={cls('text-blue-gray', { h2: large })}
 						style={{ color: classInfo?.color }}
 					>
 						{title ? `${title} ` : ''}
@@ -104,7 +61,46 @@ const ClassPicker = ({
 					</span>
 				</div>
 			)}
-		</DialogButton>
+		>
+			<div className="flex items-center justify-between gap-2">
+				<h3 className="haax-color">Pick Class</h3>
+
+				<TextButton
+					icon={X}
+					onClick={e => {
+						field.onChange(0);
+						closeDialog(e);
+					}}
+					className="text-red -m-2"
+				>
+					Clear
+				</TextButton>
+			</div>
+
+			<hr />
+
+			<div
+				className="grid gap-1"
+				style={{ gridTemplateColumns: 'repeat(3, 64px)' }}
+			>
+				{Object.entries(classMask).map(([mask, classInfo]) => (
+					<SpellIcon
+						key={mask}
+						icon={classInfo.icon}
+						selected={field.value === Number(mask)}
+						onClick={e => {
+							field.onChange(Number(mask));
+							closeDialog(e);
+						}}
+						className={
+							field.value !== Number(mask)
+								? 'grayscale hover:grayscale-0'
+								: undefined
+						}
+					/>
+				))}
+			</div>
+		</Dialog>
 	);
 };
 

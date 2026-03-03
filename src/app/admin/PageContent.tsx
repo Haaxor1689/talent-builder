@@ -1,42 +1,40 @@
 'use client';
 
+import { useState, useTransition } from 'react';
 import { Download, Upload } from 'lucide-react';
-import { useState } from 'react';
-import toast from 'react-hot-toast';
 
-import Input from '~/components/form/Input';
-import TextButton from '~/components/styled/TextButton';
-import useAsyncAction from '~/hooks/useAsyncAction';
-import { exportTable, importTable } from '~/server/api/routers/general';
-import { downloadBlob } from '~/utils';
+import Input from '#components/form/Input.tsx';
+import TextButton from '#components/styled/TextButton.tsx';
+import { toast } from '#components/ToastProvider.tsx';
 import {
 	exportCollection,
 	importCollection
-} from '~/server/api/routers/collection';
+} from '#server/api/routers/collection.ts';
+import { exportTable, importTable } from '#server/api/routers/general.ts';
+import { downloadBlob } from '#utils.ts';
 
 import AdminModule from './AdminModule';
 
 const PageContent = () => {
-	const a = useAsyncAction();
+	const [isPending, startTransition] = useTransition();
 
 	const [table, setTable] = useState('');
 
 	const [collection, setCollection] = useState('');
 
 	return (
-		<>
-			<h2 className="self-center">Admin panel</h2>
-			<div className="flex flex-wrap gap-2">
-				<AdminModule title="Import/export DB table">
-					<Input
-						placeholder="Table name"
-						value={table}
-						onChange={e => setTable(e.currentTarget.value)}
-					/>
-					<div className="flex gap-2 self-end">
-						<TextButton
-							icon={Upload}
-							onClick={a.action(async () => {
+		<div className="flex flex-wrap gap-2">
+			<AdminModule title="Import/export DB table">
+				<Input
+					placeholder="Table name"
+					value={table}
+					onChange={e => setTable(e.currentTarget.value)}
+				/>
+				<div className="flex gap-2 self-end">
+					<TextButton
+						icon={Upload}
+						onClick={() =>
+							startTransition(async () => {
 								const [file] = await window.showOpenFilePicker({
 									multiple: false
 								});
@@ -45,37 +43,41 @@ const PageContent = () => {
 									data: await file.getFile().then(f => f.text()),
 									table: table as never
 								});
-							})}
-							disabled={a.loading}
-						>
-							Import
-						</TextButton>
-						<TextButton
-							icon={Download}
-							onClick={a.action(async () => {
+							})
+						}
+						disabled={isPending}
+					>
+						Import
+					</TextButton>
+					<TextButton
+						icon={Download}
+						onClick={() =>
+							startTransition(async () => {
 								const response = await exportTable(table as never);
 								downloadBlob(
 									new Blob([response]),
 									`talent-builder_${table}.json`
 								);
-							})}
-							disabled={a.loading}
-						>
-							Export
-						</TextButton>
-					</div>
-				</AdminModule>
+							})
+						}
+						disabled={isPending}
+					>
+						Export
+					</TextButton>
+				</div>
+			</AdminModule>
 
-				<AdminModule title="Import/export talent collection">
-					<Input
-						placeholder="Collection name"
-						value={collection}
-						onChange={e => setCollection(e.currentTarget.value)}
-					/>
-					<div className="flex gap-2 self-end">
-						<TextButton
-							icon={Upload}
-							onClick={a.action(async () => {
+			<AdminModule title="Import/export talent collection">
+				<Input
+					placeholder="Collection name"
+					value={collection}
+					onChange={e => setCollection(e.currentTarget.value)}
+				/>
+				<div className="flex gap-2 self-end">
+					<TextButton
+						icon={Upload}
+						onClick={() =>
+							startTransition(async () => {
 								const [file] = await window.showOpenFilePicker({
 									multiple: false
 								});
@@ -84,28 +86,30 @@ const PageContent = () => {
 									collection,
 									json: await file.getFile().then(f => f.text())
 								});
-							})}
-							disabled={a.loading}
-							className="self-end"
-						>
-							Import from JSON
-						</TextButton>
-						<TextButton
-							icon={Download}
-							onClick={a.action(async () => {
+							})
+						}
+						disabled={isPending}
+						className="self-end"
+					>
+						Import from JSON
+					</TextButton>
+					<TextButton
+						icon={Download}
+						onClick={() =>
+							startTransition(async () => {
 								const response = await exportCollection(collection);
 								window.navigator.clipboard.writeText(response);
-								toast.success('Copied to clipboard');
-							})}
-							disabled={a.loading}
-							className="self-end"
-						>
-							Export to JSON
-						</TextButton>
-					</div>
-				</AdminModule>
-			</div>
-		</>
+								toast({ message: 'Copied to clipboard', type: 'success' });
+							})
+						}
+						disabled={isPending}
+						className="self-end"
+					>
+						Export to JSON
+					</TextButton>
+				</div>
+			</AdminModule>
+		</div>
 	);
 };
 export default PageContent;

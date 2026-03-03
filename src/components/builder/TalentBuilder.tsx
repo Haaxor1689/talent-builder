@@ -1,6 +1,9 @@
 'use client';
 
+import { useMemo, useRef, useState, useTransition } from 'react';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import {
 	Camera,
 	CloudOff,
@@ -11,35 +14,30 @@ import {
 	Trash2,
 	UploadCloud
 } from 'lucide-react';
-import { useMemo, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
-import toast from 'react-hot-toast';
 import { nanoid } from 'nanoid';
 
+import useLocalTrees from '#hooks/useLocalTrees.ts';
 import {
 	deleteTalentTree,
 	upsertTalentTree
-} from '~/server/api/routers/talentTree';
-import { type TalentFormT, TalentForm } from '~/server/api/types';
-import { elementToPng, zodResolver } from '~/utils';
-import useAsyncAction from '~/hooks/useAsyncAction';
-import useLocalTrees from '~/hooks/useLocalTrees';
+} from '#server/api/routers/talentTree.ts';
+import { TalentForm, type TalentFormT } from '#server/api/types.ts';
+import { elementToPng, zodResolver } from '#utils.ts';
 
 import ConfirmDialog from '../ConfirmDialog';
-import IconPicker from '../form/IconPicker';
-import Input from '../form/Input';
-import TextButton from '../styled/TextButton';
 import CheckboxInput from '../form/CheckboxInput';
 import ClassPicker from '../form/ClassPicker';
+import IconPicker from '../form/IconPicker';
+import Input from '../form/Input';
 import UndoRedo from '../form/UndoRedo';
 import AuthorTag from '../styled/AuthorTag';
-import Textarea from '../form/Textarea';
-
-import TalentPreview from './TalentPreview';
+import TextButton from '../styled/TextButton';
+import { toast } from '../ToastProvider';
+import IdxInput from './IdxInput';
+import Notes from './Notes';
 import PointsSummary from './PointsSummary';
 import TalentEdit from './TalentEdit';
-import IdxInput from './IdxInput';
+import TalentPreview from './TalentPreview';
 
 type Props = {
 	defaultValues?: TalentFormT;
@@ -47,8 +45,7 @@ type Props = {
 
 const TalentBuilder = (props: Props) => {
 	const treeElemRef = useRef<HTMLDivElement>(null);
-
-	const a = useAsyncAction();
+	const [isPending, startTransition] = useTransition();
 
 	const session = useSession();
 	const router = useRouter();
@@ -56,7 +53,7 @@ const TalentBuilder = (props: Props) => {
 	const setSavedSpecs = useLocalTrees()[1];
 
 	const editable =
-		props.isLocal ||
+		!!props.isLocal ||
 		(session.status === 'authenticated' &&
 			(session.data.user.isAdmin ||
 				session.data.user.id === props.defaultValues?.createdById));
@@ -78,7 +75,7 @@ const TalentBuilder = (props: Props) => {
 
 	return (
 		<FormProvider {...formProps}>
-			<form className="tw-surface flex flex-col gap-3">
+			<form className="haax-surface-3 flex flex-col gap-3">
 				<div className="flex flex-col gap-3 md:flex-row md:items-center">
 					<div className="flex grow items-center gap-4 overflow-hidden">
 						<IconPicker required name="icon" disabled={!editable} />
@@ -90,77 +87,93 @@ const TalentBuilder = (props: Props) => {
 						/>
 					</div>
 
-					<div className="flex items-center">
+					<div className="flex shrink items-center">
 						<ClassPicker name="class" disabled={!editable} />
 						<IdxInput control={control} disabled={!editable} />
 						{session.data?.user.isAdmin && (
-							<Input placeholder="Collection" {...register('collection')} />
+							<Input
+								placeholder="Collection"
+								{...register('collection')}
+								className="shrink grow"
+							/>
 						)}
 						{editable && (
 							<TextButton
-								onClick={a.action(async () => {
-									const values = getValues();
-									if (!props.isLocal) {
-										const newTree = await upsertTalentTree(values);
-										toast.success('Saved!');
-										newTree && reset(newTree);
-										return;
-									}
-									setSavedSpecs(p => ({ ...p, [values.id]: values }));
-									toast.success('Saved!');
-									reset(values);
-									if (props.isNew) router.push(`/local/${values.id}`);
-								})}
+								onClick={() =>
+									startTransition(async () => {
+										const values = getValues();
+										if (!props.isLocal) {
+											const newTree = await upsertTalentTree(values);
+											toast({ message: 'Saved!', type: 'success' });
+											newTree && reset(newTree);
+											return;
+										}
+										setSavedSpecs(p => ({ ...p, [values.id]: values }));
+										toast({ message: 'Saved!', type: 'success' });
+										reset(values);
+										if (props.isNew) router.push(`/local/${values.id}`);
+									})
+								}
 								icon={Save}
 								title={props.isLocal ? 'Save locally' : 'Save changes'}
-								disabled={!formState.isDirty || a.loading}
+								disabled={!formState.isDirty || isPending}
 							/>
 						)}
 
 						{props.isLocal && session.status === 'authenticated' && (
 							<TextButton
-								onClick={a.action(async () => {
-									const values = getValues();
-									const newId = nanoid(10);
-									await upsertTalentTree({ ...values, id: newId });
-									setSavedSpecs(savedSpecs => {
-										const { [values.id]: _, ...newSpecs } = savedSpecs ?? {};
-										return newSpecs;
-									});
-									toast.success('Talent tree saved online!');
-									router.push(`/tree/${newId}`);
-								})}
+								onClick={() =>
+									startTransition(async () => {
+										const values = getValues();
+										const newId = nanoid(10);
+										await upsertTalentTree({ ...values, id: newId });
+										setSavedSpecs(savedSpecs => {
+											const { [values.id]: _, ...newSpecs } = savedSpecs ?? {};
+											return newSpecs;
+										});
+										toast({
+											message: 'Talent tree saved online!',
+											type: 'success'
+										});
+										router.push(`/tree/${newId}`);
+									})
+								}
 								icon={UploadCloud}
 								title="Save online"
-								disabled={(props.isNew && !formState.isDirty) || a.loading}
+								disabled={(!!props.isNew && !formState.isDirty) || isPending}
 							/>
 						)}
 
 						{!props.isNew && (
 							<TextButton
-								onClick={a.action(async () => {
-									const values = getValues();
-									const newId = nanoid(10);
-									setSavedSpecs(savedSpecs => ({
-										...savedSpecs,
-										[newId]: {
-											...values,
-											id: newId,
-											name: `${values.name} (copy)`,
-											collection: null,
-											public: false,
-											createdBy: null,
-											createdById: null,
-											createdAt: null,
-											updatedAt: null
-										}
-									}));
-									toast.success('New copy saved locally!');
-									router.push(`/local/${newId}`);
-								})}
+								onClick={() =>
+									startTransition(async () => {
+										const values = getValues();
+										const newId = nanoid(10);
+										setSavedSpecs(savedSpecs => ({
+											...savedSpecs,
+											[newId]: {
+												...values,
+												id: newId,
+												name: `${values.name} (copy)`,
+												collection: null,
+												public: false,
+												createdBy: null,
+												createdById: null,
+												createdAt: null,
+												updatedAt: null
+											}
+										}));
+										toast({
+											message: 'New copy saved locally!',
+											type: 'success'
+										});
+										router.push(`/local/${newId}`);
+									})
+								}
 								icon={Copy}
 								title="Clone locally"
-								disabled={a.loading}
+								disabled={isPending}
 							/>
 						)}
 
@@ -169,22 +182,25 @@ const TalentBuilder = (props: Props) => {
 								title={`Are you sure you want to delete "${
 									getValues().name
 								}" tree?`}
-								confirm={a.action(async () => {
-									if (props.isNew) {
-										reset(TalentForm.parse({}));
-										return;
-									}
-									const values = getValues();
-									if (props.isLocal) {
-										setSavedSpecs(savedSpecs => {
-											const { [values.id]: _, ...newSpecs } = savedSpecs ?? {};
-											return newSpecs;
-										});
-									} else {
-										await deleteTalentTree(values.id);
-									}
-									router.push('/');
-								})}
+								confirm={() =>
+									startTransition(async () => {
+										if (props.isNew) {
+											reset(TalentForm.parse({}));
+											return;
+										}
+										const values = getValues();
+										if (props.isLocal) {
+											setSavedSpecs(savedSpecs => {
+												const { [values.id]: _, ...newSpecs } =
+													savedSpecs ?? {};
+												return newSpecs;
+											});
+										} else {
+											await deleteTalentTree(values.id);
+										}
+										router.push('/');
+									})
+								}
 							>
 								{open => (
 									<TextButton
@@ -192,7 +208,7 @@ const TalentBuilder = (props: Props) => {
 										icon={Trash2}
 										title="Delete"
 										className={editable ? 'text-red' : undefined}
-										disabled={a.loading}
+										disabled={isPending}
 									/>
 								)}
 							</ConfirmDialog>
@@ -202,11 +218,11 @@ const TalentBuilder = (props: Props) => {
 
 				<hr />
 
-				<div className="flex flex-col gap-3 md:flex-row md:justify-center">
-					<div className="relative grow">
+				<div className="-m-3 flex flex-col md:flex-row md:justify-center">
+					<div className="relative flex grow">
 						<div
 							ref={treeElemRef}
-							className="grid grow select-none grid-cols-[repeat(4,_max-content)] content-center justify-center gap-6 overflow-x-auto py-9 md:py-[72px]"
+							className="grid grow grid-cols-[repeat(4,max-content)] content-center justify-center gap-6 overflow-x-auto p-10 select-none md:py-18"
 						>
 							{fields.map((field, i) => (
 								<TalentPreview
@@ -219,7 +235,7 @@ const TalentBuilder = (props: Props) => {
 							))}
 						</div>
 						{editable && <UndoRedo defaultValues={defaultValues} />}
-						<div className="absolute right-0 top-0 flex gap-2 overflow-hidden">
+						<div className="absolute top-3 right-3 flex gap-2 overflow-hidden">
 							<TextButton
 								icon={Camera}
 								title="Screenshot"
@@ -236,13 +252,13 @@ const TalentBuilder = (props: Props) => {
 								className="-m-2"
 							/>
 						</div>
-						<div className="absolute bottom-0 left-0 flex flex-col gap-2">
+						<div className="absolute bottom-3 left-3 flex flex-col gap-2">
 							{!editable ? (
-								<p className="flex gap-1 text-pink">
+								<p className="text-pink flex gap-1">
 									<FileLock2 /> Read only
 								</p>
 							) : props.isLocal ? (
-								<p className="flex gap-1 text-blueGray">
+								<p className="text-blue-gray flex gap-1">
 									<CloudOff size={24} />
 									Local only
 								</p>
@@ -251,11 +267,11 @@ const TalentBuilder = (props: Props) => {
 									name="public"
 									label="Publicly visible"
 									disabled={!editable}
-									className="!p-0"
+									className="p-0!"
 								/>
 							)}
 							{defaultValues.createdBy && (
-								<div className="flex items-center gap-1.5 text-blueGray">
+								<div className="text-blue-gray flex items-center gap-1.5">
 									Author: <AuthorTag {...defaultValues.createdBy} />
 								</div>
 							)}
@@ -263,19 +279,9 @@ const TalentBuilder = (props: Props) => {
 						<PointsSummary />
 					</div>
 
-					<hr className="md:hidden" />
-
-					<div className="flex grow flex-col gap-3 border-0 border-gray/40 md:-my-3 md:max-w-sm md:border-l md:py-3 md:pl-3">
+					<div className="border-gray/40 shrink grow border-t md:ml-0 md:max-h-184 md:w-lg md:border-t-0 md:border-l">
 						{selected === -1 ? (
-							<div className="flex w-full grow flex-col gap-4 md:max-w-md">
-								<Textarea
-									{...register('notes')}
-									label="Notes"
-									disabled={!editable}
-									className="grow"
-									maxRows={22}
-								/>
-							</div>
+							<Notes editable={editable} />
 						) : (
 							<TalentEdit
 								key={selected}

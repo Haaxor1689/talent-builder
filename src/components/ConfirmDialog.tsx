@@ -1,6 +1,6 @@
 import { type ReactElement } from 'react';
 
-import DialogButton from './styled/DialogButton';
+import Dialog, { closeDialog } from './styled/Dialog';
 import TextButton from './styled/TextButton';
 
 type Props = {
@@ -9,28 +9,23 @@ type Props = {
 	children: (open: () => void) => ReactElement;
 };
 
+// TODO: Remove
 const ConfirmDialog = ({ title, confirm, children }: Props) => (
-	<DialogButton
-		dialog={close => (
-			<div className="tw-surface flex flex-col gap-4 bg-darkGray/90">
-				<p>{title}</p>
-				<div className="-m-2 flex justify-end gap-2">
-					<TextButton onClick={close}>Cancel</TextButton>
-					<TextButton
-						onClick={() => {
-							confirm();
-							close();
-						}}
-					>
-						Confirm
-					</TextButton>
-				</div>
-			</div>
-		)}
-		clickAway
-	>
-		{children}
-	</DialogButton>
+	<Dialog trigger={children}>
+		<p>{title}</p>
+		<hr />
+		<div className="-m-3 flex justify-end gap-2">
+			<TextButton onClick={closeDialog}>Cancel</TextButton>
+			<TextButton
+				onClick={e => {
+					confirm();
+					closeDialog(e);
+				}}
+			>
+				Confirm
+			</TextButton>
+		</div>
+	</Dialog>
 );
 
 export default ConfirmDialog;

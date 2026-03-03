@@ -1,19 +1,19 @@
-import { DrizzleAdapter } from '@auth/drizzle-adapter';
+import { cache } from 'react';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import NextAuth, { type DefaultSession } from 'next-auth';
 import { type DiscordProfile } from 'next-auth/providers/discord';
 import Discord from 'next-auth/providers/discord';
-import { revalidatePath, revalidateTag } from 'next/cache';
-import { cache } from 'react';
+import { DrizzleAdapter } from '@auth/drizzle-adapter';
 import { eq } from 'drizzle-orm';
 
-import { db } from '~/server/db';
+import { db } from '#server/db/index.ts';
 import {
 	accounts,
 	sessions,
 	talentTrees,
 	users,
 	verificationTokens
-} from '~/server/db/schema';
+} from '#server/db/schema.ts';
 
 import { getFullTag } from './api/helpers';
 
@@ -35,6 +35,7 @@ declare module 'next-auth' {
 	interface Profile extends DiscordProfile {}
 }
 
+// TODO: Migrate to better-auth
 export const { auth, handlers, signIn, signOut } = NextAuth({
 	trustHost: true,
 	callbacks: {
@@ -71,11 +72,12 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 				where: eq(talentTrees.createdById, user.id)
 			});
 			trees.forEach(tree => {
-				revalidateTag(getFullTag('getOgInfo', tree.id));
+				revalidateTag(getFullTag('getOgInfo', tree.id), { expire: 0 });
 				revalidatePath(`/api/og/${tree.id}`);
 			});
 		}
 	}
 });
 
-export const getServerAuthSession = cache(() => auth());
+// TODO: export const getServerAuthSession = cache(() => auth());
+export const getServerAuthSession = cache(() => null);

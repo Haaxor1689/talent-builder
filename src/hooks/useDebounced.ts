@@ -1,12 +1,12 @@
-import { debounce, isEqual } from 'lodash-es';
-import { useState, useRef, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { debounce, isEqual } from 'es-toolkit';
 
 const useDebounced = <T>(value: T, wait = 300) => {
 	const [state, setState] = useState(value);
-	const debounced = useRef(debounce(setState, wait));
+	const debouncedRef = useRef(debounce(setState, wait));
 	useEffect(() => {
 		if (isEqual(value, state)) return;
-		debounced.current(value);
+		debouncedRef.current(value);
 	}, [value, state]);
 	return state;
 };

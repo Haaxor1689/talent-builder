@@ -1,10 +1,13 @@
+import { type Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { z } from 'zod';
 
-import { classMask, getIconPath, maskToClass } from '~/utils';
-import { env } from '~/env';
-import { getCollectionTree } from '~/server/api/routers/collection';
-import TalentCalculator from '~/components/calculator/TalentCalculator';
+import TalentCalculator from '#components/calculator/TalentCalculator.tsx';
+import { env } from '#env.js';
+import { getCollectionTree } from '#server/api/routers/collection.ts';
+import { classMask, getIconPath, maskToClass } from '#utils.ts';
+
+type Props = PageProps<'/collections/[collection]/[class]'>;
 
 const ParamsSchema = z.object({
 	collection: z.string(),
@@ -17,12 +20,10 @@ const ParamsSchema = z.object({
 	)
 });
 
-type PageProps = {
-	params: z.infer<typeof ParamsSchema>;
-};
-
-export const generateMetadata = async ({ params }: PageProps) => {
-	const parsed = ParamsSchema.safeParse(params);
+export const generateMetadata = async ({
+	params
+}: Props): Promise<Metadata> => {
+	const parsed = ParamsSchema.safeParse(await params);
 	if (!parsed.success) return notFound();
 
 	const info = maskToClass(parsed.data.class);
@@ -37,8 +38,8 @@ export const generateMetadata = async ({ params }: PageProps) => {
 	};
 };
 
-const TalentTreePage = async ({ params }: PageProps) => {
-	const parsed = ParamsSchema.safeParse(params);
+const TalentTreePage = async ({ params }: Props) => {
+	const parsed = ParamsSchema.safeParse(await params);
 	if (!parsed.success) {
 		return notFound();
 	}
@@ -51,7 +52,7 @@ const TalentTreePage = async ({ params }: PageProps) => {
 
 	return (
 		<TalentCalculator
-			urlBase={`/c/${parsed.data.collection}/`}
+			urlBase={`/collections/${parsed.data.collection}/`}
 			trees={trees}
 			values={{ class: parsed.data.class }}
 		/>

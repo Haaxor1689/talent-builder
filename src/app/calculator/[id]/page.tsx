@@ -1,20 +1,21 @@
+import { type Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { getSavedBuild } from '~/server/api/routers/savedBuilds';
-import { getIconPath, maskToClass } from '~/utils';
-import TalentCalculator from '~/components/calculator/TalentCalculator';
-import { getTalentTree } from '~/server/api/routers/talentTree';
-import { CalculatorParams, type CalculatorParamsT } from '~/server/api/types';
-import { env } from '~/env';
+import TalentCalculator from '#components/calculator/TalentCalculator.tsx';
+import { env } from '#env.js';
+import { getSavedBuild } from '#server/api/routers/savedBuilds.ts';
+import { getTalentTree } from '#server/api/routers/talentTree.ts';
+import { CalculatorParams } from '#server/api/types.ts';
+import { getIconPath, maskToClass } from '#utils.ts';
 
-export type PageProps = {
-	params: { id: string };
-	searchParams: CalculatorParamsT;
-};
+type Props = PageProps<'/calculator/[id]'>;
 
-export const generateMetadata = async ({ params }: PageProps) => {
-	const savedBuild = await getSavedBuild(params.id);
-	if (!savedBuild) return null;
+export const generateMetadata = async ({
+	params
+}: Props): Promise<Metadata> => {
+	const { id } = await params;
+	const savedBuild = await getSavedBuild(id);
+	if (!savedBuild) return {};
 	const cls = maskToClass(savedBuild.class);
 	return {
 		title: `${savedBuild.name || cls?.name} | Talent Calculator`,
@@ -23,12 +24,13 @@ export const generateMetadata = async ({ params }: PageProps) => {
 	};
 };
 
-const Page = async ({ params, searchParams }: PageProps) => {
-	const parsed = CalculatorParams.safeParse(searchParams);
+const Page = async ({ params, searchParams }: Props) => {
+	const { id } = await params;
+	const parsed = CalculatorParams.safeParse(await searchParams);
 	if (!parsed.success) return notFound();
 
-	if (!params.id || params.id === 'undefined') return notFound();
-	const savedBuild = await getSavedBuild(params.id);
+	if (!id || id === 'undefined') return notFound();
+	const savedBuild = await getSavedBuild(id);
 	if (!savedBuild) return notFound();
 
 	const trees = await Promise.all([

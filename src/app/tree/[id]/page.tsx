@@ -1,18 +1,19 @@
+import { type Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import TalentBuilder from '~/components/builder/TalentBuilder';
-import { getTalentTree } from '~/server/api/routers/talentTree';
-import { getOgInfo } from '~/server/api/routers/openGraph';
-import { getIconPath } from '~/utils';
-import { env } from '~/env';
+import TalentBuilder from '#components/builder/TalentBuilder.tsx';
+import { env } from '#env.js';
+import { getOgInfo } from '#server/api/routers/openGraph.ts';
+import { getTalentTree } from '#server/api/routers/talentTree.ts';
+import { getIconPath } from '#utils.ts';
 
-export type PageProps = {
-	params: { id: string };
-};
-
-export const generateMetadata = async ({ params }: PageProps) => {
-	const info = await getOgInfo(params.id);
-	if (!info) return null;
+type Props = PageProps<'/tree/[id]'>;
+export const generateMetadata = async ({
+	params
+}: Props): Promise<Metadata> => {
+	const { id } = await params;
+	const info = await getOgInfo(id);
+	if (!info) return {};
 	return {
 		title: `${info.name} | Talent Builder`,
 		description: `Talent tree created by ${info.user.name}`,
@@ -20,9 +21,10 @@ export const generateMetadata = async ({ params }: PageProps) => {
 	};
 };
 
-const TalentTreePage = async ({ params }: PageProps) => {
-	if (!params.id || params.id === 'undefined') return notFound();
-	const talentTree = await getTalentTree(params.id);
+const TalentTreePage = async ({ params }: Props) => {
+	const { id } = await params;
+	if (!id || id === 'undefined') return notFound();
+	const talentTree = await getTalentTree(id);
 	if (!talentTree) return notFound();
 
 	return <TalentBuilder defaultValues={talentTree} />;

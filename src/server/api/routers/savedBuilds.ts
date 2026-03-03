@@ -2,12 +2,12 @@
 
 import 'server-only';
 
+import { updateTag } from 'next/cache';
 import { asc, eq } from 'drizzle-orm';
+import { omit } from 'es-toolkit';
 import { z } from 'zod';
-import { revalidateTag } from 'next/cache';
-import { omit } from 'lodash-es';
 
-import { savedBuilds } from '~/server/db/schema';
+import { savedBuilds } from '#server/db/schema.ts';
 
 import {
 	createdBySelect,
@@ -17,7 +17,6 @@ import {
 	publicProcedure
 } from '../helpers';
 import { BuildForm } from '../types';
-
 import { turtleWoWAccountId } from './general';
 
 export const upsertSavedBuild = protectedProcedure({
@@ -54,11 +53,11 @@ export const upsertSavedBuild = protectedProcedure({
 
 		const turtleAccId = await turtleWoWAccountId(undefined);
 		if (input?.createdById === turtleAccId) {
-			revalidateTag(getQueryTag('listTurtleSavedBuilds'));
+			updateTag(getQueryTag('listTurtleSavedBuilds'));
 		}
 
-		revalidateTag(getFullTag('getSavedBuild', input.id));
-		revalidateTag(getQueryTag('listPersonalSavedBuilds'));
+		updateTag(getFullTag('getSavedBuild', input.id));
+		updateTag(getQueryTag('listPersonalSavedBuilds'));
 
 		const build = await db.query.savedBuilds.findFirst({
 			where: eq(savedBuilds.id, input.id)
@@ -136,9 +135,9 @@ export const deleteSavedBuild = protectedProcedure({
 
 		const turtleAccId = await turtleWoWAccountId(undefined);
 		if (entry.createdById === turtleAccId) {
-			revalidateTag(getQueryTag('listTurtleSavedBuilds'));
+			updateTag(getQueryTag('listTurtleSavedBuilds'));
 		}
 
-		revalidateTag(getFullTag('getSavedBuild', entry.id));
+		updateTag(getFullTag('getSavedBuild', entry.id));
 	}
 });

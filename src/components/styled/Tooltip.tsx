@@ -1,148 +1,116 @@
+/* eslint-disable react-hooks/refs */
+/* eslint-disable @eslint-react/no-clone-element */
 'use client';
 
+import { cloneElement, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import cls from 'classnames';
-import {
-	type ReactElement,
-	type ReactNode,
-	cloneElement,
-	useEffect,
-	useLayoutEffect,
-	useRef,
-	useState
-} from 'react';
 import { X } from 'lucide-react';
 
-import useIsMobile from '~/hooks/useIsMobile';
+import useIsMobile from '#hooks/useIsMobile.ts';
+import useMounted from '#hooks/useMounted.ts';
 
+import Dialog, { closeDialog } from './Dialog';
 import TextButton from './TextButton';
 
 const PADDING = 8;
+const OFFSET = 20;
 
 type Props = {
-	children: ReactElement;
-	tooltip: ReactNode;
-	actions?: (close: () => void) => ReactNode;
-	hide?: boolean;
-	hideMobile?: boolean;
-	offset?: number;
+	children: React.ReactElement;
+	tooltip: React.ReactNode;
+	actions?: React.ReactNode;
+	hidden?: boolean;
 };
 
-const Tooltip = ({
-	children,
-	tooltip,
-	actions,
-	hide = false,
-	hideMobile = hide,
-	offset = 20
-}: Props) => {
-	const isMobile = useIsMobile();
-	const [open, setOpen] = useState(false);
+const MobileTooltip = ({ children, tooltip, actions }: Props) => (
+	<Dialog
+		trigger={open =>
+			cloneElement(children, {
+				onClick: (e: React.MouseEvent) => {
+					e.preventDefault();
+					open();
+				}
+			} as never)
+		}
+		unstyled
+		className="flex flex-col items-center gap-3"
+	>
+		<div className="pointer-events-none">{children}</div>
+		<div className="haax-surface-3 gap-0">{tooltip}</div>
+		{actions}
+		<TextButton icon={X} onClick={closeDialog} className="text-red">
+			Close
+		</TextButton>
+	</Dialog>
+);
 
-	const [mouse, setMouse] = useState<Record<'x' | 'y', number>>();
-	const [position, setPosition] = useState<
-		Partial<Record<'top' | 'left' | 'right' | 'bottom', number>>
-	>({ top: 0, left: 0 });
-	const [rect, setRect] = useState<{ width: number; height: number }>();
+type Position = {
+	top: number;
+	left: number;
+	right?: number;
+	bottom?: number;
+};
+
+const DesktopTooltip = ({ children, tooltip, hidden }: Props) => {
+	const [position, setPosition] = useState<Position>();
 
 	const tooltipRef = useRef<HTMLDivElement>(null);
+	const [container, setContainer] = useState<HTMLDialogElement | null>(null);
 
-	useEffect(() => {
-		if (typeof window === 'undefined') return;
-
-		const elem = tooltipRef.current;
-		if (!elem) return;
-		const clickAway = (e: MouseEvent) => {
-			if (e.target !== elem) return;
-			setOpen(false);
-		};
-		elem.addEventListener('click', clickAway);
-		return () => elem.removeEventListener('click', clickAway);
-	}, []);
-
-	useLayoutEffect(() => {
-		if (typeof window === 'undefined' || !tooltipRef.current) return;
-		if (isMobile || !mouse) return;
-
-		if (!rect) {
-			const tooltip = tooltipRef.current.getBoundingClientRect();
-			setRect({ width: tooltip.width, height: tooltip.height });
-			return;
-		}
-
-		const tooltip = rect;
-
-		const width = Math.min(window.innerWidth, document.body.clientWidth);
-		const height = Math.min(window.innerHeight, document.body.clientHeight);
-
-		const right = mouse.x + tooltip.width;
-		const bottom = mouse.y + tooltip.height;
-
-		const overflowX = Math.max(right - width, 0);
-		const overflowY = Math.max(bottom - height, 0);
-
-		const left = Math.max(mouse.x - overflowX, PADDING);
-		const top = Math.max(mouse.y - overflowY, PADDING);
-
-		setPosition({
-			left,
-			top,
-			right: left + tooltip.width > width ? PADDING : undefined,
-			bottom: top + tooltip.height > height ? PADDING : undefined
-		});
-	}, [isMobile, mouse, rect]);
+	const mounted = useMounted();
 
 	return (
 		<>
-			{cloneElement(
-				children,
-				isMobile
-					? {
-							onClick: (e: React.MouseEvent) => {
-								e.preventDefault();
-								setOpen(!open);
-							}
-					  }
-					: {
-							onMouseMove: (e: React.MouseEvent) => {
-								if (isMobile) return;
-								setMouse({ x: e.clientX + offset, y: e.clientY + offset });
-							},
-							onMouseLeave: () => {
-								if (isMobile) return;
-								setMouse(undefined);
-							}
-					  }
-			)}
-			<div
-				ref={tooltipRef}
-				className={cls(
-					'fixed z-10 bg-darkerGray/90',
-					isMobile
-						? 'inset-0 flex flex-col items-center justify-center gap-4 p-4'
-						: 'tw-surface pointer-events-none min-w-[250px] max-w-[400px]',
-					{ hidden: (!open && !mouse) || (isMobile ? hideMobile : hide) }
+			{cloneElement(children, {
+				onMouseMove: (e: React.MouseEvent<HTMLElement>) => {
+					if (!tooltipRef.current) return;
+
+					if (!container) setContainer(e.currentTarget.closest('dialog'));
+
+					const tooltip = tooltipRef.current.getBoundingClientRect();
+
+					const width = Math.min(window.innerWidth, document.body.clientWidth);
+					const height = Math.min(
+						window.innerHeight,
+						document.body.clientHeight
+					);
+
+					const x = e.clientX + OFFSET;
+					const y = e.clientY + OFFSET;
+
+					const overflowX = Math.max(x + tooltip.width - width, 0);
+					const overflowY = Math.max(y + tooltip.height - height, 0);
+
+					const left = Math.max(x - overflowX, PADDING);
+					const top = Math.max(y - overflowY, PADDING);
+					const right = left + tooltip.width > width ? PADDING : undefined;
+					const bottom = top + tooltip.height > height ? PADDING : undefined;
+
+					setPosition({ left, top, right, bottom });
+				},
+				onMouseLeave: () => setPosition(undefined)
+			} as never)}
+
+			{mounted &&
+				createPortal(
+					<div
+						ref={tooltipRef}
+						className={cls(
+							'haax-surface-3 pointer-events-none fixed z-10 max-w-100 min-w-62.5 gap-0 backdrop-blur-xs',
+							{ invisible: !position || !!hidden }
+						)}
+						style={position}
+					>
+						{tooltip}
+					</div>,
+					container ?? document.body
 				)}
-				style={!isMobile ? position : undefined}
-			>
-				{isMobile ? (
-					<>
-						<div className="pointer-events-none shrink-0">{children}</div>
-						<div className="tw-surface overflow-auto">{tooltip}</div>
-						{actions?.(() => setOpen(false))}
-						<TextButton
-							icon={X}
-							onClick={() => setOpen(false)}
-							className="text-red"
-						>
-							Close
-						</TextButton>
-					</>
-				) : (
-					tooltip
-				)}
-			</div>
 		</>
 	);
 };
+
+const Tooltip = (props: Props) =>
+	useIsMobile() ? <MobileTooltip {...props} /> : <DesktopTooltip {...props} />;
 
 export default Tooltip;

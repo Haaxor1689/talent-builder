@@ -1,7 +1,7 @@
 import { type PropsWithChildren, Suspense } from 'react';
 
-import PersonalBuilds from '~/components/builds-lists/PersonalBuilds';
-import Spinner from '~/components/styled/Spinner';
+import PersonalBuilds from '#components/builds-lists/PersonalBuilds.tsx';
+import Spinner from '#components/styled/Spinner.tsx';
 
 const Layout = ({ children }: PropsWithChildren) => (
 	<>

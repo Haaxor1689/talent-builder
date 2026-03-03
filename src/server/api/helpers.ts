@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { z } from 'zod';
-import { unstable_cache } from 'next/cache';
 import { cache } from 'react';
+import { unstable_cache } from 'next/cache';
 import { type Session } from 'next-auth';
+import { z } from 'zod';
 
-import { db } from '../db';
 import { getServerAuthSession } from '../auth';
+import { db } from '../db';
 
 type SessionTagType = 'user' | 'role' | 'any';
 
@@ -14,12 +14,12 @@ const getSessionTag = (session: Session | null, sessionType?: SessionTagType) =>
 		sessionType === 'any'
 			? !!session
 			: sessionType === 'user'
-			? session?.user?.id ?? 'none'
-			: sessionType === 'role'
-			? session?.user.isAdmin
-				? 'admin'
-				: 'user'
-			: 'none'
+				? (session?.user?.id ?? 'none')
+				: sessionType === 'role'
+					? session?.user.isAdmin
+						? 'admin'
+						: 'user'
+					: 'none'
 	}]`;
 
 export const getQueryTag = (queryKey: string) => `api:[${queryKey}]`;

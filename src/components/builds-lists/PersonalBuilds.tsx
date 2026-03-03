@@ -1,5 +1,5 @@
-import { listPersonalSavedBuilds } from '~/server/api/routers/savedBuilds';
-import { getServerAuthSession } from '~/server/auth';
+import { listPersonalSavedBuilds } from '#server/api/routers/savedBuilds.ts';
+import { getServerAuthSession } from '#server/auth.ts';
 
 import BuildsGrid from './BuildsGrid';
 

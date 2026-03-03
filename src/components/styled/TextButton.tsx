@@ -1,16 +1,18 @@
-import cls from 'classnames';
 import {
+	type CSSProperties,
 	type FunctionComponent,
 	type MouseEventHandler,
 	type ReactNode
 } from 'react';
 import Link from 'next/link';
+import cls from 'classnames';
+import { omit } from 'es-toolkit';
 import { type LucideIcon } from 'lucide-react';
 
 import Spinner from './Spinner';
 
-type IconType =
-	| FunctionComponent<{ size?: number; className: string }>
+export type IconType =
+	| FunctionComponent<{ size?: number; className?: string }>
 	| LucideIcon;
 
 type Props = {
@@ -20,6 +22,7 @@ type Props = {
 	tabIndex?: number;
 	iconSize?: number;
 	className?: cls.Value;
+	style?: CSSProperties;
 } & (
 	| { type: 'submit'; form?: string }
 	| {
@@ -27,11 +30,14 @@ type Props = {
 			onClick: MouseEventHandler<HTMLButtonElement>;
 			onDoubleClick?: MouseEventHandler<HTMLButtonElement>;
 			onContextMenu?: MouseEventHandler<HTMLButtonElement>;
+			onMouseEnter?: MouseEventHandler<HTMLButtonElement>;
+			onMouseLeave?: MouseEventHandler<HTMLButtonElement>;
 	  }
 	| {
 			href: string;
 			type: 'link';
 			onClick?: MouseEventHandler<HTMLButtonElement>;
+			external?: boolean;
 	  }
 ) &
 	(
@@ -55,36 +61,42 @@ const TextButton = ({
 	const Component = props.type === 'link' ? Link : 'button';
 	return (
 		<Component
+			{...omit(props, ['external'] as never)}
 			title={title ?? (typeof children === 'string' ? children : undefined)}
 			tabIndex={!!loading || !!disabled ? -1 : tabIndex}
 			className={cls(
 				'flex cursor-pointer items-center gap-1 border-0 p-2',
 				className,
 				{
-					'!text-pink/70': active && !loading && !disabled,
-					'pointer-events-none text-gray': !!loading || !!disabled,
-					'tw-hocus': !loading && !disabled
+					'text-warm-green': active && !loading && !disabled,
+					'text-gray pointer-events-none': !!loading || !!disabled,
+					'hocus:haax-highlight transition-all': !loading && !disabled
 				}
 			)}
 			{...((props.type === 'link'
-				? { href: props.href, onClick: props.onClick }
-				: props.type === 'submit'
-				? { form: props.form }
-				: {
-						type: 'button',
+				? {
+						href: props.href,
 						onClick: props.onClick,
-						onDoubleClick: props.onDoubleClick,
-						onContextMenu: props.onContextMenu
-						// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				  }) as any)}
+						target: props.external ? '_blank' : undefined,
+						rel: props.external ? 'noopener noreferrer' : undefined
+					}
+				: props.type === 'submit'
+					? { form: props.form }
+					: {
+							type: 'button',
+							onClick: props.onClick,
+							onDoubleClick: props.onDoubleClick,
+							onContextMenu: props.onContextMenu
+							// eslint-disable-next-line @typescript-eslint/no-explicit-any
+						}) as any)}
 		>
 			{loading ? (
 				<Spinner size={iconSize ?? 24} />
 			) : (
-				Icon && <Icon size={iconSize} className="shrink-0" />
+				Icon && <Icon size={iconSize ?? 24} />
 			)}
 			{children && (
-				<span className="cursor-pointer select-none text-inherit [font-size:inherit]">
+				<span className="cursor-pointer [font-size:inherit] text-inherit select-none">
 					{children}
 				</span>
 			)}

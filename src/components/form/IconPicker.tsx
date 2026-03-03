@@ -1,16 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { HelpCircle, ListFilter } from 'lucide-react';
 import { useController } from 'react-hook-form';
 import { useQuery } from '@tanstack/react-query';
+import { HelpCircle, ListFilter } from 'lucide-react';
 
-import useDebounced from '~/hooks/useDebounced';
+import useDebounced from '#hooks/useDebounced.ts';
 
-import DialogButton from '../styled/DialogButton';
-import SpellIcon from '../styled/SpellIcon';
+import Dialog, { closeDialog } from '../styled/Dialog';
 import IconGrid from '../styled/IconGrid';
-
+import SpellIcon from '../styled/SpellIcon';
 import Input from './Input';
 
 type Props = {
@@ -28,7 +27,8 @@ const IconPicker = ({ name, required, disabled }: Props) => {
 			if (!data || !Array.isArray(data))
 				throw new Error('Failed to fetch icons');
 			return data;
-		}
+		},
+		enabled: !disabled
 	});
 
 	const { field } = useController({ name });
@@ -47,78 +47,78 @@ const IconPicker = ({ name, required, disabled }: Props) => {
 	const item = query.data?.find(([, i]) => i === field.value);
 
 	return (
-		<DialogButton
-			dialog={close => (
-				<div className="tw-surface flex w-full max-w-[574px] flex-col gap-2 bg-darkGray/90">
-					<div className="flex items-center justify-between gap-4">
-						<h3 className="tw-color">Pick icon</h3>
-						<Input
-							value={filter}
-							icon={ListFilter}
-							onChange={e => setFilter((e.target as HTMLInputElement).value)}
-							className="grow"
-						/>
-					</div>
-
-					<IconGrid
-						filter={debouncedFilter}
-						required={required}
-						icon={field.value}
-						setIcon={i => {
-							field.onChange(i);
-							setWowhead('');
-							close();
-						}}
-					/>
-
-					<form
-						className="flex items-center gap-2"
-						onSubmit={() => {
-							field.onChange(wowhead);
-							setWowhead('');
-							close();
-						}}
-					>
-						<label htmlFor="wowhead" className="shrink-0">
-							Wowhead icon:
-						</label>
-						<Input
-							name="wowhead"
-							value={wowhead}
-							onChange={e => setWowhead((e.target as HTMLInputElement).value)}
-							onKeyDownCapture={e => {
-								if (e.key !== 'Enter') return;
-								e.preventDefault();
-								e.stopPropagation();
-
-								field.onChange(`_${wowhead}`);
-								setWowhead('');
-								close();
-								return false;
-							}}
-							icon={HelpCircle}
-							onIconClick={() => {
-								// Open wowhead in new tab
-								window.open('https://wowhead.com/icons/');
-							}}
-							className="w-full"
-						/>
-					</form>
-				</div>
-			)}
-			clickAway
-		>
-			{open => (
+		<Dialog
+			trigger={open => (
 				<SpellIcon
 					icon={field.value}
+					clickable={!disabled}
 					showDefault
-					onClick={!disabled ? open : undefined}
 					title={
 						item ? `#${item[0]} ${item[1]}` : `#wowhead ${field.value.slice(1)}`
 					}
+					onClick={open}
 				/>
 			)}
-		</DialogButton>
+			unstyled
+			className="haax-surface-0 w-full max-w-[calc(10*64px+9*4px+26px)]"
+		>
+			<div className="flex items-center justify-between gap-4 p-3">
+				<h3 className="haax-color">Pick icon</h3>
+				<Input
+					value={filter}
+					icon={ListFilter}
+					onChange={e => setFilter((e.target as HTMLInputElement).value)}
+					className="grow"
+				/>
+			</div>
+
+			<hr />
+
+			<IconGrid
+				filter={debouncedFilter}
+				required={required}
+				icon={field.value}
+				setIcon={(icon, e) => {
+					field.onChange(icon);
+					setWowhead('');
+					closeDialog(e);
+				}}
+			/>
+
+			<hr />
+
+			<form
+				className="flex items-center gap-2 p-3"
+				onSubmit={e => {
+					field.onChange(wowhead);
+					setWowhead('');
+					closeDialog(e);
+				}}
+			>
+				<label htmlFor="wowhead">Wowhead icon:</label>
+				<Input
+					name="wowhead"
+					value={wowhead}
+					onChange={e => setWowhead((e.target as HTMLInputElement).value)}
+					onKeyDownCapture={e => {
+						if (e.key !== 'Enter') return;
+						e.preventDefault();
+						e.stopPropagation();
+
+						field.onChange(`_${wowhead}`);
+						setWowhead('');
+						closeDialog(e);
+						return false;
+					}}
+					icon={HelpCircle}
+					onIconClick={() => {
+						// Open wowhead in new tab
+						window.open('https://wowhead.com/icons/');
+					}}
+					className="grow"
+				/>
+			</form>
+		</Dialog>
 	);
 };
 

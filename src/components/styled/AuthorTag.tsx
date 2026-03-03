@@ -12,7 +12,7 @@ const AuthorTag = ({ image, name, isAdmin }: AuthorTagProps) => (
 				backgroundImage: `url(${image}), url(https://cdn.discordapp.com/embed/avatars/0.png)`
 			}}
 		/>
-		<span className={isAdmin ? 'font-semibold text-green' : undefined}>
+		<span className={isAdmin ? 'text-green font-semibold' : undefined}>
 			{name}
 		</span>
 	</>

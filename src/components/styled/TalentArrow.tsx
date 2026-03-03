@@ -17,14 +17,14 @@ const TalentArrow = ({ start, end, highlighted }: Props) => {
 
 	if (y1 > y2)
 		return (
-			<CornerDownRight className="absolute bottom-0 left-0 -translate-x-1/2 translate-y-1/2 text-red" />
+			<CornerDownRight className="text-red absolute bottom-0 left-0 -translate-x-1/2 translate-y-1/2" />
 		);
 
 	if (y1 === y2) {
 		if (x1 > x2)
 			return (
 				<div
-					className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 bg-cover bg-left"
+					className="pointer-events-none absolute top-1/2 left-full -translate-y-1/2 bg-cover bg-left"
 					style={{
 						height: 15,
 						width: (x1 - x2 - 1) * 64 + (x1 - x2) * 24,
@@ -35,7 +35,7 @@ const TalentArrow = ({ start, end, highlighted }: Props) => {
 		if (x1 < x2)
 			return (
 				<div
-					className="pointer-events-none absolute right-full top-1/2 -translate-y-1/2 bg-cover bg-right"
+					className="pointer-events-none absolute top-1/2 right-full -translate-y-1/2 bg-cover bg-right"
 					style={{
 						height: 15,
 						width: (x2 - x1 - 1) * 64 + (x2 - x1) * 24,
@@ -45,7 +45,7 @@ const TalentArrow = ({ start, end, highlighted }: Props) => {
 			);
 
 		return (
-			<CornerDownRight className="absolute bottom-0 left-0 -translate-x-1/2 -translate-y-1/2 text-red" />
+			<CornerDownRight className="text-red absolute bottom-0 left-0 -translate-x-1/2 -translate-y-1/2" />
 		);
 	}
 

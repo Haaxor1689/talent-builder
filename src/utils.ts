@@ -1,11 +1,11 @@
-import { type Resolver, type FieldValues } from 'react-hook-form';
-import type { z } from 'zod';
+import { type FieldValues, type Resolver } from 'react-hook-form';
 import { zodResolver as resolver } from '@hookform/resolvers/zod';
-import { isEqual } from 'lodash-es';
-import { PlusCircle, Workflow } from 'lucide-react';
+import { isEqual } from 'es-toolkit';
 import { toPng } from 'html-to-image';
+import { Calculator, LibraryBig, PlusCircle, Workflow } from 'lucide-react';
+import type { z } from 'zod';
 
-import { type TalentFormT, type TalentTreeT } from '~/server/api/types';
+import { type TalentFormT, type TalentTreeT } from '#server/api/types.ts';
 
 export const zodResolver = <In extends FieldValues, Out extends FieldValues>(
 	schema: z.ZodType<In, z.ZodTypeDef, Out>
@@ -36,7 +36,7 @@ export const getLastUpdatedString = (date: Date) => {
 };
 
 export const getTalentSum = (talentTree: TalentTreeT) =>
-	talentTree.reduce((p, n) => p + ((n?.ranks ?? 0) || 0), 0);
+	talentTree.reduce((p, n) => p + (n?.ranks ?? 0), 0);
 
 export const isEmptyTalent = (talent?: TalentFormT['talents'][number]) =>
 	!talent ||
@@ -61,15 +61,16 @@ export const maskToClass = (mask?: number) =>
 		| undefined;
 
 export const topNavigation = [
-	{ href: '/tree/new', icon: PlusCircle, text: 'New tree' },
-	{ href: '/calculator', icon: Workflow, text: 'Calculator' }
+	{ href: '/tree/new', icon: PlusCircle, text: 'New Tree' },
+	{ href: '/trees', icon: Workflow, text: 'Trees' },
+	{ href: '/collections', icon: LibraryBig, text: 'Collections' },
+	{ href: '/calculator', icon: Calculator, text: 'Calculator' }
 ] as const;
 
 export const getIconPath = (icon?: string) =>
 	icon?.startsWith('_')
 		? `/api/wowhead-icons/${icon.toLocaleLowerCase()}`
-		: // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-		  `/icons/${(icon || 'inv_misc_questionmark').toLocaleLowerCase()}.png`;
+		: `/icons/${(icon || 'inv_misc_questionmark').toLocaleLowerCase()}.png`;
 
 export const elementToPng = async (element: HTMLElement, name: string) => {
 	const dataUrl = await toPng(element, {

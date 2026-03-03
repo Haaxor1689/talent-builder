@@ -1,5 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 'use client';
 
 import { useLayoutEffect, useState } from 'react';
@@ -48,8 +46,11 @@ const BackgroundImage = ({
 		<img
 			key={src}
 			src={src}
+			loading={visible ? 'eager' : 'lazy'}
+			fetchPriority={visible ? 'high' : 'low'}
+			decoding="async"
 			alt="Background"
-			className="min-w-[1024px]transition-all pointer-events-none fixed inset-0 -z-10  w-full"
+			className="pointer-events-none fixed inset-0 -z-10 w-full min-w-5xl transition-all"
 			style={{
 				WebkitMaskImage:
 					'linear-gradient(180deg, rgba(0,0,0,1), rgba(0,0,0,0))',
@@ -61,20 +62,23 @@ const BackgroundImage = ({
 
 const PageBackground = () => {
 	const [transition, setTransition] = useState(false);
-	const [images, setImages] = useState<typeof source>([]);
+	const [images, setImages] = useState(source);
 
 	useLayoutEffect(() => {
 		if (typeof window === 'undefined') return;
-		setImages(shuffleArray(source));
+		let timeout = setTimeout(() => setImages(shuffleArray(source)), 0);
 		const interval = setInterval(() => {
 			setTransition(true);
-			setTimeout(() => setTransition(false), fadeDuration);
+			timeout = setTimeout(() => setTransition(false), fadeDuration);
 			setImages(images => {
 				const [current, next, ...rest] = images;
 				return [next!, ...shuffleArray(rest), current!];
 			});
 		}, swapDuration);
-		return () => clearInterval(interval);
+		return () => {
+			clearInterval(interval);
+			clearTimeout(timeout);
+		};
 	}, []);
 
 	return (

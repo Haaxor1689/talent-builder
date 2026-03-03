@@ -1,17 +1,17 @@
 'use client';
 
-import { Fragment, useMemo, useRef } from 'react';
-import cls from 'classnames';
+import { useMemo, useRef } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
+import cls from 'classnames';
 import { Minus, Plus } from 'lucide-react';
 
-import { type BuildFormT, type TalentFormT } from '~/server/api/types';
-import useIsMobile from '~/hooks/useIsMobile';
+import useIsMobile from '#hooks/useIsMobile.ts';
+import { type BuildFormT, type TalentFormT } from '#server/api/types.ts';
 
 import SpellIcon from '../styled/SpellIcon';
-import Tooltip from '../styled/Tooltip';
+import TalentArrow from '../styled/TalentArrow';
 import TextButton from '../styled/TextButton';
-
+import Tooltip from '../styled/Tooltip';
 import { formatTalentDescription } from './formatTalentDescription';
 
 type Props = TalentFormT['talents'][number] & {
@@ -98,68 +98,66 @@ const TalentPreview = ({ i, idx, talents, ...field }: Props) => {
 	};
 
 	return (
-		<Tooltip
-			tooltip={
-				<>
-					{/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
-					<h4 className="tw-color">{field.name || '[Unnamed talent]'}</h4>
-					<p className="font-bold">
-						Rank {value}/{field.ranks}
-					</p>
-					<p
-						className={cls(
-							'whitespace-pre-wrap',
-							!description && 'text-blueGray'
-						)}
-					>
-						{description ?? '[No description]'}
-					</p>
-				</>
-			}
-			actions={() =>
-				!!field.ranks && (
-					<div className="flex items-center gap-2 text-xl">
-						<TextButton
-							icon={Minus}
-							title="Remove point"
-							onClick={() => setPoints(-1)}
-							iconSize={32}
-						/>
-						{value}/{field.ranks}
-						<TextButton
-							icon={Plus}
-							title="Add point"
-							onClick={() => setPoints(1)}
-							iconSize={32}
-						/>
-					</div>
-				)
-			}
-		>
-			<SpellIcon
-				ref={ref}
-				icon={field.icon}
-				value={value}
-				ranks={noPointsLeft && value === 0 ? undefined : field.ranks}
-				clickable={!disabled}
-				onClick={e => {
-					e.preventDefault();
-					setPoints(1);
-				}}
-				onContextMenu={e => {
-					e.preventDefault();
-					if (isMobile) return;
-					setPoints(-1);
-				}}
-				arrow={
-					!field.requires && field.requires !== 0
-						? undefined
-						: [field.requires, i]
+		<div className="relative flex">
+			<Tooltip
+				tooltip={
+					<>
+						<p className="haax-color h3">{field.name || '[Unnamed talent]'}</p>
+						<p className="font-bold">
+							Rank {value}/{field.ranks}
+						</p>
+						<p
+							className={cls(
+								'whitespace-pre-wrap',
+								!description && 'text-blue-gray'
+							)}
+						>
+							{description ?? '[No description]'}
+						</p>
+					</>
 				}
-				highlightedArrow={!disabled}
-				className={cls({ grayscale: disabled })}
-			/>
-		</Tooltip>
+				actions={
+					!!field.ranks && (
+						<div className="flex items-center gap-2 text-xl">
+							<TextButton
+								icon={Minus}
+								title="Remove point"
+								onClick={() => setPoints(-1)}
+								iconSize={32}
+							/>
+							{value}/{field.ranks}
+							<TextButton
+								icon={Plus}
+								title="Add point"
+								onClick={() => setPoints(1)}
+								iconSize={32}
+							/>
+						</div>
+					)
+				}
+			>
+				<SpellIcon
+					ref={ref}
+					icon={field.icon}
+					value={value}
+					ranks={noPointsLeft && value === 0 ? undefined : field.ranks}
+					clickable={!disabled}
+					onClick={e => {
+						e.preventDefault();
+						setPoints(1);
+					}}
+					onContextMenu={e => {
+						e.preventDefault();
+						if (isMobile) return;
+						setPoints(-1);
+					}}
+					className={cls({ grayscale: disabled })}
+				/>
+			</Tooltip>
+			{field.requires !== null && (
+				<TalentArrow start={field.requires} end={i} highlighted={!disabled} />
+			)}
+		</div>
 	);
 };
 export default TalentPreview;

@@ -3,13 +3,17 @@
 import { Fragment, useEffect, useRef } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
+import ScrollArea from './ScrollArea';
 import SpellIcon from './SpellIcon';
 import Spinner from './Spinner';
 
 type Props = {
 	filter?: string;
 	icon?: string;
-	setIcon: (icon: string) => void;
+	setIcon: (
+		icon: string,
+		event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+	) => void;
 	required?: boolean;
 };
 
@@ -25,7 +29,7 @@ const IconGrid = ({ filter, required, icon, setIcon }: Props) => {
 			const filtered = filter
 				? data.filter(v =>
 						v[1].toLocaleLowerCase().includes(filter.toLocaleLowerCase())
-				  )
+					)
 				: data;
 			const nextCursor = pageParam + 64;
 			return {
@@ -52,13 +56,7 @@ const IconGrid = ({ filter, required, icon, setIcon }: Props) => {
 	}, [bottomRef, icons.isFetchingNextPage, icons.hasNextPage]);
 
 	return (
-		<div
-			className="grid max-h-[520px] gap-1 overflow-y-auto"
-			style={{
-				gridTemplateColumns: 'repeat(auto-fit, 64px)',
-				gridAutoRows: '64px'
-			}}
-		>
+		<ScrollArea contentClassName="grid max-h-130 auto-rows-[64px] grid-cols-[repeat(auto-fit,64px)] gap-1 p-3">
 			{icons.isLoading && (
 				<div className="col-span-full flex h-32 items-center justify-center">
 					<Spinner size={32} />
@@ -66,7 +64,7 @@ const IconGrid = ({ filter, required, icon, setIcon }: Props) => {
 			)}
 
 			{!required && !icons.isLoading && (
-				<SpellIcon showDefault selected={!icon} onClick={() => setIcon('')} />
+				<SpellIcon showDefault selected={!icon} onClick={e => setIcon('', e)} />
 			)}
 
 			{icons.data?.pages.map((page, index) => (
@@ -76,7 +74,7 @@ const IconGrid = ({ filter, required, icon, setIcon }: Props) => {
 							key={item[1]}
 							icon={item[1]}
 							selected={icon === item[1]}
-							onClick={() => setIcon(item[1])}
+							onClick={e => setIcon(item[1], e)}
 							title={`#${item[0]} ${item[1]}`}
 						/>
 					))}
@@ -89,7 +87,7 @@ const IconGrid = ({ filter, required, icon, setIcon }: Props) => {
 			>
 				{icons.isFetchingNextPage && <Spinner size={32} />}
 			</div>
-		</div>
+		</ScrollArea>
 	);
 };
 

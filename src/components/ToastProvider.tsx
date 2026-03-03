@@ -1,36 +1,72 @@
-import { AlertCircle, CheckCircle, ClipboardCopy } from 'lucide-react';
-import { Toaster, resolveValue } from 'react-hot-toast';
+'use client';
+
+import cls from 'classnames';
+import {
+	CircleAlert,
+	CircleCheck,
+	CircleHelp,
+	ClipboardCopy,
+	X
+} from 'lucide-react';
+import { toast as sonnerToast } from 'sonner';
 
 import TextButton from './styled/TextButton';
 
-const ToastProvider = () => (
-	<Toaster>
-		{t => {
-			const msgString = typeof t.message === 'string' ? t.message : '';
-			return (
-				<div className="tw-surface flex max-w-sm items-center gap-2 bg-darkGray">
-					{t.type === 'error' && (
-						<AlertCircle size={18} className="shrink-0 text-red" />
-					)}
-					{t.type === 'success' && (
-						<CheckCircle size={18} className="shrink-0 text-green" />
-					)}
-					<p title={msgString} className="truncate">
-						{resolveValue(t.message, t)}
-					</p>
+type ToastProps = {
+	id: string | number;
+	type?: 'success' | 'error' | 'info';
+	message: string | React.ReactNode;
+};
 
-					{t.type === 'error' && msgString && (
-						<TextButton
-							title="Copy message"
-							onClick={() => navigator.clipboard.writeText(msgString)}
-							icon={ClipboardCopy}
-							className="-m-2 shrink-0"
-						/>
-					)}
-				</div>
-			);
-		}}
-	</Toaster>
-);
+const ToastComponent = ({ id, type, message }: ToastProps) => {
+	const Icon =
+		type === 'error'
+			? CircleAlert
+			: type === 'success'
+				? CircleCheck
+				: CircleHelp;
 
-export default ToastProvider;
+	return (
+		<div className="haax-surface-3 bg-dark-gray max-w-md min-w-xs">
+			<div className="flex gap-2">
+				<Icon
+					size={18}
+					className={cls(
+						'mt-1',
+						type === 'error'
+							? 'text-red'
+							: type === 'success'
+								? 'text-green'
+								: 'text-yellow'
+					)}
+				/>
+
+				<div className="line-clamp-4 shrink">{message}</div>
+			</div>
+
+			<div className="-m-2 flex justify-end gap-1">
+				{typeof message === 'string' && (
+					<TextButton
+						onClick={() => navigator.clipboard.writeText(message)}
+						icon={ClipboardCopy}
+						iconSize={16}
+					>
+						Copy text
+					</TextButton>
+				)}
+				{type === 'error' && (
+					<TextButton
+						onClick={() => sonnerToast.dismiss(id)}
+						icon={X}
+						iconSize={16}
+					>
+						Close
+					</TextButton>
+				)}
+			</div>
+		</div>
+	);
+};
+
+export const toast = (toast: Omit<ToastProps, 'id'>) =>
+	sonnerToast.custom(id => <ToastComponent id={id} {...toast} />);

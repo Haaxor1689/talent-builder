@@ -1,4 +1,4 @@
-import { TalentForm, type TalentFormT } from '~/server/api/types';
+import { TalentForm, type TalentFormT } from '#server/api/types.ts';
 
 import useLocalStorage from './useLocalStorage';
 
@@ -14,7 +14,7 @@ const parseLocalTrees = (v: string) => {
 						? {
 								...v,
 								talents: v.tree
-						  }
+							}
 						: v
 				);
 				if (!parsed.success) return undefined;

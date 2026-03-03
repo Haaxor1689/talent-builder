@@ -1,25 +1,39 @@
 'use client';
 
+import { signIn, signOut, useSession } from 'next-auth/react';
 import cls from 'classnames';
-import { useSession } from 'next-auth/react';
-import { Settings } from 'lucide-react';
+import { LogOut, Settings } from 'lucide-react';
 
+import Discord from '../Discord';
 import Spinner from '../styled/Spinner';
 import TextButton from '../styled/TextButton';
 
-import SignInOut from './SignInOut';
-
 const UserStatus = () => {
 	const session = useSession();
-	if (session.status === 'loading') return <Spinner size={26} />;
+	if (session.status === 'loading')
+		return (
+			<div className="mx-2 flex items-center">
+				<Spinner size={26} />
+			</div>
+		);
+
 	if (session.status === 'unauthenticated')
-		return <SignInOut signedIn={false} />;
+		return (
+			<TextButton
+				icon={Discord}
+				onClick={() => signIn('discord')}
+				className="text-[#5865f2] [&_span]:hidden [&_span]:md:inline"
+			>
+				Sign in
+			</TextButton>
+		);
+
 	return (
 		<>
 			<div className="flex items-center gap-3">
 				<span
 					className={cls('hidden select-none sm:inline', {
-						'font-bold text-green': session.data?.user.isAdmin
+						'text-green font-bold': session.data?.user.isAdmin
 					})}
 				>
 					{session.data?.user.name}
@@ -39,7 +53,13 @@ const UserStatus = () => {
 					href="/admin"
 				/>
 			)}
-			<SignInOut signedIn />
+			<TextButton
+				icon={LogOut}
+				onClick={() => signOut()}
+				className="[&_span]:hidden [&_span]:md:inline"
+			>
+				Sign out
+			</TextButton>
 		</>
 	);
 };

@@ -1,45 +1,34 @@
 {
 	"compilerOptions": {
-		/* Base Options: */
-		"esModuleInterop": true,
-		"skipLibCheck": true,
-		"target": "es2022",
-		"allowJs": true,
-		"resolveJsonModule": true,
-		"moduleDetection": "force",
-		"isolatedModules": true,
-
-		/* Strictness */
 		"strict": true,
+		"target": "es2024",
+		"module": "esnext",
+		"moduleResolution": "bundler",
+		"skipLibCheck": true,
+		"isolatedModules": true,
 		"noUncheckedIndexedAccess": true,
 		"checkJs": true,
-
-		/* Bundled projects */
-		"lib": ["dom", "dom.iterable", "ES2022"],
+		"lib": ["dom", "esnext"],
 		"noEmit": true,
-		"module": "ESNext",
-		"moduleResolution": "Bundler",
-		"jsx": "preserve",
+		"jsx": "react-jsx",
 		"plugins": [{ "name": "next" }],
 		"incremental": true,
-
-		/* Path Aliases */
-		"baseUrl": ".",
-		"paths": {
-			"~/*": ["./src/*"]
-		},
-
-		/* Fix for FileSystemAPI types */
-		"types": ["@types/wicg-file-system-access"]
+		"allowJs": true,
+		"esModuleInterop": true,
+		"resolveJsonModule": true,
+		"allowImportingTsExtensions": true
 	},
 	"include": [
-		".eslintrc.cjs",
-		"next-env.d.ts",
 		"**/*.ts",
 		"**/*.tsx",
-		"**/*.cjs",
-		"**/*.js",
-		".next/types/**/*.ts"
+		"src/env.js",
+		"drizzle.config.ts",
+		"eslint.config.js",
+		"next.config.js",
+		"postcss.config.js",
+		"prettier.config.cjs",
+		".next/types/**/*.ts",
+		".next/dev/types/**/*.ts"
 	],
 	"exclude": ["node_modules"]
 }

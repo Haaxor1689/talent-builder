@@ -1,13 +1,13 @@
 import { nanoid } from 'nanoid';
 import { z } from 'zod';
 
-import { bitUnpack, legacyBitUnpack } from '~/components/calculator/utils';
+import { bitUnpack, legacyBitUnpack } from '#components/calculator/utils.ts';
 
 export const Talent = z.object({
 	icon: z.string().default(''),
 	name: z.string().default(''),
 	ranks: z.preprocess(
-		val => (!val ? null : val),
+		val => (!val || val === '' ? null : val),
 		z.number().nullable().default(null)
 	),
 	spellIds: z.string().nullable().default(null),
@@ -77,8 +77,8 @@ export const CalculatorParams = z
 		points: val.points
 			? bitUnpack(val.points)
 			: val.t
-			? legacyBitUnpack(val.t)
-			: undefined,
+				? legacyBitUnpack(val.t)
+				: undefined,
 		class: val.class ?? val.c
 	}));
 

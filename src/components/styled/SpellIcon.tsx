@@ -1,10 +1,6 @@
-/* eslint-disable @next/next/no-img-element */
 import cls from 'classnames';
-import { forwardRef } from 'react';
 
-import { getIconPath } from '~/utils';
-
-import TalentArrow from './TalentArrow';
+import { getIconPath } from '#utils.ts';
 
 type Props = React.DetailedHTMLProps<
 	React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -14,8 +10,6 @@ type Props = React.DetailedHTMLProps<
 	icon?: string | null;
 	value?: number;
 	ranks?: number | null;
-	arrow?: [number, number] | null;
-	highlightedArrow?: boolean;
 	frameClass?: string;
 	showDefault?: boolean;
 	showEmpty?: boolean;
@@ -23,101 +17,83 @@ type Props = React.DetailedHTMLProps<
 	highlighted?: boolean;
 	size?: number;
 };
-const SpellIcon = forwardRef<HTMLButtonElement, Props>(
-	(
-		{
-			icon,
-			value,
-			ranks,
-			arrow,
-			highlightedArrow,
-			showDefault,
-			selected,
-			highlighted,
-			frameClass,
-			className,
-			clickable,
-			size = 64,
-			...props
-		},
-		ref
-	) => {
-		const isClickable = !!clickable || !!props.onClick;
-		return (
-			<button
-				ref={ref}
-				type="button"
-				tabIndex={!isClickable ? -1 : undefined}
-				className={cls(
-					'cursor group relative flex-shrink-0 focus:outline-none',
-					!isClickable ? 'cursor-default' : 'cursor-pointer',
-					className
-				)}
-				{...props}
-			>
-				{showDefault || icon ? (
-					<img
-						src={getIconPath(icon ?? undefined)}
-						alt={!icon ? 'empty' : icon}
-						width={size}
-						height={size}
-					/>
-				) : (
-					<img
-						src="/icon_frame.png"
-						alt="frame"
-						width={size}
-						height={size}
-						className={frameClass}
-					/>
-				)}
+const SpellIcon = ({
+	ref,
+	icon,
+	value,
+	ranks,
+	showDefault,
+	selected,
+	highlighted,
+	frameClass,
+	className,
+	clickable,
+	size = 64,
+	...props
+}: Props & { ref?: React.RefObject<HTMLButtonElement | null> }) => {
+	const isClickable = !!clickable || !!props.onClick;
+	return (
+		<button
+			ref={ref}
+			type="button"
+			tabIndex={!isClickable ? -1 : undefined}
+			className={cls(
+				'cursor group/icon relative focus:outline-none',
+				!isClickable ? 'cursor-default' : 'cursor-pointer',
+				selected && 'haax-highlight',
+				className
+			)}
+			{...props}
+		>
+			{showDefault || icon ? (
 				<img
-					className={cls('pointer-events-none absolute inset-0 p-[5%]', {
-						'group-hover:block group-focus:block': isClickable,
-						'hidden': !selected,
-						'hue-rotate-180': selected
-					})}
-					src="/icon_hover.png"
-					alt="hover"
+					src={getIconPath(icon ?? undefined)}
+					alt={!icon || icon === '' ? 'empty' : icon}
 					width={size}
 					height={size}
 				/>
+			) : (
+				<img
+					src="/icon_frame.png"
+					alt="frame"
+					width={size}
+					height={size}
+					className={frameClass}
+				/>
+			)}
 
-				{highlighted && (
-					<img
-						className={cls('pointer-events-none absolute inset-0 scale-125')}
-						src="/icon_hover.png"
-						alt="hover"
-						width={size}
-						height={size}
-					/>
-				)}
+			<img
+				className={cls('pointer-events-none absolute inset-0 hidden p-[5%]', {
+					'group-hover/icon:block group-focus/icon:block': isClickable
+				})}
+				src="/icon_hover.png"
+				alt="hover"
+				width={size}
+				height={size}
+			/>
 
-				{!!ranks && (
-					<p
-						className={cls(
-							'absolute bottom-1 right-1 translate-x-1/2 translate-y-1/2 rounded border-0 bg-darkGray px-1',
-							{
-								'text-green': value !== undefined && ranks !== value,
-								'text-yellow': value !== undefined && ranks === value
-							}
-						)}
-					>
-						{value !== undefined ? `${value}/` : ''}
-						{ranks}
-					</p>
-				)}
+			{highlighted && (
+				<span className="text-pink h2 pointer-events-none absolute -top-3 -right-2.5 animate-pulse">
+					!!
+				</span>
+			)}
 
-				{!!arrow && (
-					<TalentArrow
-						start={arrow[0]}
-						end={arrow[1]}
-						highlighted={highlightedArrow}
-					/>
-				)}
-			</button>
-		);
-	}
-);
+			{!!ranks && (
+				<p
+					className={cls(
+						'bg-dark-gray absolute right-1 bottom-1 translate-x-1/2 translate-y-1/2 rounded border-0 px-1',
+						{
+							'text-green': value !== undefined && ranks !== value,
+							'text-yellow': value !== undefined && ranks === value
+						}
+					)}
+				>
+					{value !== undefined ? `${value}/` : ''}
+					{ranks}
+				</p>
+			)}
+		</button>
+	);
+};
 
 export default SpellIcon;

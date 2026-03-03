@@ -6,11 +6,10 @@ import { and, asc, eq } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
 import { z } from 'zod';
 
-import { talentTrees } from '~/server/db/schema';
+import { talentTrees } from '#server/db/schema.ts';
 
 import { adminProcedure, createdBySelect, publicProcedure } from '../helpers';
 import { Talent } from '../types';
-
 import { turtleWoWAccountId } from './general';
 
 const FallbackCollection = '1.18.0';
@@ -206,7 +205,7 @@ export const exportCollection = adminProcedure({
 								description: l.description,
 								requires: l.requires,
 								spellIds: l.spellIds
-						  }
+							}
 				)
 			}))
 		);
