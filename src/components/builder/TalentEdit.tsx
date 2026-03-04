@@ -4,7 +4,7 @@ import { useMemo, useRef } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { Camera, Link2Off, Trash2 } from 'lucide-react';
 
-import { Talent, type TalentFormT } from '#server/api/types.ts';
+import { Talent, type TalentFormT } from '#server/schemas.ts';
 import { elementToPng } from '#utils.ts';
 
 import { formatTalentDescription } from '../calculator/formatTalentDescription';

@@ -3,7 +3,7 @@
 import { useFormContext, useWatch } from 'react-hook-form';
 import { ExternalLink, NotebookPen, Workflow, X } from 'lucide-react';
 
-import { type BuildFormT, type TalentFormT } from '#server/api/types.ts';
+import { type BuildFormT, type TalentFormT } from '#server/schemas.ts';
 import { isEmptyTalent } from '#utils.ts';
 
 import Dialog from '../styled/Dialog';

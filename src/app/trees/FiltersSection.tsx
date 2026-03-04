@@ -8,7 +8,7 @@ import CheckboxInput from '#components/form/CheckboxInput.tsx';
 import ClassPicker from '#components/form/ClassPicker.tsx';
 import Input from '#components/form/Input.tsx';
 import useDebounced from '#hooks/useDebounced.ts';
-import { Filters } from '#server/api/types.ts';
+import { Filters } from '#server/schemas.ts';
 import { zodResolver } from '#utils.ts';
 
 const FiltersSection = () => {

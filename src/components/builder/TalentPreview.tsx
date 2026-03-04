@@ -6,7 +6,7 @@ import cls from 'classnames';
 import { cloneDeep } from 'es-toolkit';
 import { Link2, Pointer, Replace } from 'lucide-react';
 
-import { Talent, type TalentFormT } from '#server/api/types.ts';
+import { Talent, type TalentFormT } from '#server/schemas.ts';
 import { isEmptyTalent } from '#utils.ts';
 
 import { formatTalentDescription } from '../calculator/formatTalentDescription';

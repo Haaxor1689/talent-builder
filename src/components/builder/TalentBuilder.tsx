@@ -21,7 +21,7 @@ import {
 	deleteTalentTree,
 	upsertTalentTree
 } from '#server/api/routers/talentTree.ts';
-import { TalentForm, type TalentFormT } from '#server/api/types.ts';
+import { TalentForm, type TalentFormT } from '#server/schemas.ts';
 import { elementToPng, zodResolver } from '#utils.ts';
 
 import ConfirmDialog from '../ConfirmDialog';

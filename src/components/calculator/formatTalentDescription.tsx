@@ -1,6 +1,6 @@
 import { type JSX } from 'react';
 
-import { type TalentFormT } from '#server/api/types.ts';
+import { type TalentFormT } from '#server/schemas.ts';
 
 export const formatTalentDescription = (
 	field: TalentFormT['talents'][number],

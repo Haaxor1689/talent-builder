@@ -6,7 +6,7 @@ import cls from 'classnames';
 import { Minus, Plus } from 'lucide-react';
 
 import useIsMobile from '#hooks/useIsMobile.ts';
-import { type BuildFormT, type TalentFormT } from '#server/api/types.ts';
+import { type BuildFormT, type TalentFormT } from '#server/schemas.ts';
 
 import SpellIcon from '../styled/SpellIcon';
 import TalentArrow from '../styled/TalentArrow';

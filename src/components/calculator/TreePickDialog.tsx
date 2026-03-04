@@ -10,7 +10,7 @@ import { ListFilter } from 'lucide-react';
 import TreeGridItem from '#app/trees/TreeGridItem.tsx';
 import useDebounced from '#hooks/useDebounced.ts';
 import { listInfiniteTalentTrees } from '#server/api/routers/talentTree.ts';
-import { Filters } from '#server/api/types.ts';
+import { Filters } from '#server/schemas.ts';
 import { zodResolver } from '#utils.ts';
 
 import Input from '../form/Input';

@@ -5,7 +5,7 @@ import { toPng } from 'html-to-image';
 import { Calculator, LibraryBig, PlusCircle, Workflow } from 'lucide-react';
 import type { z } from 'zod';
 
-import { type TalentFormT, type TalentTreeT } from '#server/api/types.ts';
+import { type TalentFormT, type TalentTreeT } from '#server/schemas.ts';
 
 export const zodResolver = <In extends FieldValues, Out extends FieldValues>(
 	schema: z.ZodType<In, z.ZodTypeDef, Out>

@@ -5,7 +5,7 @@ import TalentCalculator from '#components/calculator/TalentCalculator.tsx';
 import { env } from '#env.js';
 import { getSavedBuild } from '#server/api/routers/savedBuilds.ts';
 import { getTalentTree } from '#server/api/routers/talentTree.ts';
-import { CalculatorParams } from '#server/api/types.ts';
+import { CalculatorParams } from '#server/schemas.ts';
 import { getIconPath, maskToClass } from '#utils.ts';
 
 type Props = PageProps<'/calculator/[id]'>;

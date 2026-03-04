@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useWatch } from 'react-hook-form';
 import { useSearchParams } from 'next/navigation';
 
-import { BuildForm, type BuildFormT } from '#server/api/types.ts';
+import { BuildForm, type BuildFormT } from '#server/schemas.ts';
 
 import { bitPack } from './utils';
 

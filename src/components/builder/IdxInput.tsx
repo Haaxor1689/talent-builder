@@ -1,7 +1,7 @@
 import { type Control, useController } from 'react-hook-form';
 import { NotebookTabs } from 'lucide-react';
 
-import { type TalentFormT } from '#server/api/types.ts';
+import { type TalentFormT } from '#server/schemas.ts';
 
 import TextButton from '../styled/TextButton';
 

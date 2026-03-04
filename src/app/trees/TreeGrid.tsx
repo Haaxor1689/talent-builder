@@ -7,7 +7,7 @@ import cls from 'classnames';
 
 import Spinner from '#components/styled/Spinner.tsx';
 import { listInfiniteTalentTrees } from '#server/api/routers/talentTree.ts';
-import { Filters, type FiltersT } from '#server/api/types.ts';
+import { Filters, type FiltersT } from '#server/schemas.ts';
 
 import TreeGridItem from './TreeGridItem';
 

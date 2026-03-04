@@ -7,7 +7,7 @@ import {
 } from 'drizzle-orm/sqlite-core';
 import { nanoid } from 'nanoid';
 
-import { type TalentTreeT } from '#server/api/types.ts';
+import { type TalentTreeT } from '#server/schemas.ts';
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same

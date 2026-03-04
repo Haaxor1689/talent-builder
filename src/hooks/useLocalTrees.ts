@@ -1,4 +1,4 @@
-import { TalentForm, type TalentFormT } from '#server/api/types.ts';
+import { TalentForm, type TalentFormT } from '#server/schemas.ts';
 
 import useLocalStorage from './useLocalStorage';
 

@@ -8,7 +8,7 @@ import {
 	deleteSavedBuild,
 	upsertSavedBuild
 } from '#server/api/routers/savedBuilds.ts';
-import { type BuildFormT, type TalentFormT } from '#server/api/types.ts';
+import { type BuildFormT, type TalentFormT } from '#server/schemas.ts';
 import { maskToClass } from '#utils.ts';
 
 import ConfirmDialog from '../ConfirmDialog';

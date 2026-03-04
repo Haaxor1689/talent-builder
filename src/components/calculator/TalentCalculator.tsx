@@ -9,7 +9,7 @@ import {
 	type BuildFormT,
 	CalculatorParams,
 	type TalentFormT
-} from '#server/api/types.ts';
+} from '#server/schemas.ts';
 import { zodResolver } from '#utils.ts';
 
 import ClassPicker from '../form/ClassPicker';
