@@ -21,7 +21,7 @@ export const sqliteTable = sqliteTableCreator(name => `talent-builder_${name}`);
 
 export const user = sqliteTable('user_new', {
 	id: text('id').primaryKey(),
-	name: text('name'),
+	name: text('name').notNull(),
 	email: text('email').notNull(),
 	emailVerified: integer('emailVerified', { mode: 'boolean' }),
 	image: text('image'),

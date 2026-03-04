@@ -23,7 +23,6 @@ export const generateMetadata = async ({
 
 const TalentTreePage = async ({ params }: Props) => {
 	const { id } = await params;
-	if (!id || id === 'undefined') return notFound();
 	const talentTree = await getTalentTree(id);
 	if (!talentTree) return notFound();
 

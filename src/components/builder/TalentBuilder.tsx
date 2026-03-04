@@ -119,7 +119,7 @@ const TalentBuilder = (props: Props) => {
 							/>
 						)}
 
-						{props.isLocal && session.status === 'authenticated' && (
+						{props.isLocal && session.data && (
 							<TextButton
 								onClick={() =>
 									startTransition(async () => {

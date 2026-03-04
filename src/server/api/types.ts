@@ -36,9 +36,9 @@ export const TalentForm = z.object({
 	createdById: z.string().nullable().default(null),
 	createdBy: z
 		.object({
-			name: z.string().nullable(),
+			name: z.string(),
 			image: z.string().nullable(),
-			role: z.enum(['user', 'admin', 'supporter']).nullable()
+			role: z.enum(['user', 'admin', 'supporter'])
 		})
 		.nullable()
 		.default(null),
