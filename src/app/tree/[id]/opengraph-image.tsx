@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 
 import { ImageResponse } from 'next/og';
+import cls from 'classnames';
 
 import { env } from '#env.js';
 import { getIconPath } from '#utils.ts';
@@ -100,11 +101,10 @@ const Image = async ({ params }: PageProps<'/tree/[id]'>) => {
 						/>
 					)}
 					<span
-						style={
-							response.user.isAdmin
-								? { color: '#8DD958', fontWeight: 600 }
-								: undefined
-						}
+						className={cls({
+							'text-green font-bold': response.user?.role === 'admin',
+							'text-[#41c8d4]': response.user?.role === 'supporter'
+						})}
 					>
 						{response.user?.name}
 					</span>

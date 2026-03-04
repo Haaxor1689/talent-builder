@@ -18,9 +18,10 @@ export const env = createEnv({
 		NODE_ENV: z
 			.enum(['development', 'test', 'production'])
 			.default('development'),
-		AUTH_SECRET: z.string(),
+		BETTER_AUTH_SECRET: z.string(),
 		AUTH_DISCORD_ID: z.string(),
 		AUTH_DISCORD_SECRET: z.string(),
+		DISCORD_BOT_TOKEN: z.string(),
 		DEPLOY_URL: z.string().url()
 	},
 
@@ -41,9 +42,10 @@ export const env = createEnv({
 		DATABASE_URL: process.env.DATABASE_URL,
 		DATABASE_AUTH_TOKEN: process.env.DATABASE_AUTH_TOKEN,
 		NODE_ENV: process.env.NODE_ENV,
-		AUTH_SECRET: process.env.AUTH_SECRET,
+		BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
 		AUTH_DISCORD_ID: process.env.AUTH_DISCORD_ID,
 		AUTH_DISCORD_SECRET: process.env.AUTH_DISCORD_SECRET,
+		DISCORD_BOT_TOKEN: process.env.DISCORD_BOT_TOKEN,
 		DEPLOY_URL: process.env.DEPLOY_URL
 	},
 	/**

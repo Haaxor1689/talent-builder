@@ -7,7 +7,7 @@ import { and, asc, desc, eq, inArray, like, or } from 'drizzle-orm';
 import { omit } from 'es-toolkit';
 import { z } from 'zod';
 
-import { talentTrees, users } from '#server/db/schema.ts';
+import { talentTrees, user } from '#server/db/schema.ts';
 
 import {
 	createdBySelect,
@@ -33,7 +33,10 @@ export const upsertTalentTree = protectedProcedure({
 				createdAt: new Date()
 			});
 		} else {
-			if (!session.user.isAdmin && session.user.id !== entry.createdById)
+			if (
+				session.user.role !== 'admin' &&
+				session.user.id !== entry.createdById
+			)
 				throw new Error('UNAUTHORIZED');
 
 			await db
@@ -78,8 +81,8 @@ export const listInfiniteTalentTrees = publicProcedure({
 
 		const whereAcc = input.from
 			? (
-					await db.query.users.findMany({
-						where: like(users.name, `%${input.from}%`),
+					await db.query.user.findMany({
+						where: like(user.name, `%${input.from}%`),
 						columns: { id: true }
 					})
 				).map(a => a.id)
@@ -100,7 +103,7 @@ export const listInfiniteTalentTrees = publicProcedure({
 						]
 					: [desc(talentTrees.updatedAt)],
 			where: and(
-				!session?.user.isAdmin
+				session?.user.role !== 'admin'
 					? or(
 							eq(talentTrees.public, true),
 							session?.user.id
@@ -153,7 +156,7 @@ export const deleteTalentTree = protectedProcedure({
 
 		if (!entry) throw new Error('NOT_FOUND');
 
-		if (!session.user.isAdmin && session.user.id !== entry?.createdById)
+		if (session.user.role !== 'admin' && session.user.id !== entry?.createdById)
 			throw new Error('UNAUTHORIZED');
 
 		await db.delete(talentTrees).where(eq(talentTrees.id, input));

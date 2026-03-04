@@ -51,7 +51,7 @@ const IconPicker = ({ name, required, disabled }: Props) => {
 			trigger={open => (
 				<SpellIcon
 					icon={field.value}
-					clickable={!disabled}
+					disabled={disabled}
 					showDefault
 					title={
 						item ? `#${item[0]} ${item[1]}` : `#wowhead ${field.value.slice(1)}`

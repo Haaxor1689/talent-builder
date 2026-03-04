@@ -107,6 +107,10 @@
 	@apply text-green drop-shadow-[0px_0px_25px_white];
 }
 
+@utility haax-tooltip-hidden {
+	@apply group-[&]/tooltip:hidden!;
+}
+
 @utility haax-table-row {
 	@apply col-start-1 -col-end-1 grid grid-cols-subgrid items-center;
 	& > * {

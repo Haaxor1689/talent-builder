@@ -40,7 +40,9 @@ export const getCollectionTree = publicProcedure({
 				eq(talentTrees.collection, input.collection),
 				eq(talentTrees.class, input.class),
 				eq(talentTrees.index, input.index),
-				session?.user?.isAdmin ? undefined : eq(talentTrees.public, true)
+				session?.user?.role === 'admin'
+					? undefined
+					: eq(talentTrees.public, true)
 			),
 			with: { createdBy: createdBySelect }
 		})) ??

@@ -38,7 +38,10 @@ export const upsertSavedBuild = protectedProcedure({
 				createdAt: new Date()
 			});
 		} else {
-			if (!session.user.isAdmin && session.user.id !== entry.createdById)
+			if (
+				session.user.role !== 'admin' &&
+				session.user.id !== entry.createdById
+			)
 				throw new Error('UNAUTHORIZED');
 
 			await db
@@ -128,7 +131,7 @@ export const deleteSavedBuild = protectedProcedure({
 
 		if (!entry) throw new Error('NOT_FOUND');
 
-		if (!session.user.isAdmin && session.user.id !== entry?.createdById)
+		if (session.user.role !== 'admin' && session.user.id !== entry?.createdById)
 			throw new Error('UNAUTHORIZED');
 
 		await db.delete(savedBuilds).where(eq(savedBuilds.id, input));

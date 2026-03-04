@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useRef } from 'react';
+import { useMemo } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import cls from 'classnames';
 import { Minus, Plus } from 'lucide-react';
@@ -21,7 +21,6 @@ type Props = TalentFormT['talents'][number] & {
 };
 
 const TalentPreview = ({ i, idx, talents, ...field }: Props) => {
-	const ref = useRef<HTMLButtonElement>(null);
 	const isMobile = useIsMobile();
 
 	const { setValue } = useFormContext<BuildFormT>();
@@ -98,66 +97,69 @@ const TalentPreview = ({ i, idx, talents, ...field }: Props) => {
 	};
 
 	return (
-		<div className="relative flex">
-			<Tooltip
-				tooltip={
-					<>
-						<p className="haax-color h3">{field.name || '[Unnamed talent]'}</p>
-						<p className="font-bold">
-							Rank {value}/{field.ranks}
-						</p>
-						<p
-							className={cls(
-								'whitespace-pre-wrap',
-								!description && 'text-blue-gray'
-							)}
-						>
-							{description ?? '[No description]'}
-						</p>
-					</>
-				}
-				actions={
-					!!field.ranks && (
-						<div className="flex items-center gap-2 text-xl">
-							<TextButton
-								icon={Minus}
-								title="Remove point"
-								onClick={() => setPoints(-1)}
-								iconSize={32}
-							/>
-							{value}/{field.ranks}
-							<TextButton
-								icon={Plus}
-								title="Add point"
-								onClick={() => setPoints(1)}
-								iconSize={32}
-							/>
-						</div>
+		<Tooltip
+			tooltip={
+				<>
+					<p className="haax-color h3">{field.name || '[Unnamed talent]'}</p>
+					<p className="font-bold">
+						Rank {value}/{field.ranks}
+					</p>
+					<p
+						className={cls(
+							'whitespace-pre-wrap',
+							!description && 'text-blue-gray'
+						)}
+					>
+						{description ?? '[No description]'}
+					</p>
+				</>
+			}
+			actions={
+				!!field.ranks && (
+					<div className="flex items-center gap-2 text-xl">
+						<TextButton
+							icon={Minus}
+							title="Remove point"
+							onClick={() => setPoints(-1)}
+							iconSize={32}
+						/>
+						{value}/{field.ranks}
+						<TextButton
+							icon={Plus}
+							title="Add point"
+							onClick={() => setPoints(1)}
+							iconSize={32}
+						/>
+					</div>
+				)
+			}
+		>
+			<SpellIcon
+				icon={field.icon}
+				currentRank={value}
+				ranks={noPointsLeft && value === 0 ? undefined : field.ranks}
+				disabled={disabled}
+				onClick={e => {
+					e.preventDefault();
+					setPoints(1);
+				}}
+				onContextMenu={e => {
+					e.preventDefault();
+					if (isMobile) return;
+					setPoints(-1);
+				}}
+				className={cls({ grayscale: disabled })}
+				extraContent={
+					field.requires !== null && (
+						<TalentArrow
+							start={field.requires}
+							end={i}
+							highlighted={!disabled}
+						/>
 					)
 				}
-			>
-				<SpellIcon
-					ref={ref}
-					icon={field.icon}
-					value={value}
-					ranks={noPointsLeft && value === 0 ? undefined : field.ranks}
-					clickable={!disabled}
-					onClick={e => {
-						e.preventDefault();
-						setPoints(1);
-					}}
-					onContextMenu={e => {
-						e.preventDefault();
-						if (isMobile) return;
-						setPoints(-1);
-					}}
-					className={cls({ grayscale: disabled })}
-				/>
-			</Tooltip>
-			{field.requires !== null && (
-				<TalentArrow start={field.requires} end={i} highlighted={!disabled} />
-			)}
-		</div>
+			/>
+		</Tooltip>
 	);
 };
 export default TalentPreview;

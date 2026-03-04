@@ -5,6 +5,7 @@ import cls from 'classnames';
 import { type LucideIcon } from 'lucide-react';
 
 type Props = HTMLProps<HTMLInputElement> & {
+	ref?: React.Ref<HTMLInputElement>;
 	label?: string;
 	error?: boolean;
 	icon?: LucideIcon;
@@ -23,7 +24,7 @@ const Input = ({
 	onIconClick,
 	inputClassName,
 	...props
-}: Props & { ref?: React.RefObject<HTMLInputElement | null> }) => (
+}: Props) => (
 	<div className={cls('flex flex-col gap-2', className)}>
 		{label && <label htmlFor={id}>{label}</label>}
 		<div className="relative flex items-center">

@@ -5,6 +5,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 import cls from 'classnames';
 
 type Props = ComponentProps<typeof TextareaAutosize> & {
+	ref?: React.Ref<HTMLTextAreaElement>;
 	label?: string;
 	error?: boolean;
 	minRows?: number;
@@ -18,7 +19,7 @@ const Textarea = ({
 	className,
 	error,
 	...props
-}: Props & { ref?: React.RefObject<HTMLTextAreaElement | null> }) => (
+}: Props) => (
 	<div className={cls('flex flex-col gap-2', className)}>
 		{label && <label htmlFor={id}>{label}</label>}
 		<TextareaAutosize

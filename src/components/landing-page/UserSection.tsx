@@ -1,27 +1,28 @@
 'use client';
 
-import { signIn, useSession } from 'next-auth/react';
+import cls from 'classnames';
 
+import { signIn, useSession } from '#auth/client.ts';
 import Discord from '#components/Discord.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
 
 const UserSection = () => {
 	const session = useSession();
 
-	if (session.status !== 'authenticated')
+	if (!session.data)
 		return (
 			<TextButton
 				icon={Discord}
 				iconSize={24}
-				onClick={() => signIn('discord')}
-				loading={session.status === 'loading'}
+				onClick={() => signIn.social({ provider: 'discord' })}
+				loading={session.isPending}
 				className="text-2xl text-[#5865f2]"
 			>
 				Sign in with Discord
 			</TextButton>
 		);
 
-	const user = session.data?.user;
+	const user = session.data.user;
 
 	return (
 		<div className="flex items-center gap-3">
@@ -29,11 +30,16 @@ const UserSection = () => {
 			<div
 				className="size-8 rounded-full bg-contain"
 				style={{
-					backgroundImage: `url(${user?.image}), url(https://cdn.discordapp.com/embed/avatars/0.png)`
+					backgroundImage: `url(${user.image}), url(https://cdn.discordapp.com/embed/avatars/0.png)`
 				}}
 			/>
-			<span className={user?.isAdmin ? 'text-green font-bold' : undefined}>
-				{user?.name}
+			<span
+				className={cls({
+					'text-green font-bold': user.role === 'admin',
+					'text-[#41c8d4]': user.role === 'supporter'
+				})}
+			>
+				{user.name}
 			</span>
 		</div>
 	);

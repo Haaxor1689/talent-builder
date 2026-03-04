@@ -10,63 +10,16 @@ import {
 	exportCollection,
 	importCollection
 } from '#server/api/routers/collection.ts';
-import { exportTable, importTable } from '#server/api/routers/general.ts';
-import { downloadBlob } from '#utils.ts';
 
 import AdminModule from './AdminModule';
 
 const PageContent = () => {
 	const [isPending, startTransition] = useTransition();
 
-	const [table, setTable] = useState('');
-
 	const [collection, setCollection] = useState('');
 
 	return (
 		<div className="flex flex-wrap gap-2">
-			<AdminModule title="Import/export DB table">
-				<Input
-					placeholder="Table name"
-					value={table}
-					onChange={e => setTable(e.currentTarget.value)}
-				/>
-				<div className="flex gap-2 self-end">
-					<TextButton
-						icon={Upload}
-						onClick={() =>
-							startTransition(async () => {
-								const [file] = await window.showOpenFilePicker({
-									multiple: false
-								});
-								if (!file) return;
-								return importTable({
-									data: await file.getFile().then(f => f.text()),
-									table: table as never
-								});
-							})
-						}
-						disabled={isPending}
-					>
-						Import
-					</TextButton>
-					<TextButton
-						icon={Download}
-						onClick={() =>
-							startTransition(async () => {
-								const response = await exportTable(table as never);
-								downloadBlob(
-									new Blob([response]),
-									`talent-builder_${table}.json`
-								);
-							})
-						}
-						disabled={isPending}
-					>
-						Export
-					</TextButton>
-				</div>
-			</AdminModule>
-
 			<AdminModule title="Import/export talent collection">
 				<Input
 					placeholder="Collection name"

@@ -3,18 +3,16 @@
 import Link from 'next/link';
 import { CloudOff, EyeOff, Workflow } from 'lucide-react';
 
-import AuthorTag, {
-	type AuthorTagProps
-} from '#components/styled/AuthorTag.tsx';
+import AuthorTag from '#components/styled/AuthorTag.tsx';
 import SpellIcon from '#components/styled/SpellIcon.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
 import Tooltip from '#components/styled/Tooltip.tsx';
-import { type talentTrees } from '#server/db/schema.ts';
+import { type talentTrees, type user } from '#server/db/schema.ts';
 import { getLastUpdatedString, getTalentSum, maskToClass } from '#utils.ts';
 
 type Item = typeof talentTrees.$inferSelect & {
 	href: string;
-	createdBy: AuthorTagProps;
+	createdBy: Pick<typeof user.$inferSelect, 'image' | 'name' | 'role'> | null;
 	label?: string;
 	onClick?: (
 		e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement, MouseEvent>
@@ -78,14 +76,18 @@ const TreeGridItem = (item: Item) => {
 				prefetch={false}
 				onClick={item.onClick}
 			>
-				<div className="relative flex">
-					<SpellIcon icon={item.icon} showDefault className="cursor-pointer" />
-					{classInfo && (
-						<div className="pointer-events-none absolute -right-2 -bottom-4">
-							<SpellIcon icon={classInfo.icon} className="size-6" />
-						</div>
-					)}
-				</div>
+				<SpellIcon
+					icon={item.icon}
+					showDefault
+					className="cursor-pointer"
+					extraContent={
+						classInfo && (
+							<div className="pointer-events-none absolute -right-2 -bottom-4">
+								<SpellIcon icon={classInfo.icon} className="size-6" />
+							</div>
+						)
+					}
+				/>
 
 				<div className="flex shrink grow flex-col gap-1 text-inherit">
 					<p className="truncate text-lg text-inherit">{item.name}</p>

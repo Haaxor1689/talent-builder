@@ -1,24 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { cache } from 'react';
+// TODO: Replace with use cache
 import { unstable_cache } from 'next/cache';
-import { type Session } from 'next-auth';
 import { z } from 'zod';
 
-import { getServerAuthSession } from '../auth';
-import { db } from '../db';
+import { getSession } from '#auth/server.ts';
+import { db } from '#server/db/index.ts';
 
 type SessionTagType = 'user' | 'role' | 'any';
 
-const getSessionTag = (session: Session | null, sessionType?: SessionTagType) =>
+const getSessionTag = (
+	session: Awaited<ReturnType<typeof getSession>>,
+	sessionType?: SessionTagType
+) =>
 	`session:[${
 		sessionType === 'any'
 			? !!session
 			: sessionType === 'user'
 				? (session?.user?.id ?? 'none')
 				: sessionType === 'role'
-					? session?.user.isAdmin
-						? 'admin'
-						: 'user'
+					? session?.user.role
 					: 'none'
 	}]`;
 
@@ -32,7 +33,7 @@ export const publicProcedure =
 		Func extends (args: {
 			input: z.infer<Input>;
 			db: typeof db;
-			session: Awaited<ReturnType<typeof getServerAuthSession>>;
+			session: Awaited<ReturnType<typeof getSession>>;
 		}) => Promise<any>,
 		Input extends z.ZodTypeAny = z.ZodUndefined
 	>({
@@ -48,7 +49,7 @@ export const publicProcedure =
 	}) =>
 	async (val: z.infer<Input>): Promise<Awaited<ReturnType<Func>>> => {
 		const values = (input ?? z.undefined()).parse(val);
-		const session = !sessionType ? null : await getServerAuthSession();
+		const session = !sessionType ? null : await getSession();
 
 		if (!queryKey)
 			return cache(() => query({ input: values, db, session }))() as never;
@@ -70,7 +71,7 @@ export const protectedProcedure = <
 	Func extends (args: {
 		input: z.infer<Input>;
 		db: typeof db;
-		session: Exclude<Awaited<ReturnType<typeof getServerAuthSession>>, null>;
+		session: Exclude<Awaited<ReturnType<typeof getSession>>, null>;
 	}) => Promise<any>,
 	Input extends z.ZodTypeAny = z.ZodUndefined
 >({
@@ -88,7 +89,7 @@ export const protectedProcedure = <
 		input,
 		queryKey,
 		query: async args => {
-			const session = args.session ?? (await getServerAuthSession());
+			const session = args.session ?? (await getSession());
 			if (!session) throw new Error('UNAUTHORIZED');
 			return query({ ...args, session }) as never;
 		},
@@ -99,7 +100,7 @@ export const adminProcedure = <
 	Func extends (args: {
 		input: z.infer<Input>;
 		db: typeof db;
-		session: Exclude<Awaited<ReturnType<typeof getServerAuthSession>>, null>;
+		session: Exclude<Awaited<ReturnType<typeof getSession>>, null>;
 	}) => Promise<any>,
 	Input extends z.ZodTypeAny = z.ZodUndefined
 >({
@@ -117,13 +118,13 @@ export const adminProcedure = <
 		input,
 		queryKey,
 		query: async args => {
-			const session = args.session ?? (await getServerAuthSession());
-			if (!session?.user.isAdmin) throw new Error('UNAUTHORIZED');
+			const session = args.session ?? (await getSession());
+			if (session?.user.role !== 'admin') throw new Error('UNAUTHORIZED');
 			return query({ ...args, session }) as never;
 		},
 		sessionType: sessionType ?? 'role'
 	}) as never;
 
 export const createdBySelect = {
-	columns: { name: true, image: true, isAdmin: true }
+	columns: { name: true, image: true, role: true }
 } as const;

@@ -3,7 +3,6 @@
 import { useMemo, useRef, useState, useTransition } from 'react';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
 import {
 	Camera,
 	CloudOff,
@@ -16,6 +15,7 @@ import {
 } from 'lucide-react';
 import { nanoid } from 'nanoid';
 
+import { useSession } from '#auth/client.ts';
 import useLocalTrees from '#hooks/useLocalTrees.ts';
 import {
 	deleteTalentTree,
@@ -54,9 +54,8 @@ const TalentBuilder = (props: Props) => {
 
 	const editable =
 		!!props.isLocal ||
-		(session.status === 'authenticated' &&
-			(session.data.user.isAdmin ||
-				session.data.user.id === props.defaultValues?.createdById));
+		session.data?.user.role === 'admin' ||
+		session.data?.user.id === props.defaultValues?.createdById;
 
 	const defaultValues = useMemo(
 		() => TalentForm.parse(props.defaultValues ?? {}),
@@ -90,7 +89,7 @@ const TalentBuilder = (props: Props) => {
 					<div className="flex shrink items-center">
 						<ClassPicker name="class" disabled={!editable} />
 						<IdxInput control={control} disabled={!editable} />
-						{session.data?.user.isAdmin && (
+						{session.data?.user.role === 'admin' && (
 							<Input
 								placeholder="Collection"
 								{...register('collection')}

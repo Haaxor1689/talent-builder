@@ -36,7 +36,7 @@ const MobileTooltip = ({ children, tooltip, actions }: Props) => (
 		unstyled
 		className="flex flex-col items-center gap-3"
 	>
-		<div className="pointer-events-none">{children}</div>
+		<div className="group/tooltip pointer-events-none">{children}</div>
 		<div className="haax-surface-3 gap-0">{tooltip}</div>
 		{actions}
 		<TextButton icon={X} onClick={closeDialog} className="text-red">

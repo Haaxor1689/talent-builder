@@ -1,9 +1,9 @@
 import { Suspense } from 'react';
 
-import UserStatus from '#components/session/UserStatus.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
 
 import Navigation from './Navigation';
+import UserStatus from './UserStatus';
 
 const Header = () => (
 	<header className="haax-surface-3 mb-3 max-w-7xl flex-row items-center border-t-0 p-2 md:px-6 md:py-2 xl:mx-auto xl:w-full">

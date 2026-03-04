@@ -1,9 +1,9 @@
 import { useTransition } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
 import { Copy, Save, Trash2 } from 'lucide-react';
 
+import { useSession } from '#auth/client.ts';
 import {
 	deleteSavedBuild,
 	upsertSavedBuild
@@ -30,16 +30,15 @@ const Actions = ({ trees, isNew }: Props) => {
 	const router = useRouter();
 
 	const editable =
-		session.status === 'authenticated' &&
-		(session.data.user.isAdmin ||
-			session.data.user.id === watch('createdById'));
+		session.data?.user.role === 'admin' ||
+		session.data?.user.id === watch('createdById');
 
 	const name = watch('name');
 	const fullName = `${name ? `${name} ` : ''}${
 		maskToClass(watch('class'))?.name
 	}`;
 
-	if (session.status !== 'authenticated') return null;
+	if (!session.data) return null;
 	return (
 		<>
 			<hr />

@@ -1,40 +1,40 @@
+import { type HTMLAttributes } from 'react';
 import cls from 'classnames';
 
 import { getIconPath } from '#utils.ts';
 
-type Props = React.DetailedHTMLProps<
-	React.ButtonHTMLAttributes<HTMLButtonElement>,
-	HTMLButtonElement
-> & {
-	clickable?: boolean;
+type Props = HTMLAttributes<HTMLButtonElement> & {
 	icon?: string | null;
-	value?: number;
+	currentRank?: number;
 	ranks?: number | null;
 	frameClass?: string;
 	showDefault?: boolean;
 	showEmpty?: boolean;
 	selected?: boolean;
 	highlighted?: boolean;
+	disabled?: boolean;
 	size?: number;
+	className?: cls.Value;
+	extraContent?: React.ReactNode;
 };
+
 const SpellIcon = ({
-	ref,
 	icon,
-	value,
+	currentRank,
 	ranks,
 	showDefault,
 	selected,
 	highlighted,
 	frameClass,
 	className,
-	clickable,
+	disabled,
 	size = 64,
+	extraContent,
 	...props
-}: Props & { ref?: React.RefObject<HTMLButtonElement | null> }) => {
-	const isClickable = !!clickable || !!props.onClick;
+}: Props) => {
+	const isClickable = props.onClick && !disabled;
 	return (
 		<button
-			ref={ref}
 			type="button"
 			tabIndex={!isClickable ? -1 : undefined}
 			className={cls(
@@ -78,17 +78,18 @@ const SpellIcon = ({
 				</span>
 			)}
 
+			{extraContent}
 			{!!ranks && (
 				<p
 					className={cls(
 						'bg-dark-gray absolute right-1 bottom-1 translate-x-1/2 translate-y-1/2 rounded border-0 px-1',
 						{
-							'text-green': value !== undefined && ranks !== value,
-							'text-yellow': value !== undefined && ranks === value
+							'text-green': currentRank !== undefined && ranks !== currentRank,
+							'text-yellow': currentRank !== undefined && ranks === currentRank
 						}
 					)}
 				>
-					{value !== undefined ? `${value}/` : ''}
+					{currentRank !== undefined ? `${currentRank}/` : undefined}
 					{ranks}
 				</p>
 			)}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import cls from 'classnames';
 import { cloneDeep } from 'es-toolkit';
@@ -29,7 +29,6 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 	});
 	const { setValue, getValues } = useFormContext<TalentFormT>();
 
-	const ref = useRef<HTMLButtonElement>(null);
 	const [dragging, setDragging] = useState(false);
 
 	const isEmpty = isEmptyTalent(field);
@@ -53,118 +52,115 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 
 	if (!field) return null;
 	return (
-		<div className="relative flex">
-			<Tooltip
-				hidden={dragging || isEmpty}
-				tooltip={
+		<Tooltip
+			hidden={dragging || isEmpty}
+			tooltip={
+				<>
+					<p className="haax-color h4">{field.name || '[Empty talent]'}</p>
+					<p
+						className={cls('whitespace-pre-wrap', {
+							['text-blue-gray']: !description
+						})}
+					>
+						{description ?? '[No description]'}
+					</p>
+				</>
+			}
+			actions={
+				selected !== i && (
 					<>
-						{}
-						<p className="haax-color h4">{field.name || '[Empty talent]'}</p>
-						{}
-						<p
-							className={cls('whitespace-pre-wrap', {
-								['text-blue-gray']: !description
-							})}
+						{selected !== -1 && (
+							<>
+								<TextButton
+									icon={Link2}
+									onClick={e => {
+										setValue(`talents.${selected}.requires`, i, {
+											shouldDirty: true,
+											shouldTouch: true
+										});
+										closeDialog(e);
+									}}
+								>
+									Link as requirement
+								</TextButton>
+								<TextButton
+									icon={Replace}
+									onClick={e => {
+										swapTalents(i, selected);
+										closeDialog(e);
+									}}
+								>
+									Swap with selected
+								</TextButton>
+							</>
+						)}
+						<TextButton
+							icon={Pointer}
+							onClick={e => {
+								setSelected(i);
+								closeDialog(e);
+							}}
 						>
-							{description ?? '[No description]'}
-						</p>
+							Select
+						</TextButton>
 					</>
-				}
-				actions={
-					selected !== i && (
-						<>
-							{selected !== -1 && (
-								<>
-									<TextButton
-										icon={Link2}
-										onClick={e => {
-											setValue(`talents.${selected}.requires`, i, {
-												shouldDirty: true,
-												shouldTouch: true
-											});
-											closeDialog(e);
-										}}
-									>
-										Link as requirement
-									</TextButton>
-									<TextButton
-										icon={Replace}
-										onClick={e => {
-											swapTalents(i, selected);
-											closeDialog(e);
-										}}
-									>
-										Swap with selected
-									</TextButton>
-								</>
-							)}
-							<TextButton
-								icon={Pointer}
-								onClick={e => {
-									setSelected(i);
-									closeDialog(e);
-								}}
-							>
-								Select
-							</TextButton>
-						</>
+				)
+			}
+		>
+			<SpellIcon
+				onClick={e => {
+					if (e.shiftKey && editable && selected !== -1) {
+						setValue(
+							`talents.${selected}.requires`,
+							selected === i ? null : i,
+							{ shouldDirty: true, shouldTouch: true }
+						);
+					} else {
+						setSelected(selected === i ? -1 : i);
+					}
+				}}
+				onKeyDown={e => {
+					if (!editable || e.key !== 'Delete') return;
+					setValue(`talents.${selected}`, Talent.parse({}), {
+						shouldDirty: true,
+						shouldTouch: true
+					});
+				}}
+				icon={field.icon}
+				ranks={field.ranks}
+				selected={selected === i}
+				highlighted={!!field.highlight}
+				frameClass={cls({ 'opacity-10': !field.name })}
+				onDragStart={e => {
+					if (!editable || isEmpty) {
+						e.preventDefault();
+						return;
+					}
+
+					setDragging(true);
+					e.dataTransfer.setData('text/plain', i.toString());
+					window.addEventListener('dragend', () => setDragging(false), {
+						once: true
+					});
+				}}
+				onDragOver={e => {
+					if (!editable) return;
+					e.preventDefault();
+				}}
+				onDrop={e => {
+					if (!editable) return;
+					e.preventDefault();
+					const idx = Number(e.dataTransfer.getData('text/plain'));
+					swapTalents(i, idx);
+				}}
+				showDefault={!isEmpty}
+				extraContent={
+					field.requires !== null && (
+						<TalentArrow start={field.requires} end={i} />
 					)
 				}
-			>
-				<SpellIcon
-					ref={ref}
-					onClick={e => {
-						if (e.shiftKey && editable && selected !== -1) {
-							setValue(
-								`talents.${selected}.requires`,
-								selected === i ? null : i,
-								{ shouldDirty: true, shouldTouch: true }
-							);
-						} else {
-							setSelected(selected === i ? -1 : i);
-						}
-					}}
-					onKeyDown={e => {
-						if (!editable || e.key !== 'Delete') return;
-						setValue(`talents.${selected}`, Talent.parse({}), {
-							shouldDirty: true,
-							shouldTouch: true
-						});
-					}}
-					icon={field.icon}
-					ranks={field.ranks}
-					selected={selected === i}
-					highlighted={!!field.highlight}
-					frameClass={cls({ 'opacity-10': !field.name })}
-					onDragStart={e => {
-						if (!editable || isEmpty) {
-							e.preventDefault();
-							return;
-						}
-
-						setDragging(true);
-						e.dataTransfer.setData('text/plain', i.toString());
-						window.addEventListener('dragend', () => setDragging(false), {
-							once: true
-						});
-					}}
-					onDragOver={e => {
-						if (!editable) return;
-						e.preventDefault();
-					}}
-					onDrop={e => {
-						if (!editable) return;
-						e.preventDefault();
-						const idx = Number(e.dataTransfer.getData('text/plain'));
-						swapTalents(i, idx);
-					}}
-					showDefault={!isEmpty}
-				/>
-			</Tooltip>
-			{field.requires !== null && (
-				<TalentArrow start={field.requires} end={i} />
-			)}
-		</div>
+			/>
+		</Tooltip>
 	);
 };
 export default TalentPreview;

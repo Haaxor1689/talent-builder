@@ -38,7 +38,7 @@ export const TalentForm = z.object({
 		.object({
 			name: z.string().nullable(),
 			image: z.string().nullable(),
-			isAdmin: z.boolean().nullable().default(false)
+			role: z.enum(['user', 'admin', 'supporter']).nullable()
 		})
 		.nullable()
 		.default(null),
@@ -104,7 +104,7 @@ export const BuildForm = z.object({
 		.object({
 			name: z.string().nullable(),
 			image: z.string().nullable(),
-			isAdmin: z.boolean().nullable().default(false)
+			role: z.enum(['user', 'admin', 'supporter']).nullable()
 		})
 		.nullable()
 		.default(null),

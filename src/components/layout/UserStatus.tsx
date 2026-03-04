@@ -1,51 +1,62 @@
 'use client';
 
-import { signIn, signOut, useSession } from 'next-auth/react';
+import { useTransition } from 'react';
 import cls from 'classnames';
 import { LogOut, Settings } from 'lucide-react';
 
-import Discord from '../Discord';
-import Spinner from '../styled/Spinner';
-import TextButton from '../styled/TextButton';
+import { signIn, signOut, useSession } from '#auth/client.ts';
+import Discord from '#components/Discord.tsx';
+import Spinner from '#components/styled/Spinner.tsx';
+import TextButton from '#components/styled/TextButton.tsx';
 
 const UserStatus = () => {
 	const session = useSession();
-	if (session.status === 'loading')
+	const [isPending, startTransition] = useTransition();
+
+	if (session.isPending)
 		return (
 			<div className="mx-2 flex items-center">
 				<Spinner size={26} />
 			</div>
 		);
 
-	if (session.status === 'unauthenticated')
+	if (!session.data)
 		return (
 			<TextButton
 				icon={Discord}
-				onClick={() => signIn('discord')}
+				onClick={() =>
+					startTransition(async () => {
+						await signIn.social({ provider: 'discord' });
+					})
+				}
+				loading={isPending}
 				className="text-[#5865f2] [&_span]:hidden [&_span]:md:inline"
 			>
 				Sign in
 			</TextButton>
 		);
 
+	const { name, image, role } = session.data.user;
+
 	return (
 		<>
 			<div className="flex items-center gap-3">
 				<span
 					className={cls('hidden select-none sm:inline', {
-						'text-green font-bold': session.data?.user.isAdmin
+						'text-green font-bold': role === 'admin',
+						'text-[#41c8d4]': role === 'supporter'
 					})}
 				>
-					{session.data?.user.name}
+					{name}
 				</span>
 				<div
 					className="size-8 rounded-full bg-contain"
 					style={{
-						backgroundImage: `url(${session.data?.user.image}), url(https://cdn.discordapp.com/embed/avatars/0.png)`
+						backgroundImage: `url(${image}), url(https://cdn.discordapp.com/embed/avatars/0.png)`
 					}}
 				/>
 			</div>
-			{session.data?.user.isAdmin && (
+			{role === 'admin' && (
 				<TextButton
 					icon={Settings}
 					title="Admin panel"
@@ -55,7 +66,12 @@ const UserStatus = () => {
 			)}
 			<TextButton
 				icon={LogOut}
-				onClick={() => signOut()}
+				onClick={() =>
+					startTransition(async () => {
+						await signOut();
+					})
+				}
+				loading={isPending}
 				className="[&_span]:hidden [&_span]:md:inline"
 			>
 				Sign out

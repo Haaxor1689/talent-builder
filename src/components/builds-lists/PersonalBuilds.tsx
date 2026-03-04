@@ -1,10 +1,10 @@
+import { getSession } from '#auth/server.ts';
 import { listPersonalSavedBuilds } from '#server/api/routers/savedBuilds.ts';
-import { getServerAuthSession } from '#server/auth.ts';
 
 import BuildsGrid from './BuildsGrid';
 
 const PersonalBuilds = async () => {
-	const session = await getServerAuthSession();
+	const session = await getSession();
 	if (!session) return null;
 	const builds = await listPersonalSavedBuilds(undefined);
 	if (!builds.length) return null;
