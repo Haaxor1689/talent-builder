@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import { logger } from '#utils/index.ts';
+
 const getInit = <T>(key: string, parse: (v: string) => T = JSON.parse) => {
 	if (typeof window === 'undefined') return undefined;
 	try {
@@ -7,7 +9,7 @@ const getInit = <T>(key: string, parse: (v: string) => T = JSON.parse) => {
 		if (!item) return undefined;
 		return parse(item);
 	} catch (error) {
-		console.error(error);
+		logger.error(error);
 		return undefined;
 	}
 };
@@ -32,7 +34,7 @@ const useLocalStorage = <T>(
 			}
 		} catch (error) {
 			// A more advanced implementation would handle the error case
-			console.log(error);
+			logger.error(error);
 		}
 	};
 	return [storedValue, setValue] as const;

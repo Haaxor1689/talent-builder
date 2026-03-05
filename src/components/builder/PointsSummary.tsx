@@ -3,7 +3,7 @@
 import { useWatch } from 'react-hook-form';
 
 import { type TalentFormT } from '#server/schemas.ts';
-import { getTalentSum } from '#utils.ts';
+import { getTalentSum } from '#utils/index.ts';
 
 const PointsSummary = () => {
 	const field = useWatch<TalentFormT, 'talents'>({ name: 'talents' });

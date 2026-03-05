@@ -10,7 +10,7 @@ import {
 	CalculatorParams,
 	type TalentFormT
 } from '#server/schemas.ts';
-import { zodResolver } from '#utils.ts';
+import { zodResolver } from '#utils/index.ts';
 
 import ClassPicker from '../form/ClassPicker';
 import ScrollArea from '../styled/ScrollArea';

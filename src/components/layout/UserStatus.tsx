@@ -1,11 +1,11 @@
 'use client';
 
 import { useTransition } from 'react';
-import cls from 'classnames';
 import { LogOut, Settings } from 'lucide-react';
 
 import { signIn, signOut, useSession } from '#auth/client.ts';
 import Discord from '#components/Discord.tsx';
+import AuthorTag from '#components/styled/AuthorTag.tsx';
 import Spinner from '#components/styled/Spinner.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
 
@@ -30,7 +30,7 @@ const UserStatus = () => {
 					})
 				}
 				loading={isPending}
-				className="text-[#5865f2] [&_span]:hidden [&_span]:md:inline"
+				className="text-[#5865f2]"
 			>
 				Sign in
 			</TextButton>
@@ -40,21 +40,8 @@ const UserStatus = () => {
 
 	return (
 		<>
-			<div className="flex items-center gap-3">
-				<span
-					className={cls('hidden select-none sm:inline', {
-						'text-green font-bold': role === 'admin',
-						'text-[#41c8d4]': role === 'supporter'
-					})}
-				>
-					{name}
-				</span>
-				<div
-					className="size-8 rounded-full bg-contain"
-					style={{
-						backgroundImage: `url(${image}), url(https://cdn.discordapp.com/embed/avatars/0.png)`
-					}}
-				/>
+			<div className="flex flex-row-reverse items-center gap-3">
+				<AuthorTag image={image ?? null} name={name} role={role} />
 			</div>
 			{role === 'admin' && (
 				<TextButton

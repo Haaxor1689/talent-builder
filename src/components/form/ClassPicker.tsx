@@ -4,7 +4,7 @@ import { type Control, useController } from 'react-hook-form';
 import cls from 'classnames';
 import { X } from 'lucide-react';
 
-import { classMask, maskToClass } from '#utils.ts';
+import { classMask, maskToClass } from '#utils/index.ts';
 
 import Dialog, { closeDialog } from '../styled/Dialog';
 import SpellIcon from '../styled/SpellIcon';

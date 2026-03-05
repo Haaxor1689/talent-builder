@@ -15,7 +15,7 @@ const AuthorTag = ({
 			}}
 		/>
 		<span
-			className={cls('hidden select-none sm:inline', {
+			className={cls('select-none', {
 				'text-green font-bold': role === 'admin',
 				'text-[#41c8d4]': role === 'supporter'
 			})}

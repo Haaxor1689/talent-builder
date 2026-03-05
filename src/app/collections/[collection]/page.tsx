@@ -2,8 +2,8 @@ import { type Metadata } from 'next';
 
 import TreeGridItem from '#app/trees/TreeGridItem.tsx';
 import ClassCalculatorsLinks from '#components/calculator/ClassCalculatorsLinks.tsx';
-import { getCollectionTree } from '#server/api/routers/collection.ts';
-import { classMask } from '#utils.ts';
+import { getCollectionTree } from '#server/api/collection.ts';
+import { classMask } from '#utils/index.ts';
 
 type Props = PageProps<'/collections/[collection]'>;
 

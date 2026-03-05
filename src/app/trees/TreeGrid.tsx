@@ -6,7 +6,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import cls from 'classnames';
 
 import Spinner from '#components/styled/Spinner.tsx';
-import { listInfiniteTalentTrees } from '#server/api/routers/talentTree.ts';
+import { listInfiniteTalentTrees } from '#server/api/talentTree.actions.ts';
 import { Filters, type FiltersT } from '#server/schemas.ts';
 
 import TreeGridItem from './TreeGridItem';

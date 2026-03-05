@@ -6,17 +6,14 @@ import { z } from 'zod';
 
 import { env } from '#env.js';
 import { db } from '#server/db/index.ts';
+import { UserRoles } from '#server/db/schema.ts';
 
 export const auth = betterAuth({
 	baseURL: env.DEPLOY_URL,
 	database: drizzleAdapter(db, { provider: 'sqlite' }),
 	user: {
 		additionalFields: {
-			role: {
-				type: ['user', 'supporter', 'admin'] as const,
-				defaultValue: 'user',
-				input: false
-			}
+			role: { type: UserRoles, defaultValue: 'user', input: false }
 		}
 	},
 	socialProviders: {

@@ -9,7 +9,7 @@ import { toast } from '#components/ToastProvider.tsx';
 import {
 	exportCollection,
 	importCollection
-} from '#server/api/routers/collection.ts';
+} from '#server/api/collection.actions.ts';
 
 import AdminModule from './AdminModule';
 
@@ -50,7 +50,7 @@ const PageContent = () => {
 						icon={Download}
 						onClick={() =>
 							startTransition(async () => {
-								const response = await exportCollection(collection);
+								const response = await exportCollection({ collection });
 								window.navigator.clipboard.writeText(response);
 								toast({ message: 'Copied to clipboard', type: 'success' });
 							})

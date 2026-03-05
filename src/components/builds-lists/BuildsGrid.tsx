@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Workflow } from 'lucide-react';
 
 import { type savedBuilds, type user } from '#server/db/schema.ts';
-import { getLastUpdatedString, maskToClass } from '#utils.ts';
+import { getLastUpdatedString, maskToClass } from '#utils/index.ts';
 
 import AuthorTag from '../styled/AuthorTag';
 import SpellIcon from '../styled/SpellIcon';

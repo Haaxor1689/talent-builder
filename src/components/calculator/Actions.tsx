@@ -7,9 +7,9 @@ import { useSession } from '#auth/client.ts';
 import {
 	deleteSavedBuild,
 	upsertSavedBuild
-} from '#server/api/routers/savedBuilds.ts';
+} from '#server/api/savedBuilds.actions.ts';
 import { type BuildFormT, type TalentFormT } from '#server/schemas.ts';
-import { maskToClass } from '#utils.ts';
+import { maskToClass } from '#utils/index.ts';
 
 import ConfirmDialog from '../ConfirmDialog';
 import Input from '../form/Input';
@@ -106,9 +106,8 @@ const Actions = ({ trees, isNew }: Props) => {
 						title={`Are you sure you want to delete "${fullName}" build?`}
 						confirm={() =>
 							startTransition(async () => {
-								const values = getValues();
-								await deleteSavedBuild(values.id);
-
+								const { id } = getValues();
+								await deleteSavedBuild({ id });
 								router.push('/calculator');
 							})
 						}

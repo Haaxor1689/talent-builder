@@ -2,10 +2,10 @@ import { Suspense } from 'react';
 
 import Spinner from '#components/styled/Spinner.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
-import { listCollections } from '#server/api/routers/collection.ts';
+import { listCollections } from '#server/api/collection.ts';
 
 const Page = async () => {
-	const collections = await listCollections(undefined);
+	const collections = await listCollections();
 	return (
 		<>
 			<h2 className="haax-color mt-4 -mb-2 text-center">Talent Collections</h2>

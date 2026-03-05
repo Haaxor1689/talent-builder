@@ -3,9 +3,12 @@ import { zodResolver as resolver } from '@hookform/resolvers/zod';
 import { isEqual } from 'es-toolkit';
 import { toPng } from 'html-to-image';
 import { Calculator, LibraryBig, PlusCircle, Workflow } from 'lucide-react';
-import type { z } from 'zod';
+import pino, { type Logger } from 'pino';
+import { type z } from 'zod';
 
 import { type TalentFormT, type TalentTreeT } from '#server/schemas.ts';
+
+import { Errors, isErrors } from './errors';
 
 export const zodResolver = <In extends FieldValues, Out extends FieldValues>(
 	schema: z.ZodType<In, z.ZodTypeDef, Out>
@@ -70,7 +73,8 @@ export const topNavigation = [
 export const getIconPath = (icon?: string) =>
 	icon?.startsWith('_')
 		? `/api/wowhead-icons/${icon.toLocaleLowerCase()}`
-		: `/icons/${(icon || 'inv_misc_questionmark').toLocaleLowerCase()}.png`;
+		: // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+			`/icons/${(icon || 'inv_misc_questionmark').toLocaleLowerCase()}.png`;
 
 export const elementToPng = async (element: HTMLElement, name: string) => {
 	const dataUrl = await toPng(element, {
@@ -81,3 +85,44 @@ export const elementToPng = async (element: HTMLElement, name: string) => {
 	link.href = dataUrl;
 	link.click();
 };
+
+export const safeJsonParse = <T extends z.ZodTypeAny>({
+	text,
+	schema,
+	errorMessage: message
+}: {
+	text: string;
+	schema: T;
+	errorMessage?: string;
+}) => {
+	try {
+		const json = JSON.parse(text);
+		const parsed = schema.safeParse(json);
+		if (!parsed.success)
+			throw Errors.schemaValidation({
+				message,
+				error: parsed.error,
+				data: json
+			});
+		return parsed.data as z.infer<T>;
+	} catch (err) {
+		throw isErrors(err) ? err : Errors.jsonParse({ message, data: text });
+	}
+};
+
+const createLogger = (): Logger => {
+	if (typeof window !== 'undefined') {
+		return pino({
+			browser: { transmit: { level: 'info', send: () => {} } },
+			level: 'info'
+		});
+	}
+	return pino({
+		level: 'info',
+		transport:
+			process.env.NODE_ENV === 'development'
+				? { target: 'pino-pretty', options: { colorize: true } }
+				: undefined
+	});
+};
+export const logger = createLogger();

@@ -1,66 +1,24 @@
 'use server';
 
-import 'server-only';
-
+import { updateTag } from 'next/cache';
 import { and, asc, eq } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
 import { z } from 'zod';
 
+import { db } from '#server/db/index.ts';
 import { talentTrees } from '#server/db/schema.ts';
+import { serverFunction } from '#server/helpers.ts';
+import { Talent } from '#server/schemas.ts';
+import { safeJsonParse } from '#utils/index.ts';
 
-import { adminProcedure, createdBySelect, publicProcedure } from '../helpers';
-import { Talent } from '../types';
+import { getUser } from '.';
+import { FallbackCollection } from './collection';
 import { turtleWoWAccountId } from './general';
 
-const FallbackCollection = '1.18.0';
-
-export const listCollections = publicProcedure({
-	queryKey: 'listCollections',
-	query: async ({ db }) => {
-		const response = await db
-			.selectDistinct({ collection: talentTrees.collection })
-			.from(talentTrees);
-		return response
-			.map(t => t.collection)
-			.filter(v => v !== null && !v.startsWith('_'));
-	}
-});
-
-export const getCollectionTree = publicProcedure({
-	input: z.object({
-		collection: z.string(),
-		class: z.number(),
-		index: z.number()
-	}),
-	queryKey: 'getCollectionTree',
-	sessionType: 'role',
-	query: async ({ db, input, session }) =>
-		(await db.query.talentTrees.findFirst({
-			where: and(
-				eq(talentTrees.collection, input.collection),
-				eq(talentTrees.class, input.class),
-				eq(talentTrees.index, input.index),
-				session?.user?.role === 'admin'
-					? undefined
-					: eq(talentTrees.public, true)
-			),
-			with: { createdBy: createdBySelect }
-		})) ??
-		(await db.query.talentTrees.findFirst({
-			where: and(
-				eq(talentTrees.collection, FallbackCollection),
-				eq(talentTrees.class, input.class),
-				eq(talentTrees.index, input.index)
-			),
-			with: { createdBy: createdBySelect }
-		}))
-});
-
-export const importCollection = adminProcedure({
+export const importCollection = serverFunction({
 	input: z.object({ collection: z.string(), json: z.string() }),
-	query: async ({ input, db }) => {
-		if (!input.collection) return;
-
+	session: () => getUser('admin').then(() => true),
+	query: async input => {
 		const DbTalent = z.object({
 			id: z.number(),
 			icon: z.string(),
@@ -79,16 +37,14 @@ export const importCollection = adminProcedure({
 			talents: z.array(DbTalent.nullable()).length(4 * 7)
 		});
 
-		const trees = z.array(DbTalentTree).safeParse(JSON.parse(input.json));
+		const trees = safeJsonParse({
+			text: input.json,
+			schema: z.array(DbTalentTree),
+			errorMessage: 'Invalid input'
+		});
 
-		if (!trees.success) {
-			throw new Error(
-				`Invalid input: ${JSON.stringify(trees.error.errors, null, 2)}`
-			);
-		}
-
-		const turtleWoW = await turtleWoWAccountId(undefined);
-		for (const tree of trees.data) {
+		const turtleWoW = await turtleWoWAccountId();
+		for (const tree of trees) {
 			const exists = await db.query.talentTrees.findFirst({
 				where: and(
 					eq(talentTrees.collection, input.collection),
@@ -153,12 +109,13 @@ export const importCollection = adminProcedure({
 				});
 			});
 
-			if (exists)
+			if (exists) {
 				await db
 					.update(talentTrees)
 					.set({ ...tree, name: tree.name_enUS, talents })
 					.where(eq(talentTrees.id, exists.id));
-			else
+				updateTag(`talentTrees:id:${exists.id}`);
+			} else
 				await db.insert(talentTrees).values({
 					...tree,
 					name: tree.name_enUS,
@@ -169,15 +126,16 @@ export const importCollection = adminProcedure({
 					createdAt: new Date()
 				});
 		}
+		updateTag(`collections:${input.collection}`);
 	}
 });
 
-export const exportCollection = adminProcedure({
-	input: z.string(),
-	query: async ({ db, input }) => {
-		if (!input) return '';
+export const exportCollection = serverFunction({
+	input: z.object({ collection: z.string() }),
+	session: () => getUser('admin').then(() => true),
+	query: async input => {
 		let trees = await db.query.talentTrees.findMany({
-			where: eq(talentTrees.collection, input),
+			where: eq(talentTrees.collection, input.collection),
 			orderBy: [asc(talentTrees.class), asc(talentTrees.index)]
 		});
 
@@ -211,13 +169,5 @@ export const exportCollection = adminProcedure({
 				)
 			}))
 		);
-	}
-});
-
-export const deleteCollection = adminProcedure({
-	input: z.string(),
-	query: async ({ db, input }) => {
-		if (!input) return;
-		await db.delete(talentTrees).where(eq(talentTrees.collection, input));
 	}
 });

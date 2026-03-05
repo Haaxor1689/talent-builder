@@ -3,9 +3,9 @@ import { notFound } from 'next/navigation';
 
 import TalentCalculator from '#components/calculator/TalentCalculator.tsx';
 import { env } from '#env.js';
-import { getTalentTree } from '#server/api/routers/talentTree.ts';
+import { getTalentTree } from '#server/api/talentTree.ts';
 import { CalculatorParams } from '#server/schemas.ts';
-import { getIconPath, maskToClass } from '#utils.ts';
+import { getIconPath, maskToClass } from '#utils/index.ts';
 
 type Props = PageProps<'/calculator'>;
 
@@ -16,9 +16,9 @@ export const generateMetadata = async ({
 	if (!parsed.success) return {};
 
 	const trees = await Promise.all([
-		getTalentTree(parsed.data.t0),
-		getTalentTree(parsed.data.t1),
-		getTalentTree(parsed.data.t2)
+		getTalentTree({ id: parsed.data.t0 }),
+		getTalentTree({ id: parsed.data.t1 }),
+		getTalentTree({ id: parsed.data.t2 })
 	] as const);
 
 	const classInfo = maskToClass(parsed.data.class);
@@ -37,9 +37,9 @@ const Page = async ({ searchParams }: Props) => {
 	if (!parsed.success) return notFound();
 
 	const trees = await Promise.all([
-		getTalentTree(parsed.data.t0),
-		getTalentTree(parsed.data.t1),
-		getTalentTree(parsed.data.t2)
+		getTalentTree({ id: parsed.data.t0 }),
+		getTalentTree({ id: parsed.data.t1 }),
+		getTalentTree({ id: parsed.data.t2 })
 	] as const);
 
 	return (

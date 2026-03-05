@@ -19,6 +19,13 @@ export const sqliteTable = sqliteTableCreator(name => `talent-builder_${name}`);
 
 // Auth tables
 
+export const UserRoles = ['user', 'supporter', 'admin'] as [
+	'user',
+	'supporter',
+	'admin'
+];
+export type UserRole = (typeof UserRoles)[number];
+
 export const user = sqliteTable('user_new', {
 	id: text('id').primaryKey(),
 	name: text('name').notNull(),
@@ -27,9 +34,7 @@ export const user = sqliteTable('user_new', {
 	image: text('image'),
 	createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
 	updatedAt: integer('updatedAt', { mode: 'timestamp' }).notNull(),
-	role: text('role', { enum: ['user', 'supporter', 'admin'] })
-		.default('user')
-		.notNull()
+	role: text('role', { enum: UserRoles }).default('user').notNull()
 });
 
 export const userRelations = relations(user, ({ many }) => ({

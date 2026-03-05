@@ -1,7 +1,7 @@
 import { type HTMLAttributes } from 'react';
 import cls from 'classnames';
 
-import { getIconPath } from '#utils.ts';
+import { getIconPath } from '#utils/index.ts';
 
 type Props = HTMLAttributes<HTMLButtonElement> & {
 	icon?: string | null;

@@ -1,38 +1,21 @@
 /* eslint-disable jsx-a11y/alt-text */
 
-import { ImageResponse } from 'next/og';
-import cls from 'classnames';
-
 import { env } from '#env.js';
-import { getIconPath } from '#utils.ts';
+import {
+	imageResponse,
+	imageSize,
+	randomBackground
+} from '#utils/imageResponse.ts';
+import { getIconPath } from '#utils/index.ts';
 
-// Route segment config
-export const runtime = 'edge';
+export const size = imageSize;
+export const contentType = 'image/webp';
 
-// Image metadata
-export const alt = 'Talent builder';
-export const size = {
-	width: 1200,
-	height: 630
-};
-
-export const contentType = 'image/png';
-
-// Image generation
 const Image = async ({ params }: PageProps<'/tree/[id]'>) => {
 	const { id } = await params;
-	const response = await fetch(`${env.DEPLOY_URL}/api/og/${id}`).then(r =>
-		r.json()
-	);
-
-	if (!response) return undefined;
-
-	// Font
-	const fontinSans = await fetch(
-		new URL('../../../assets/FontinSans-Regular.otf', import.meta.url)
-	).then(res => res.arrayBuffer());
-
-	return new ImageResponse(
+	const r = await fetch(`${env.DEPLOY_URL}/api/og/${id}`).then(r => r.json());
+	if (!r) return undefined;
+	return imageResponse(
 		<div
 			style={{
 				width: '100%',
@@ -41,87 +24,67 @@ const Image = async ({ params }: PageProps<'/tree/[id]'>) => {
 				flexDirection: 'column',
 				alignItems: 'center',
 				justifyContent: 'center',
-				gap: 8,
+				gap: 32,
 				color: 'white',
-				background: '#181412',
-				backgroundImage: `url("${env.DEPLOY_URL}/page_background.png")`
+				background: '#0f0d0c',
+				backgroundImage: await randomBackground()
 			}}
 		>
-			<div style={{ fontSize: 32, textTransform: 'uppercase' }}>
-				Talent builder
-			</div>
+			<div style={{ fontSize: 64, color: '#f9a146' }}>Talent Builder</div>
 
 			<div
 				style={{
 					display: 'flex',
-					gap: 8,
+					flexWrap: 'wrap',
+					justifyContent: 'center',
+					gap: 16,
 					alignItems: 'center',
-					paddingTop: 16,
-					paddingBottom: 8,
-					maxWidth: '90%',
 					textAlign: 'center'
 				}}
 			>
 				<img
-					src={env.DEPLOY_URL + getIconPath(response.icon)}
-					width={64}
-					height={64}
+					src={env.DEPLOY_URL + getIconPath(r.icon)}
+					width={128}
+					height={128}
 				/>
-				<div style={{ fontSize: 86 }}>{response.name}</div>
+				<span style={{ fontSize: 118, maxHeight: 235, overflow: 'hidden' }}>
+					{r.name}
+				</span>
 			</div>
 
-			<div
-				style={{
-					display: 'flex',
-					alignItems: 'center',
-					gap: 8,
-					fontSize: 42
-				}}
-			>
-				<span style={{ color: '#929391' }}>Total points: </span>
-				{response.sum}
-			</div>
-
-			{response.user?.name && (
+			{r.createdBy && (
 				<div
 					style={{
 						display: 'flex',
 						alignItems: 'center',
-						gap: 8,
+						gap: 16,
 						fontSize: 42
 					}}
 				>
-					<span style={{ color: '#929391' }}>Author:</span>
-					{response.user?.image && (
+					<span style={{ color: '#929391' }}>Created by</span>
+					{r.createdBy?.image && (
 						<img
-							src={response.user?.image ?? ''}
-							width={42}
-							height={42}
+							src={r.createdBy.image}
+							width={38}
+							height={38}
 							style={{ borderRadius: '100%' }}
 						/>
 					)}
 					<span
-						className={cls({
-							'text-green font-bold': response.user?.role === 'admin',
-							'text-[#41c8d4]': response.user?.role === 'supporter'
-						})}
+						style={{
+							color:
+								r.createdBy.role === 'admin'
+									? '#8dd958'
+									: r.createdBy.role === 'supporter'
+										? '#41c8d4'
+										: 'white'
+						}}
 					>
-						{response.user?.name}
+						{r.createdBy.name}
 					</span>
 				</div>
 			)}
-		</div>,
-		{
-			...size,
-			fonts: [
-				{
-					name: 'Inter',
-					data: await fontinSans,
-					style: 'normal',
-					weight: 400
-				}
-			]
-		}
+		</div>
 	);
 };
 

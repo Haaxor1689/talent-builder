@@ -9,7 +9,7 @@ import ClassPicker from '#components/form/ClassPicker.tsx';
 import Input from '#components/form/Input.tsx';
 import useDebounced from '#hooks/useDebounced.ts';
 import { Filters } from '#server/schemas.ts';
-import { zodResolver } from '#utils.ts';
+import { zodResolver } from '#utils/index.ts';
 
 const FiltersSection = () => {
 	const searchParams = useSearchParams();

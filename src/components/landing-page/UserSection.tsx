@@ -16,7 +16,7 @@ const UserSection = () => {
 				iconSize={24}
 				onClick={() => signIn.social({ provider: 'discord' })}
 				loading={session.isPending}
-				className="text-2xl text-[#5865f2]"
+				className="self-center rounded-full border-2 border-current/30 px-4 py-3 text-2xl text-[#5865f2] *:font-bold"
 			>
 				Sign in with Discord
 			</TextButton>

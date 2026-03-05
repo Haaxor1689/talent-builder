@@ -3,6 +3,8 @@ import { z } from 'zod';
 
 import { bitUnpack, legacyBitUnpack } from '#components/calculator/utils.ts';
 
+import { UserRoles } from './db/schema';
+
 export const Talent = z.object({
 	icon: z.string().default(''),
 	name: z.string().default(''),
@@ -38,7 +40,7 @@ export const TalentForm = z.object({
 		.object({
 			name: z.string(),
 			image: z.string().nullable(),
-			role: z.enum(['user', 'admin', 'supporter'])
+			role: z.enum(UserRoles)
 		})
 		.nullable()
 		.default(null),
@@ -51,7 +53,7 @@ export const Filters = z.object({
 	name: z.string().optional().default(''),
 	from: z.string().optional().default(''),
 	class: z.coerce.number().optional().default(0),
-	sort: z.enum(['newest', 'class']).default('newest'),
+	sort: z.enum(['updated', 'class']).default('updated'),
 	collection: z.string().optional().default(''),
 	onlyPersonal: z.coerce.boolean().optional().default(false)
 });
@@ -102,9 +104,9 @@ export const BuildForm = z.object({
 	createdById: z.string().nullable().default(null),
 	createdBy: z
 		.object({
-			name: z.string().nullable(),
+			name: z.string(),
 			image: z.string().nullable(),
-			role: z.enum(['user', 'admin', 'supporter']).nullable()
+			role: z.enum(UserRoles)
 		})
 		.nullable()
 		.default(null),

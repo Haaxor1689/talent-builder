@@ -20,9 +20,9 @@ import useLocalTrees from '#hooks/useLocalTrees.ts';
 import {
 	deleteTalentTree,
 	upsertTalentTree
-} from '#server/api/routers/talentTree.ts';
+} from '#server/api/talentTree.actions.ts';
 import { TalentForm, type TalentFormT } from '#server/schemas.ts';
-import { elementToPng, zodResolver } from '#utils.ts';
+import { elementToPng, zodResolver } from '#utils/index.ts';
 
 import ConfirmDialog from '../ConfirmDialog';
 import CheckboxInput from '../form/CheckboxInput';
@@ -195,7 +195,7 @@ const TalentBuilder = (props: Props) => {
 												return newSpecs;
 											});
 										} else {
-											await deleteTalentTree(values.id);
+											await deleteTalentTree({ id: values.id });
 										}
 										router.push('/');
 									})

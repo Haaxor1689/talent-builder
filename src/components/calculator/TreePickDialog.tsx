@@ -9,9 +9,9 @@ import { ListFilter } from 'lucide-react';
 
 import TreeGridItem from '#app/trees/TreeGridItem.tsx';
 import useDebounced from '#hooks/useDebounced.ts';
-import { listInfiniteTalentTrees } from '#server/api/routers/talentTree.ts';
+import { listInfiniteTalentTrees } from '#server/api/talentTree.actions.ts';
 import { Filters } from '#server/schemas.ts';
-import { zodResolver } from '#utils.ts';
+import { zodResolver } from '#utils/index.ts';
 
 import Input from '../form/Input';
 import Dialog, { closeDialog } from '../styled/Dialog';

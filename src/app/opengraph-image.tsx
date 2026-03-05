@@ -1,28 +1,17 @@
 /* eslint-disable jsx-a11y/alt-text */
 
-import { ImageResponse } from 'next/og';
-
 import { env } from '#env.js';
+import {
+	imageResponse,
+	imageSize,
+	randomBackground
+} from '#utils/imageResponse.ts';
 
-// Route segment config
-export const runtime = 'edge';
+export const size = imageSize;
+export const contentType = 'image/webp';
 
-// Image metadata
-export const alt = 'Talent builder';
-export const size = {
-	width: 1200,
-	height: 630
-};
-
-export const contentType = 'image/png';
-
-const Image = async () => {
-	// Font
-	const fontinSans = await fetch(
-		new URL('../assets/FontinSans-Regular.otf', import.meta.url)
-	).then(res => res.arrayBuffer());
-
-	return new ImageResponse(
+const Image = async () =>
+	imageResponse(
 		<div
 			style={{
 				width: '100%',
@@ -31,30 +20,19 @@ const Image = async () => {
 				flexDirection: 'column',
 				alignItems: 'center',
 				justifyContent: 'center',
-				gap: 32,
 				color: 'white',
-				textTransform: 'uppercase',
-				background: '#181412',
-				backgroundImage: `url("${env.DEPLOY_URL}/page_background.png")`,
-				backgroundSize: 'cover',
-				backgroundPosition: 'top'
+				background: '#0f0d0c',
+				backgroundImage: await randomBackground()
 			}}
 		>
-			<img src={`${env.DEPLOY_URL}/icon.png`} width={128} height={128} />
-			<p style={{ fontSize: 128 }}>Talent builder</p>
-		</div>,
-		{
-			...size,
-			fonts: [
-				{
-					name: 'Inter',
-					data: fontinSans,
-					style: 'normal',
-					weight: 400
-				}
-			]
-		}
+			<div style={{ display: 'flex', gap: 16, paddingTop: 64 }}>
+				<img src={`${env.DEPLOY_URL}/icon.png`} width={128} height={128} />
+				<p style={{ fontSize: 118, color: '#f9a146' }}>Talent Builder</p>
+			</div>
+			<p style={{ fontSize: 36, color: '#929391', marginTop: -8 }}>
+				Created by Haaxor1689
+			</p>
+		</div>
 	);
-};
 
 export default Image;

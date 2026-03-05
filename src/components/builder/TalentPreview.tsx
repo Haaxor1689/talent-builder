@@ -7,7 +7,7 @@ import { cloneDeep } from 'es-toolkit';
 import { Link2, Pointer, Replace } from 'lucide-react';
 
 import { Talent, type TalentFormT } from '#server/schemas.ts';
-import { isEmptyTalent } from '#utils.ts';
+import { isEmptyTalent } from '#utils/index.ts';
 
 import { formatTalentDescription } from '../calculator/formatTalentDescription';
 import { closeDialog } from '../styled/Dialog';

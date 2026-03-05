@@ -4,7 +4,7 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { ExternalLink, NotebookPen, Workflow, X } from 'lucide-react';
 
 import { type BuildFormT, type TalentFormT } from '#server/schemas.ts';
-import { isEmptyTalent } from '#utils.ts';
+import { isEmptyTalent } from '#utils/index.ts';
 
 import Dialog from '../styled/Dialog';
 import Md from '../styled/Md';

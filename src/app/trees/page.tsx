@@ -5,7 +5,7 @@ const Page = () => (
 	<>
 		<h2 className="haax-color mt-4 -mb-2 text-center">Talent Trees</h2>
 		<FiltersSection />
-		<TreeGrid values={{ sort: 'newest' }} />
+		<TreeGrid values={{ sort: 'updated' }} />
 	</>
 );
 

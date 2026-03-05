@@ -3,10 +3,10 @@ import { notFound } from 'next/navigation';
 
 import TalentCalculator from '#components/calculator/TalentCalculator.tsx';
 import { env } from '#env.js';
-import { getSavedBuild } from '#server/api/routers/savedBuilds.ts';
-import { getTalentTree } from '#server/api/routers/talentTree.ts';
+import { getSavedBuild } from '#server/api/savedBuilds.ts';
+import { getTalentTree } from '#server/api/talentTree.ts';
 import { CalculatorParams } from '#server/schemas.ts';
-import { getIconPath, maskToClass } from '#utils.ts';
+import { getIconPath, maskToClass } from '#utils/index.ts';
 
 type Props = PageProps<'/calculator/[id]'>;
 
@@ -14,7 +14,7 @@ export const generateMetadata = async ({
 	params
 }: Props): Promise<Metadata> => {
 	const { id } = await params;
-	const savedBuild = await getSavedBuild(id);
+	const savedBuild = await getSavedBuild({ id });
 	if (!savedBuild) return {};
 	const cls = maskToClass(savedBuild.class);
 	return {
@@ -30,13 +30,13 @@ const Page = async ({ params, searchParams }: Props) => {
 	if (!parsed.success) return notFound();
 
 	if (!id || id === 'undefined') return notFound();
-	const savedBuild = await getSavedBuild(id);
+	const savedBuild = await getSavedBuild({ id });
 	if (!savedBuild) return notFound();
 
 	const trees = await Promise.all([
-		getTalentTree(parsed.data.t0 ?? savedBuild.tree0Id),
-		getTalentTree(parsed.data.t1 ?? savedBuild.tree1Id),
-		getTalentTree(parsed.data.t2 ?? savedBuild.tree2Id)
+		getTalentTree({ id: parsed.data.t0 ?? savedBuild.tree0Id }),
+		getTalentTree({ id: parsed.data.t1 ?? savedBuild.tree1Id }),
+		getTalentTree({ id: parsed.data.t2 ?? savedBuild.tree2Id })
 	] as const);
 
 	return <TalentCalculator trees={trees} values={savedBuild} />;

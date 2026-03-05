@@ -5,7 +5,7 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { Camera, Link2Off, Trash2 } from 'lucide-react';
 
 import { Talent, type TalentFormT } from '#server/schemas.ts';
-import { elementToPng } from '#utils.ts';
+import { elementToPng } from '#utils/index.ts';
 
 import { formatTalentDescription } from '../calculator/formatTalentDescription';
 import CheckboxInput from '../form/CheckboxInput';

@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import { Menu } from 'lucide-react';
 
 import TextButton from '#components/styled/TextButton.tsx';
-import { topNavigation } from '#utils.ts';
+import { topNavigation } from '#utils/index.ts';
 
 import Dialog, { closeDialog } from '../styled/Dialog';
 

@@ -8,7 +8,11 @@ import SpellIcon from '#components/styled/SpellIcon.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
 import Tooltip from '#components/styled/Tooltip.tsx';
 import { type talentTrees, type user } from '#server/db/schema.ts';
-import { getLastUpdatedString, getTalentSum, maskToClass } from '#utils.ts';
+import {
+	getLastUpdatedString,
+	getTalentSum,
+	maskToClass
+} from '#utils/index.ts';
 
 type Item = typeof talentTrees.$inferSelect & {
 	href: string;
