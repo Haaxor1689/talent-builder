@@ -1,10 +1,9 @@
 'use client';
 
-import cls from 'classnames';
-
 import { signIn, useSession } from '#auth/client.ts';
 import Discord from '#components/Discord.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
+import { UserAvatar, UserRoleText } from '#components/styled/User.tsx';
 
 const UserSection = () => {
 	const session = useSession();
@@ -25,22 +24,12 @@ const UserSection = () => {
 	const user = session.data.user;
 
 	return (
-		<div className="flex items-center gap-3">
-			<span className="text-blue-gray">Welcome back </span>
-			<div
-				className="size-8 rounded-full bg-contain"
-				style={{
-					backgroundImage: `url(${user.image}), url(https://cdn.discordapp.com/embed/avatars/0.png)`
-				}}
-			/>
-			<span
-				className={cls({
-					'text-green font-bold': user.role === 'admin',
-					'text-[#41c8d4]': user.role === 'supporter'
-				})}
-			>
+		<div className="flex items-center gap-2">
+			<span className="text-blue-gray text-2xl">Welcome back</span>
+			<UserAvatar image={user.image} size={30} />
+			<UserRoleText role={user.role} className="text-2xl">
 				{user.name}
-			</span>
+			</UserRoleText>
 		</div>
 	);
 };

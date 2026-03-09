@@ -21,7 +21,7 @@ type Props = {
 	disabled?: boolean;
 	tabIndex?: number;
 	iconSize?: number;
-	className?: cls.Value;
+	className?: string;
 	style?: CSSProperties;
 } & (
 	| { type: 'submit'; form?: string }

@@ -16,6 +16,7 @@ import {
 import { nanoid } from 'nanoid';
 
 import { useSession } from '#auth/client.ts';
+import { UserAvatar, UserRoleText } from '#components/styled/User.tsx';
 import useLocalTrees from '#hooks/useLocalTrees.ts';
 import {
 	deleteTalentTree,
@@ -30,7 +31,6 @@ import ClassPicker from '../form/ClassPicker';
 import IconPicker from '../form/IconPicker';
 import Input from '../form/Input';
 import UndoRedo from '../form/UndoRedo';
-import AuthorTag from '../styled/AuthorTag';
 import TextButton from '../styled/TextButton';
 import { toast } from '../ToastProvider';
 import IdxInput from './IdxInput';
@@ -251,7 +251,7 @@ const TalentBuilder = (props: Props) => {
 								className="-m-2"
 							/>
 						</div>
-						<div className="absolute bottom-3 left-3 flex flex-col gap-2">
+						<div className="absolute bottom-3 left-3 flex flex-col items-start gap-2">
 							{!editable ? (
 								<p className="text-pink flex gap-1">
 									<FileLock2 /> Read only
@@ -271,7 +271,19 @@ const TalentBuilder = (props: Props) => {
 							)}
 							{defaultValues.createdBy && (
 								<div className="text-blue-gray flex items-center gap-1.5">
-									Author: <AuthorTag {...defaultValues.createdBy} />
+									Author:{' '}
+									<TextButton
+										icon={() => (
+											<UserAvatar image={defaultValues.createdBy?.image} />
+										)}
+										type="link"
+										href={`/profile/${defaultValues.createdById}`}
+										className="p-0!"
+									>
+										<UserRoleText role={defaultValues.createdBy.role}>
+											{defaultValues.createdBy.name}
+										</UserRoleText>
+									</TextButton>
 								</div>
 							)}
 						</div>

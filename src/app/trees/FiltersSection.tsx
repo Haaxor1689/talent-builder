@@ -4,7 +4,6 @@ import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useSearchParams } from 'next/navigation';
 
-import CheckboxInput from '#components/form/CheckboxInput.tsx';
 import ClassPicker from '#components/form/ClassPicker.tsx';
 import Input from '#components/form/Input.tsx';
 import useDebounced from '#hooks/useDebounced.ts';
@@ -32,8 +31,6 @@ const FiltersSection = () => {
 		else params.delete('from');
 		if (values.class) params.set('class', values.class.toString());
 		else params.delete('class');
-		if (values.onlyPersonal) params.set('onlyPersonal', 'true');
-		else params.delete('onlyPersonal');
 
 		if (searchParams.toString() === params.toString()) return;
 		window.history.replaceState(
@@ -55,10 +52,8 @@ const FiltersSection = () => {
 					<Input
 						{...register('from')}
 						placeholder="Author"
-						disabled={values.onlyPersonal}
 						className="shrink grow"
 					/>
-					<CheckboxInput name="onlyPersonal" label="Mine" />
 					<ClassPicker name="class" />
 				</div>
 			</form>

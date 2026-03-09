@@ -29,11 +29,16 @@ export const getLastUpdatedString = (date: Date) => {
 	const now = new Date();
 	const diff = now.getTime() - new Date(date).getTime();
 	const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-	const hours = Math.floor(diff / (1000 * 60 * 60));
-	const minutes = Math.floor(diff / (1000 * 60));
 	const plural = (n: number) => (n === 1 ? '' : 's');
+	if (days >= 365) return 'Over a year ago';
+	if (days >= 30) {
+		const months = Math.floor(days / 30);
+		return `${months} month${plural(months)} ago`;
+	}
 	if (days > 0) return `${days} day${plural(days)} ago`;
+	const hours = Math.floor(diff / (1000 * 60 * 60));
 	if (hours > 0) return `${hours} hour${plural(hours)} ago`;
+	const minutes = Math.floor(diff / (1000 * 60));
 	if (minutes > 0) return `${minutes} minute${plural(minutes)} ago`;
 	return `<1 minute ago`;
 };

@@ -26,7 +26,7 @@ export const auth = betterAuth({
 				name: profile.username,
 				email: profile.email,
 				emailVerified: profile.verified,
-				image: `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.webp?size=32`,
+				image: `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.webp`,
 				role: await getDiscordRole(profile.id)
 			})
 		}

@@ -52,10 +52,7 @@ export type TalentFormT = z.infer<typeof TalentForm>;
 export const Filters = z.object({
 	name: z.string().optional().default(''),
 	from: z.string().optional().default(''),
-	class: z.coerce.number().optional().default(0),
-	sort: z.enum(['updated', 'class']).default('updated'),
-	collection: z.string().optional().default(''),
-	onlyPersonal: z.coerce.boolean().optional().default(false)
+	class: z.coerce.number().optional().default(0)
 });
 export type FiltersT = z.infer<typeof Filters>;
 

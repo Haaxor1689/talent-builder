@@ -134,31 +134,33 @@ const TalentPreview = ({ i, idx, talents, ...field }: Props) => {
 				)
 			}
 		>
-			<SpellIcon
-				icon={field.icon}
-				currentRank={value}
-				ranks={noPointsLeft && value === 0 ? undefined : field.ranks}
-				disabled={disabled}
-				onClick={e => {
-					e.preventDefault();
-					setPoints(1);
-				}}
-				onContextMenu={e => {
-					e.preventDefault();
-					if (isMobile) return;
-					setPoints(-1);
-				}}
-				className={cls({ grayscale: disabled })}
-				extraContent={
-					field.requires !== null && (
-						<TalentArrow
-							start={field.requires}
-							end={i}
-							highlighted={!disabled}
-						/>
-					)
-				}
-			/>
+			{props => (
+				<SpellIcon
+					icon={field.icon}
+					currentRank={value}
+					ranks={noPointsLeft && value === 0 ? undefined : field.ranks}
+					onClick={e => {
+						e.preventDefault();
+						setPoints(1);
+					}}
+					onContextMenu={e => {
+						e.preventDefault();
+						if (isMobile) return;
+						setPoints(-1);
+					}}
+					{...props}
+					className={cls({ grayscale: disabled })}
+					extraContent={
+						field.requires !== null && (
+							<TalentArrow
+								start={field.requires}
+								end={i}
+								highlighted={!disabled}
+							/>
+						)
+					}
+				/>
+			)}
 		</Tooltip>
 	);
 };

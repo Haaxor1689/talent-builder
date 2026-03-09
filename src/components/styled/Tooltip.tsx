@@ -1,8 +1,7 @@
 /* eslint-disable react-hooks/refs */
-/* eslint-disable @eslint-react/no-clone-element */
 'use client';
 
-import { cloneElement, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import cls from 'classnames';
 import { X } from 'lucide-react';
@@ -16,8 +15,14 @@ import TextButton from './TextButton';
 const PADDING = 8;
 const OFFSET = 20;
 
+type TriggerProps = {
+	onClick?: (e: React.MouseEvent) => void;
+	onMouseMove?: (e: React.MouseEvent) => void;
+	onMouseLeave?: () => void;
+};
+
 type Props = {
-	children: React.ReactElement;
+	children: (props: TriggerProps) => React.ReactElement;
 	tooltip: React.ReactNode;
 	actions?: React.ReactNode;
 	hidden?: boolean;
@@ -26,17 +31,17 @@ type Props = {
 const MobileTooltip = ({ children, tooltip, actions }: Props) => (
 	<Dialog
 		trigger={open =>
-			cloneElement(children, {
-				onClick: (e: React.MouseEvent) => {
+			children({
+				onClick: e => {
 					e.preventDefault();
 					open();
 				}
-			} as never)
+			})
 		}
 		unstyled
 		className="flex flex-col items-center gap-3"
 	>
-		<div className="group/tooltip pointer-events-none">{children}</div>
+		<div className="group/tooltip pointer-events-none">{children({})}</div>
 		<div className="haax-surface-3 gap-0">{tooltip}</div>
 		{actions}
 		<TextButton icon={X} onClick={closeDialog} className="text-red">
@@ -62,8 +67,8 @@ const DesktopTooltip = ({ children, tooltip, hidden }: Props) => {
 
 	return (
 		<>
-			{cloneElement(children, {
-				onMouseMove: (e: React.MouseEvent<HTMLElement>) => {
+			{children({
+				onMouseMove: e => {
 					if (!tooltipRef.current) return;
 
 					if (!container) setContainer(e.currentTarget.closest('dialog'));
@@ -90,7 +95,7 @@ const DesktopTooltip = ({ children, tooltip, hidden }: Props) => {
 					setPosition({ left, top, right, bottom });
 				},
 				onMouseLeave: () => setPosition(undefined)
-			} as never)}
+			})}
 
 			{mounted &&
 				createPortal(

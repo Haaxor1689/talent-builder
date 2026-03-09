@@ -32,7 +32,7 @@ export const generateMetadata = async ({
 	const collection = parsed.data.collection.replaceAll('-', ' ');
 
 	return {
-		title: `${collection} ${info.name} | Talent Calculator`,
+		title: `${collection} ${info.name}`,
 		description: `Talent calculator from collection ${collection}.`,
 		icons: [{ rel: 'icon', url: env.DEPLOY_URL + getIconPath(info.icon) }]
 	};

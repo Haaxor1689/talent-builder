@@ -12,7 +12,7 @@ type Props = {
 	children: React.ReactNode;
 	defaultOpen?: boolean;
 	unstyled?: boolean;
-	className?: cls.Value;
+	className?: string;
 };
 
 const Dialog = ({

@@ -24,8 +24,8 @@ export const generateMetadata = async ({
 	const classInfo = maskToClass(parsed.data.class);
 	const className = classInfo ? `${classInfo.name} ` : '';
 	return {
-		title: `${className}Talent Calculator | Talent Builder`,
-		description: `Custom ${className}talent tree calculator consisting of trees: ${trees
+		title: `${className} Talent Calculator`,
+		description: `Custom ${className} talent tree calculator consisting of trees: ${trees
 			.map(t => t?.name)
 			.join(', ')}`,
 		icons: [{ rel: 'icon', url: env.DEPLOY_URL + getIconPath(classInfo?.icon) }]
@@ -44,7 +44,9 @@ const Page = async ({ searchParams }: Props) => {
 
 	return (
 		<>
-			<h2 className="haax-color mt-4 -mb-2 text-center">Talent Calculator</h2>
+			<h2 className="haax-color -mb-3 text-center md:text-left">
+				Talent Calculator
+			</h2>
 			<TalentCalculator trees={trees} isNew />
 		</>
 	);

@@ -21,7 +21,7 @@ type Props = {
 	name: string;
 	label?: ReactNode;
 	disabled?: boolean;
-	className?: cls.Value;
+	className?: string;
 };
 
 const CheckboxInput = ({ name, label, disabled, className }: Props) => {

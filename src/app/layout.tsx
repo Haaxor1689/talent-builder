@@ -24,7 +24,7 @@ const din = localFont({
 });
 
 export const metadata: Metadata = {
-	title: 'Talent Builder',
+	title: { default: 'Talent Builder', template: '%s | Talent Builder' },
 	description:
 		'A tool for creating and sharing your custom World of Warcraft talent trees and builds',
 	icons: [{ rel: 'icon', url: '/icon.png' }],
@@ -67,7 +67,7 @@ const RootLayout = async ({ children }: LayoutProps<'/'>) => (
 			<PageBackground />
 			<Providers>
 				<Header />
-				<main className="flex max-w-7xl shrink grow flex-col gap-6 p-2 pt-0 md:px-6 xl:mx-auto xl:w-full">
+				<main className="flex max-w-7xl shrink grow flex-col gap-6 p-2 py-4 md:px-6 xl:mx-auto xl:w-full">
 					{children}
 				</main>
 				<Footer />

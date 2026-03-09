@@ -12,7 +12,7 @@ type Props = {
 	icon?: string;
 	setIcon: (
 		icon: string,
-		event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+		event: React.MouseEvent<HTMLElement, MouseEvent>
 	) => void;
 	required?: boolean;
 };

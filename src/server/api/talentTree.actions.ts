@@ -1,12 +1,12 @@
 'use server';
 
 import { updateTag } from 'next/cache';
-import { and, asc, desc, eq, inArray, like, or } from 'drizzle-orm';
+import { and, desc, eq, inArray, like } from 'drizzle-orm';
 import { omit } from 'es-toolkit';
 import { z } from 'zod';
 
 import { db } from '#server/db/index.ts';
-import { talentTrees, user as userDb } from '#server/db/schema.ts';
+import { talentTrees, user as userTable } from '#server/db/schema.ts';
 import { serverFunction } from '#server/helpers.ts';
 import { Filters, TalentForm } from '#server/schemas.ts';
 import { Errors } from '#utils/errors.ts';
@@ -18,14 +18,14 @@ export const listInfiniteTalentTrees = serverFunction({
 		limit: z.number().min(1).max(100).optional(),
 		cursor: z.number().optional()
 	}),
-	session: () => getUser().then(u => ({ id: u?.id, role: u?.role })),
-	query: async (input, user) => {
+	session: () => getUser().then(u => u?.role === 'admin'),
+	query: async (input, isAdmin) => {
 		const { limit = 32, cursor: offset = 0 } = input;
 
 		const whereAcc = input.from
 			? (
 					await db.query.user.findMany({
-						where: like(userDb.name, `%${input.from}%`),
+						where: like(userTable.name, `%${input.from}%`),
 						columns: { id: true }
 					})
 				).map(a => a.id)
@@ -37,31 +37,14 @@ export const listInfiniteTalentTrees = serverFunction({
 		const items = await db.query.talentTrees.findMany({
 			limit: limit + 1,
 			offset,
-			orderBy:
-				input.sort === 'class'
-					? [
-							asc(talentTrees.class),
-							asc(talentTrees.index),
-							desc(talentTrees.updatedAt)
-						]
-					: [desc(talentTrees.updatedAt)],
+			orderBy: [desc(talentTrees.updatedAt)],
 			where: and(
-				user?.role !== 'admin'
-					? or(
-							eq(talentTrees.public, true),
-							user?.id ? eq(talentTrees.createdById, user.id) : undefined
-						)
-					: undefined,
+				!isAdmin ? eq(talentTrees.public, true) : undefined,
 				input.name ? like(talentTrees.name, `%${input.name}%`) : undefined,
-				user?.id && input.onlyPersonal
-					? eq(talentTrees.createdById, user.id)
-					: whereAcc.length
-						? inArray(talentTrees.createdById, whereAcc)
-						: undefined,
-				input.class ? eq(talentTrees.class, input.class) : undefined,
-				input.collection
-					? eq(talentTrees.collection, input.collection)
-					: undefined
+				whereAcc.length
+					? inArray(talentTrees.createdById, whereAcc)
+					: undefined,
+				input.class ? eq(talentTrees.class, input.class) : undefined
 			),
 			with: { createdBy: createdBySelect }
 		});
@@ -105,6 +88,7 @@ export const upsertTalentTree = serverFunction({
 		}
 
 		updateTag(`talentTrees:id:${input.id}`);
+		updateTag(`users:id:${entry?.createdById ?? user.id}`);
 
 		return await db.query.talentTrees.findFirst({
 			where: eq(talentTrees.id, input.id),
@@ -127,6 +111,7 @@ export const deleteTalentTree = serverFunction({
 			});
 
 		updateTag(`talentTrees:id:${input.id}`);
+		updateTag(`users:id:${entry?.createdById ?? user.id}`);
 
 		await db.delete(talentTrees).where(eq(talentTrees.id, input.id));
 	}

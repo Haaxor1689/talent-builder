@@ -56,7 +56,7 @@ export const upsertSavedBuild = serverFunction({
 		});
 
 		updateTag(`savedBuilds:id:${restInput.id}`);
-		updateTag(`savedBuilds:user:${entry?.createdById ?? user.id}`);
+		updateTag(`users:id:${entry?.createdById ?? user.id}`);
 
 		return {
 			...build,
@@ -81,7 +81,7 @@ export const deleteSavedBuild = serverFunction({
 			});
 
 		updateTag(`savedBuilds:id:${input.id}`);
-		updateTag(`savedBuilds:user:${entry?.createdById ?? user.id}`);
+		updateTag(`users:id:${entry?.createdById ?? user.id}`);
 
 		await db.delete(savedBuilds).where(eq(savedBuilds.id, input.id));
 	}

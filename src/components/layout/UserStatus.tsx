@@ -1,13 +1,13 @@
 'use client';
 
 import { useTransition } from 'react';
-import { LogOut, Settings } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 
 import { signIn, signOut, useSession } from '#auth/client.ts';
 import Discord from '#components/Discord.tsx';
-import AuthorTag from '#components/styled/AuthorTag.tsx';
 import Spinner from '#components/styled/Spinner.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
+import { UserAvatar, UserRoleText } from '#components/styled/User.tsx';
 
 const UserStatus = () => {
 	const session = useSession();
@@ -40,29 +40,24 @@ const UserStatus = () => {
 
 	return (
 		<>
-			<div className="flex flex-row-reverse items-center gap-3">
-				<AuthorTag image={image ?? null} name={name} role={role} />
-			</div>
-			{role === 'admin' && (
-				<TextButton
-					icon={Settings}
-					title="Admin panel"
-					type="link"
-					href="/admin"
-				/>
-			)}
+			<TextButton
+				icon={() => <UserAvatar image={image} size={30} />}
+				type="link"
+				href="/profile"
+				className="gap-2"
+			>
+				<UserRoleText role={role}>{name}</UserRoleText>
+			</TextButton>
 			<TextButton
 				icon={LogOut}
+				title="Sign out"
 				onClick={() =>
 					startTransition(async () => {
 						await signOut();
 					})
 				}
 				loading={isPending}
-				className="[&_span]:hidden [&_span]:md:inline"
-			>
-				Sign out
-			</TextButton>
+			/>
 		</>
 	);
 };

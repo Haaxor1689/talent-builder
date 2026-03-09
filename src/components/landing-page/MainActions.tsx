@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { Calculator, PlusCircle, Workflow } from 'lucide-react';
+import { Calculator, CloudOff, PlusCircle, Workflow } from 'lucide-react';
 
 import TextButton from '#components/styled/TextButton.tsx';
 
@@ -19,6 +19,12 @@ const actions = [
 		title: 'Create a build',
 		icon: Calculator,
 		href: '/calculator'
+	},
+	{
+		title: 'Manage local trees',
+		icon: CloudOff,
+		href: '/local',
+		className: 'text-blue-gray'
 	}
 ];
 

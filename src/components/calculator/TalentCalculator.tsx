@@ -80,7 +80,6 @@ const TalentCalculator = ({ urlBase, trees, isNew, values }: Props) => {
 						name="class"
 						title={defaultValues.name}
 						large
-						showEmpty
 						disabled={values?.class !== undefined}
 					/>
 					<PointsSpent />

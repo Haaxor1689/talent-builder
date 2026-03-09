@@ -40,7 +40,8 @@ export const user = sqliteTable('user_new', {
 export const userRelations = relations(user, ({ many }) => ({
 	accounts: many(account),
 	sessions: many(session),
-	trees: many(talentTrees)
+	trees: many(talentTrees),
+	builds: many(savedBuilds)
 }));
 
 export const account = sqliteTable('account_new', {

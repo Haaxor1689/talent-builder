@@ -10,7 +10,7 @@ type Props = HTMLProps<HTMLInputElement> & {
 	error?: boolean;
 	icon?: LucideIcon;
 	onIconClick?: () => void;
-	inputClassName?: cls.Value;
+	inputClassName?: string;
 };
 
 const Input = ({

@@ -3,18 +3,15 @@ import cls from 'classnames';
 
 import { getIconPath } from '#utils/index.ts';
 
-type Props = HTMLAttributes<HTMLButtonElement> & {
+type Props = HTMLAttributes<HTMLElement> & {
 	icon?: string | null;
 	currentRank?: number;
 	ranks?: number | null;
-	frameClass?: string;
 	showDefault?: boolean;
 	showEmpty?: boolean;
 	selected?: boolean;
-	highlighted?: boolean;
 	disabled?: boolean;
-	size?: number;
-	className?: cls.Value;
+	className?: string;
 	extraContent?: React.ReactNode;
 };
 
@@ -24,58 +21,41 @@ const SpellIcon = ({
 	ranks,
 	showDefault,
 	selected,
-	highlighted,
-	frameClass,
 	className,
 	disabled,
-	size = 64,
 	extraContent,
 	...props
 }: Props) => {
 	const isClickable = props.onClick && !disabled;
+	const Component = props.onClick ? 'button' : 'div';
+	const hasSize = className && /\b(size-|w-|h-)\S+/.test(String(className));
 	return (
-		<button
-			type="button"
-			tabIndex={!isClickable ? -1 : undefined}
+		<Component
+			{...(props.onClick ? { ...props, type: 'button', disabled } : {})}
 			className={cls(
 				'cursor group/icon relative focus:outline-none',
-				!isClickable ? 'cursor-default' : 'cursor-pointer',
+				!hasSize && 'size-16',
+				isClickable ? 'cursor-pointer' : 'cursor-[inherit]',
 				selected && 'haax-highlight',
 				className
 			)}
-			{...props}
 		>
-			{showDefault || icon ? (
+			{showDefault || !!icon ? (
 				<img
 					src={getIconPath(icon ?? undefined)}
 					alt={!icon || icon === '' ? 'empty' : icon}
-					width={size}
-					height={size}
+					className="size-full"
 				/>
 			) : (
-				<img
-					src="/icon_frame.png"
-					alt="frame"
-					width={size}
-					height={size}
-					className={frameClass}
-				/>
+				<img src="/icon_frame.png" alt="frame" className="size-full" />
 			)}
 
-			<img
-				className={cls('pointer-events-none absolute inset-0 hidden p-[5%]', {
-					'group-hover/icon:block group-focus/icon:block': isClickable
-				})}
-				src="/icon_hover.png"
-				alt="hover"
-				width={size}
-				height={size}
-			/>
-
-			{highlighted && (
-				<span className="text-pink h2 pointer-events-none absolute -top-3 -right-2.5 animate-pulse">
-					!!
-				</span>
+			{isClickable && (
+				<img
+					src="/icon_hover.png"
+					alt="hover"
+					className="pointer-events-none absolute inset-0 hidden size-full p-[5%] group-hover/icon:block group-focus/icon:block"
+				/>
 			)}
 
 			{extraContent}
@@ -93,7 +73,7 @@ const SpellIcon = ({
 					{ranks}
 				</p>
 			)}
-		</button>
+		</Component>
 	);
 };
 

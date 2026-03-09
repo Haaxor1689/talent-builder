@@ -107,59 +107,68 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 				)
 			}
 		>
-			<SpellIcon
-				onClick={e => {
-					if (e.shiftKey && editable && selected !== -1) {
-						setValue(
-							`talents.${selected}.requires`,
-							selected === i ? null : i,
-							{ shouldDirty: true, shouldTouch: true }
-						);
-					} else {
-						setSelected(selected === i ? -1 : i);
-					}
-				}}
-				onKeyDown={e => {
-					if (!editable || e.key !== 'Delete') return;
-					setValue(`talents.${selected}`, Talent.parse({}), {
-						shouldDirty: true,
-						shouldTouch: true
-					});
-				}}
-				icon={field.icon}
-				ranks={field.ranks}
-				selected={selected === i}
-				highlighted={!!field.highlight}
-				frameClass={cls({ 'opacity-10': !field.name })}
-				onDragStart={e => {
-					if (!editable || isEmpty) {
-						e.preventDefault();
-						return;
-					}
+			{props => (
+				<SpellIcon
+					onClick={e => {
+						if (e.shiftKey && editable && selected !== -1) {
+							setValue(
+								`talents.${selected}.requires`,
+								selected === i ? null : i,
+								{ shouldDirty: true, shouldTouch: true }
+							);
+						} else {
+							setSelected(selected === i ? -1 : i);
+						}
+					}}
+					onKeyDown={e => {
+						if (!editable || e.key !== 'Delete') return;
+						setValue(`talents.${selected}`, Talent.parse({}), {
+							shouldDirty: true,
+							shouldTouch: true
+						});
+					}}
+					icon={field.icon}
+					ranks={field.ranks}
+					selected={selected === i}
+					onDragStart={e => {
+						if (!editable || isEmpty) {
+							e.preventDefault();
+							return;
+						}
 
-					setDragging(true);
-					e.dataTransfer.setData('text/plain', i.toString());
-					window.addEventListener('dragend', () => setDragging(false), {
-						once: true
-					});
-				}}
-				onDragOver={e => {
-					if (!editable) return;
-					e.preventDefault();
-				}}
-				onDrop={e => {
-					if (!editable) return;
-					e.preventDefault();
-					const idx = Number(e.dataTransfer.getData('text/plain'));
-					swapTalents(i, idx);
-				}}
-				showDefault={!isEmpty}
-				extraContent={
-					field.requires !== null && (
-						<TalentArrow start={field.requires} end={i} />
-					)
-				}
-			/>
+						setDragging(true);
+						e.dataTransfer.setData('text/plain', i.toString());
+						window.addEventListener('dragend', () => setDragging(false), {
+							once: true
+						});
+					}}
+					onDragOver={e => {
+						if (!editable) return;
+						e.preventDefault();
+					}}
+					onDrop={e => {
+						if (!editable) return;
+						e.preventDefault();
+						const idx = Number(e.dataTransfer.getData('text/plain'));
+						swapTalents(i, idx);
+					}}
+					showDefault={!isEmpty}
+					extraContent={
+						<>
+							{field.requires !== null && (
+								<TalentArrow start={field.requires} end={i} />
+							)}
+							{!!field.highlight && (
+								<span className="text-pink h2 pointer-events-none absolute -top-3 -right-2.5 animate-pulse">
+									!!
+								</span>
+							)}
+						</>
+					}
+					{...props}
+					className="*:[[alt='frame']]:opacity-10"
+				/>
+			)}
 		</Tooltip>
 	);
 };

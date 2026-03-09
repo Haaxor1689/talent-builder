@@ -6,7 +6,7 @@ import UserSection from '#components/landing-page/UserSection.tsx';
 import Md from '#components/styled/Md.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
 
-const Home = async () => (
+const Page = async () => (
 	<>
 		<div className="flex min-h-[65vh] flex-col items-center justify-center gap-6 pt-6 md:pt-20">
 			<div className="-mb-6 flex max-w-62.5 flex-wrap items-center justify-center gap-3 md:max-w-none">
@@ -113,11 +113,11 @@ const Home = async () => (
 					external
 					className="self-center rounded-full border-2 border-current/30 px-4 py-3 text-2xl text-[#5865f2] *:font-bold"
 				>
-					Join Discord Server
+					Join the Discord Server
 				</TextButton>
 			</div>
 		</div>
 	</>
 );
 
-export default Home;
+export default Page;

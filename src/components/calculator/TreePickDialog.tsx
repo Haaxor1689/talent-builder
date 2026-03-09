@@ -7,7 +7,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import cls from 'classnames';
 import { ListFilter } from 'lucide-react';
 
-import TreeGridItem from '#app/trees/TreeGridItem.tsx';
+import TreeGridItem from '#components/styled/TreeGridItem.tsx';
 import useDebounced from '#hooks/useDebounced.ts';
 import { listInfiniteTalentTrees } from '#server/api/talentTree.actions.ts';
 import { Filters } from '#server/schemas.ts';
@@ -29,11 +29,7 @@ const TreePickDialog = ({ idx, trigger }: Props) => {
 
 	const calculatorClass = useWatch({ name: 'class' });
 
-	const formProps = useForm({
-		resolver: zodResolver(Filters)
-	});
-	const { register, watch } = formProps;
-
+	const { register, watch } = useForm({ resolver: zodResolver(Filters) });
 	const values = useDebounced(watch());
 
 	const trees = useInfiniteQuery({

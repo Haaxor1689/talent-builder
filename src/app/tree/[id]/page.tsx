@@ -16,7 +16,7 @@ export const generateMetadata = async ({
 	const info = await getOgInfo({ id });
 	if (!info) return {};
 	return {
-		title: `${info.name} | Talent Builder`,
+		title: info.name,
 		description: `Talent tree created by ${info.createdBy.name}`,
 		icons: [{ rel: 'icon', url: env.DEPLOY_URL + getIconPath(info.icon) }]
 	};

@@ -1,7 +1,7 @@
 import { type Metadata } from 'next';
 
-import TreeGridItem from '#app/trees/TreeGridItem.tsx';
 import ClassCalculatorsLinks from '#components/calculator/ClassCalculatorsLinks.tsx';
+import TreeGridItem from '#components/styled/TreeGridItem.tsx';
 import { getCollectionTree } from '#server/api/collection.ts';
 import { classMask } from '#utils/index.ts';
 
@@ -14,7 +14,7 @@ export const generateMetadata = async ({
 	const title = collection.replaceAll('-', ' ');
 	const capitalized = title[0]?.toUpperCase() + title.slice(1);
 	return {
-		title: `${capitalized} collection | Talent Builder`,
+		title: `${capitalized} collection`,
 		description: 'Collection of talents'
 	};
 };
@@ -35,17 +35,21 @@ const TalentTreePage = async ({ params }: Props) => {
 
 	return (
 		<>
-			<h2 className="mt-4 -mb-2 flex flex-wrap justify-center gap-2 text-center">
-				<span className="h2">Collection:</span>
-				<span className="h2 haax-color shrink uppercase">
+			<h1 className="-mb-3 flex flex-wrap justify-center gap-2 text-center md:text-left">
+				<span className="h1">Collection:</span>
+				<span className="h1 haax-color shrink uppercase">
 					{collection.replaceAll('-', ' ')}
 				</span>
-			</h2>
+			</h1>
 
-			<h3 className="-mb-3">Talent calculators:</h3>
+			<h2 className="haax-color -mb-3 text-center md:text-left">
+				Talent calculators:
+			</h2>
 			<ClassCalculatorsLinks urlBase={`/collections/${collection}/`} />
 
-			<h3 className="-mb-3">Talent trees:</h3>
+			<h2 className="haax-color -mb-3 text-center md:text-left">
+				Talent trees:
+			</h2>
 			<div className="haax-surface-3 grid grid-cols-[repeat(auto-fill,minmax(340px,1fr))] items-start">
 				{trees.map(item =>
 					!item ? null : (

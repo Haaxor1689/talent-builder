@@ -1,12 +1,12 @@
 import { cacheLife, cacheTag } from 'next/cache';
-import { asc, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 
 import { db } from '#server/db/index.ts';
 import { savedBuilds } from '#server/db/schema.ts';
 import { serverFunction } from '#server/helpers.ts';
 
-import { createdBySelect, getUser } from './index';
+import { createdBySelect } from './index';
 
 export const getSavedBuild = serverFunction({
 	input: z.object({ id: z.string() }),
@@ -30,19 +30,5 @@ export const getSavedBuild = serverFunction({
 				number[]
 			]
 		};
-	}
-});
-
-export const listPersonalSavedBuilds = serverFunction({
-	session: () => getUser('user').then(u => u.id),
-	query: async (_, userId) => {
-		'use cache';
-		cacheLife('weeks');
-		cacheTag(`savedBuilds:user:${userId}`);
-		return await db.query.savedBuilds.findMany({
-			orderBy: [asc(savedBuilds.class)],
-			where: eq(savedBuilds.createdById, userId),
-			with: { createdBy: createdBySelect }
-		});
 	}
 });

@@ -6,22 +6,18 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import cls from 'classnames';
 
 import Spinner from '#components/styled/Spinner.tsx';
+import TreeGridItem from '#components/styled/TreeGridItem.tsx';
 import { listInfiniteTalentTrees } from '#server/api/talentTree.actions.ts';
-import { Filters, type FiltersT } from '#server/schemas.ts';
+import { Filters } from '#server/schemas.ts';
 
-import TreeGridItem from './TreeGridItem';
-
-type Props = { values?: Partial<FiltersT> };
-
-const TreeGrid = ({ values }: Props) => {
+const TreeGrid = () => {
 	const searchParams = useSearchParams();
 	const defaultValues = useMemo(() => {
 		const p = Filters.safeParse({
-			...values,
 			...Object.fromEntries(searchParams.entries())
 		});
 		return p.success ? p.data : Filters.parse({});
-	}, [values, searchParams]);
+	}, [searchParams]);
 
 	const trees = useInfiniteQuery({
 		queryKey: ['talentTrees', defaultValues],

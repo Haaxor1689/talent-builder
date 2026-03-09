@@ -1,6 +1,6 @@
 'use client';
 
-import { type Control, useController } from 'react-hook-form';
+import { useController } from 'react-hook-form';
 import cls from 'classnames';
 import { X } from 'lucide-react';
 
@@ -14,52 +14,32 @@ type Props = {
 	name: string;
 	title?: string;
 	disabled?: boolean;
-	showEmpty?: boolean;
 	large?: boolean;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	control?: Control<any>;
 };
 
-const ClassPicker = ({
-	name,
-	title,
-	disabled,
-	showEmpty,
-	large,
-	control
-}: Props) => {
-	const { field } = useController({ name, control });
-
+const ClassPicker = ({ name, title, disabled, large }: Props) => {
+	const { field } = useController({ name });
 	const classInfo = maskToClass(field.value);
-
-	if (disabled && !showEmpty && !classInfo) return null;
-
+	if (disabled && !classInfo) return null;
 	return (
 		<Dialog
 			trigger={open => (
-				<div
-					role="button"
-					onClick={open}
-					onKeyDown={e => e.key === 'Enter' && open()}
-					tabIndex={disabled ? -1 : 0}
-					className={cls(
-						'hocus:haax-highlight flex cursor-pointer items-center gap-2 p-2',
-						{ 'pointer-events-none': disabled }
+				<TextButton
+					icon={() => (
+						<SpellIcon
+							icon={classInfo?.icon}
+							showDefault
+							className={large ? 'size-12' : 'size-8'}
+						/>
 					)}
+					disabled={disabled}
+					onClick={open}
+					className={cls('text-blue-gray', { '*:h2 gap-2': large })}
+					style={{ color: classInfo?.color }}
 				>
-					<SpellIcon
-						icon={classInfo?.icon}
-						showDefault
-						className={cls('cursor-pointer', large ? 'size-12' : 'size-8')}
-					/>
-					<span
-						className={cls('text-blue-gray', { h2: large })}
-						style={{ color: classInfo?.color }}
-					>
-						{title ? `${title} ` : ''}
-						{classInfo?.name ?? 'Any class'}
-					</span>
-				</div>
+					{title ? `${title} ` : ''}
+					{classInfo?.name ?? 'Any class'}
+				</TextButton>
 			)}
 		>
 			<div className="flex items-center justify-between gap-2">

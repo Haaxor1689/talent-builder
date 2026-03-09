@@ -1,14 +1,22 @@
 import { Suspense } from 'react';
+import { type Metadata } from 'next';
 
 import Spinner from '#components/styled/Spinner.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
 import { listCollections } from '#server/api/collection.ts';
 
+export const metadata: Metadata = {
+	title: 'Talent Collections',
+	description: 'Browse public talent collections'
+};
+
 const Page = async () => {
 	const collections = await listCollections();
 	return (
 		<>
-			<h2 className="haax-color mt-4 -mb-2 text-center">Talent Collections</h2>
+			<h2 className="haax-color -mb-3 text-center md:text-left">
+				Talent Collections
+			</h2>
 			<Suspense fallback={<Spinner className="my-6 self-center" />}>
 				<div className="grid auto-cols-fr items-stretch justify-stretch gap-3 md:grid-flow-col md:gap-5">
 					{collections.map(c => (

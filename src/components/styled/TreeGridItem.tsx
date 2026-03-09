@@ -3,10 +3,10 @@
 import Link from 'next/link';
 import { CloudOff, EyeOff, Workflow } from 'lucide-react';
 
-import AuthorTag from '#components/styled/AuthorTag.tsx';
 import SpellIcon from '#components/styled/SpellIcon.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
 import Tooltip from '#components/styled/Tooltip.tsx';
+import { UserAvatar, UserRoleText } from '#components/styled/User.tsx';
 import { type talentTrees, type user } from '#server/db/schema.ts';
 import {
 	getLastUpdatedString,
@@ -50,16 +50,19 @@ const TreeGridItem = (item: Item) => {
 								</span>
 							</span>
 							<div className="text-blue-gray flex items-center gap-1.5">
-								Author: <AuthorTag {...item.createdBy} />
+								Author: <UserAvatar image={item.createdBy.image} />{' '}
+								<UserRoleText role={item.createdBy.role}>
+									{item.createdBy.name}
+								</UserRoleText>
 							</div>
 						</>
 					)}
 					{classInfo && (
-						<p className="text-blue-gray flex items-center gap-1">
+						<div className="text-blue-gray flex items-center gap-1">
 							Class:{' '}
 							<SpellIcon icon={classInfo.icon} showDefault className="size-6" />{' '}
 							<span style={{ color: classInfo.color }}>{classInfo.name}</span>
-						</p>
+						</div>
 					)}
 				</>
 			}
@@ -74,55 +77,54 @@ const TreeGridItem = (item: Item) => {
 				</TextButton>
 			}
 		>
-			<Link
-				href={item.href}
-				className="hocus:haax-highlight -mb-2 flex items-center gap-3 p-2"
-				prefetch={false}
-				onClick={item.onClick}
-			>
-				<SpellIcon
-					icon={item.icon}
-					showDefault
-					className="cursor-pointer"
-					extraContent={
-						classInfo && (
-							<div className="pointer-events-none absolute -right-2 -bottom-4">
-								<SpellIcon icon={classInfo.icon} className="size-6" />
-							</div>
-						)
-					}
-				/>
+			{props => (
+				<Link
+					href={item.href}
+					className="hocus:haax-highlight -mb-2 flex items-center gap-3 p-2"
+					prefetch={false}
+					onClick={item.onClick}
+					{...props}
+				>
+					<SpellIcon
+						icon={item.icon}
+						showDefault
+						className="cursor-pointer"
+						extraContent={
+							classInfo && (
+								<SpellIcon
+									icon={classInfo.icon}
+									className="absolute! -right-2 -bottom-2 size-6"
+								/>
+							)
+						}
+					/>
 
-				<div className="flex shrink grow flex-col gap-1 text-inherit">
-					<p className="truncate text-lg text-inherit">{item.name}</p>
-					{item.createdBy ? (
-						<div className="flex items-center gap-1.5">
-							<div
-								className="size-6 truncate rounded-full bg-contain"
-								style={{
-									backgroundImage: `url(${item.createdBy?.image}), url(https://cdn.discordapp.com/embed/avatars/0.png)`
-								}}
-							/>
-							<span className="text-blue-gray shrink grow truncate overflow-hidden whitespace-nowrap">
-								{item.createdBy.name === 'TurtleWoW'
-									? 'TurtleWoW'
-									: getLastUpdatedString(item.updatedAt ?? item.createdAt)}
-							</span>
-							{!item.public && (
-								<span className="text-warm-green flex items-center gap-1.5">
-									<EyeOff className="w-4" />
-									Private
+					<div className="flex shrink grow flex-col gap-1 text-inherit">
+						<p className="truncate text-lg text-inherit">{item.name}</p>
+						{item.createdBy ? (
+							<div className="flex items-center gap-1.5">
+								<UserAvatar image={item.createdBy.image} />
+								<span className="text-blue-gray shrink grow truncate overflow-hidden whitespace-nowrap">
+									{item.createdBy.name === 'TurtleWoW'
+										? 'TurtleWoW'
+										: getLastUpdatedString(item.updatedAt ?? item.createdAt)}
 								</span>
-							)}
-						</div>
-					) : (
-						<div className="text-blue-gray flex items-center gap-1.5">
-							<CloudOff size={24} />
-							Local only
-						</div>
-					)}
-				</div>
-			</Link>
+								{!item.public && (
+									<span className="text-warm-green flex items-center gap-1.5">
+										<EyeOff className="w-4" />
+										Private
+									</span>
+								)}
+							</div>
+						) : (
+							<div className="text-blue-gray flex items-center gap-1.5">
+								<CloudOff size={24} />
+								Local only
+							</div>
+						)}
+					</div>
+				</Link>
+			)}
 		</Tooltip>
 	);
 };

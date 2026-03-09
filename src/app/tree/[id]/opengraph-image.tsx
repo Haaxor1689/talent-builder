@@ -64,7 +64,7 @@ const Image = async ({ params }: PageProps<'/tree/[id]'>) => {
 					<span style={{ color: '#929391' }}>Created by</span>
 					{r.createdBy?.image && (
 						<img
-							src={r.createdBy.image}
+							src={`${r.createdBy.image}?size=38`}
 							width={38}
 							height={38}
 							style={{ borderRadius: '100%' }}
