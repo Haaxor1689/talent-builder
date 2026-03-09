@@ -6,23 +6,23 @@ import TextButton from '#components/styled/TextButton.tsx';
 const actions = [
 	{
 		title: 'Create a new tree',
-		icon: PlusCircle,
+		icon: <PlusCircle />,
 		href: '/tree/new',
 		className: 'text-warm-green'
 	},
 	{
 		title: 'Browse public trees',
-		icon: Workflow,
+		icon: <Workflow />,
 		href: '/trees'
 	},
 	{
 		title: 'Create a build',
-		icon: Calculator,
+		icon: <Calculator />,
 		href: '/calculator'
 	},
 	{
 		title: 'Manage local trees',
-		icon: CloudOff,
+		icon: <CloudOff />,
 		href: '/local',
 		className: 'text-blue-gray'
 	}
@@ -30,19 +30,18 @@ const actions = [
 
 const MainActions = () => (
 	<div className="grid auto-cols-fr items-stretch justify-stretch gap-3 md:grid-flow-col md:gap-5">
-		{actions.map(({ title, icon: Icon, href, className }) => (
+		{actions.map(({ title, icon, href, className }) => (
 			<div key={title} className="haax-surface-3 flex items-center p-0">
 				<TextButton
+					icon={icon}
 					type="link"
 					href={href}
-					className={classNames('p-5! **:shrink', className)}
+					className={classNames(
+						'icon-size-8 items-center gap-2 p-5 text-2xl md:max-w-42 md:flex-col md:gap-1 md:text-center',
+						className
+					)}
 				>
-					<div className="flex items-center gap-2 text-inherit md:max-w-35 md:flex-col md:gap-1">
-						<Icon size={32} className="shrink-0!" />
-						<p className="shrink truncate text-2xl whitespace-normal text-inherit md:text-center">
-							{title}
-						</p>
-					</div>
+					{title}
 				</TextButton>
 			</div>
 		))}

@@ -34,7 +34,7 @@ const Md = ({ text }: { text: string }) => (
 					type="link"
 					href={props.href ?? ''}
 					external={props.href?.startsWith('http')}
-					className="-m-2 inline-flex!"
+					className="-m-2 inline-flex"
 				>
 					{props.children}
 				</TextButton>

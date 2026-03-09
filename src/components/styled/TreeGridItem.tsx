@@ -1,61 +1,57 @@
 'use client';
 
 import Link from 'next/link';
+import cls from 'classnames';
 import { CloudOff, EyeOff, Workflow } from 'lucide-react';
 
 import SpellIcon from '#components/styled/SpellIcon.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
 import Tooltip from '#components/styled/Tooltip.tsx';
 import { UserAvatar, UserRoleText } from '#components/styled/User.tsx';
-import { type talentTrees, type user } from '#server/db/schema.ts';
+import { type TalentFormT } from '#server/schemas.ts';
 import {
 	getLastUpdatedString,
 	getTalentSum,
 	maskToClass
 } from '#utils/index.ts';
 
-type Item = typeof talentTrees.$inferSelect & {
+type Item = TalentFormT & {
 	href: string;
-	createdBy: Pick<typeof user.$inferSelect, 'image' | 'name' | 'role'> | null;
 	label?: string;
-	onClick?: (
-		e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement, MouseEvent>
-	) => void;
+	active?: boolean;
+	onClick?: (e: React.MouseEvent) => void;
 };
 
 const TreeGridItem = (item: Item) => {
 	const classInfo = maskToClass(item.class);
+	const date = item.updatedAt ?? item.createdAt;
 	return (
 		<Tooltip
 			tooltip={
 				<>
 					<h4 className="haax-color text-xl">{item.name}</h4>
-					{!item.public && (
-						<span className="text-warm-green flex items-center gap-1 text-lg">
-							<EyeOff className="w-4 shrink-0" />
+					{item.visibility === 'private' && (
+						<span className="text-warm-green flex items-center gap-1 text-sm">
+							<EyeOff size={14} />
 							Private
 						</span>
 					)}
-					<p className="text-blue-gray">
+					<div className="text-blue-gray">
 						Points: <span>{getTalentSum(item.talents)}</span>
-					</p>
+					</div>
+					{date && (
+						<div className="text-blue-gray whitespace-nowrap">
+							Last updated:{' '}
+							<span>{new Date(date).toLocaleString('en-US')}</span>
+						</div>
+					)}
 					{item.createdBy && (
-						<>
-							<span className="text-blue-gray whitespace-nowrap">
-								Last updated:{' '}
-								<span>
-									{new Date(item.updatedAt ?? item.createdAt).toLocaleString(
-										'en-US'
-									)}
-								</span>
-							</span>
-							<div className="text-blue-gray flex items-center gap-1.5">
-								Author: <UserAvatar image={item.createdBy.image} />{' '}
-								<UserRoleText role={item.createdBy.role}>
-									{item.createdBy.name}
-								</UserRoleText>
-							</div>
-						</>
+						<div className="text-blue-gray flex items-center gap-1.5">
+							Author: <UserAvatar image={item.createdBy.image} />{' '}
+							<UserRoleText role={item.createdBy.role}>
+								{item.createdBy.name}
+							</UserRoleText>
+						</div>
 					)}
 					{classInfo && (
 						<div className="text-blue-gray flex items-center gap-1">
@@ -68,10 +64,10 @@ const TreeGridItem = (item: Item) => {
 			}
 			actions={
 				<TextButton
+					icon={<Workflow />}
 					type="link"
 					href={item.href}
 					onClick={item.onClick}
-					icon={Workflow}
 				>
 					{item.label ?? 'Open tree'}
 				</TextButton>
@@ -80,9 +76,12 @@ const TreeGridItem = (item: Item) => {
 			{props => (
 				<Link
 					href={item.href}
-					className="hocus:haax-highlight -mb-2 flex items-center gap-3 p-2"
 					prefetch={false}
 					onClick={item.onClick}
+					className={cls(
+						'hocus:haax-highlight -mb-2 flex items-center gap-3 p-2',
+						{ 'text-warm-green': item.active }
+					)}
 					{...props}
 				>
 					<SpellIcon
@@ -101,27 +100,22 @@ const TreeGridItem = (item: Item) => {
 
 					<div className="flex shrink grow flex-col gap-1 text-inherit">
 						<p className="truncate text-lg text-inherit">{item.name}</p>
-						{item.createdBy ? (
-							<div className="flex items-center gap-1.5">
+						<div className="flex items-center gap-1.5">
+							{item.createdBy ? (
 								<UserAvatar image={item.createdBy.image} />
-								<span className="text-blue-gray shrink grow truncate overflow-hidden whitespace-nowrap">
-									{item.createdBy.name === 'TurtleWoW'
-										? 'TurtleWoW'
-										: getLastUpdatedString(item.updatedAt ?? item.createdAt)}
+							) : (
+								<CloudOff className="text-blue-gray" />
+							)}
+							<span className="text-blue-gray shrink grow truncate overflow-hidden whitespace-nowrap">
+								{date ? getLastUpdatedString(date) : 'Local only'}
+							</span>
+							{item.visibility === 'private' && (
+								<span className="text-warm-green flex items-center gap-1 text-sm">
+									<EyeOff size={14} />
+									Private
 								</span>
-								{!item.public && (
-									<span className="text-warm-green flex items-center gap-1.5">
-										<EyeOff className="w-4" />
-										Private
-									</span>
-								)}
-							</div>
-						) : (
-							<div className="text-blue-gray flex items-center gap-1.5">
-								<CloudOff size={24} />
-								Local only
-							</div>
-						)}
+							)}
+						</div>
 					</div>
 				</Link>
 			)}

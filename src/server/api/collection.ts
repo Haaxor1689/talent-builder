@@ -43,7 +43,7 @@ export const getCollectionTree = serverFunction({
 				eq(talentTrees.collection, input.collection),
 				eq(talentTrees.class, input.class),
 				eq(talentTrees.index, input.index),
-				isAdmin ? undefined : eq(talentTrees.public, true)
+				isAdmin ? undefined : eq(talentTrees.visibility, 'public')
 			),
 			with: { createdBy: createdBySelect }
 		});

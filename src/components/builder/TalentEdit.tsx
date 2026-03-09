@@ -1,21 +1,18 @@
 'use client';
 
-import { useMemo, useRef } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { Camera, Link2Off, Trash2 } from 'lucide-react';
+import { Link2Off, Trash2 } from 'lucide-react';
 
 import { Talent, type TalentFormT } from '#server/schemas.ts';
-import { elementToPng } from '#utils/index.ts';
 
-import { formatTalentDescription } from '../calculator/formatTalentDescription';
 import CheckboxInput from '../form/CheckboxInput';
 import IconPicker from '../form/IconPicker';
 import Input from '../form/Input';
 import Textarea from '../form/Textarea';
-import Dialog, { closeDialog } from '../styled/Dialog';
 import ScrollArea from '../styled/ScrollArea';
 import SpellIcon from '../styled/SpellIcon';
 import TextButton from '../styled/TextButton';
+import TalentScreenshot from './TalentScreenshot';
 
 const RequiredTalent = ({
 	selected,
@@ -31,13 +28,13 @@ const RequiredTalent = ({
 	if (!requires) return null;
 	return (
 		<div className="flex items-center gap-3">
-			<SpellIcon icon={requires.icon} className="size-12!" showDefault />
+			<SpellIcon icon={requires.icon} className="size-12" showDefault />
 			<p className="haax-color grow font-bold">
 				{requires.name || '[Unnamed talent]'}
 			</p>
 			{editable && (
 				<TextButton
-					icon={Link2Off}
+					icon={<Link2Off />}
 					title="Remove link"
 					onClick={() =>
 						setValue(`talents.${selected}.requires`, null, {
@@ -47,51 +44,6 @@ const RequiredTalent = ({
 					}
 				/>
 			)}
-		</div>
-	);
-};
-
-const TalentScreenshot = ({ selected }: { selected: number }) => {
-	const ref = useRef<HTMLDivElement>(null);
-
-	const item = useWatch({ name: `talents.${selected}` });
-
-	const description = useMemo(
-		() => formatTalentDescription(item),
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[item.description, item.ranks]
-	);
-
-	return (
-		<div className="flex justify-end">
-			<Dialog
-				unstyled
-				trigger={open => (
-					<TextButton icon={Camera} title="Screenshot" onClick={open} />
-				)}
-			>
-				<div className="flex flex-col items-center gap-4">
-					<TextButton
-						icon={Camera}
-						onClick={async e => {
-							if (!ref.current) return;
-							await elementToPng(ref.current, item.name);
-							closeDialog(e);
-						}}
-					>
-						Save screenshot
-					</TextButton>
-					<div ref={ref} className="flex items-start gap-2">
-						<SpellIcon icon={item.icon} showDefault />
-						<div className="haax-surface-3 pointer-events-none z-10 max-w-100 min-w-62.5">
-							<h4 className="haax-color">{item.name || '[Empty talent]'}</h4>
-							<p className="whitespace-pre-wrap">
-								{description ?? '[No description]'}
-							</p>
-						</div>
-					</div>
-				</div>
-			</Dialog>
 		</div>
 	);
 };
@@ -118,6 +70,8 @@ const TalentEdit = ({ selected, editable }: Props) => {
 
 				{editable && (
 					<TextButton
+						icon={<Trash2 />}
+						title="Delete"
 						onClick={() =>
 							setValue(`talents.${selected}`, Talent.parse({}), {
 								shouldDirty: true,
@@ -125,18 +79,25 @@ const TalentEdit = ({ selected, editable }: Props) => {
 							})
 						}
 						className="text-red"
-						icon={Trash2}
-						title="Delete"
 					/>
 				)}
 			</div>
 
-			<Input
-				{...register(`talents.${selected}.ranks`, { valueAsNumber: true })}
-				label="Ranks"
-				type="number"
-				disabled={!editable}
-			/>
+			<div className="flex items-end gap-2">
+				<Input
+					{...register(`talents.${selected}.ranks`, { valueAsNumber: true })}
+					label="Ranks"
+					type="number"
+					disabled={!editable}
+					className="grow"
+				/>
+
+				<CheckboxInput
+					name={`talents.${selected}.highlight`}
+					label="Highlight change"
+					disabled={!editable}
+				/>
+			</div>
 
 			<Textarea
 				{...register(`talents.${selected}.description`)}
@@ -156,13 +117,11 @@ const TalentEdit = ({ selected, editable }: Props) => {
 				)}
 			</div>
 
-			<CheckboxInput
-				name={`talents.${selected}.highlight`}
-				label="Highlight change"
+			<Input
+				{...register(`talents.${selected}.spellIds`)}
+				label="Spell Ids"
 				disabled={!editable}
 			/>
-
-			<Input {...register(`talents.${selected}.spellIds`)} label="Spell Ids" />
 			<span className="text-blue-gray -mt-2 text-sm">
 				Comma separated list of spell ids for each rank
 			</span>

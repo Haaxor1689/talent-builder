@@ -12,13 +12,9 @@ import IconGrid from '../styled/IconGrid';
 import SpellIcon from '../styled/SpellIcon';
 import Input from './Input';
 
-type Props = {
-	name: string;
-	disabled?: boolean;
-	required?: boolean;
-};
+type Props = { name: string; disabled?: boolean };
 
-const IconPicker = ({ name, required, disabled }: Props) => {
+const IconPicker = ({ name, disabled }: Props) => {
 	const query = useQuery({
 		queryKey: ['icons'],
 		queryFn: async () => {
@@ -76,7 +72,6 @@ const IconPicker = ({ name, required, disabled }: Props) => {
 
 			<IconGrid
 				filter={debouncedFilter}
-				required={required}
 				icon={field.value}
 				setIcon={(icon, e) => {
 					field.onChange(icon);

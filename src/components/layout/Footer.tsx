@@ -26,13 +26,13 @@ const Footer = async () => (
 			•
 			<TextButton
 				type="link"
-				icon={() => (
+				icon={
 					<img
 						src="https://storage.ko-fi.com/cdn/logomarkLogo.png"
 						alt="Ko-fi logo"
 						className="h-4 pr-1"
 					/>
-				)}
+				}
 				href="https://ko-fi.com/haaxor1689"
 				className="-m-2"
 			>
@@ -42,9 +42,8 @@ const Footer = async () => (
 			<TextButton
 				type="link"
 				href="https://discord.gg/pDeTHQH99B"
-				icon={Bug}
-				iconSize={18}
-				className="text-orange -m-2 text-sm"
+				icon={<Bug />}
+				className="text-orange icon-size-4 -m-2 text-sm"
 			>
 				Report a bug
 			</TextButton>

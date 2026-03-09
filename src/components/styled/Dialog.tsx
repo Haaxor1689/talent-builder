@@ -2,10 +2,11 @@ import { useRef, useState } from 'react';
 import { Dialog as Base } from '@base-ui/react/dialog';
 import cls from 'classnames';
 
-export const closeDialog = (event: Pick<Event, 'currentTarget'>) =>
+export const closeDialog = (event: Pick<Event, 'currentTarget'>) => {
 	window.dispatchEvent(
 		new CustomEvent('dialog-close', { detail: event.currentTarget })
 	);
+};
 
 type Props = {
 	trigger: (open: (...args: unknown[]) => void) => React.ReactNode;

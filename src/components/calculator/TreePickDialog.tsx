@@ -32,7 +32,7 @@ const TreePickDialog = ({ idx, trigger }: Props) => {
 	const { register, watch } = useForm({ resolver: zodResolver(Filters) });
 	const values = useDebounced(watch());
 
-	const trees = useInfiniteQuery({
+	const items = useInfiniteQuery({
 		queryKey: ['talentTrees', { ...values, class: calculatorClass }] as const,
 		queryFn: ({ queryKey, pageParam }) =>
 			listInfiniteTalentTrees({ ...queryKey[1], limit: 42, cursor: pageParam }),
@@ -43,16 +43,16 @@ const TreePickDialog = ({ idx, trigger }: Props) => {
 
 	const bottomRef = useRef<HTMLDivElement>(null);
 	useEffect(() => {
-		if (!bottomRef.current || trees.isFetchingNextPage || !trees.hasNextPage)
+		if (!bottomRef.current || items.isFetchingNextPage || !items.hasNextPage)
 			return;
 		const observer = new IntersectionObserver(([o]) => {
 			if (!o?.isIntersecting) return;
-			trees.fetchNextPage();
+			items.fetchNextPage();
 		});
 		observer.observe(bottomRef.current);
 		return () => observer.disconnect();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [trees.isFetchingNextPage, trees.hasNextPage]);
+	}, [items.isFetchingNextPage, items.hasNextPage]);
 
 	return (
 		<Dialog
@@ -74,11 +74,11 @@ const TreePickDialog = ({ idx, trigger }: Props) => {
 
 			<hr />
 
-			{trees.isLoading ? (
+			{items.isLoading ? (
 				<div className="flex h-135 grow items-center justify-center">
-					<Spinner size={32} />
+					<Spinner className="icon-size-8" />
 				</div>
-			) : !trees.data?.pages[0]?.items?.length ? (
+			) : !items.data?.pages[0]?.items?.length ? (
 				<div className="text-blue-gray flex h-135 grow items-center justify-center">
 					No results found
 				</div>
@@ -87,7 +87,7 @@ const TreePickDialog = ({ idx, trigger }: Props) => {
 					containerClassName="max-h-135"
 					contentClassName="grid items-start gap-3 p-3 grid-cols-[repeat(auto-fill,minmax(280px,1fr))]"
 				>
-					{trees.data?.pages.map((page, index) => (
+					{items.data?.pages.map((page, index) => (
 						<Fragment key={page.items[0]?.name ?? index}>
 							{page.items.map(item => (
 								<TreeGridItem
@@ -108,10 +108,10 @@ const TreePickDialog = ({ idx, trigger }: Props) => {
 						ref={bottomRef}
 						className={cls(
 							'col-span-full flex h-16 items-center justify-center',
-							{ hidden: !trees.hasNextPage }
+							{ hidden: !items.hasNextPage }
 						)}
 					>
-						<Spinner size={32} />
+						<Spinner className="icon-size-8" />
 					</div>
 				</ScrollArea>
 			)}

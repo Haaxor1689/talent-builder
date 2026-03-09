@@ -1,9 +1,3 @@
-import Spinner from '#components/styled/Spinner.tsx';
-
-const Loading = () => (
-	<div className="my-6 flex grow items-center justify-center">
-		<Spinner />
-	</div>
-);
+import Loading from '#components/layout/Loading.tsx';
 
 export default Loading;

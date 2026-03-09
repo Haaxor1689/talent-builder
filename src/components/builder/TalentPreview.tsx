@@ -72,7 +72,7 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 						{selected !== -1 && (
 							<>
 								<TextButton
-									icon={Link2}
+									icon={<Link2 />}
 									onClick={e => {
 										setValue(`talents.${selected}.requires`, i, {
 											shouldDirty: true,
@@ -84,7 +84,7 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 									Link as requirement
 								</TextButton>
 								<TextButton
-									icon={Replace}
+									icon={<Replace />}
 									onClick={e => {
 										swapTalents(i, selected);
 										closeDialog(e);
@@ -95,7 +95,7 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 							</>
 						)}
 						<TextButton
-							icon={Pointer}
+							icon={<Pointer />}
 							onClick={e => {
 								setSelected(i);
 								closeDialog(e);

@@ -43,10 +43,10 @@ const TalentSpec = ({ idx, value, canChangeTree }: Props) => {
 					trigger={open => (
 						<TextButton
 							onClick={open}
-							className="h-full w-full items-center justify-center"
+							className="h-full w-full flex-col items-center justify-center p-12"
 						>
 							<p className="h1 text-7xl text-inherit">+</p>
-							<p className="h3 text-inherit">Pick a tree</p>
+							<p className="h3 whitespace-nowrap text-inherit">Pick a tree</p>
 						</TextButton>
 					)}
 				/>
@@ -63,7 +63,7 @@ const TalentSpec = ({ idx, value, canChangeTree }: Props) => {
 					</span>
 				</div>
 				<TextButton
-					icon={ExternalLink}
+					icon={<ExternalLink />}
 					title="Open tree"
 					type="link"
 					href={`/tree/${value.id}`}
@@ -96,10 +96,9 @@ const TalentSpec = ({ idx, value, canChangeTree }: Props) => {
 						idx={idx}
 						trigger={open => (
 							<TextButton
+								icon={<Workflow />}
 								onClick={open}
-								icon={Workflow}
-								iconSize={14}
-								className="text-blue-gray text-sm"
+								className="text-blue-gray icon-size-4 text-sm"
 							>
 								Change tree
 							</TextButton>
@@ -110,10 +109,9 @@ const TalentSpec = ({ idx, value, canChangeTree }: Props) => {
 					<Dialog
 						trigger={open => (
 							<TextButton
-								icon={NotebookPen}
+								icon={<NotebookPen />}
 								onClick={open}
-								iconSize={14}
-								className="text-blue-gray text-sm"
+								className="text-blue-gray icon-size-4 text-sm"
 							>
 								Notes
 							</TextButton>
@@ -130,15 +128,14 @@ const TalentSpec = ({ idx, value, canChangeTree }: Props) => {
 					</Dialog>
 				)}
 				<TextButton
+					icon={<X />}
 					onClick={() =>
 						setValue(
 							`points.${idx}`,
 							[...Array(4 * 7).keys()].map(() => 0)
 						)
 					}
-					icon={X}
-					iconSize={14}
-					className="text-red text-sm"
+					className="text-red icon-size-4 text-sm"
 				>
 					Clear points
 				</TextButton>

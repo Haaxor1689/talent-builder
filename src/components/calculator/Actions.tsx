@@ -1,21 +1,18 @@
 import { useTransition } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import { Copy, Save, Trash2 } from 'lucide-react';
+import { Copy, Save } from 'lucide-react';
 
 import { useSession } from '#auth/client.ts';
-import {
-	deleteSavedBuild,
-	upsertSavedBuild
-} from '#server/api/savedBuilds.actions.ts';
+import { upsertSavedBuild } from '#server/api/savedBuilds.actions.ts';
 import { type BuildFormT, type TalentFormT } from '#server/schemas.ts';
 import { maskToClass } from '#utils/index.ts';
 
-import ConfirmDialog from '../ConfirmDialog';
 import Input from '../form/Input';
 import Dialog, { closeDialog } from '../styled/Dialog';
 import TextButton from '../styled/TextButton';
 import { toast } from '../ToastProvider';
+import DeleteDialog from './DeleteDialog';
 
 type Props = {
 	trees: [TalentFormT?, TalentFormT?, TalentFormT?];
@@ -46,9 +43,9 @@ const Actions = ({ trees, isNew }: Props) => {
 				<Dialog
 					trigger={open => (
 						<TextButton
-							onClick={open}
-							icon={Save}
+							icon={<Save />}
 							title="Save build"
+							onClick={open}
 							disabled={isPending || trees.some(t => !t)}
 						/>
 					)}
@@ -57,7 +54,8 @@ const Actions = ({ trees, isNew }: Props) => {
 						<h3 className="haax-color">Save build</h3>
 						<Input {...register('name')} label="Build name" />
 						<TextButton
-							onClick={e =>
+							onClick={e => {
+								const currentTarget = e.currentTarget;
 								startTransition(async () => {
 									const values = getValues();
 									const newBuild = await upsertSavedBuild({
@@ -69,9 +67,9 @@ const Actions = ({ trees, isNew }: Props) => {
 									toast({ message: 'Build saved!', type: 'success' });
 									router.push(`/calculator/${values.id}`);
 									newBuild && reset(newBuild);
-									closeDialog(e);
-								})
-							}
+									closeDialog({ currentTarget });
+								});
+							}}
 							className="self-end"
 						>
 							Save
@@ -81,6 +79,8 @@ const Actions = ({ trees, isNew }: Props) => {
 
 				{!isNew && (
 					<TextButton
+						icon={<Copy />}
+						title="Clone"
 						onClick={() =>
 							startTransition(async () => {
 								const values = getValues();
@@ -95,34 +95,11 @@ const Actions = ({ trees, isNew }: Props) => {
 								router.push(newUrl);
 							})
 						}
-						icon={Copy}
-						title="Clone"
 						disabled={isPending || trees.some(t => !t)}
 					/>
 				)}
 
-				{!isNew && editable && (
-					<ConfirmDialog
-						title={`Are you sure you want to delete "${fullName}" build?`}
-						confirm={() =>
-							startTransition(async () => {
-								const { id } = getValues();
-								await deleteSavedBuild({ id });
-								router.push('/calculator');
-							})
-						}
-					>
-						{open => (
-							<TextButton
-								onClick={open}
-								icon={Trash2}
-								title="Delete"
-								className={editable ? 'text-red' : undefined}
-								disabled={isPending}
-							/>
-						)}
-					</ConfirmDialog>
-				)}
+				{!isNew && editable && <DeleteDialog name={fullName} />}
 			</div>
 		</>
 	);

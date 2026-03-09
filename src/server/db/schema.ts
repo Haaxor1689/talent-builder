@@ -87,6 +87,9 @@ export const verification = sqliteTable('verification_new', {
 
 // Content tables
 
+export const TreeVisibility = ['public', 'private'] as const;
+export type TreeVisibilityType = (typeof TreeVisibility)[number];
+
 export const talentTrees = sqliteTable(
 	'talentTree',
 	{
@@ -94,7 +97,9 @@ export const talentTrees = sqliteTable(
 			.primaryKey()
 			.$default(() => nanoid(10)),
 		name: text('name', { length: 255 }).notNull(),
-		public: integer('public', { mode: 'boolean' }).default(false).notNull(),
+		visibility: text('visibility', { enum: TreeVisibility })
+			.default('public')
+			.notNull(),
 		notes: text('notes'),
 		class: integer('class').default(0).notNull(),
 		index: integer('index').default(0).notNull(),
@@ -113,7 +118,7 @@ export const talentTrees = sqliteTable(
 	example => ({
 		createdByIdIdx: index('trees_createdById_idx').on(example.createdById),
 		nameIndex: index('trees_name_idx').on(example.name),
-		publicIndex: index('trees_public_idx').on(example.public)
+		visibilityIndex: index('trees_visibility_idx').on(example.visibility)
 	})
 );
 

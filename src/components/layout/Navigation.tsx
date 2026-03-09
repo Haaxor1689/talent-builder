@@ -1,12 +1,24 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { Menu } from 'lucide-react';
+import {
+	Calculator,
+	LibraryBig,
+	Menu,
+	PlusCircle,
+	Workflow
+} from 'lucide-react';
 
 import TextButton from '#components/styled/TextButton.tsx';
-import { topNavigation } from '#utils/index.ts';
 
 import Dialog, { closeDialog } from '../styled/Dialog';
+
+const topNavigation = [
+	{ href: '/tree/new', icon: <PlusCircle />, text: 'New Tree' },
+	{ href: '/trees', icon: <Workflow />, text: 'Trees' },
+	{ href: '/collections', icon: <LibraryBig />, text: 'Collections' },
+	{ href: '/calculator', icon: <Calculator />, text: 'Calculator' }
+] as const;
 
 const Navigation = () => {
 	const pathname = usePathname();
@@ -15,10 +27,10 @@ const Navigation = () => {
 			{topNavigation.map(({ href, icon, text }) => (
 				<TextButton
 					key={href}
+					icon={icon}
 					type="link"
 					href={href}
 					active={pathname === href}
-					icon={icon}
 					className="hidden md:inline-flex"
 				>
 					{text}
@@ -27,9 +39,9 @@ const Navigation = () => {
 			<Dialog
 				trigger={open => (
 					<TextButton
-						onClick={open}
-						icon={Menu}
+						icon={<Menu />}
 						title="Import/Export"
+						onClick={open}
 						className="md:hidden"
 					/>
 				)}
@@ -38,10 +50,10 @@ const Navigation = () => {
 				{topNavigation.map(({ href, icon, text }) => (
 					<TextButton
 						key={href}
+						icon={icon}
 						type="link"
 						href={href}
 						active={pathname === href}
-						icon={icon}
 						onClick={closeDialog}
 					>
 						{text}

@@ -47,7 +47,7 @@ const BuildGridItem = (item: BuildGridItemProps) => {
 				</>
 			}
 			actions={
-				<TextButton type="link" href={item.href} icon={Workflow}>
+				<TextButton icon={<Workflow />} type="link" href={item.href}>
 					Open build
 				</TextButton>
 			}

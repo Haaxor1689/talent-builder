@@ -2,6 +2,7 @@
 
 import { Fragment, useEffect, useRef } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
+import cls from 'classnames';
 
 import ScrollArea from './ScrollArea';
 import SpellIcon from './SpellIcon';
@@ -14,11 +15,10 @@ type Props = {
 		icon: string,
 		event: React.MouseEvent<HTMLElement, MouseEvent>
 	) => void;
-	required?: boolean;
 };
 
-const IconGrid = ({ filter, required, icon, setIcon }: Props) => {
-	const icons = useInfiniteQuery({
+const IconGrid = ({ filter, icon, setIcon }: Props) => {
+	const items = useInfiniteQuery({
 		queryKey: ['icons', filter],
 		queryFn: async ({ pageParam }) => {
 			const response = await fetch('/icons/list.json');
@@ -44,30 +44,31 @@ const IconGrid = ({ filter, required, icon, setIcon }: Props) => {
 
 	const bottomRef = useRef<HTMLDivElement>(null);
 	useEffect(() => {
-		if (!bottomRef.current) return;
+		if (!bottomRef.current || items.isFetchingNextPage || !items.hasNextPage)
+			return;
 		const observer = new IntersectionObserver(([o]) => {
-			if (!o?.isIntersecting || icons.isFetchingNextPage || !icons.hasNextPage)
-				return;
-			icons.fetchNextPage();
+			if (!o?.isIntersecting) return;
+			items.fetchNextPage();
 		});
 		observer.observe(bottomRef.current);
 		return () => observer.disconnect();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [bottomRef, icons.isFetchingNextPage, icons.hasNextPage]);
+	}, [items.isFetchingNextPage, items.hasNextPage]);
 
-	return (
-		<ScrollArea contentClassName="grid max-h-130 auto-rows-[64px] grid-cols-[repeat(auto-fit,64px)] gap-1 p-3">
-			{icons.isLoading && (
-				<div className="col-span-full flex h-32 items-center justify-center">
-					<Spinner size={32} />
-				</div>
-			)}
-
-			{!required && !icons.isLoading && (
-				<SpellIcon showDefault selected={!icon} onClick={e => setIcon('', e)} />
-			)}
-
-			{icons.data?.pages.map((page, index) => (
+	return items.isLoading ? (
+		<div className="flex h-135 grow items-center justify-center">
+			<Spinner className="icon-size-8" />
+		</div>
+	) : !items.data?.pages[0]?.items?.length ? (
+		<div className="text-blue-gray flex h-135 grow items-center justify-center">
+			No results found
+		</div>
+	) : (
+		<ScrollArea
+			containerClassName="max-h-135"
+			contentClassName="grid p-3 auto-rows-[64px] grid-cols-[repeat(auto-fit,64px)] gap-1"
+		>
+			{items.data?.pages.map((page, index) => (
 				<Fragment key={page.items[0]?.[1] ?? index}>
 					{page.items.map(item => (
 						<SpellIcon
@@ -83,9 +84,11 @@ const IconGrid = ({ filter, required, icon, setIcon }: Props) => {
 
 			<div
 				ref={bottomRef}
-				className="col-span-full flex h-16 items-center justify-center"
+				className={cls('col-span-full flex h-16 items-center justify-center', {
+					hidden: !items.hasNextPage
+				})}
 			>
-				{icons.isFetchingNextPage && <Spinner size={32} />}
+				<Spinner className="icon-size-8" />
 			</div>
 		</ScrollArea>
 	);

@@ -1,16 +1,13 @@
-import { type HTMLAttributes } from 'react';
 import cls from 'classnames';
 
-type Props = HTMLAttributes<HTMLDivElement> & { size?: number };
+type Props = { className?: string };
 
-const Spinner = ({ size = 50, className, ...props }: Props) => (
+const Spinner = ({ className }: Props) => (
 	<div
-		style={{ width: size, borderWidth: Math.ceil(size * 0.1) }}
 		className={cls(
-			`border-blue-gray inline-block aspect-square animate-spin rounded-full border border-t-[currentColor] opacity-75`,
+			`border-blue-gray inline-block aspect-square size-(--icon-size) animate-spin rounded-full border-[round(up,calc(var(--icon-size)*0.1),2px)] border-t-[currentColor] opacity-75`,
 			className
 		)}
-		{...props}
 	/>
 );
 

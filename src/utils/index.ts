@@ -2,7 +2,6 @@ import { type FieldValues, type Resolver } from 'react-hook-form';
 import { zodResolver as resolver } from '@hookform/resolvers/zod';
 import { isEqual } from 'es-toolkit';
 import { toPng } from 'html-to-image';
-import { Calculator, LibraryBig, PlusCircle, Workflow } from 'lucide-react';
 import pino, { type Logger } from 'pino';
 import { type z } from 'zod';
 
@@ -67,13 +66,6 @@ export const maskToClass = (mask?: number) =>
 	classMask[mask as never] as
 		| (typeof classMask)[keyof typeof classMask]
 		| undefined;
-
-export const topNavigation = [
-	{ href: '/tree/new', icon: PlusCircle, text: 'New Tree' },
-	{ href: '/trees', icon: Workflow, text: 'Trees' },
-	{ href: '/collections', icon: LibraryBig, text: 'Collections' },
-	{ href: '/calculator', icon: Calculator, text: 'Calculator' }
-] as const;
 
 export const getIconPath = (icon?: string) =>
 	icon?.startsWith('_')

@@ -25,16 +25,16 @@ const ClassPicker = ({ name, title, disabled, large }: Props) => {
 		<Dialog
 			trigger={open => (
 				<TextButton
-					icon={() => (
+					icon={
 						<SpellIcon
 							icon={classInfo?.icon}
 							showDefault
 							className={large ? 'size-12' : 'size-8'}
 						/>
-					)}
+					}
 					disabled={disabled}
 					onClick={open}
-					className={cls('text-blue-gray', { '*:h2 gap-2': large })}
+					className={cls('text-blue-gray', { 'h2 gap-2': large })}
 					style={{ color: classInfo?.color }}
 				>
 					{title ? `${title} ` : ''}
@@ -46,7 +46,7 @@ const ClassPicker = ({ name, title, disabled, large }: Props) => {
 				<h3 className="haax-color">Pick Class</h3>
 
 				<TextButton
-					icon={X}
+					icon={<X />}
 					onClick={e => {
 						field.onChange(0);
 						closeDialog(e);
@@ -59,10 +59,7 @@ const ClassPicker = ({ name, title, disabled, large }: Props) => {
 
 			<hr />
 
-			<div
-				className="grid gap-1"
-				style={{ gridTemplateColumns: 'repeat(3, 64px)' }}
-			>
+			<div className="grid grid-cols-[repeat(3,64px)] gap-1">
 				{Object.entries(classMask).map(([mask, classInfo]) => (
 					<SpellIcon
 						key={mask}

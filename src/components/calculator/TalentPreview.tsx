@@ -118,17 +118,17 @@ const TalentPreview = ({ i, idx, talents, ...field }: Props) => {
 				!!field.ranks && (
 					<div className="flex items-center gap-2 text-xl">
 						<TextButton
-							icon={Minus}
+							icon={<Minus />}
 							title="Remove point"
 							onClick={() => setPoints(-1)}
-							iconSize={32}
+							className="icon-size-8"
 						/>
 						{value}/{field.ranks}
 						<TextButton
-							icon={Plus}
+							icon={<Plus />}
 							title="Add point"
 							onClick={() => setPoints(1)}
-							iconSize={32}
+							className="icon-size-8"
 						/>
 					</div>
 				)

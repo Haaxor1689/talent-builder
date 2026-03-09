@@ -44,7 +44,7 @@ const MobileTooltip = ({ children, tooltip, actions }: Props) => (
 		<div className="group/tooltip pointer-events-none">{children({})}</div>
 		<div className="haax-surface-3 gap-0">{tooltip}</div>
 		{actions}
-		<TextButton icon={X} onClick={closeDialog} className="text-red">
+		<TextButton icon={<X />} onClick={closeDialog} className="text-red">
 			Close
 		</TextButton>
 	</Dialog>

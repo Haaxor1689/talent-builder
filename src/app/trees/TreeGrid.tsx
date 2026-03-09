@@ -48,7 +48,7 @@ const TreeGrid = () => {
 	if (trees.isLoading)
 		return (
 			<div className="haax-surface-6 text-blue-gray grow items-center justify-center text-center">
-				<Spinner size={48} />
+				<Spinner className="icon-size-8" />
 			</div>
 		);
 
@@ -75,7 +75,7 @@ const TreeGrid = () => {
 					hidden: !trees.hasNextPage
 				})}
 			>
-				<Spinner size={32} />
+				<Spinner className="icon-size-8" />
 			</div>
 		</div>
 	);

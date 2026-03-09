@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 import { bitUnpack, legacyBitUnpack } from '#components/calculator/utils.ts';
 
-import { UserRoles } from './db/schema';
+import { TreeVisibility, UserRoles } from './db/schema';
 
 export const Talent = z.object({
 	icon: z.string().default(''),
@@ -33,7 +33,7 @@ export const TalentForm = z.object({
 	),
 	// Builder specific
 	collection: z.string().nullable().default(null),
-	public: z.boolean().default(false),
+	visibility: z.enum(TreeVisibility).nullable().default(null),
 	notes: z.string().nullable().default(null),
 	createdById: z.string().nullable().default(null),
 	createdBy: z

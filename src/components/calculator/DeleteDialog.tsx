@@ -1,0 +1,56 @@
+'use client';
+
+import { useTransition } from 'react';
+import { useFormContext } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
+import { Trash2 } from 'lucide-react';
+
+import Dialog from '#components/styled/Dialog.tsx';
+import TextButton from '#components/styled/TextButton.tsx';
+import { deleteSavedBuild } from '#server/api/savedBuilds.actions.ts';
+import { type BuildFormT } from '#server/schemas.ts';
+
+const DeleteDialog = ({ name }: { name: string }) => {
+	const [isPending, startTransition] = useTransition();
+	const router = useRouter();
+	const { getValues } = useFormContext<BuildFormT>();
+
+	return (
+		<Dialog
+			trigger={open => (
+				<TextButton
+					onClick={open}
+					icon={<Trash2 />}
+					title="Delete"
+					className="text-red"
+				/>
+			)}
+		>
+			<h3 className="haax-color">Delete &quot;{name}&quot;?</h3>
+			<hr />
+			<p className="text-blue-gray">
+				Are you sure you want to delete <span>&quot;{name}&quot;</span> build?
+			</p>
+			<p className="text-blue-gray">This action cannot be undone!</p>
+			<hr />
+			<div className="-m-2 flex justify-end gap-2">
+				<TextButton
+					icon={<Trash2 />}
+					loading={isPending}
+					onClick={() =>
+						startTransition(async () => {
+							const { id } = getValues();
+							await deleteSavedBuild({ id });
+							router.push('/calculator');
+						})
+					}
+					className="text-red"
+				>
+					Delete
+				</TextButton>
+			</div>
+		</Dialog>
+	);
+};
+
+export default DeleteDialog;

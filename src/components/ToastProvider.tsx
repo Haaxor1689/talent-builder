@@ -48,8 +48,8 @@ const ToastComponent = ({ id, type, message }: ToastProps) => {
 				{typeof message === 'string' && (
 					<TextButton
 						onClick={() => navigator.clipboard.writeText(message)}
-						icon={ClipboardCopy}
-						iconSize={16}
+						icon={<ClipboardCopy />}
+						className="icon-size-4"
 					>
 						Copy text
 					</TextButton>
@@ -57,8 +57,8 @@ const ToastComponent = ({ id, type, message }: ToastProps) => {
 				{type === 'error' && (
 					<TextButton
 						onClick={() => sonnerToast.dismiss(id)}
-						icon={X}
-						iconSize={16}
+						icon={<X />}
+						className="icon-size-4"
 					>
 						Close
 					</TextButton>

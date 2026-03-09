@@ -72,11 +72,8 @@ const UndoRedo = <T extends FieldValues>({
 			if (e.key?.toLocaleLowerCase() !== 'z' || !e.ctrlKey) return;
 			e.preventDefault();
 
-			if (!e.shiftKey) {
-				undo();
-			} else {
-				redo();
-			}
+			if (!e.shiftKey) undo();
+			else redo();
 		};
 		window.addEventListener('keydown', callback);
 		return () => window.removeEventListener('keydown', callback);
@@ -87,14 +84,14 @@ const UndoRedo = <T extends FieldValues>({
 		<div className="absolute top-3 left-3 flex gap-1">
 			<TextButton
 				onClick={undo}
-				icon={Undo2}
+				icon={<Undo2 />}
 				title="Undo"
 				disabled={disabled[0]}
 				className="-m-2"
 			/>
 			<TextButton
 				onClick={redo}
-				icon={Redo2}
+				icon={<Redo2 />}
 				title="Redo"
 				disabled={disabled[1]}
 				className="-m-2"

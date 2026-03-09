@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 
+import { getSession } from '#auth/server.ts';
 import BuildGridItem from '#components/styled/BuildGridItem.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
 import TreeGridItem from '#components/styled/TreeGridItem.tsx';
@@ -8,17 +9,15 @@ import { getUser } from '#server/api/users.ts';
 
 import AdminPanel from './AdminPanel';
 
-const ProfilePage = async ({
-	id,
-	isOwnProfile = false
-}: {
-	id: string;
-	isOwnProfile?: boolean;
-}) => {
-	const user = await getUser({ id });
+type Props = { id: string };
+
+const ProfilePage = async ({ id }: Props) => {
+	const [user, session] = await Promise.all([getUser({ id }), getSession()]);
 
 	if (!user) return notFound();
 
+	const isOwnProfile = session?.user?.id === id;
+	const showPrivate = isOwnProfile || session?.user?.role === 'admin';
 	const roleLabel =
 		user.role === 'admin'
 			? 'Administrator'
@@ -28,13 +27,13 @@ const ProfilePage = async ({
 
 	const oldestTree = user.trees.at(-1)?.createdAt;
 	const filteredTrees = user.trees.filter(
-		tree => tree.public || isOwnProfile || user.role === 'admin'
+		t => t.visibility === 'public' || showPrivate
 	);
 
 	return (
 		<>
 			<section className="haax-surface-4 flex-row flex-wrap items-end justify-center">
-				<UserAvatar image={user.image} size={144} className="rounded-none" />
+				<UserAvatar image={user.image} size={160} className="rounded-none" />
 
 				<div className="flex grow flex-col gap-1">
 					<h1 className="haax-color text-3xl sm:text-5xl">{user.name}</h1>
@@ -72,16 +71,16 @@ const ProfilePage = async ({
 							</p>
 							<TextButton
 								type="link"
-								icon={() => (
+								icon={
 									<img
 										src="https://storage.ko-fi.com/cdn/logomarkLogo.png"
 										alt="Ko-fi logo"
 										className="h-6 pr-1"
 									/>
-								)}
+								}
 								href="https://ko-fi.com/haaxor1689"
 								external
-								className="rounded-full border-2 border-current/30 px-4 py-3 text-2xl *:font-bold"
+								className="rounded-full border-2 border-current/30 px-4 py-3 text-2xl font-bold"
 							>
 								Donate on Ko‑fi
 							</TextButton>

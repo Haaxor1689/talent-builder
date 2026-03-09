@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 const Page = async () => {
 	const session = await getSession();
 	if (!session?.user) return notFound();
-	return <ProfilePage id={session.user.id} isOwnProfile />;
+	return <ProfilePage id={session.user.id} />;
 };
 
 export default Page;

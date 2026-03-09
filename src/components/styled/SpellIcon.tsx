@@ -28,13 +28,11 @@ const SpellIcon = ({
 }: Props) => {
 	const isClickable = props.onClick && !disabled;
 	const Component = props.onClick ? 'button' : 'div';
-	const hasSize = className && /\b(size-|w-|h-)\S+/.test(String(className));
 	return (
 		<Component
 			{...(props.onClick ? { ...props, type: 'button', disabled } : {})}
 			className={cls(
-				'cursor group/icon relative focus:outline-none',
-				!hasSize && 'size-16',
+				'cursor group/icon relative size-(--spell-icon-size) focus:outline-none',
 				isClickable ? 'cursor-pointer' : 'cursor-[inherit]',
 				selected && 'haax-highlight',
 				className

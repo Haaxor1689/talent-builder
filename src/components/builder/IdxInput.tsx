@@ -1,20 +1,15 @@
-import { type Control, useController } from 'react-hook-form';
+import { useController } from 'react-hook-form';
 import { NotebookTabs } from 'lucide-react';
-
-import { type TalentFormT } from '#server/schemas.ts';
 
 import TextButton from '../styled/TextButton';
 
-type Props = {
-	control: Control<TalentFormT>;
-	disabled?: boolean;
-};
+type Props = { disabled?: boolean };
 
-const IdxInput = ({ control, disabled }: Props) => {
-	const { field } = useController({ name: 'index', control });
+const IdxInput = ({ disabled }: Props) => {
+	const { field } = useController({ name: 'index' });
 	return (
 		<TextButton
-			icon={NotebookTabs}
+			icon={<NotebookTabs />}
 			disabled={disabled}
 			onClick={() => {
 				field.onChange((field.value + 1) % 3);

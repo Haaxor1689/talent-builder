@@ -26,7 +26,7 @@ const AdminPanel = () => {
 			/>
 			<div className="flex gap-2 self-end">
 				<TextButton
-					icon={Upload}
+					icon={<Upload />}
 					onClick={() =>
 						startTransition(async () => {
 							const [file] = await window.showOpenFilePicker({
@@ -45,7 +45,7 @@ const AdminPanel = () => {
 					Import from JSON
 				</TextButton>
 				<TextButton
-					icon={Download}
+					icon={<Download />}
 					onClick={() =>
 						startTransition(async () => {
 							const response = await exportCollection({ collection });

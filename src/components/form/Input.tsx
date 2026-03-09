@@ -34,9 +34,13 @@ const Input = ({
 				name={name}
 				{...props}
 				onKeyDown={e => {
-					if (e.key.toLocaleLowerCase() === 'z' && e.ctrlKey) {
+					if (e.key === 'Enter') e.preventDefault();
+
+					if (e.key.toLocaleLowerCase() === 'y' && e.ctrlKey)
 						e.preventDefault();
-					}
+
+					if (e.key.toLocaleLowerCase() === 'z' && e.ctrlKey)
+						e.preventDefault();
 				}}
 				className={cls('haax-input-underline shrink', inputClassName, {
 					'haax-input-hocus': !props.disabled,

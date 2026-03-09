@@ -39,7 +39,7 @@ export const listInfiniteTalentTrees = serverFunction({
 			offset,
 			orderBy: [desc(talentTrees.updatedAt)],
 			where: and(
-				!isAdmin ? eq(talentTrees.public, true) : undefined,
+				!isAdmin ? eq(talentTrees.visibility, 'public') : undefined,
 				input.name ? like(talentTrees.name, `%${input.name}%`) : undefined,
 				whereAcc.length
 					? inArray(talentTrees.createdById, whereAcc)
@@ -69,8 +69,10 @@ export const upsertTalentTree = serverFunction({
 		if (!entry) {
 			await db.insert(talentTrees).values({
 				...input,
+				visibility: input.visibility ?? 'public',
 				createdById: user.id,
-				createdAt: new Date()
+				createdAt: new Date(),
+				updatedAt: new Date()
 			});
 		} else {
 			if (user.role !== 'admin' && user.id !== entry.createdById)
@@ -81,7 +83,10 @@ export const upsertTalentTree = serverFunction({
 			await db
 				.update(talentTrees)
 				.set({
-					...omit(input, ['createdBy', 'createdById', 'createdAt']),
+					...input,
+					visibility: input.visibility ?? entry.visibility,
+					createdById: entry.createdById,
+					createdAt: entry.createdAt,
 					updatedAt: new Date()
 				})
 				.where(eq(talentTrees.id, input.id));
@@ -89,11 +94,6 @@ export const upsertTalentTree = serverFunction({
 
 		updateTag(`talentTrees:id:${input.id}`);
 		updateTag(`users:id:${entry?.createdById ?? user.id}`);
-
-		return await db.query.talentTrees.findFirst({
-			where: eq(talentTrees.id, input.id),
-			with: { createdBy: createdBySelect }
-		});
 	}
 });
 

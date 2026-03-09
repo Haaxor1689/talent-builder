@@ -27,7 +27,7 @@ export const UserAvatar = ({
 	className
 }: {
 	image?: string | null;
-	size?: number;
+	size?: 24 | 32 | 128 | 160 | 256;
 	className?: string;
 }) => (
 	<div

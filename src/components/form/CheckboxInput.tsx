@@ -4,16 +4,14 @@ import cls from 'classnames';
 
 import TextButton from '../styled/TextButton';
 
-const Checkbox = () => (
+export const Checkbox = ({checked}: {checked?: boolean}) => (
 	<svg
-		width={16}
-		height={16}
 		viewBox="0 0 12 12"
-		fill="none"
 		xmlns="http://www.w3.org/2000/svg"
+		className='size-4'
 	>
 		<rect x="1" y="1" width="10" height="10" rx="1" stroke="currentColor" />
-		<rect x="3.5" y="3.5" width="5" height="5" fill="white" />
+		<rect x="3.5" y="3.5" width="5" height="5" fill={checked ?"white" : 'none'} />
 	</svg>
 );
 
@@ -33,11 +31,10 @@ const CheckboxInput = ({ name, label, disabled, className }: Props) => {
 				if (disabled) return;
 				field.onChange(!field.value);
 			}}
-			icon={Checkbox as never}
+			icon={<Checkbox checked={field.value} />}
 			disabled={disabled}
 			className={cls(
 				'text-blue-gray',
-				{ '**:fill-none': !field.value },
 				className
 			)}
 		>

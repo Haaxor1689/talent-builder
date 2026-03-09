@@ -24,6 +24,9 @@
 	--color-tooltip-yellow: #ffd100;
 	--color-tooltip-green: #1eff00;
 	--color-tooltip-gray: #9d9d9d;
+
+	--icon-size: calc(var(--spacing) * 6);
+	--spell-icon-size: calc(var(--spacing) * 16);
 }
 
 @theme inline {
@@ -89,6 +92,10 @@
 		margin-right: calc(-1 * var(--spacing) * --value(integer, [integer]));
 		@apply text-blue-gray/20;
 	}
+}
+
+@utility icon-size-* {
+	--icon-size: calc(var(--spacing) * --value(integer, [integer]));
 }
 
 @utility haax-backdrop-blur {
@@ -176,6 +183,10 @@
 
 	*:focus {
 		outline: none;
+	}
+
+	.lucide {
+		@apply size-(--icon-size);
 	}
 
 	input {

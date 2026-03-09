@@ -3,40 +3,31 @@
 import { useSearchParams } from 'next/navigation';
 
 import TalentBuilder from '#components/builder/TalentBuilder.tsx';
+import Loading from '#components/layout/Loading.tsx';
 import TreeGridItem from '#components/styled/TreeGridItem.tsx';
 import useLocalTrees from '#hooks/useLocalTrees.ts';
 
 const LocalTrees = () => {
 	const searchParams = useSearchParams();
-	const [localTrees] = useLocalTrees();
+	const { localTrees } = useLocalTrees();
 	const trees = Object.values(localTrees ?? {});
 	const selected = searchParams.get('tree');
 
-	if (selected && localTrees?.[selected])
-		return <TalentBuilder defaultValues={localTrees[selected]} isLocal />;
-
+	if (!localTrees) return <Loading />;
 	return (
 		<>
+			{selected && localTrees?.[selected] && (
+				<TalentBuilder key={selected} defaultValues={localTrees[selected]} />
+			)}
 			<h2 className="haax-color -mb-3 text-center md:text-left">Local Trees</h2>
 			{trees.length ? (
 				<div className="haax-surface-3 grid items-start md:grid-cols-[repeat(auto-fill,minmax(340px,1fr))]">
 					{trees.map(tree => (
 						<TreeGridItem
 							key={tree.id}
-							id={tree.id}
-							name={tree.name}
-							icon={tree.icon}
-							class={tree.class}
-							index={tree.index}
-							public={tree.public}
-							notes={tree.notes}
-							talents={tree.talents}
-							collection={tree.collection}
-							createdAt={tree.createdAt ?? new Date(0)}
-							updatedAt={tree.updatedAt}
-							createdById={tree.createdById ?? 'local'}
+							{...tree}
 							href={`/local?tree=${tree.id}`}
-							createdBy={null}
+							active={tree.id === selected}
 							label="Open local tree"
 						/>
 					))}

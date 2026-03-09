@@ -1,6 +1,6 @@
 import dedent from 'dedent';
 
-import Discord from '#components/Discord.tsx';
+import { Discord } from '#components/Icons.tsx';
 import MainActions from '#components/landing-page/MainActions.tsx';
 import UserSection from '#components/landing-page/UserSection.tsx';
 import Md from '#components/styled/Md.tsx';
@@ -92,26 +92,25 @@ const Page = async () => (
 			<div className="flex flex-col gap-2 self-center md:flex-row">
 				<TextButton
 					type="link"
-					icon={() => (
+					icon={
 						<img
 							src="https://storage.ko-fi.com/cdn/logomarkLogo.png"
 							alt="Ko-fi logo"
 							className="h-6 shrink-0 pr-1"
 						/>
-					)}
+					}
 					href="https://ko-fi.com/haaxor1689"
 					external
-					className="self-center rounded-full border-2 border-current/30 px-4 py-3 text-2xl *:font-bold"
+					className="self-center rounded-full border-2 border-current/30 px-4 py-3 text-2xl font-bold"
 				>
 					Donate on Ko‑fi
 				</TextButton>
 				<TextButton
 					type="link"
-					icon={Discord}
-					iconSize={24}
+					icon={<Discord />}
 					href="https://discord.gg/pDeTHQH99B"
 					external
-					className="self-center rounded-full border-2 border-current/30 px-4 py-3 text-2xl text-[#5865f2] *:font-bold"
+					className="self-center rounded-full border-2 border-current/30 px-4 py-3 text-2xl font-bold text-[#5865f2]"
 				>
 					Join the Discord Server
 				</TextButton>
