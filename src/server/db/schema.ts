@@ -26,7 +26,7 @@ export const UserRoles = ['user', 'supporter', 'admin'] as [
 ];
 export type UserRole = (typeof UserRoles)[number];
 
-export const user = sqliteTable('user_new', {
+export const user = sqliteTable('user', {
 	id: text('id').primaryKey(),
 	name: text('name').notNull(),
 	email: text('email').notNull(),
@@ -44,7 +44,7 @@ export const userRelations = relations(user, ({ many }) => ({
 	builds: many(savedBuilds)
 }));
 
-export const account = sqliteTable('account_new', {
+export const account = sqliteTable('account', {
 	id: text('id').primaryKey(),
 	userId: text('userId').notNull(),
 	accountId: text('accountId').notNull(),
@@ -65,7 +65,7 @@ export const account = sqliteTable('account_new', {
 	updatedAt: integer('updatedAt', { mode: 'timestamp' }).notNull()
 });
 
-export const session = sqliteTable('session_new', {
+export const session = sqliteTable('session', {
 	id: text('id').primaryKey(),
 	userId: text('userId').notNull(),
 	token: text('token').notNull(),
@@ -76,7 +76,7 @@ export const session = sqliteTable('session_new', {
 	updatedAt: integer('updatedAt', { mode: 'timestamp' }).notNull()
 });
 
-export const verification = sqliteTable('verification_new', {
+export const verification = sqliteTable('verification', {
 	id: text('id').primaryKey(),
 	identifier: text('identifier').notNull(),
 	value: text('value').notNull(),
