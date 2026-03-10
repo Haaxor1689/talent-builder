@@ -14,6 +14,8 @@ type Props = {
 	defaultOpen?: boolean;
 	unstyled?: boolean;
 	className?: string;
+	style?: React.CSSProperties;
+	onOpenChange?: (open: boolean) => void;
 };
 
 const Dialog = ({
@@ -21,7 +23,9 @@ const Dialog = ({
 	children,
 	defaultOpen,
 	unstyled,
-	className
+	className,
+	style,
+	onOpenChange
 }: Props) => {
 	const ref = useRef<HTMLDivElement>(null);
 	const cbRef = useRef<((e: Event) => void) | null>(null);
@@ -30,6 +34,7 @@ const Dialog = ({
 
 	const handleOpenChange = (open: boolean) => {
 		setOpen(open);
+		onOpenChange?.(open);
 		if (open) {
 			cbRef.current = (e: Event) => {
 				const sender = (e as CustomEvent).detail as HTMLElement | undefined;
@@ -58,6 +63,7 @@ const Dialog = ({
 							!unstyled && 'haax-surface-3',
 							className
 						)}
+						style={style}
 					>
 						{children}
 					</Base.Popup>

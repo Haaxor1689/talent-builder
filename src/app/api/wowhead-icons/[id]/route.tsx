@@ -13,10 +13,10 @@ export const GET = async (
 
 	try {
 		const input = id.slice(1);
-		if (env.NODE_ENV === 'development')
-			return NextResponse.redirect(
-				`https://wow.zamimg.com/images/wow/icons/large/${input}.jpg`
-			);
+		// if (env.NODE_ENV === 'development')
+		// 	return NextResponse.redirect(
+		// 		`https://wow.zamimg.com/images/wow/icons/large/${input}.jpg`
+		// 	);
 
 		const wowHeadIcon = await fetch(
 			`https://wow.zamimg.com/images/wow/icons/large/${input}.jpg`

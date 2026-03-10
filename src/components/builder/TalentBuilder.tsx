@@ -51,8 +51,8 @@ const TalentBuilder = ({ defaultValues }: Props) => {
 	return (
 		<FormProvider {...formProps}>
 			<form className="haax-surface-3 flex flex-col gap-3">
-				<div className="flex flex-col gap-3 md:flex-row md:items-center">
-					<div className="flex grow items-center gap-4 overflow-hidden">
+				<div className="flex flex-col gap-2 md:flex-row md:items-center">
+					<div className="flex grow items-center gap-2 overflow-hidden">
 						<IconPicker name="icon" disabled={!editable} />
 						<Input
 							{...register('name', { setValueAs: v => (v === '' ? null : v) })}
@@ -67,11 +67,11 @@ const TalentBuilder = ({ defaultValues }: Props) => {
 						<IdxInput disabled={!editable} />
 						{session.data?.user.role === 'admin' && (
 							<Input
-								placeholder="Collection"
 								{...register('collection', {
 									setValueAs: v => (v === '' ? null : v)
 								})}
-								className="shrink grow"
+								placeholder="No collection"
+								className="mx-2 shrink grow"
 								disabled={!editable}
 							/>
 						)}

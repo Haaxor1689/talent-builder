@@ -18,7 +18,7 @@ export const generateMetadata = async ({
 	return {
 		title: info.name,
 		description: `Talent tree created by ${info.createdBy.name}`,
-		icons: [{ rel: 'icon', url: env.DEPLOY_URL + getIconPath(info.icon) }]
+		icons: [{ rel: 'icon', url: getIconPath(info.icon, env.DEPLOY_URL) }]
 	};
 };
 

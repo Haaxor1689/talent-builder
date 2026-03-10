@@ -42,11 +42,26 @@ const Image = async ({ params }: PageProps<'/tree/[id]'>) => {
 					textAlign: 'center'
 				}}
 			>
-				<img
-					src={env.DEPLOY_URL + getIconPath(r.icon)}
-					width={128}
-					height={128}
-				/>
+				<div
+					style={{
+						position: 'relative',
+						display: 'flex',
+						justifyContent: 'center',
+						alignItems: 'center'
+					}}
+				>
+					<img
+						src={getIconPath(r.icon, env.DEPLOY_URL)}
+						width={112}
+						height={112}
+					/>
+					<img
+						src={`${env.DEPLOY_URL}/icon_frame.png`}
+						width={128}
+						height={128}
+						style={{ position: 'absolute' }}
+					/>
+				</div>
 				<span style={{ fontSize: 118, maxHeight: 235, overflow: 'hidden' }}>
 					{r.name}
 				</span>
@@ -58,15 +73,15 @@ const Image = async ({ params }: PageProps<'/tree/[id]'>) => {
 						display: 'flex',
 						alignItems: 'center',
 						gap: 16,
-						fontSize: 42
+						fontSize: 48
 					}}
 				>
 					<span style={{ color: '#929391' }}>Created by</span>
 					{r.createdBy?.image && (
 						<img
-							src={`${r.createdBy.image}?size=38`}
-							width={38}
-							height={38}
+							src={`${r.createdBy.image}?size=64`}
+							width={64}
+							height={64}
 							style={{ borderRadius: '100%' }}
 						/>
 					)}

@@ -28,7 +28,7 @@ export const generateMetadata = async ({
 		description: `Custom ${className} talent tree calculator consisting of trees: ${trees
 			.map(t => t?.name)
 			.join(', ')}`,
-		icons: [{ rel: 'icon', url: env.DEPLOY_URL + getIconPath(classInfo?.icon) }]
+		icons: [{ rel: 'icon', url: getIconPath(classInfo?.icon, env.DEPLOY_URL) }]
 	};
 };
 

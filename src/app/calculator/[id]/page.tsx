@@ -20,7 +20,7 @@ export const generateMetadata = async ({
 	return {
 		title: `${savedBuild.name || cls?.name}`,
 		description: `Talent tree created by ${savedBuild.createdBy.name}`,
-		icons: [{ rel: 'icon', url: env.DEPLOY_URL + getIconPath(cls?.icon) }]
+		icons: [{ rel: 'icon', url: getIconPath(cls?.icon, env.DEPLOY_URL) }]
 	};
 };
 

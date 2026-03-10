@@ -159,14 +159,16 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 								<TalentArrow start={field.requires} end={i} />
 							)}
 							{!!field.highlight && (
-								<span className="text-pink h2 pointer-events-none absolute -top-3 -right-2.5 animate-pulse">
-									!!
-								</span>
+								<img
+									src="/icon_hover.png"
+									alt="hover"
+									className="pointer-events-none absolute inset-0 size-full scale-125 animate-pulse -hue-rotate-90"
+								/>
 							)}
 						</>
 					}
 					{...props}
-					className="*:[[alt='frame']]:opacity-10"
+					className={isEmpty ? "*:[[alt='frame']]:opacity-10" : undefined}
 				/>
 			)}
 		</Tooltip>

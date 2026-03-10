@@ -58,16 +58,17 @@ const TalentEdit = ({ selected, editable }: Props) => {
 	return (
 		<ScrollArea
 			containerClassName="h-full"
-			contentClassName="flex flex-col gap-4 p-3"
+			contentClassName="flex flex-col gap-4 p-3 h-full"
 		>
-			<div className="flex items-center gap-2">
+			<div className="flex items-center">
 				<IconPicker name={`talents.${selected}.icon`} disabled={!editable} />
 				<Input
 					{...register(`talents.${selected}.name`)}
 					disabled={!editable}
-					className="shrink grow"
+					className="mx-2 shrink grow"
+					inputClassName="text-xl"
 				/>
-
+				<TalentScreenshot selected={selected} />
 				{editable && (
 					<TextButton
 						icon={<Trash2 />}
@@ -105,6 +106,7 @@ const TalentEdit = ({ selected, editable }: Props) => {
 				minRows={5}
 				maxRows={14}
 				disabled={!editable}
+				className="grow"
 			/>
 
 			<div className="flex flex-col gap-2">
@@ -125,8 +127,6 @@ const TalentEdit = ({ selected, editable }: Props) => {
 			<span className="text-blue-gray -mt-2 text-sm">
 				Comma separated list of spell ids for each rank
 			</span>
-
-			<TalentScreenshot selected={selected} />
 		</ScrollArea>
 	);
 };

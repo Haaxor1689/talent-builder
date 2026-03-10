@@ -31,7 +31,7 @@ const Navigation = () => {
 					type="link"
 					href={href}
 					active={pathname === href}
-					className="hidden md:inline-flex"
+					className="hidden md:flex"
 				>
 					{text}
 				</TextButton>

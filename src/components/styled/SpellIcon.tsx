@@ -32,21 +32,24 @@ const SpellIcon = ({
 		<Component
 			{...(props.onClick ? { ...props, type: 'button', disabled } : {})}
 			className={cls(
-				'cursor group/icon relative size-(--spell-icon-size) focus:outline-none',
+				'cursor group/icon relative flex size-(--spell-icon-size) items-center justify-center focus:outline-none',
 				isClickable ? 'cursor-pointer' : 'cursor-[inherit]',
 				selected && 'haax-highlight',
 				className
 			)}
 		>
-			{showDefault || !!icon ? (
+			{(!!showDefault || !!icon) && (
 				<img
-					src={getIconPath(icon ?? undefined)}
-					alt={!icon || icon === '' ? 'empty' : icon}
-					className="size-full"
+					src={getIconPath(icon)}
+					alt={icon ?? 'empty icon'}
+					className="size-[87.5%]"
 				/>
-			) : (
-				<img src="/icon_frame.png" alt="frame" className="size-full" />
 			)}
+			<img
+				src="/icon_frame.png"
+				alt="frame"
+				className="absolute inset-0 size-full"
+			/>
 
 			{isClickable && (
 				<img

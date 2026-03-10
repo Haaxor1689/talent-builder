@@ -26,7 +26,10 @@ const UserStatus = () => {
 				icon={<Discord />}
 				onClick={() =>
 					startTransition(async () => {
-						await signIn.social({ provider: 'discord' });
+						await signIn.social({
+							provider: 'discord',
+							callbackURL: window.location.pathname + window.location.search
+						});
 					})
 				}
 				loading={isPending}

@@ -5,6 +5,7 @@ import { toPng } from 'html-to-image';
 import pino, { type Logger } from 'pino';
 import { type z } from 'zod';
 
+import iconListRaw from '#assets/icon-list.json';
 import { type TalentFormT, type TalentTreeT } from '#server/schemas.ts';
 
 import { Errors, isErrors } from './errors';
@@ -67,11 +68,22 @@ export const maskToClass = (mask?: number) =>
 		| (typeof classMask)[keyof typeof classMask]
 		| undefined;
 
-export const getIconPath = (icon?: string) =>
-	icon?.startsWith('_')
-		? `/api/wowhead-icons/${icon.toLocaleLowerCase()}`
-		: // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-			`/icons/${(icon || 'inv_misc_questionmark').toLocaleLowerCase()}.png`;
+export const iconList = iconListRaw as Record<string, number>;
+const iconCache = new Map<string, string>();
+
+const wowheadIconUrl = (name: string) =>
+	`https://wow.zamimg.com/images/wow/icons/large/${name.toLocaleLowerCase()}.jpg`;
+
+export const getIconPath = (icon?: string | null, baseUrl = '') => {
+	if (!icon) return wowheadIconUrl('inv_misc_questionmark');
+	if (iconCache.has(icon)) return iconCache.get(icon)!;
+	if (icon.startsWith('http')) return icon;
+	const key = icon.toLocaleLowerCase().replace(/^_/, '');
+	const url =
+		iconList[key] === 1 ? `${baseUrl}/icons/${key}.png` : wowheadIconUrl(key);
+	iconCache.set(icon, url);
+	return url;
+};
 
 export const elementToPng = async (element: HTMLElement, name: string) => {
 	const dataUrl = await toPng(element, {

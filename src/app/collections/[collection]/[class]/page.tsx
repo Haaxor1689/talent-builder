@@ -34,7 +34,7 @@ export const generateMetadata = async ({
 	return {
 		title: `${collection} ${info.name}`,
 		description: `Talent calculator from collection ${collection}.`,
-		icons: [{ rel: 'icon', url: env.DEPLOY_URL + getIconPath(info.icon) }]
+		icons: [{ rel: 'icon', url: getIconPath(info.icon, env.DEPLOY_URL) }]
 	};
 };
 

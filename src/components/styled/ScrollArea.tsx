@@ -2,6 +2,7 @@ import { ScrollArea as Base } from '@base-ui/react/scroll-area';
 import cls from 'classnames';
 
 type Props = {
+	ref?: React.RefObject<HTMLDivElement | null>;
 	containerClassName?: string;
 	contentClassName?: string;
 	children: React.ReactNode;
@@ -18,6 +19,7 @@ const Scrollbar = (props: { orientation: 'vertical' | 'horizontal' }) => (
 );
 
 const ScrollArea = ({
+	ref,
 	children,
 	containerClassName,
 	contentClassName
@@ -28,7 +30,7 @@ const ScrollArea = ({
 			containerClassName
 		)}
 	>
-		<Base.Viewport className="shrink">
+		<Base.Viewport className="shrink" ref={ref}>
 			<Base.Content className={contentClassName}>{children}</Base.Content>
 		</Base.Viewport>
 		<Scrollbar orientation="vertical" />
