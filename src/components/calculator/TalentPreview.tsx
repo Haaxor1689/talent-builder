@@ -59,7 +59,7 @@ const TalentPreview = ({ i, idx, talents, rows }: Props) => {
 		if (value === 0) return;
 
 		const requiredBy = Object.entries(talents)
-			.map(([idx, t]) => (t.requires === i ? Number(idx) : undefined))
+			.map(([idx, t]) => (t?.requires === i ? Number(idx) : undefined))
 			.filter(t => t !== undefined);
 		// If the talent is required by another, prevent removing points
 		if (requiredBy.some(t => points[idx][t])) return;
@@ -86,7 +86,7 @@ const TalentPreview = ({ i, idx, talents, rows }: Props) => {
 		}
 
 		setValue(`points.${idx}.${i}`, value - 1);
-	};;
+	};
 
 	return (
 		<Tooltip

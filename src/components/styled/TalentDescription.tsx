@@ -37,10 +37,11 @@ export const TalentDescription = ({ field, value }: Props) => {
 			'gm'
 		);
 
-		const matches = [...field.description.matchAll(reg)];
+		const desc = field.description;
+		const matches = [...desc.matchAll(reg)];
 		return matches.reduce(
 			(prev, match, i) => {
-				const next = field.description.slice(
+				const next = desc.slice(
 					match.index + match[0].length,
 					matches[i + 1]?.index
 				);
@@ -67,10 +68,7 @@ export const TalentDescription = ({ field, value }: Props) => {
 					next
 				];
 			},
-			[field.description.slice(0, matches[0]?.index)] as (
-				| string
-				| JSX.Element
-			)[]
+			[desc.slice(0, matches[0]?.index)] as (string | JSX.Element)[]
 		);
 	}, [field?.description, field?.ranks, value]);
 
