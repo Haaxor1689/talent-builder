@@ -1,4 +1,4 @@
-import { Bug } from 'lucide-react';
+import { Bug, ScrollText } from 'lucide-react';
 
 import TextButton from '#components/styled/TextButton.tsx';
 
@@ -54,6 +54,15 @@ const Footer = async () => (
 				className="text-blue-gray -m-2 text-sm"
 			>
 				Privacy Policy
+			</TextButton>
+			•
+			<TextButton
+				type="link"
+				href="/changelog"
+				icon={<ScrollText className="size-4" />}
+				className="text-blue-gray -m-2 text-sm"
+			>
+				Changelog
 			</TextButton>
 		</footer>
 	</>
