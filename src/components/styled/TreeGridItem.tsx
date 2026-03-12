@@ -29,7 +29,7 @@ const TreeGridItem = (item: Item) => {
 	const date = item.updatedAt ?? item.createdAt;
 	return (
 		<Tooltip
-			tooltip={
+			tooltip={() => (
 				<>
 					<h4 className="haax-color text-xl">{item.name}</h4>
 					{item.visibility === 'private' && (
@@ -68,8 +68,8 @@ const TreeGridItem = (item: Item) => {
 						</div>
 					)}
 				</>
-			}
-			actions={
+			)}
+			actions={() => (
 				<TextButton
 					icon={<Workflow />}
 					type="link"
@@ -78,7 +78,7 @@ const TreeGridItem = (item: Item) => {
 				>
 					{item.label ?? 'Open tree'}
 				</TextButton>
-			}
+			)}
 		>
 			{props => (
 				<Link

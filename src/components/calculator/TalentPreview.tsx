@@ -5,7 +5,7 @@ import cls from 'classnames';
 import { Minus, Plus } from 'lucide-react';
 
 import { TalentDescription } from '#components/styled/TalentDescription.tsx';
-import useIsMobile from '#hooks/useIsMobile.ts';
+import useIsMobile from '#hooks/useIsMobile.tsx';
 import {
 	type BuildForm,
 	type Talent,

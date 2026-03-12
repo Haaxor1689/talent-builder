@@ -20,7 +20,7 @@ const BuildGridItem = (item: BuildGridItemProps) => {
 	const classInfo = maskToClass(item.class);
 	return (
 		<Tooltip
-			tooltip={
+			tooltip={() => (
 				<>
 					<h4 className="haax-color text-lg">
 						{item.name ? `${item.name} ` : ''}
@@ -45,12 +45,12 @@ const BuildGridItem = (item: BuildGridItemProps) => {
 						</>
 					)}
 				</>
-			}
-			actions={
+			)}
+			actions={() => (
 				<TextButton icon={<Workflow />} type="link" href={item.href}>
 					Open build
 				</TextButton>
-			}
+			)}
 		>
 			{props => (
 				<Link
