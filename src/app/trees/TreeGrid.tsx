@@ -8,15 +8,15 @@ import cls from 'classnames';
 import Spinner from '#components/styled/Spinner.tsx';
 import TreeGridItem from '#components/styled/TreeGridItem.tsx';
 import { listInfiniteTalentTrees } from '#server/api/talentTree.actions.ts';
-import { Filters } from '#server/schemas.ts';
+import { TreesFilters } from '#server/schemas.ts';
 
 const TreeGrid = () => {
 	const searchParams = useSearchParams();
 	const defaultValues = useMemo(() => {
-		const p = Filters.safeParse({
+		const p = TreesFilters.safeParse({
 			...Object.fromEntries(searchParams.entries())
 		});
-		return p.success ? p.data : Filters.parse({});
+		return p.success ? p.data : TreesFilters.parse({});
 	}, [searchParams]);
 
 	const trees = useInfiniteQuery({

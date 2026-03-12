@@ -6,21 +6,37 @@ import { bitUnpack, legacyBitUnpack } from '#components/calculator/utils.ts';
 import { TreeVisibility, UserRoles } from './db/schema';
 
 export const Talent = z.object({
-	icon: z.string().default(''),
-	name: z.string().default(''),
+	icon: z.string().default('inv_misc_questionmark'),
+	name: z.string().default('New talent'),
 	ranks: z.preprocess(
-		val => (!val || val === '' ? null : val),
-		z.number().nullable().default(null)
+		val =>
+			!val || isNaN(Number(val)) ? 1 : Math.max(Math.min(Number(val), 7), 0),
+		z.number().min(0).max(7).default(1)
 	),
-	spellIds: z.string().nullable().default(null),
-	description: z.string().default(''),
+	highlight: z.boolean().default(false),
+	description: z.string().nullable().default(null),
+	notes: z.string().nullable().default(null),
 	requires: z.number().nullable().default(null),
-	highlight: z.boolean().default(false)
+	spellIds: z.string().nullable().default(null)
 });
-export type TalentT = z.infer<typeof Talent>;
+export type Talent = z.infer<typeof Talent>;
 
-const TalentTree = z.array(Talent.default({})).length(4 * 7);
-export type TalentTreeT = z.infer<typeof TalentTree>;
+const isEmptyTalent = (t?: Talent) =>
+	!t || (!t.name && !t.description && !t.ranks);
+
+const Talents = z.preprocess(
+	value => {
+		if (!Array.isArray(value)) return value;
+		// Migrate from array format to object format
+		return Object.fromEntries(
+			value
+				.map((talent, idx) => [`${idx}`, talent] as const)
+				.filter(([, talent]) => !isEmptyTalent(talent))
+		);
+	},
+	z.record(z.string(), Talent.optional())
+);
+export type Talents = z.infer<typeof Talents>;
 
 export const TalentForm = z.object({
 	id: z.string().default(nanoid(10)),
@@ -28,10 +44,8 @@ export const TalentForm = z.object({
 	name: z.string().default('New talent tree'),
 	class: z.number().default(0),
 	index: z.number().default(0),
-	talents: TalentTree.default(
-		[...Array(4 * 7).keys()].map(() => Talent.parse({}))
-	),
-	// Builder specific
+	rows: z.number().min(1).max(11).default(7),
+	talents: Talents.default({}),
 	collection: z.string().nullable().default(null),
 	visibility: z.enum(TreeVisibility).nullable().default(null),
 	notes: z.string().nullable().default(null),
@@ -47,14 +61,15 @@ export const TalentForm = z.object({
 	createdAt: z.coerce.date().nullable().default(null),
 	updatedAt: z.coerce.date().nullable().default(null)
 });
-export type TalentFormT = z.infer<typeof TalentForm>;
+export type TalentForm = z.infer<typeof TalentForm>;
 
-export const Filters = z.object({
+export const TreesFilters = z.object({
 	name: z.string().optional().default(''),
 	from: z.string().optional().default(''),
-	class: z.coerce.number().optional().default(0)
+	class: z.coerce.number().optional().default(0),
+	rows: z.coerce.number().optional()
 });
-export type FiltersT = z.infer<typeof Filters>;
+export type TreesFilters = z.infer<typeof TreesFilters>;
 
 export const CalculatorParams = z
 	.object({
@@ -67,7 +82,8 @@ export const CalculatorParams = z
 			.optional(),
 		points: z.string().optional(),
 		c: z.coerce.number().optional(),
-		class: z.coerce.number().optional()
+		class: z.coerce.number().optional(),
+		rows: z.coerce.number().optional()
 	})
 	.transform(val => ({
 		t0: val.t0,
@@ -78,26 +94,20 @@ export const CalculatorParams = z
 			: val.t
 				? legacyBitUnpack(val.t)
 				: undefined,
-		class: val.class ?? val.c
+		class: val.class ?? val.c,
+		rows: val.rows
 	}));
 
-export type CalculatorParamsT = z.infer<typeof CalculatorParams>;
+export type CalculatorParams = z.infer<typeof CalculatorParams>;
 
 export const BuildForm = z.object({
 	id: z.string().default(nanoid(10)),
 	name: z.string().default(''),
 	class: z.number().default(0),
+	rows: z.number().min(1).max(11).default(7),
 	points: z
-		.tuple([
-			z.array(z.number()).length(4 * 7),
-			z.array(z.number()).length(4 * 7),
-			z.array(z.number()).length(4 * 7)
-		])
-		.default([
-			[...Array(4 * 7).keys()].map(() => 0),
-			[...Array(4 * 7).keys()].map(() => 0),
-			[...Array(4 * 7).keys()].map(() => 0)
-		]),
+		.tuple([z.array(z.number()), z.array(z.number()), z.array(z.number())])
+		.default([[], [], []]),
 	createdById: z.string().nullable().default(null),
 	createdBy: z
 		.object({
@@ -110,4 +120,4 @@ export const BuildForm = z.object({
 	createdAt: z.coerce.date().nullable().default(null),
 	updatedAt: z.coerce.date().nullable().default(null)
 });
-export type BuildFormT = z.infer<typeof BuildForm>;
+export type BuildForm = z.infer<typeof BuildForm>;

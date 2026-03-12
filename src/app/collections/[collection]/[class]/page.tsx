@@ -54,7 +54,10 @@ const TalentTreePage = async ({ params }: Props) => {
 		<TalentCalculator
 			urlBase={`/collections/${parsed.data.collection}/`}
 			trees={trees}
-			values={{ class: parsed.data.class }}
+			values={{
+				class: parsed.data.class,
+				rows: Math.max(...trees.map(t => t?.rows ?? 7))
+			}}
 		/>
 	);
 };

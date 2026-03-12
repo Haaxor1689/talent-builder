@@ -4,16 +4,17 @@ import { useEffect } from 'react';
 import { useWatch } from 'react-hook-form';
 import { useSearchParams } from 'next/navigation';
 
-import { BuildForm, type BuildFormT } from '#server/schemas.ts';
+import { BuildForm } from '#server/schemas.ts';
 
 import { bitPack } from './utils';
 
-const UrlSync = ({ values }: { values?: Partial<BuildFormT> }) => {
+const UrlSync = ({ values }: { values?: Partial<BuildForm> }) => {
 	const searchParams = useSearchParams();
 
 	// Update points in URL
-	const points = useWatch<BuildFormT, 'points'>({ name: 'points' });
-	const cls = useWatch<BuildFormT, 'class'>({ name: 'class' });
+	const points = useWatch<BuildForm, 'points'>({ name: 'points' });
+	const cls = useWatch<BuildForm, 'class'>({ name: 'class' });
+	const rows = useWatch<BuildForm, 'rows'>({ name: 'rows' });
 
 	useEffect(() => {
 		const params = new URLSearchParams(
@@ -27,6 +28,7 @@ const UrlSync = ({ values }: { values?: Partial<BuildFormT> }) => {
 		params.delete('t');
 		params.delete('class');
 		params.delete('points');
+		params.delete('rows');
 
 		if (cls !== defaults.class) {
 			params.append('class', cls.toString());
@@ -35,6 +37,10 @@ const UrlSync = ({ values }: { values?: Partial<BuildFormT> }) => {
 		const t = bitPack(points);
 		if (t !== bitPack(defaults.points)) {
 			params.append('points', t);
+		}
+
+		if (rows !== defaults.rows) {
+			params.append('rows', rows.toString());
 		}
 
 		window.history.replaceState(
@@ -47,7 +53,7 @@ const UrlSync = ({ values }: { values?: Partial<BuildFormT> }) => {
 			].join('')
 		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [points, cls, values]);
+	}, [points, cls, rows, values]);
 
 	return null;
 };

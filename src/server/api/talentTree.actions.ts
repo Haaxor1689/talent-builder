@@ -1,20 +1,32 @@
 'use server';
 
 import { updateTag } from 'next/cache';
-import { and, desc, eq, inArray, like } from 'drizzle-orm';
-import { omit } from 'es-toolkit';
+import { and, desc, eq, inArray, like, not } from 'drizzle-orm';
 import { z } from 'zod';
 
+import { GameVersions } from '#components/styled/GameVersion.tsx';
 import { db } from '#server/db/index.ts';
 import { talentTrees, user as userTable } from '#server/db/schema.ts';
 import { serverFunction } from '#server/helpers.ts';
-import { Filters, TalentForm } from '#server/schemas.ts';
+import { TalentForm, TreesFilters } from '#server/schemas.ts';
 import { Errors } from '#utils/errors.ts';
 
 import { createdBySelect, getUser } from '.';
 
+const getVersionFilter = (rows?: number) => {
+	if (rows === undefined) return undefined;
+	if (rows > 0) return eq(talentTrees.rows, rows);
+	// -1 represents "custom" version that is everything except known versions
+	return not(
+		inArray(
+			talentTrees.rows,
+			GameVersions.map(v => v.rows)
+		)
+	);
+};
+
 export const listInfiniteTalentTrees = serverFunction({
-	input: Filters.extend({
+	input: TreesFilters.extend({
 		limit: z.number().min(1).max(100).optional(),
 		cursor: z.number().optional()
 	}),
@@ -44,7 +56,8 @@ export const listInfiniteTalentTrees = serverFunction({
 				whereAcc.length
 					? inArray(talentTrees.createdById, whereAcc)
 					: undefined,
-				input.class ? eq(talentTrees.class, input.class) : undefined
+				input.class ? eq(talentTrees.class, input.class) : undefined,
+				getVersionFilter(input.rows)
 			),
 			with: { createdBy: createdBySelect }
 		});

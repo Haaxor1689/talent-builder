@@ -7,14 +7,8 @@ import {
 } from 'drizzle-orm/sqlite-core';
 import { nanoid } from 'nanoid';
 
-import { type TalentTreeT } from '#server/schemas.ts';
+import { type Talents } from '#server/schemas.ts';
 
-/**
- * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
- * database instance for multiple projects.
- *
- * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
- */
 export const sqliteTable = sqliteTableCreator(name => `talent-builder_${name}`);
 
 // Auth tables
@@ -26,16 +20,20 @@ export const UserRoles = ['user', 'supporter', 'admin'] as [
 ];
 export type UserRole = (typeof UserRoles)[number];
 
-export const user = sqliteTable('user', {
-	id: text('id').primaryKey(),
-	name: text('name').notNull(),
-	email: text('email').notNull(),
-	emailVerified: integer('emailVerified', { mode: 'boolean' }),
-	image: text('image'),
-	createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
-	updatedAt: integer('updatedAt', { mode: 'timestamp' }).notNull(),
-	role: text('role', { enum: UserRoles }).default('user').notNull()
-});
+export const user = sqliteTable(
+	'user',
+	{
+		id: text('id').primaryKey(),
+		name: text('name').notNull(),
+		email: text('email').notNull(),
+		emailVerified: integer('emailVerified', { mode: 'boolean' }).notNull(),
+		image: text('image'),
+		createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
+		updatedAt: integer('updatedAt', { mode: 'timestamp' }).notNull(),
+		role: text('role', { enum: UserRoles }).default('user').notNull()
+	},
+	t => ({ nameIdx: index('user_name_idx').on(t.name) })
+);
 
 export const userRelations = relations(user, ({ many }) => ({
 	accounts: many(account),
@@ -44,46 +42,64 @@ export const userRelations = relations(user, ({ many }) => ({
 	builds: many(savedBuilds)
 }));
 
-export const account = sqliteTable('account', {
-	id: text('id').primaryKey(),
-	userId: text('userId').notNull(),
-	accountId: text('accountId').notNull(),
-	providerId: text('providerId').notNull(),
-	providerAccountId: text('providerAccountId'),
-	accessToken: text('accessToken'),
-	refreshToken: text('refreshToken'),
-	accessTokenExpiresAt: integer('accessTokenExpiresAt', {
-		mode: 'timestamp'
-	}),
-	refreshTokenExpiresAt: integer('refreshTokenExpiresAt', {
-		mode: 'timestamp'
-	}),
-	scope: text('scope'),
-	idToken: text('idToken'),
-	password: text('password'),
-	createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
-	updatedAt: integer('updatedAt', { mode: 'timestamp' }).notNull()
-});
+export const account = sqliteTable(
+	'account',
+	{
+		id: text('id').primaryKey(),
+		userId: text('userId').notNull(),
+		accountId: text('accountId').notNull(),
+		providerId: text('providerId').notNull(),
+		providerAccountId: text('providerAccountId'),
+		accessToken: text('accessToken'),
+		refreshToken: text('refreshToken'),
+		accessTokenExpiresAt: integer('accessTokenExpiresAt', {
+			mode: 'timestamp'
+		}),
+		refreshTokenExpiresAt: integer('refreshTokenExpiresAt', {
+			mode: 'timestamp'
+		}),
+		scope: text('scope'),
+		idToken: text('idToken'),
+		password: text('password'),
+		createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
+		updatedAt: integer('updatedAt', { mode: 'timestamp' }).notNull()
+	},
+	t => ({ userIdIdx: index('account_userId_idx').on(t.userId) })
+);
 
-export const session = sqliteTable('session', {
-	id: text('id').primaryKey(),
-	userId: text('userId').notNull(),
-	token: text('token').notNull(),
-	expiresAt: integer('expiresAt', { mode: 'timestamp' }).notNull(),
-	ipAddress: text('ipAddress'),
-	userAgent: text('userAgent'),
-	createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
-	updatedAt: integer('updatedAt', { mode: 'timestamp' }).notNull()
-});
+export const session = sqliteTable(
+	'session',
+	{
+		id: text('id').primaryKey(),
+		userId: text('userId').notNull(),
+		token: text('token').notNull(),
+		expiresAt: integer('expiresAt', { mode: 'timestamp' }).notNull(),
+		ipAddress: text('ipAddress'),
+		userAgent: text('userAgent'),
+		createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
+		updatedAt: integer('updatedAt', { mode: 'timestamp' }).notNull()
+	},
+	t => ({ userIdIdx: index('session_userId_idx').on(t.userId) })
+);
 
-export const verification = sqliteTable('verification', {
-	id: text('id').primaryKey(),
-	identifier: text('identifier').notNull(),
-	value: text('value').notNull(),
-	expiresAt: integer('expiresAt', { mode: 'timestamp' }).notNull(),
-	createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
-	updatedAt: integer('updatedAt', { mode: 'timestamp' }).notNull()
-});
+export const verification = sqliteTable(
+	'verification',
+	{
+		id: text('id').primaryKey(),
+		identifier: text('identifier').notNull(),
+		value: text('value').notNull(),
+		expiresAt: integer('expiresAt', { mode: 'timestamp' }).notNull(),
+		createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
+		updatedAt: integer('updatedAt', { mode: 'timestamp' }).notNull()
+	},
+	t => ({
+		identifierIdx: index('verification_identifier_idx').on(t.identifier),
+		identifierExpiresAtIdx: index('verification_identifier_expiresAt_idx').on(
+			t.identifier,
+			t.expiresAt
+		)
+	})
+);
 
 // Content tables
 
@@ -106,19 +122,33 @@ export const talentTrees = sqliteTable(
 		icon: text('icon', { length: 255 })
 			.default('inv_misc_questionmark')
 			.notNull(),
+		rows: integer('rows').default(7).notNull(),
 		talents: text('talents', { mode: 'json' })
-			.default('[]')
+			.default('{}')
 			.notNull()
-			.$type<TalentTreeT>(),
+			.$type<Talents>(),
 		collection: text('collection', { length: 255 }),
 		createdById: text('createdById', { length: 255 }).notNull(),
 		createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
-		updatedAt: integer('updatedAt', { mode: 'timestamp' })
+		updatedAt: integer('updatedAt', { mode: 'timestamp' }).notNull()
 	},
-	example => ({
-		createdByIdIdx: index('trees_createdById_idx').on(example.createdById),
-		nameIndex: index('trees_name_idx').on(example.name),
-		visibilityIndex: index('trees_visibility_idx').on(example.visibility)
+	t => ({
+		createdByIdIdx: index('trees_createdById_idx').on(t.createdById),
+		nameIndex: index('trees_name_idx').on(t.name),
+		visibilityIndex: index('trees_visibility_idx').on(t.visibility),
+		rowsIdx: index('trees_rows_idx').on(t.rows),
+		collectionIdx: index('trees_collection_idx').on(t.collection),
+		classIdx: index('trees_class_idx').on(t.class),
+		collectionClassIndexRowsIdx: index(
+			'trees_collection_class_index_rows_idx'
+		).on(t.collection, t.class, t.index, t.rows),
+		visibilityCreatedByUpdatedAtIdx: index(
+			'trees_visibility_createdById_updatedAt_idx'
+		).on(t.visibility, t.createdById, t.updatedAt),
+		createdByUpdatedAtIdx: index('trees_createdById_updatedAt_idx').on(
+			t.createdById,
+			t.updatedAt
+		)
 	})
 );
 
@@ -143,10 +173,14 @@ export const savedBuilds = sqliteTable(
 		talents: text('talents', { length: 86 }).notNull(),
 		createdById: text('createdById', { length: 255 }).notNull(),
 		createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
-		updatedAt: integer('updatedAt', { mode: 'timestamp' })
+		updatedAt: integer('updatedAt', { mode: 'timestamp' }).notNull()
 	},
-	example => ({
-		createdByIdIdx: index('builds_createdById_idx').on(example.createdById)
+	t => ({
+		createdByIdIdx: index('builds_createdById_idx').on(t.createdById),
+		createdByUpdatedAtIdx: index('builds_createdById_updatedAt_idx').on(
+			t.createdById,
+			t.updatedAt
+		)
 	})
 );
 

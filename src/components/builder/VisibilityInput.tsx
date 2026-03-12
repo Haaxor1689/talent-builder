@@ -4,7 +4,7 @@ import { AlertTriangle, CloudOff, Eye, EyeOff } from 'lucide-react';
 import { useSession } from '#auth/client.ts';
 import { Checkbox } from '#components/form/CheckboxInput.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
-import { type TalentFormT } from '#server/schemas.ts';
+import { type TalentForm } from '#server/schemas.ts';
 
 const Options = [
 	{
@@ -31,8 +31,8 @@ const Options = [
 ] as const;
 
 type Props = {
-	visibility: TalentFormT['visibility'];
-	setVisibility: (value: TalentFormT['visibility']) => void;
+	visibility: TalentForm['visibility'];
+	setVisibility: (value: TalentForm['visibility']) => void;
 };
 
 export const VisibilityInput = ({ visibility, setVisibility }: Props) => {

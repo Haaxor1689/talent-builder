@@ -1,4 +1,5 @@
 import dedent from 'dedent';
+import { Calculator, PlusCircle, ScrollText, Workflow } from 'lucide-react';
 
 import { Discord } from '#components/Icons.tsx';
 import MainActions from '#components/landing-page/MainActions.tsx';
@@ -41,11 +42,21 @@ const Page = async () => (
 				</p>
 				<p>
 					Start by{' '}
-					<TextButton type="link" href="/tree/new" className="-m-2 inline-flex">
+					<TextButton
+						type="link"
+						href="/tree/new"
+						icon={<PlusCircle />}
+						className="-m-2 inline-flex icon-size-4"
+					>
 						creating a new tree
 					</TextButton>{' '}
 					from scratch, or{' '}
-					<TextButton type="link" href="/trees" className="-m-2 inline-flex">
+					<TextButton
+						type="link"
+						href="/trees"
+						icon={<Workflow />}
+						className="-m-2 inline-flex icon-size-4"
+					>
 						browse public trees
 					</TextButton>{' '}
 					made by other users, that you can clone and modify as you like. You
@@ -53,7 +64,8 @@ const Page = async () => (
 					<TextButton
 						type="link"
 						href="/calculator"
-						className="-m-2 inline-flex"
+						icon={<Calculator />}
+						className="-m-2 inline-flex icon-size-4"
 					>
 						calculator tool
 					</TextButton>{' '}
@@ -65,6 +77,18 @@ const Page = async () => (
 						<Discord /> Discord
 					</span>{' '}
 					account.
+				</p>
+				<p>
+					Check out the{' '}
+					<TextButton
+						type="link"
+						href="/changelog"
+						icon={<ScrollText />}
+						className="-m-2 inline-flex icon-size-4"
+					>
+						changelog
+					</TextButton>{' '}
+					to see what&apos;s new.
 				</p>
 			</div>
 		</div>

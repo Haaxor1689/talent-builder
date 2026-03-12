@@ -4,11 +4,11 @@ import { useMemo } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useSearchParams } from 'next/navigation';
 
+import VersionPicker from '#components/form/VersionPicker.tsx';
 import {
 	BuildForm,
-	type BuildFormT,
 	CalculatorParams,
-	type TalentFormT
+	type TalentForm
 } from '#server/schemas.ts';
 import { zodResolver } from '#utils/index.ts';
 
@@ -20,10 +20,11 @@ import TalentSpec from './TalentSpec';
 import UrlSync from './UrlSync';
 
 const PointsSpent = () => {
-	const points = useWatch<BuildFormT, 'points'>({ name: 'points' });
+	const points = useWatch<BuildForm, 'points'>({ name: 'points' });
+	const rows = useWatch<BuildForm, 'rows'>({ name: 'rows' });
 	const sums = points.map(p => p.reduce((acc, curr) => acc + curr, 0));
 	const reqLvl = sums.reduce((acc, curr) => acc + curr, 0);
-	const pointsLeft = 51 - reqLvl;
+	const pointsLeft = rows * 5 + 16 - reqLvl;
 	return (
 		<>
 			<span className="h3 grow">{sums.join(' / ')}</span>
@@ -45,8 +46,8 @@ const PointsSpent = () => {
 
 type Props = {
 	urlBase?: string;
-	values?: Partial<BuildFormT>;
-	trees: [TalentFormT?, TalentFormT?, TalentFormT?];
+	values?: Partial<BuildForm>;
+	trees: [TalentForm?, TalentForm?, TalentForm?];
 	isNew?: boolean;
 };
 
@@ -60,7 +61,8 @@ const TalentCalculator = ({ urlBase, trees, isNew, values }: Props) => {
 		const p = BuildForm.safeParse({
 			...values,
 			class: data.class ?? values?.class,
-			points: data.points ?? values?.points
+			points: data.points ?? values?.points,
+			rows: data.rows ?? values?.rows
 		});
 		return p.success ? p.data : BuildForm.parse({});
 	}, [values, searchParams]);
@@ -83,6 +85,11 @@ const TalentCalculator = ({ urlBase, trees, isNew, values }: Props) => {
 						disabled={values?.class !== undefined}
 					/>
 					<PointsSpent />
+					<VersionPicker
+						name="rows"
+						disabled={values?.rows !== undefined}
+						required
+					/>
 				</div>
 
 				<hr />
@@ -95,7 +102,7 @@ const TalentCalculator = ({ urlBase, trees, isNew, values }: Props) => {
 						<TalentSpec
 							key={i}
 							idx={i}
-							value={trees[i]}
+							tree={trees[i]}
 							canChangeTree={!urlBase}
 						/>
 					))}

@@ -8,12 +8,12 @@ import { Trash2 } from 'lucide-react';
 import Dialog from '#components/styled/Dialog.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
 import { deleteSavedBuild } from '#server/api/savedBuilds.actions.ts';
-import { type BuildFormT } from '#server/schemas.ts';
+import { type BuildForm } from '#server/schemas.ts';
 
 const DeleteDialog = ({ name }: { name: string }) => {
 	const [isPending, startTransition] = useTransition();
 	const router = useRouter();
-	const { getValues } = useFormContext<BuildFormT>();
+	const { getValues } = useFormContext<BuildForm>();
 
 	return (
 		<Dialog

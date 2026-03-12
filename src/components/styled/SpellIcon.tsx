@@ -8,7 +8,6 @@ type Props = HTMLAttributes<HTMLElement> & {
 	currentRank?: number;
 	ranks?: number | null;
 	showDefault?: boolean;
-	showEmpty?: boolean;
 	selected?: boolean;
 	disabled?: boolean;
 	className?: string;
@@ -41,7 +40,7 @@ const SpellIcon = ({
 			{(!!showDefault || !!icon) && (
 				<img
 					src={getIconPath(icon)}
-					alt={icon ?? 'empty icon'}
+					alt={`${icon ?? 'empty'} icon`}
 					className="size-[87.5%]"
 				/>
 			)}

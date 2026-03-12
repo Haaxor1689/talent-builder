@@ -5,6 +5,7 @@ import { eq } from 'drizzle-orm';
 import { omit } from 'es-toolkit';
 import { z } from 'zod';
 
+import { bitPack } from '#components/calculator/utils.ts';
 import { db } from '#server/db/index.ts';
 import { savedBuilds } from '#server/db/schema.ts';
 import { serverFunction } from '#server/helpers.ts';
@@ -30,9 +31,10 @@ export const upsertSavedBuild = serverFunction({
 		if (!entry) {
 			await db.insert(savedBuilds).values({
 				...restInput,
-				talents: points.map(p => p.join('')).join('-'),
+				talents: bitPack(points),
 				createdById: user.id,
-				createdAt: new Date()
+				createdAt: new Date(),
+				updatedAt: new Date()
 			});
 		} else {
 			if (user.role !== 'admin' && user.id !== entry.createdById)
@@ -44,7 +46,7 @@ export const upsertSavedBuild = serverFunction({
 				.update(savedBuilds)
 				.set({
 					...omit(restInput, ['createdBy', 'createdById', 'createdAt']),
-					talents: points.map((p: number[]) => p.join('')).join('-'),
+					talents: bitPack(points),
 					updatedAt: new Date()
 				})
 				.where(eq(savedBuilds.id, restInput.id));

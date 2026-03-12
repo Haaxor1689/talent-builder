@@ -6,19 +6,25 @@ import { useSearchParams } from 'next/navigation';
 
 import ClassPicker from '#components/form/ClassPicker.tsx';
 import Input from '#components/form/Input.tsx';
+import VersionPicker from '#components/form/VersionPicker.tsx';
 import useDebounced from '#hooks/useDebounced.ts';
-import { Filters } from '#server/schemas.ts';
+import { TreesFilters } from '#server/schemas.ts';
 import { zodResolver } from '#utils/index.ts';
 
 const FiltersSection = () => {
 	const searchParams = useSearchParams();
 
 	const defaultValues = useMemo(() => {
-		const p = Filters.safeParse(Object.fromEntries(searchParams.entries()));
-		return p.success ? p.data : Filters.parse({});
+		const p = TreesFilters.safeParse(
+			Object.fromEntries(searchParams.entries())
+		);
+		return p.success ? p.data : TreesFilters.parse({});
 	}, [searchParams]);
 
-	const formProps = useForm({ defaultValues, resolver: zodResolver(Filters) });
+	const formProps = useForm({
+		defaultValues,
+		resolver: zodResolver(TreesFilters)
+	});
 	const { register, watch } = formProps;
 
 	// eslint-disable-next-line react-hooks/incompatible-library
@@ -31,6 +37,8 @@ const FiltersSection = () => {
 		else params.delete('from');
 		if (values.class) params.set('class', values.class.toString());
 		else params.delete('class');
+		if (values.rows) params.set('rows', values.rows.toString());
+		else params.delete('rows');
 
 		if (searchParams.toString() === params.toString()) return;
 		window.history.replaceState(
@@ -55,6 +63,7 @@ const FiltersSection = () => {
 						className="shrink grow"
 					/>
 					<ClassPicker name="class" />
+					<VersionPicker name="rows" />
 				</div>
 			</form>
 		</FormProvider>

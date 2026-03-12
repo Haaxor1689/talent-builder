@@ -1,18 +1,21 @@
 import { type FieldValues, type Resolver } from 'react-hook-form';
 import { zodResolver as resolver } from '@hookform/resolvers/zod';
-import { isEqual } from 'es-toolkit';
 import { toPng } from 'html-to-image';
 import pino, { type Logger } from 'pino';
 import { type z } from 'zod';
 
 import iconListRaw from '#assets/icon-list.json';
-import { type TalentFormT, type TalentTreeT } from '#server/schemas.ts';
+import { type Talents } from '#server/schemas.ts';
 
 import { Errors, isErrors } from './errors';
 
 export const zodResolver = <In extends FieldValues, Out extends FieldValues>(
 	schema: z.ZodType<In, z.ZodTypeDef, Out>
 ): Resolver<z.infer<z.ZodType<In, z.ZodTypeDef, Out>>> => resolver(schema);
+
+export const nullableInput = {
+	setValueAs: (v: unknown) => (v === '' ? null : v)
+};
 
 export const downloadBlob = (blob: Blob, title: string) => {
 	const url = window.URL.createObjectURL(blob);
@@ -43,13 +46,11 @@ export const getLastUpdatedString = (date: Date) => {
 	return `<1 minute ago`;
 };
 
-export const getTalentSum = (talentTree: TalentTreeT) =>
-	talentTree.reduce((p, n) => p + (n?.ranks ?? 0), 0);
-
-export const isEmptyTalent = (talent?: TalentFormT['talents'][number]) =>
-	!talent ||
-	isEqual(talent, {}) ||
-	(!talent.name && !talent.description && !talent.ranks);
+export const getTalentSum = (talentTree: Talents, rows: number) =>
+	Object.entries(talentTree).reduce(
+		(p, [i, n]) => (Number(i) >= rows * 4 ? p : p + (n?.ranks ?? 0)),
+		0
+	);
 
 export const classMask = {
 	1: { name: 'Warrior', icon: 'class_warrior', color: '#C79C6E' },

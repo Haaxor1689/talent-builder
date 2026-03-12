@@ -2,10 +2,18 @@
 
 import { type PropsWithChildren } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Provider as JotaiProvider } from 'jotai';
+
+import { MobileStateSync } from '#hooks/useIsMobile.tsx';
 
 const queryClient = new QueryClient();
 
 const Providers = ({ children }: PropsWithChildren) => (
-	<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+	<JotaiProvider>
+		<QueryClientProvider client={queryClient}>
+			<MobileStateSync />
+			{children}
+		</QueryClientProvider>
+	</JotaiProvider>
 );
 export default Providers;

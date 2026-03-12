@@ -3,8 +3,8 @@
 import { useFormContext, useWatch } from 'react-hook-form';
 import { ExternalLink, NotebookPen, Workflow, X } from 'lucide-react';
 
-import { type BuildFormT, type TalentFormT } from '#server/schemas.ts';
-import { isEmptyTalent } from '#utils/index.ts';
+import { type BuildForm, type TalentForm } from '#server/schemas.ts';
+import { getTalentSum } from '#utils/index.ts';
 
 import Dialog from '../styled/Dialog';
 import Md from '../styled/Md';
@@ -16,78 +16,80 @@ import TreePickDialog from './TreePickDialog';
 
 type Props = {
 	idx: 0 | 1 | 2;
-	value?: TalentFormT;
+	tree?: TalentForm;
 	canChangeTree?: boolean;
 };
 
-const PointsSpent = ({ idx, value }: Props) => {
-	const points = useWatch<BuildFormT, `points.${0 | 1 | 2}`>({
+const PointsSpent = ({ idx, total }: { idx: 0 | 1 | 2; total: number }) => {
+	const points = useWatch<BuildForm, `points.${0 | 1 | 2}`>({
 		name: `points.${idx}`
 	});
 	return (
 		<span className="h3 text-blue-gray">
-			{points.reduce((acc, curr) => acc + curr, 0)} /{' '}
-			{value?.talents.reduce((acc, curr) => acc + (curr?.ranks ?? 0), 0)}
+			{points.reduce((acc, curr) => acc + curr, 0)} / {total}
 		</span>
 	);
 };
 
-const TalentSpec = ({ idx, value, canChangeTree }: Props) => {
-	const { setValue } = useFormContext<BuildFormT>();
-
-	if (!value)
-		return (
-			<div className="border-blue-gray/20 min-h-[50vh] grow first:border-r last:border-l">
-				<TreePickDialog
-					idx={idx}
-					trigger={open => (
-						<TextButton
-							onClick={open}
-							className="h-full w-full flex-col items-center justify-center p-12"
-						>
-							<p className="h1 text-7xl text-inherit">+</p>
-							<p className="h3 whitespace-nowrap text-inherit">Pick a tree</p>
-						</TextButton>
-					)}
-				/>
-			</div>
-		);
-
+const ClearPoints = ({ idx }: { idx: 0 | 1 | 2 }) => {
+	const { setValue } = useFormContext<BuildForm>();
 	return (
+		<TextButton
+			icon={<X />}
+			onClick={() => setValue(`points.${idx}`, [])}
+			className="text-red icon-size-4 text-sm"
+		>
+			Clear points
+		</TextButton>
+	);
+};
+
+const TalentSpec = ({ idx, tree, canChangeTree }: Props) =>
+	!tree ? (
+		<div className="border-blue-gray/20 min-h-[50vh] grow first:border-r last:border-l">
+			<TreePickDialog
+				idx={idx}
+				trigger={open => (
+					<TextButton
+						onClick={open}
+						className="h-full w-full flex-col items-center justify-center p-12"
+					>
+						<p className="h1 text-7xl text-inherit">+</p>
+						<p className="h3 whitespace-nowrap text-inherit">Pick a tree</p>
+					</TextButton>
+				)}
+			/>
+		</div>
+	) : (
 		<div className="border-blue-gray/20 flex grow flex-col first:border-r last:border-l">
 			<div className="flex items-center gap-2 p-3">
-				<SpellIcon icon={value.icon} className="size-8" />
+				<SpellIcon icon={tree.icon} className="size-8" />
 				<div className="relative h-full grow overflow-hidden">
-					<span className="h3 absolute inset-0 truncate" title={value.name}>
-						{value.name}
+					<span className="h3 absolute inset-0 truncate" title={tree.name}>
+						{tree.name}
 					</span>
 				</div>
 				<TextButton
 					icon={<ExternalLink />}
 					title="Open tree"
 					type="link"
-					href={`/tree/${value.id}`}
+					href={`/tree/${tree.id}`}
 					className="-m-2"
 				/>
-				<PointsSpent idx={idx} value={value} />
+				<PointsSpent idx={idx} total={getTalentSum(tree.talents, tree.rows)} />
 			</div>
 
 			<hr className="mx-0!" />
 
 			<div className="grid grid-cols-[repeat(4,max-content)] content-center justify-center gap-6 p-3 select-none">
-				{value.talents.map((field, i) =>
-					isEmptyTalent(field) ? (
+				{[...Array(tree.rows * 4).keys()].map(i => {
+					const field = tree.talents[i];
+					return !field ? (
 						<div key={i} />
 					) : (
-						<TalentPreview
-							key={i}
-							{...field}
-							i={i}
-							idx={idx}
-							talents={value.talents}
-						/>
-					)
-				)}
+						<TalentPreview key={i} i={i} idx={idx} talents={tree.talents} />
+					);
+				})}
 			</div>
 
 			<div className="flex justify-center gap-2">
@@ -105,7 +107,7 @@ const TalentSpec = ({ idx, value, canChangeTree }: Props) => {
 						)}
 					/>
 				)}
-				{value.notes && (
+				{tree.notes && (
 					<Dialog
 						trigger={open => (
 							<TextButton
@@ -117,31 +119,19 @@ const TalentSpec = ({ idx, value, canChangeTree }: Props) => {
 							</TextButton>
 						)}
 					>
-						<h3 className="haax-color">{value.name} notes</h3>
+						<h3 className="haax-color">{tree.name} notes</h3>
 						<hr />
 						<ScrollArea
 							containerClassName="-m-3"
 							contentClassName="p-3 flex flex-col gap-3"
 						>
-							<Md text={value.notes} />
+							<Md text={tree.notes} />
 						</ScrollArea>
 					</Dialog>
 				)}
-				<TextButton
-					icon={<X />}
-					onClick={() =>
-						setValue(
-							`points.${idx}`,
-							[...Array(4 * 7).keys()].map(() => 0)
-						)
-					}
-					className="text-red icon-size-4 text-sm"
-				>
-					Clear points
-				</TextButton>
+				<ClearPoints idx={idx} />
 			</div>
 		</div>
 	);
-};
 
 export default TalentSpec;

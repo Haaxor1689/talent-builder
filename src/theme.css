@@ -130,14 +130,11 @@
 }
 
 @utility haax-input {
-	@apply rounded-xs;
-	@apply border-gray/40 bg-darker-gray/50 border;
-	@apply grow cursor-text p-2;
-	@apply placeholder-blue-gray/70;
+	@apply border-gray/40 bg-darker-gray/50 placeholder-blue-gray/70 grow border p-2;
 }
 
 @utility haax-input-hocus {
-	@apply hocus:border-blue-gray hocus:bg-dark-gray transition-colors;
+	@apply hocus-within:border-blue-gray hocus-within:bg-dark-gray cursor-text transition-colors;
 }
 
 @utility haax-input-underline {
@@ -145,7 +142,7 @@
 }
 
 @utility haax-input-error {
-	@apply border-red/60 hocus:border-red hocus:bg-red/5 transition-colors;
+	@apply border-red/60 hocus-within:border-red hocus-within:bg-red/5 transition-colors;
 }
 
 @layer components {

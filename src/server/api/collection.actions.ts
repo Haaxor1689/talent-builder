@@ -43,8 +43,11 @@ export const importCollection = serverFunction({
 			errorMessage: 'Invalid input'
 		});
 
+		// TODO: test if this still works
 		const turtleWoW = await turtleWoWAccountId();
 		for (const tree of trees) {
+			const rows = 7;
+
 			const exists = await db.query.talentTrees.findFirst({
 				where: and(
 					eq(talentTrees.collection, input.collection),
@@ -53,77 +56,95 @@ export const importCollection = serverFunction({
 				)
 			});
 
-			const talents = tree.talents.map(t => {
-				if (!t) return Talent.parse({});
+			const talents = Object.fromEntries(
+				tree.talents
+					.map((t, idx) => {
+						if (!t) return null;
 
-				const arr = t.description_enUS ?? [];
-				const description = (arr[0] ?? [])
-					.flatMap((desc, idx) => {
-						if (arr.every(v => v[idx] === desc)) return [desc];
-						const values = arr.map(d => d[idx] ?? '');
-						if (desc.match(/^\d+(\.\d+)? ?(sec|min|hour)?$/))
-							return [values.join('/')];
+						const arr = t.description_enUS ?? [];
+						const description = (arr[0] ?? [])
+							.flatMap((desc, idx) => {
+								if (arr.every(v => v[idx] === desc)) return [desc];
+								const values = arr.map(d => d[idx] ?? '');
+								if (desc.match(/^\d+(\.\d+)? ?(sec|min|hour)?$/))
+									return [values.join('/')];
 
-						const words = values.map(v => v.split(' '));
+								const words = values.map(v => v.split(' '));
 
-						const joined: string[] = [];
-						let strings: string[] = [];
-						while (words.some(w => w.length)) {
-							if (!words[0]?.[0] || words.every(w => w[0] === words[0]?.[0])) {
-								strings.push(words[1]?.[0] ?? '');
-								words.forEach(w => w.shift());
-								continue;
-							}
+								const joined: string[] = [];
+								let strings: string[] = [];
+								while (words.some(w => w.length)) {
+									if (
+										!words[0]?.[0] ||
+										words.every(w => w[0] === words[0]?.[0])
+									) {
+										strings.push(words[1]?.[0] ?? '');
+										words.forEach(w => w.shift());
+										continue;
+									}
 
-							const numbers = words.map(
-								w => w[0]?.match(/^\d+(\.\d+)?/)?.[0] ?? '?'
-							);
-							if (numbers.some(n => n === '?')) {
-								strings.push(words[1]?.[0] ?? '');
-								words.forEach(w => w.shift());
-								continue;
-							}
+									const numbers = words.map(
+										w => w[0]?.match(/^\d+(\.\d+)?/)?.[0] ?? '?'
+									);
+									if (numbers.some(n => n === '?')) {
+										strings.push(words[1]?.[0] ?? '');
+										words.forEach(w => w.shift());
+										continue;
+									}
 
-							joined.push(`${strings.join(' ')} `);
-							joined.push(numbers.join('/'));
-							strings = [words[0]?.[0].slice(numbers[0]?.length) ?? ' '];
+									joined.push(`${strings.join(' ')} `);
+									joined.push(numbers.join('/'));
+									strings = [words[0]?.[0].slice(numbers[0]?.length) ?? ' '];
 
-							words.forEach(w => w.shift());
-						}
-						joined.push(strings.join(' '));
-						return joined;
+									words.forEach(w => w.shift());
+								}
+								joined.push(strings.join(' '));
+								return joined;
+							})
+							.join('');
+
+						const requires = !t.requires
+							? null
+							: tree.talents.findIndex(r => r?.id === t.requires);
+
+						return [
+							idx.toString(),
+							Talent.parse({
+								...t,
+								name: t.name_enUS,
+								description,
+								highlight: false,
+								spellIds: t.spellIds.join(','),
+								requires
+							})
+						] as const;
 					})
-					.join('');
-
-				const requires = !t.requires
-					? null
-					: tree.talents.findIndex(r => r?.id === t.requires);
-
-				return Talent.parse({
-					...t,
-					name: t.name_enUS,
-					description,
-					highlight: false,
-					spellIds: t.spellIds.join(','),
-					requires
-				});
-			});
+					.filter(v => !!v)
+			);
 
 			if (exists) {
 				await db
 					.update(talentTrees)
-					.set({ ...tree, name: tree.name_enUS, talents })
+					.set({
+						...tree,
+						rows,
+						name: tree.name_enUS,
+						talents,
+						updatedAt: new Date()
+					})
 					.where(eq(talentTrees.id, exists.id));
 				updateTag(`talentTrees:id:${exists.id}`);
 			} else
 				await db.insert(talentTrees).values({
 					...tree,
+					rows,
 					name: tree.name_enUS,
 					id: nanoid(10),
 					talents,
 					collection: input.collection,
 					createdById: turtleWoW,
-					createdAt: new Date()
+					createdAt: new Date(),
+					updatedAt: new Date()
 				});
 		}
 		updateTag(`collections:${input.collection}`);
@@ -155,8 +176,10 @@ export const exportCollection = serverFunction({
 				name: t.name,
 				class: t.class,
 				index: t.index,
-				talents: t.talents.map(l =>
-					!l.ranks
+				rows: t.rows,
+				talents: [...Array(t.rows * 4).keys()].map(i => {
+					const l = t.talents[i];
+					return !l?.ranks
 						? {}
 						: {
 								icon: l.icon,
@@ -165,8 +188,8 @@ export const exportCollection = serverFunction({
 								description: l.description,
 								requires: l.requires,
 								spellIds: l.spellIds
-							}
-				)
+							};
+				})
 			}))
 		);
 	}

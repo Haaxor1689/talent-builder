@@ -5,6 +5,5 @@ module.exports = {
 	quoteProps: 'consistent',
 	trailingComma: 'none',
 	arrowParens: 'avoid',
-	endOfLine: 'auto',
-	plugins: [require.resolve('prettier-plugin-tailwindcss')]
+	endOfLine: 'auto'
 };
