@@ -10,7 +10,7 @@ import {
 	deleteTalentTree,
 	upsertTalentTree
 } from '#server/api/talentTree.actions.ts';
-import { type TalentFormT } from '#server/schemas.ts';
+import { type TalentForm } from '#server/schemas.ts';
 
 import Dialog, { closeDialog } from '../styled/Dialog';
 import TextButton from '../styled/TextButton';
@@ -24,10 +24,10 @@ const SaveDialog = ({ disabled }: { disabled?: boolean }) => {
 
 	const { upsertTree, deleteTree } = useLocalTrees();
 
-	const { getValues, reset } = useFormContext<TalentFormT>();
+	const { getValues, reset } = useFormContext<TalentForm>();
 
 	const name = useWatch({ name: 'name' });
-	const [visibility, setVisibility] = useState<TalentFormT['visibility']>(
+	const [visibility, setVisibility] = useState<TalentForm['visibility']>(
 		useWatch({ name: 'visibility' })
 	);
 

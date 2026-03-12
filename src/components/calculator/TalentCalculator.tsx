@@ -4,11 +4,11 @@ import { useMemo } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useSearchParams } from 'next/navigation';
 
+import VersionPicker from '#components/form/VersionPicker.tsx';
 import {
 	BuildForm,
-	type BuildFormT,
 	CalculatorParams,
-	type TalentFormT
+	type TalentForm
 } from '#server/schemas.ts';
 import { zodResolver } from '#utils/index.ts';
 
@@ -19,11 +19,11 @@ import ClassCalculatorsLinks from './ClassCalculatorsLinks';
 import TalentSpec from './TalentSpec';
 import UrlSync from './UrlSync';
 
-const PointsSpent = () => {
-	const points = useWatch<BuildFormT, 'points'>({ name: 'points' });
+const PointsSpent = ({ rows }: { rows: number }) => {
+	const points = useWatch<BuildForm, 'points'>({ name: 'points' });
 	const sums = points.map(p => p.reduce((acc, curr) => acc + curr, 0));
 	const reqLvl = sums.reduce((acc, curr) => acc + curr, 0);
-	const pointsLeft = 51 - reqLvl;
+	const pointsLeft = rows * 5 + 16 - reqLvl;
 	return (
 		<>
 			<span className="h3 grow">{sums.join(' / ')}</span>
@@ -45,8 +45,8 @@ const PointsSpent = () => {
 
 type Props = {
 	urlBase?: string;
-	values?: Partial<BuildFormT>;
-	trees: [TalentFormT?, TalentFormT?, TalentFormT?];
+	values?: Partial<BuildForm>;
+	trees: [TalentForm?, TalentForm?, TalentForm?];
 	isNew?: boolean;
 };
 
@@ -70,6 +70,8 @@ const TalentCalculator = ({ urlBase, trees, isNew, values }: Props) => {
 		resolver: zodResolver(BuildForm)
 	});
 
+	const rows = Math.max(...trees.map(t => t?.rows ?? 7));
+
 	return (
 		<FormProvider {...formProps}>
 			<UrlSync values={values} />
@@ -82,7 +84,8 @@ const TalentCalculator = ({ urlBase, trees, isNew, values }: Props) => {
 						large
 						disabled={values?.class !== undefined}
 					/>
-					<PointsSpent />
+					<VersionPicker name="version" />
+					<PointsSpent rows={rows} />
 				</div>
 
 				<hr />
@@ -95,7 +98,8 @@ const TalentCalculator = ({ urlBase, trees, isNew, values }: Props) => {
 						<TalentSpec
 							key={i}
 							idx={i}
-							value={trees[i]}
+							tree={trees[i]}
+							rows={rows}
 							canChangeTree={!urlBase}
 						/>
 					))}

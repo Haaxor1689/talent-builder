@@ -134,10 +134,10 @@ const IconPicker = ({ name, disabled }: Props) => {
 			<div className="-my-2 flex items-center justify-between gap-3">
 				<h3 className="hidden grow sm:inline">Available icons</h3>
 				<Input
-					icon={Filter}
 					value={filter}
 					placeholder="Filter..."
 					onChange={e => setFilter(e.target.value)}
+					after={<Filter className="text-blue-gray" />}
 					className="shrink grow"
 				/>
 			</div>
@@ -178,6 +178,6 @@ const IconPicker = ({ name, disabled }: Props) => {
 			</ScrollArea>
 		</Dialog>
 	);
-};;
+};
 
 export default IconPicker;

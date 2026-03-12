@@ -7,14 +7,8 @@ import {
 } from 'drizzle-orm/sqlite-core';
 import { nanoid } from 'nanoid';
 
-import { type TalentTreeT } from '#server/schemas.ts';
+import { type Talents } from '#server/schemas.ts';
 
-/**
- * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
- * database instance for multiple projects.
- *
- * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
- */
 export const sqliteTable = sqliteTableCreator(name => `talent-builder_${name}`);
 
 // Auth tables
@@ -128,26 +122,26 @@ export const talentTrees = sqliteTable(
 		icon: text('icon', { length: 255 })
 			.default('inv_misc_questionmark')
 			.notNull(),
+		rows: integer('rows').default(7).notNull(),
 		talents: text('talents', { mode: 'json' })
-			.default('[]')
+			.default('{}')
 			.notNull()
-			.$type<TalentTreeT>(),
+			.$type<Talents>(),
 		collection: text('collection', { length: 255 }),
 		createdById: text('createdById', { length: 255 }).notNull(),
 		createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
-		updatedAt: integer('updatedAt', { mode: 'timestamp' })
+		updatedAt: integer('updatedAt', { mode: 'timestamp' }).notNull()
 	},
 	t => ({
 		createdByIdIdx: index('trees_createdById_idx').on(t.createdById),
 		nameIndex: index('trees_name_idx').on(t.name),
 		visibilityIndex: index('trees_visibility_idx').on(t.visibility),
+		rowsIdx: index('trees_rows_idx').on(t.rows),
 		collectionIdx: index('trees_collection_idx').on(t.collection),
 		classIdx: index('trees_class_idx').on(t.class),
-		collectionClassIndexIdx: index('trees_collection_class_index_idx').on(
-			t.collection,
-			t.class,
-			t.index
-		),
+		collectionClassIndexRowsIdx: index(
+			'trees_collection_class_index_rows_idx'
+		).on(t.collection, t.class, t.index, t.rows),
 		visibilityCreatedByUpdatedAtIdx: index(
 			'trees_visibility_createdById_updatedAt_idx'
 		).on(t.visibility, t.createdById, t.updatedAt),

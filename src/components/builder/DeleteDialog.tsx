@@ -9,13 +9,13 @@ import Dialog from '#components/styled/Dialog.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
 import useLocalTrees from '#hooks/useLocalTrees.ts';
 import { deleteTalentTree } from '#server/api/talentTree.actions.ts';
-import { type TalentFormT } from '#server/schemas.ts';
+import { type TalentForm } from '#server/schemas.ts';
 
 const DeleteDialog = () => {
 	const [isPending, startTransition] = useTransition();
 	const router = useRouter();
 	const { deleteTree } = useLocalTrees();
-	const { getValues } = useFormContext<TalentFormT>();
+	const { getValues } = useFormContext<TalentForm>();
 	const name = useWatch({ name: 'name' });
 
 	return (

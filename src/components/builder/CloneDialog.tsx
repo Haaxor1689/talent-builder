@@ -8,7 +8,7 @@ import { nanoid } from 'nanoid';
 
 import useLocalTrees from '#hooks/useLocalTrees.ts';
 import { upsertTalentTree } from '#server/api/talentTree.actions.ts';
-import { type TalentFormT } from '#server/schemas.ts';
+import { type TalentForm } from '#server/schemas.ts';
 
 import Input from '../form/Input';
 import Dialog, { closeDialog } from '../styled/Dialog';
@@ -16,18 +16,18 @@ import TextButton from '../styled/TextButton';
 import { toast } from '../ToastProvider';
 import { VisibilityInput } from './VisibilityInput';
 
-const SaveDialog = ({ disabled }: { disabled?: boolean }) => {
+const CloneDialog = ({ disabled }: { disabled?: boolean }) => {
 	const [isPending, startTransition] = useTransition();
 
 	const router = useRouter();
 
 	const { upsertTree } = useLocalTrees();
 
-	const { getValues } = useFormContext<TalentFormT>();
+	const { getValues } = useFormContext<TalentForm>();
 	const name = useWatch({ name: 'name' });
 
 	const [newName, setNewName] = useState('');
-	const [visibility, setVisibility] = useState<TalentFormT['visibility']>(null);
+	const [visibility, setVisibility] = useState<TalentForm['visibility']>(null);
 
 	return (
 		<Dialog
@@ -66,7 +66,7 @@ const SaveDialog = ({ disabled }: { disabled?: boolean }) => {
 					icon={<Copy />}
 					onClick={() =>
 						startTransition(async () => {
-							const tree: TalentFormT = {
+							const tree: TalentForm = {
 								...getValues(),
 								id: nanoid(10),
 								name: newName,
@@ -102,4 +102,4 @@ const SaveDialog = ({ disabled }: { disabled?: boolean }) => {
 	);
 };
 
-export default SaveDialog;
+export default CloneDialog;

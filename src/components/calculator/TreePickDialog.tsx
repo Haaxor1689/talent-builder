@@ -10,7 +10,7 @@ import { ListFilter } from 'lucide-react';
 import TreeGridItem from '#components/styled/TreeGridItem.tsx';
 import useDebounced from '#hooks/useDebounced.ts';
 import { listInfiniteTalentTrees } from '#server/api/talentTree.actions.ts';
-import { Filters } from '#server/schemas.ts';
+import { TreesFilters } from '#server/schemas.ts';
 import { zodResolver } from '#utils/index.ts';
 
 import Input from '../form/Input';
@@ -28,12 +28,16 @@ const TreePickDialog = ({ idx, trigger }: Props) => {
 	const searchParams = useSearchParams();
 
 	const calculatorClass = useWatch({ name: 'class' });
+	const calculatorVersion = useWatch({ name: 'version' });
 
-	const { register, watch } = useForm({ resolver: zodResolver(Filters) });
+	const { register, watch } = useForm({ resolver: zodResolver(TreesFilters) });
 	const values = useDebounced(watch());
 
 	const items = useInfiniteQuery({
-		queryKey: ['talentTrees', { ...values, class: calculatorClass }] as const,
+		queryKey: [
+			'talentTrees',
+			{ ...values, class: calculatorClass, version: calculatorVersion }
+		] as const,
 		queryFn: ({ queryKey, pageParam }) =>
 			listInfiniteTalentTrees({ ...queryKey[1], limit: 42, cursor: pageParam }),
 		initialPageParam: 0,

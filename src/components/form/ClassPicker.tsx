@@ -49,6 +49,7 @@ const ClassPicker = ({ name, title, disabled, large }: Props) => {
 					icon={<X />}
 					onClick={e => {
 						field.onChange(0);
+						field.onBlur();
 						closeDialog(e);
 					}}
 					className="text-red -m-2"
@@ -67,6 +68,7 @@ const ClassPicker = ({ name, title, disabled, large }: Props) => {
 						selected={field.value === Number(mask)}
 						onClick={e => {
 							field.onChange(Number(mask));
+							field.onBlur();
 							closeDialog(e);
 						}}
 						className={

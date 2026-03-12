@@ -1,29 +1,23 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
+import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { Camera, CloudOff, Eye, EyeOff, NotebookPen } from 'lucide-react';
 
 import { useSession } from '#auth/client.ts';
 import { UserAvatar, UserRoleText } from '#components/styled/User.tsx';
-import { TalentForm, type TalentFormT } from '#server/schemas.ts';
+import { TalentForm } from '#server/schemas.ts';
 import { elementToPng, zodResolver } from '#utils/index.ts';
 
-import ClassPicker from '../form/ClassPicker';
-import IconPicker from '../form/IconPicker';
-import Input from '../form/Input';
 import UndoRedo from '../form/UndoRedo';
 import TextButton from '../styled/TextButton';
-import CloneDialog from './CloneDialog';
-import DeleteDialog from './DeleteDialog';
-import IdxInput from './IdxInput';
 import Notes from './Notes';
 import PointsSummary from './PointsSummary';
-import SaveDialog from './SaveDialog';
 import TalentEdit from './TalentEdit';
 import TalentPreview from './TalentPreview';
+import TopBar from './TopBar';
 
-type Props = { defaultValues: TalentFormT };
+type Props = { defaultValues: TalentForm };
 
 const TalentBuilder = ({ defaultValues }: Props) => {
 	const treeElemRef = useRef<HTMLDivElement>(null);
@@ -43,44 +37,14 @@ const TalentBuilder = ({ defaultValues }: Props) => {
 		defaultValues,
 		resolver: zodResolver(TalentForm)
 	});
-	const { register, getValues, control, formState } = formProps;
 
+	const rows = useWatch({ name: 'rows', control: formProps.control });
 	const [selected, setSelected] = useState(-1);
-	const { fields } = useFieldArray({ control, name: 'talents' });
 
 	return (
 		<FormProvider {...formProps}>
 			<form className="haax-surface-3 flex flex-col gap-3">
-				<div className="flex flex-col gap-2 md:flex-row md:items-center">
-					<div className="flex grow items-center gap-2 overflow-hidden">
-						<IconPicker name="icon" disabled={!editable} />
-						<Input
-							{...register('name', { setValueAs: v => (v === '' ? null : v) })}
-							disabled={!editable}
-							className="grow"
-							inputClassName="text-3xl"
-						/>
-					</div>
-
-					<div className="flex shrink items-center">
-						<ClassPicker name="class" disabled={!editable} />
-						<IdxInput disabled={!editable} />
-						{session.data?.user.role === 'admin' && (
-							<Input
-								{...register('collection', {
-									setValueAs: v => (v === '' ? null : v)
-								})}
-								placeholder="No collection"
-								className="mx-2 shrink grow"
-								disabled={!editable}
-							/>
-						)}
-
-						{editable && <SaveDialog disabled={!formState.isDirty} />}
-						{!isNew && <CloneDialog />}
-						{editable && <DeleteDialog />}
-					</div>
-				</div>
+				<TopBar editable={editable} isNew={isNew} />
 
 				<hr />
 
@@ -90,9 +54,9 @@ const TalentBuilder = ({ defaultValues }: Props) => {
 							ref={treeElemRef}
 							className="grid grow grid-cols-[repeat(4,max-content)] content-center justify-center gap-6 overflow-x-auto p-10 select-none md:py-18"
 						>
-							{fields.map((field, i) => (
+							{[...Array(rows * 4).keys()].map(i => (
 								<TalentPreview
-									key={field.id ?? i}
+									key={i}
 									i={i}
 									selected={selected}
 									setSelected={setSelected}
@@ -107,7 +71,7 @@ const TalentBuilder = ({ defaultValues }: Props) => {
 								title="Screenshot"
 								onClick={() => {
 									if (!treeElemRef.current) return;
-									elementToPng(treeElemRef.current, getValues().name);
+									elementToPng(treeElemRef.current, formProps.getValues().name);
 								}}
 								className="-m-2"
 							/>
@@ -154,7 +118,10 @@ const TalentBuilder = ({ defaultValues }: Props) => {
 						<PointsSummary />
 					</div>
 
-					<div className="border-gray/40 shrink grow border-t md:ml-0 md:max-h-184 md:w-lg md:border-t-0 md:border-l">
+					<div
+						className="border-gray/40 shrink grow border-t md:ml-0 md:w-lg md:border-t-0 md:border-l"
+						style={{ height: Math.max(rows, 7) * (64 + 24) - 24 + 72 * 2 }}
+					>
 						{selected === -1 ? (
 							<Notes editable={editable} />
 						) : (

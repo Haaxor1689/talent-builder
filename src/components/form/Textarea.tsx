@@ -7,7 +7,7 @@ import cls from 'classnames';
 type Props = ComponentProps<typeof TextareaAutosize> & {
 	ref?: React.Ref<HTMLTextAreaElement>;
 	label?: string;
-	error?: boolean;
+	error?: string;
 	minRows?: number;
 };
 
@@ -32,11 +32,12 @@ const Textarea = ({
 				}
 			}}
 			{...props}
-			className={cls('haax-input-underline', {
+			className={cls('haax-input-underline shrink grow', {
 				'haax-input-hocus': !props.disabled,
 				'haax-input-error': error
 			})}
 		/>
+		{error && <p className="text-red text-sm">{error}</p>}
 	</div>
 );
 

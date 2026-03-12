@@ -1,10 +1,10 @@
-import { useMemo, useRef } from 'react';
+import { useRef } from 'react';
 import { useWatch } from 'react-hook-form';
 import { Camera } from 'lucide-react';
 
-import { formatTalentDescription } from '#components/calculator/formatTalentDescription.tsx';
 import Dialog, { closeDialog } from '#components/styled/Dialog.tsx';
 import SpellIcon from '#components/styled/SpellIcon.tsx';
+import { TalentDescription } from '#components/styled/TalentDescription.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
 import { elementToPng } from '#utils/index.ts';
 
@@ -12,12 +12,6 @@ const TalentScreenshot = ({ selected }: { selected: number }) => {
 	const ref = useRef<HTMLDivElement>(null);
 
 	const item = useWatch({ name: `talents.${selected}` });
-
-	const description = useMemo(
-		() => formatTalentDescription(item),
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[item.description, item.ranks]
-	);
 
 	return (
 		<Dialog
@@ -41,9 +35,7 @@ const TalentScreenshot = ({ selected }: { selected: number }) => {
 					<SpellIcon icon={item.icon} showDefault />
 					<div className="haax-surface-3 pointer-events-none z-10 max-w-100 min-w-62.5">
 						<h4 className="haax-color">{item.name ?? '[Empty talent]'}</h4>
-						<p className="whitespace-pre-wrap">
-							{description ?? '[No description]'}
-						</p>
+						<TalentDescription field={item} />
 					</div>
 				</div>
 			</div>

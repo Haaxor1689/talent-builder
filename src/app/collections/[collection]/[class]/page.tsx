@@ -5,6 +5,7 @@ import { z } from 'zod';
 import TalentCalculator from '#components/calculator/TalentCalculator.tsx';
 import { env } from '#env.js';
 import { getCollectionTree } from '#server/api/collection.ts';
+import { TalentForm } from '#server/schemas.ts';
 import { classMask, getIconPath, maskToClass } from '#utils/index.ts';
 
 type Props = PageProps<'/collections/[collection]/[class]'>;

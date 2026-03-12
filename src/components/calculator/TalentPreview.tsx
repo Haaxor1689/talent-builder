@@ -1,100 +1,92 @@
 'use client';
 
-import { useMemo } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import cls from 'classnames';
 import { Minus, Plus } from 'lucide-react';
 
+import { TalentDescription } from '#components/styled/TalentDescription.tsx';
 import useIsMobile from '#hooks/useIsMobile.ts';
-import { type BuildFormT, type TalentFormT } from '#server/schemas.ts';
+import {
+	type BuildForm,
+	type Talent,
+	type TalentForm
+} from '#server/schemas.ts';
 
 import SpellIcon from '../styled/SpellIcon';
 import TalentArrow from '../styled/TalentArrow';
 import TextButton from '../styled/TextButton';
 import Tooltip from '../styled/Tooltip';
-import { formatTalentDescription } from './formatTalentDescription';
 
-type Props = TalentFormT['talents'][number] & {
+type Props = {
 	i: number;
 	idx: 0 | 1 | 2;
-	talents: TalentFormT['talents'];
+	talents: TalentForm['talents'];
+	rows: TalentForm['rows'];
 };
 
-const TalentPreview = ({ i, idx, talents, ...field }: Props) => {
+const TalentPreview = ({ i, idx, talents, rows }: Props) => {
 	const isMobile = useIsMobile();
 
-	const { setValue } = useFormContext<BuildFormT>();
+	const { setValue } = useFormContext<BuildForm>();
 
-	const value = useWatch<BuildFormT, `points.${0 | 1 | 2}.${number}`>({
-		name: `points.${idx}.${i}`
+	const field = talents[i] as Talent;
+
+	const points = useWatch<BuildForm, 'points'>({
+		name: 'points'
 	});
+	const value = points[idx][i] ?? 0;
 
-	const points = useWatch<BuildFormT, `points`>({ name: 'points' });
+	const row = Math.floor(i / 4);
+	const sums = points.map(p => p.reduce((acc, curr) => acc + curr, 0));
+	const pointsLeft = rows * 5 + 16 - sums.reduce((acc, curr) => acc + curr, 0);
 
-	const { disabled, cantSubtract, noPointsLeft } = useMemo(() => {
-		const sum = points[idx].reduce((acc, curr) => acc + curr, 0);
+	const disabled =
+		// Has no points and all points were spent
+		(value === 0 && pointsLeft === 0) ||
+		// Not enough points spent in the tree to unlock the row
+		(sums[idx] ?? 0) < row * 5 ||
+		// Has unmet talent requirement
+		points[idx][field.requires ?? -1] !== talents[field.requires ?? -1]?.ranks;
 
-		const row = Math.floor(i / 4);
+	const increment = () => {
+		if (disabled || !field.ranks || pointsLeft === 0) return;
+		if (value === field.ranks) return;
+		setValue(`points.${idx}.${i}`, value + 1);
+	};
 
-		const noPointsLeft =
-			points.flatMap(p => p).reduce((acc, curr) => acc + curr, 0) === 51;
+	const decrement = () => {
+		if (disabled || !field.ranks) return;
+		if (value === 0) return;
 
-		const missingRowPoints = sum < row * 5;
+		const requiredBy = Object.entries(talents)
+			.map(([idx, t]) => (t.requires === i ? Number(idx) : undefined))
+			.filter(t => t !== undefined);
+		// If the talent is required by another, prevent removing points
+		if (requiredBy.some(t => points[idx][t])) return;
 
-		const requiredTalent = talents[field.requires ?? -1];
-		const notMetRequirement =
-			requiredTalent &&
-			points[idx][field.requires ?? -1] !== requiredTalent.ranks;
-
-		const disabled =
-			(value === 0 && noPointsLeft) || missingRowPoints || notMetRequirement;
-
-		const requiredByTalents = talents
-			.map((t, idx) => ({ idx, requires: t.requires }))
-			.filter(t => t.requires === i);
-		const disabledByRequiredTalent = requiredByTalents.some(
-			t => points[idx][t.idx] !== 0
-		);
-
+		// Get current point sum in each row
 		const pointsPerRow = [...Array(7).keys()].map(i =>
 			points[idx].slice(i * 4, i * 4 + 4).reduce((acc, curr) => acc + curr, 0)
 		);
 
-		const lastRow = [...Array(7).keys()]
-			.reverse()
-			.find(i => (pointsPerRow[i] ?? 0) > 0);
+		// Find the last row that has points spent in it
+		const lastActiveRow = pointsPerRow.findLastIndex(total => total > 0);
 
-		const canRemovePerRow: number[] = [];
-		let extra = 0;
-		for (const row of pointsPerRow.slice(0, lastRow)) {
-			extra = row + extra - 5;
-			canRemovePerRow.push(extra);
+		// If talent is in the last active row, no need to check further
+		if (row !== lastActiveRow) {
+			// Calculate how many points can be removed in each row up to the current one
+			const canRemovePerRow: number[] = [];
+			let extra = 0;
+			for (const row of pointsPerRow.slice(0, lastActiveRow)) {
+				extra = row + extra - 5;
+				canRemovePerRow.push(extra);
+			}
+			// If none of the above rows have extra points to remove, prevent removing points from the current row
+			if (canRemovePerRow.slice(row).some(i => i === 0)) return;
 		}
 
-		const canSubtract =
-			row === lastRow || canRemovePerRow.slice(row).every(i => i > 0);
-
-		const cantSubtract = disabledByRequiredTalent || !canSubtract;
-
-		return { disabled, cantSubtract, noPointsLeft };
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [points, value]);
-
-	const description = useMemo(
-		() => formatTalentDescription(field, value),
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[field.description, field.ranks, value]
-	);
-
-	const setPoints = (diff: number) => {
-		if (disabled) return;
-		if (diff < 0 && cantSubtract) return;
-		if (diff > 0 && noPointsLeft) return;
-		setValue(
-			`points.${idx}.${i}`,
-			Math.max(Math.min(value + diff, field.ranks ?? 1), 0)
-		);
-	};
+		setValue(`points.${idx}.${i}`, value - 1);
+	};;
 
 	return (
 		<Tooltip
@@ -104,14 +96,7 @@ const TalentPreview = ({ i, idx, talents, ...field }: Props) => {
 					<p className="font-bold">
 						Rank {value}/{field.ranks}
 					</p>
-					<p
-						className={cls(
-							'whitespace-pre-wrap',
-							!description && 'text-blue-gray'
-						)}
-					>
-						{description ?? '[No description]'}
-					</p>
+					<TalentDescription field={field} value={value} />
 				</>
 			}
 			actions={
@@ -120,14 +105,14 @@ const TalentPreview = ({ i, idx, talents, ...field }: Props) => {
 						<TextButton
 							icon={<Minus />}
 							title="Remove point"
-							onClick={() => setPoints(-1)}
+							onClick={decrement}
 							className="icon-size-8"
 						/>
 						{value}/{field.ranks}
 						<TextButton
 							icon={<Plus />}
 							title="Add point"
-							onClick={() => setPoints(1)}
+							onClick={increment}
 							className="icon-size-8"
 						/>
 					</div>
@@ -138,15 +123,15 @@ const TalentPreview = ({ i, idx, talents, ...field }: Props) => {
 				<SpellIcon
 					icon={field.icon}
 					currentRank={value}
-					ranks={noPointsLeft && value === 0 ? undefined : field.ranks}
+					ranks={field.ranks}
 					onClick={e => {
 						e.preventDefault();
-						setPoints(1);
+						increment();
 					}}
 					onContextMenu={e => {
 						e.preventDefault();
 						if (isMobile) return;
-						setPoints(-1);
+						decrement();
 					}}
 					{...props}
 					className={cls({ grayscale: disabled })}

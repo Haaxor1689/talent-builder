@@ -8,14 +8,16 @@ import SpellIcon from '#components/styled/SpellIcon.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
 import Tooltip from '#components/styled/Tooltip.tsx';
 import { UserAvatar, UserRoleText } from '#components/styled/User.tsx';
-import { type TalentFormT } from '#server/schemas.ts';
+import { type TalentForm } from '#server/schemas.ts';
 import {
 	getLastUpdatedString,
 	getTalentSum,
 	maskToClass
 } from '#utils/index.ts';
 
-type Item = TalentFormT & {
+import { GameVersionLogo } from './GameVersion';
+
+type Item = TalentForm & {
 	href: string;
 	label?: string;
 	active?: boolean;
@@ -37,7 +39,12 @@ const TreeGridItem = (item: Item) => {
 						</span>
 					)}
 					<div className="text-blue-gray">
-						Points: <span>{getTalentSum(item.talents)}</span>
+						Points: <span>{getTalentSum(item.talents, item.rows)}</span>
+					</div>
+					<div className="text-blue-gray flex items-center gap-1.5">
+						Version:
+						<GameVersionLogo rows={item.rows} />
+						<span>{item.rows} rows</span>
 					</div>
 					{date && (
 						<div className="text-blue-gray whitespace-nowrap">
@@ -99,22 +106,27 @@ const TreeGridItem = (item: Item) => {
 					/>
 
 					<div className="flex shrink grow flex-col gap-1 text-inherit">
-						<p className="truncate text-lg text-inherit">{item.name}</p>
+						<div
+							className={cls(
+								'-ml-1 flex items-center gap-1.5',
+								item.visibility === 'private' && 'text-warm-green'
+							)}
+						>
+							<GameVersionLogo rows={item.rows} />
+							<p className="shrink truncate overflow-hidden text-lg whitespace-nowrap text-inherit">
+								{item.name}
+							</p>
+							{item.visibility === 'private' && <EyeOff size={14} />}
+						</div>
 						<div className="flex items-center gap-1.5">
 							{item.createdBy ? (
 								<UserAvatar image={item.createdBy.image} />
 							) : (
 								<CloudOff className="text-blue-gray" />
 							)}
-							<span className="text-blue-gray shrink grow truncate overflow-hidden whitespace-nowrap">
+							<span className="text-blue-gray shrink truncate overflow-hidden whitespace-nowrap">
 								{date ? getLastUpdatedString(date) : 'Local only'}
 							</span>
-							{item.visibility === 'private' && (
-								<span className="text-warm-green flex items-center gap-1 text-sm">
-									<EyeOff size={14} />
-									Private
-								</span>
-							)}
 						</div>
 					</div>
 				</Link>

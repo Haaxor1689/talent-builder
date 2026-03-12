@@ -4,16 +4,16 @@ import { useEffect } from 'react';
 import { useWatch } from 'react-hook-form';
 import { useSearchParams } from 'next/navigation';
 
-import { BuildForm, type BuildFormT } from '#server/schemas.ts';
+import { BuildForm } from '#server/schemas.ts';
 
 import { bitPack } from './utils';
 
-const UrlSync = ({ values }: { values?: Partial<BuildFormT> }) => {
+const UrlSync = ({ values }: { values?: Partial<BuildForm> }) => {
 	const searchParams = useSearchParams();
 
 	// Update points in URL
-	const points = useWatch<BuildFormT, 'points'>({ name: 'points' });
-	const cls = useWatch<BuildFormT, 'class'>({ name: 'class' });
+	const points = useWatch<BuildForm, 'points'>({ name: 'points' });
+	const cls = useWatch<BuildForm, 'class'>({ name: 'class' });
 
 	useEffect(() => {
 		const params = new URLSearchParams(

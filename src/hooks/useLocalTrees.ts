@@ -2,7 +2,7 @@
 
 import { useLocalStorage } from 'usehooks-ts';
 
-import { TalentForm, type TalentFormT } from '#server/schemas.ts';
+import { TalentForm } from '#server/schemas.ts';
 
 const parseLocalTrees = (v: string) => {
 	const val = JSON.parse(v);
@@ -10,12 +10,11 @@ const parseLocalTrees = (v: string) => {
 	return Object.fromEntries(
 		Object.values(val)
 			.map(v => {
-				if (!v || typeof v !== 'object') return undefined;
 				const parsed = TalentForm.safeParse(v);
 				if (!parsed.success) return undefined;
-				return [parsed.data.id, parsed.data];
+				return [parsed.data.id, parsed.data] as const;
 			})
-			.filter((v): v is [string, TalentFormT] => !!v)
+			.filter(v => v !== undefined)
 	);
 };
 
@@ -31,7 +30,7 @@ const useLocalTrees = () => {
 	);
 	return {
 		localTrees,
-		upsertTree: (tree: TalentFormT) =>
+		upsertTree: (tree: TalentForm) =>
 			setLocalTrees(trees => ({
 				...trees,
 				[tree.id]: {

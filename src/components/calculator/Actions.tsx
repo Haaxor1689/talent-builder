@@ -5,7 +5,7 @@ import { Copy, Save } from 'lucide-react';
 
 import { useSession } from '#auth/client.ts';
 import { upsertSavedBuild } from '#server/api/savedBuilds.actions.ts';
-import { type BuildFormT, type TalentFormT } from '#server/schemas.ts';
+import { type BuildForm, type TalentForm } from '#server/schemas.ts';
 import { maskToClass } from '#utils/index.ts';
 
 import Input from '../form/Input';
@@ -15,12 +15,12 @@ import { toast } from '../ToastProvider';
 import DeleteDialog from './DeleteDialog';
 
 type Props = {
-	trees: [TalentFormT?, TalentFormT?, TalentFormT?];
+	trees: [TalentForm?, TalentForm?, TalentForm?];
 	isNew?: boolean;
 };
 
 const Actions = ({ trees, isNew }: Props) => {
-	const { register, getValues, reset, watch } = useFormContext<BuildFormT>();
+	const { register, getValues, reset, watch } = useFormContext<BuildForm>();
 	const [isPending, startTransition] = useTransition();
 
 	const session = useSession();
@@ -50,31 +50,32 @@ const Actions = ({ trees, isNew }: Props) => {
 						/>
 					)}
 				>
-					<div className="haax-surface-3">
-						<h3 className="haax-color">Save build</h3>
-						<Input {...register('name')} label="Build name" />
-						<TextButton
-							onClick={e => {
-								const currentTarget = e.currentTarget;
-								startTransition(async () => {
-									const values = getValues();
-									const newBuild = await upsertSavedBuild({
-										...values,
-										tree0Id: trees[0]?.id ?? '',
-										tree1Id: trees[1]?.id ?? '',
-										tree2Id: trees[2]?.id ?? ''
-									});
-									toast({ message: 'Build saved!', type: 'success' });
-									router.push(`/calculator/${values.id}`);
-									newBuild && reset(newBuild);
-									closeDialog({ currentTarget });
+					<h3 className="haax-color">Save build</h3>
+					<hr />
+					<Input {...register('name')} label="Build name" />
+					<hr />
+					<TextButton
+						icon={<Save />}
+						onClick={e => {
+							const currentTarget = e.currentTarget;
+							startTransition(async () => {
+								const values = getValues();
+								const newBuild = await upsertSavedBuild({
+									...values,
+									tree0Id: trees[0]?.id ?? '',
+									tree1Id: trees[1]?.id ?? '',
+									tree2Id: trees[2]?.id ?? ''
 								});
-							}}
-							className="self-end"
-						>
-							Save
-						</TextButton>
-					</div>
+								toast({ message: 'Build saved!', type: 'success' });
+								router.push(`/calculator/${values.id}`);
+								newBuild && reset(newBuild);
+								closeDialog({ currentTarget });
+							});
+						}}
+						className="-m-2 self-end"
+					>
+						Save
+					</TextButton>
 				</Dialog>
 
 				{!isNew && (

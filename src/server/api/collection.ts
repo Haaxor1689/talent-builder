@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { db } from '#server/db/index.ts';
 import { talentTrees } from '#server/db/schema.ts';
 import { serverFunction } from '#server/helpers.ts';
+import { TalentForm } from '#server/schemas.ts';
 
 import { createdBySelect, getUser } from '.';
 
@@ -55,6 +56,6 @@ export const getCollectionTree = serverFunction({
 			),
 			with: { createdBy: createdBySelect }
 		});
-		return tree;
+		return tree ? TalentForm.parse(tree) : tree;
 	}
 });

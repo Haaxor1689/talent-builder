@@ -2,14 +2,12 @@
 
 import { useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
-import cls from 'classnames';
 import { cloneDeep } from 'es-toolkit';
 import { Link2, Pointer, Replace } from 'lucide-react';
 
-import { Talent, type TalentFormT } from '#server/schemas.ts';
-import { isEmptyTalent } from '#utils/index.ts';
+import { TalentDescription } from '#components/styled/TalentDescription.tsx';
+import { type TalentForm } from '#server/schemas.ts';
 
-import { formatTalentDescription } from '../calculator/formatTalentDescription';
 import { closeDialog } from '../styled/Dialog';
 import SpellIcon from '../styled/SpellIcon';
 import TalentArrow from '../styled/TalentArrow';
@@ -24,24 +22,20 @@ type Props = {
 };
 
 const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
-	const field = useWatch<TalentFormT, `talents.${number}`>({
+	const field = useWatch<TalentForm, `talents.${number}`>({
 		name: `talents.${i}`
 	});
-	const { setValue, getValues } = useFormContext<TalentFormT>();
+	const { setValue, getValues } = useFormContext<TalentForm>();
 
 	const [dragging, setDragging] = useState(false);
-
-	const isEmpty = isEmptyTalent(field);
-
-	const description = formatTalentDescription(field);
 
 	const swapTalents = (lhs: number, rhs: number) => {
 		if (lhs === rhs) return;
 		const cloned = cloneDeep(getValues().talents);
 
 		const [a, b] = [cloned[lhs], cloned[rhs]];
-		cloned[lhs] = { ...Talent.parse({}), ...b };
-		cloned[rhs] = { ...Talent.parse({}), ...a };
+		cloned[lhs] = b as never;
+		cloned[rhs] = a as never;
 
 		setValue('talents', cloned, {
 			shouldDirty: true,
@@ -50,20 +44,15 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 		setSelected(i);
 	};
 
-	if (!field) return null;
+	if (!field && !editable) return <div className="size-16" />;
+
 	return (
 		<Tooltip
-			hidden={dragging || isEmpty}
+			hidden={dragging || !field}
 			tooltip={
 				<>
-					<p className="haax-color h4">{field.name || '[Empty talent]'}</p>
-					<p
-						className={cls('whitespace-pre-wrap', {
-							['text-blue-gray']: !description
-						})}
-					>
-						{description ?? '[No description]'}
-					</p>
+					<p className="haax-color h4">{field?.name ?? '[Empty talent]'}</p>
+					<TalentDescription field={field} />
 				</>
 			}
 			actions={
@@ -122,16 +111,17 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 					}}
 					onKeyDown={e => {
 						if (!editable || e.key !== 'Delete') return;
-						setValue(`talents.${selected}`, Talent.parse({}), {
+						setValue(`talents.${selected}`, undefined, {
 							shouldDirty: true,
 							shouldTouch: true
 						});
 					}}
-					icon={field.icon}
-					ranks={field.ranks}
+					icon={field?.icon}
+					showDefault={selected === i || !!field}
+					ranks={field?.ranks}
 					selected={selected === i}
 					onDragStart={e => {
-						if (!editable || isEmpty) {
+						if (!editable || !field) {
 							e.preventDefault();
 							return;
 						}
@@ -152,13 +142,12 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 						const idx = Number(e.dataTransfer.getData('text/plain'));
 						swapTalents(i, idx);
 					}}
-					showDefault={!isEmpty}
 					extraContent={
 						<>
-							{field.requires !== null && (
+							{typeof field?.requires === 'number' && (
 								<TalentArrow start={field.requires} end={i} />
 							)}
-							{!!field.highlight && (
+							{!!field?.highlight && (
 								<img
 									src="/icon_hover.png"
 									alt="hover"
@@ -168,7 +157,11 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 						</>
 					}
 					{...props}
-					className={isEmpty ? "*:[[alt='frame']]:opacity-10" : undefined}
+					className={
+						!field
+							? "*:[[alt='frame']]:opacity-10 *:[[alt='icon']]:opacity-10"
+							: undefined
+					}
 				/>
 			)}
 		</Tooltip>

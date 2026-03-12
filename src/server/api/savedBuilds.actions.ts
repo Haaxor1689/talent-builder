@@ -32,7 +32,8 @@ export const upsertSavedBuild = serverFunction({
 				...restInput,
 				talents: points.map(p => p.join('')).join('-'),
 				createdById: user.id,
-				createdAt: new Date()
+				createdAt: new Date(),
+				updatedAt: new Date()
 			});
 		} else {
 			if (user.role !== 'admin' && user.id !== entry.createdById)
