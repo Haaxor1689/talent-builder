@@ -37,9 +37,8 @@ const FiltersSection = () => {
 		else params.delete('from');
 		if (values.class) params.set('class', values.class.toString());
 		else params.delete('class');
-		if (values.version !== undefined)
-			params.set('version', values.version.toString());
-		else params.delete('version');
+		if (values.rows) params.set('rows', values.rows.toString());
+		else params.delete('rows');
 
 		if (searchParams.toString() === params.toString()) return;
 		window.history.replaceState(
@@ -64,7 +63,7 @@ const FiltersSection = () => {
 						className="shrink grow"
 					/>
 					<ClassPicker name="class" />
-					<VersionPicker name="version" />
+					<VersionPicker name="rows" />
 				</div>
 			</form>
 		</FormProvider>

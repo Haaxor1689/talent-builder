@@ -21,19 +21,17 @@ type Props = {
 	i: number;
 	idx: 0 | 1 | 2;
 	talents: TalentForm['talents'];
-	rows: TalentForm['rows'];
 };
 
-const TalentPreview = ({ i, idx, talents, rows }: Props) => {
+const TalentPreview = ({ i, idx, talents }: Props) => {
 	const isMobile = useIsMobile();
 
 	const { setValue } = useFormContext<BuildForm>();
 
 	const field = talents[i] as Talent;
 
-	const points = useWatch<BuildForm, 'points'>({
-		name: 'points'
-	});
+	const rows = useWatch<BuildForm, 'rows'>({ name: 'rows' });
+	const points = useWatch<BuildForm, 'points'>({ name: 'points' });
 	const value = points[idx][i] ?? 0;
 
 	const row = Math.floor(i / 4);

@@ -67,7 +67,7 @@ export const TreesFilters = z.object({
 	name: z.string().optional().default(''),
 	from: z.string().optional().default(''),
 	class: z.coerce.number().optional().default(0),
-	version: z.coerce.number().optional()
+	rows: z.coerce.number().optional()
 });
 export type TreesFilters = z.infer<typeof TreesFilters>;
 
@@ -82,7 +82,8 @@ export const CalculatorParams = z
 			.optional(),
 		points: z.string().optional(),
 		c: z.coerce.number().optional(),
-		class: z.coerce.number().optional()
+		class: z.coerce.number().optional(),
+		rows: z.coerce.number().optional()
 	})
 	.transform(val => ({
 		t0: val.t0,
@@ -93,7 +94,8 @@ export const CalculatorParams = z
 			: val.t
 				? legacyBitUnpack(val.t)
 				: undefined,
-		class: val.class ?? val.c
+		class: val.class ?? val.c,
+		rows: val.rows
 	}));
 
 export type CalculatorParams = z.infer<typeof CalculatorParams>;
@@ -102,7 +104,7 @@ export const BuildForm = z.object({
 	id: z.string().default(nanoid(10)),
 	name: z.string().default(''),
 	class: z.number().default(0),
-	version: z.number().optional(),
+	rows: z.number().min(1).max(11).default(7),
 	points: z
 		.tuple([z.array(z.number()), z.array(z.number()), z.array(z.number())])
 		.default([[], [], []]),

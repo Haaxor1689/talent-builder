@@ -19,8 +19,9 @@ import ClassCalculatorsLinks from './ClassCalculatorsLinks';
 import TalentSpec from './TalentSpec';
 import UrlSync from './UrlSync';
 
-const PointsSpent = ({ rows }: { rows: number }) => {
+const PointsSpent = () => {
 	const points = useWatch<BuildForm, 'points'>({ name: 'points' });
+	const rows = useWatch<BuildForm, 'rows'>({ name: 'rows' });
 	const sums = points.map(p => p.reduce((acc, curr) => acc + curr, 0));
 	const reqLvl = sums.reduce((acc, curr) => acc + curr, 0);
 	const pointsLeft = rows * 5 + 16 - reqLvl;
@@ -60,7 +61,8 @@ const TalentCalculator = ({ urlBase, trees, isNew, values }: Props) => {
 		const p = BuildForm.safeParse({
 			...values,
 			class: data.class ?? values?.class,
-			points: data.points ?? values?.points
+			points: data.points ?? values?.points,
+			rows: data.rows ?? values?.rows
 		});
 		return p.success ? p.data : BuildForm.parse({});
 	}, [values, searchParams]);
@@ -69,8 +71,6 @@ const TalentCalculator = ({ urlBase, trees, isNew, values }: Props) => {
 		defaultValues,
 		resolver: zodResolver(BuildForm)
 	});
-
-	const rows = Math.max(...trees.map(t => t?.rows ?? 7));
 
 	return (
 		<FormProvider {...formProps}>
@@ -84,8 +84,12 @@ const TalentCalculator = ({ urlBase, trees, isNew, values }: Props) => {
 						large
 						disabled={values?.class !== undefined}
 					/>
-					<VersionPicker name="version" />
-					<PointsSpent rows={rows} />
+					<PointsSpent />
+					<VersionPicker
+						name="rows"
+						disabled={values?.rows !== undefined}
+						required
+					/>
 				</div>
 
 				<hr />
@@ -99,7 +103,6 @@ const TalentCalculator = ({ urlBase, trees, isNew, values }: Props) => {
 							key={i}
 							idx={i}
 							tree={trees[i]}
-							rows={rows}
 							canChangeTree={!urlBase}
 						/>
 					))}

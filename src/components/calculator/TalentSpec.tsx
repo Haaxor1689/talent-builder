@@ -17,7 +17,6 @@ import TreePickDialog from './TreePickDialog';
 type Props = {
 	idx: 0 | 1 | 2;
 	tree?: TalentForm;
-	rows: number;
 	canChangeTree?: boolean;
 };
 
@@ -45,7 +44,7 @@ const ClearPoints = ({ idx }: { idx: 0 | 1 | 2 }) => {
 	);
 };
 
-const TalentSpec = ({ idx, tree, rows, canChangeTree }: Props) =>
+const TalentSpec = ({ idx, tree, canChangeTree }: Props) =>
 	!tree ? (
 		<div className="border-blue-gray/20 min-h-[50vh] grow first:border-r last:border-l">
 			<TreePickDialog
@@ -88,13 +87,7 @@ const TalentSpec = ({ idx, tree, rows, canChangeTree }: Props) =>
 					return !field ? (
 						<div key={i} />
 					) : (
-						<TalentPreview
-							key={i}
-							i={i}
-							idx={idx}
-							talents={tree.talents}
-							rows={rows}
-						/>
+						<TalentPreview key={i} i={i} idx={idx} talents={tree.talents} />
 					);
 				})}
 			</div>

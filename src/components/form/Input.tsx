@@ -10,7 +10,6 @@ type Props = HTMLProps<HTMLInputElement> & {
 	hint?: string;
 	before?: ReactNode;
 	after?: ReactNode;
-	inputClassName?: string;
 };
 
 const Input = ({

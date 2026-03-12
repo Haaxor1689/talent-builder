@@ -28,7 +28,7 @@ const TreePickDialog = ({ idx, trigger }: Props) => {
 	const searchParams = useSearchParams();
 
 	const calculatorClass = useWatch({ name: 'class' });
-	const calculatorVersion = useWatch({ name: 'version' });
+	const calculatorRows = useWatch({ name: 'rows' });
 
 	const { register, watch } = useForm({ resolver: zodResolver(TreesFilters) });
 	const values = useDebounced(watch());
@@ -36,7 +36,7 @@ const TreePickDialog = ({ idx, trigger }: Props) => {
 	const items = useInfiniteQuery({
 		queryKey: [
 			'talentTrees',
-			{ ...values, class: calculatorClass, version: calculatorVersion }
+			{ ...values, class: calculatorClass, rows: calculatorRows }
 		] as const,
 		queryFn: ({ queryKey, pageParam }) =>
 			listInfiniteTalentTrees({ ...queryKey[1], limit: 42, cursor: pageParam }),

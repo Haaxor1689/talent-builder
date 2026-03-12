@@ -37,10 +37,8 @@ const IdxInput = ({ editable }: Props) => {
 
 const RowsInput = ({ editable }: Props) => {
 	const { field } = useController<TalentForm, 'rows'>({ name: 'rows' });
-	const idx = Math.max(
-		GameVersions.findIndex(v => v.rows === field.value),
-		0
-	);
+	const version =
+		GameVersions.find(v => v.rows === field.value) ?? GameVersions[0];
 	return (
 		<Input
 			{...field}
@@ -55,10 +53,13 @@ const RowsInput = ({ editable }: Props) => {
 				<TextButton
 					icon={<GameVersionLogo rows={field.value} />}
 					disabled={!editable}
-					title={`Game version: ${GameVersions[idx]?.name}`}
+					title={`Game version: ${version.name}`}
 					onClick={() => {
-						const newValue = (idx + 1) % GameVersions.length;
-						field.onChange(GameVersions[newValue]?.rows ?? 5);
+						const idx = Math.max(
+							GameVersions.findIndex(v => v.rows === field.value),
+							0
+						);
+						field.onChange(GameVersions[idx + 1]?.rows ?? 5);
 						field.onBlur();
 					}}
 					className="-m-2"

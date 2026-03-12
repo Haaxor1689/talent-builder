@@ -13,14 +13,14 @@ import { Errors } from '#utils/errors.ts';
 
 import { createdBySelect, getUser } from '.';
 
-const getVersionFilter = (idx?: number) => {
-	const version = GameVersions[idx ?? -1];
-	if (!version) return undefined;
-	if (version.rows !== undefined) return eq(talentTrees.rows, version.rows);
+const getVersionFilter = (rows?: number) => {
+	if (rows === undefined) return undefined;
+	if (rows > 0) return eq(talentTrees.rows, rows);
+	// -1 represents "custom" version that is everything except known versions
 	return not(
 		inArray(
 			talentTrees.rows,
-			GameVersions.map(v => v.rows).filter(r => r !== undefined)
+			GameVersions.map(v => v.rows)
 		)
 	);
 };
@@ -57,7 +57,7 @@ export const listInfiniteTalentTrees = serverFunction({
 					? inArray(talentTrees.createdById, whereAcc)
 					: undefined,
 				input.class ? eq(talentTrees.class, input.class) : undefined,
-				getVersionFilter(input.version)
+				getVersionFilter(input.rows)
 			),
 			with: { createdBy: createdBySelect }
 		});

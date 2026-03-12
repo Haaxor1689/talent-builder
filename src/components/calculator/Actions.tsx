@@ -13,6 +13,7 @@ import Dialog, { closeDialog } from '../styled/Dialog';
 import TextButton from '../styled/TextButton';
 import { toast } from '../ToastProvider';
 import DeleteDialog from './DeleteDialog';
+import { bitPack } from './utils';
 
 type Props = {
 	trees: [TalentForm?, TalentForm?, TalentForm?];
@@ -86,8 +87,9 @@ const Actions = ({ trees, isNew }: Props) => {
 							startTransition(async () => {
 								const values = getValues();
 								const newUrl = `/calculator?${new URLSearchParams({
-									c: values.class.toString(),
-									t: values.points.map(p => p.join('')).join('-'),
+									class: values.class.toString(),
+									points: bitPack(values.points),
+									rows: values.rows.toString(),
 									t0: trees[0]?.id ?? '',
 									t1: trees[1]?.id ?? '',
 									t2: trees[2]?.id ?? ''
