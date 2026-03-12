@@ -65,7 +65,7 @@ const TalentPreview = ({ i, idx, talents, rows }: Props) => {
 		if (requiredBy.some(t => points[idx][t])) return;
 
 		// Get current point sum in each row
-		const pointsPerRow = [...Array(7).keys()].map(i =>
+		const pointsPerRow = [...Array(rows).keys()].map(i =>
 			points[idx].slice(i * 4, i * 4 + 4).reduce((acc, curr) => acc + curr, 0)
 		);
 

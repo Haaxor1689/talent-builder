@@ -38,7 +38,11 @@ const SpellIcon = ({
 			)}
 		>
 			{(!!showDefault || !!icon) && (
-				<img src={getIconPath(icon)} alt="icon" className="size-[87.5%]" />
+				<img
+					src={getIconPath(icon)}
+					alt={`${icon ?? 'empty'} icon`}
+					className="size-[87.5%]"
+				/>
 			)}
 			<img
 				src="/icon_frame.png"

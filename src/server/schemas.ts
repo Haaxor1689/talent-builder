@@ -10,7 +10,7 @@ export const Talent = z.object({
 	name: z.string().default('New talent'),
 	ranks: z.preprocess(
 		val =>
-			!val || isNaN(Number(val)) ? 0 : Math.max(Math.min(Number(val), 7), 0),
+			!val || isNaN(Number(val)) ? 1 : Math.max(Math.min(Number(val), 7), 0),
 		z.number().min(0).max(7).default(1)
 	),
 	highlight: z.boolean().default(false),

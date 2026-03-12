@@ -8,7 +8,7 @@ import cls from 'classnames';
 import Spinner from '#components/styled/Spinner.tsx';
 import TreeGridItem from '#components/styled/TreeGridItem.tsx';
 import { listInfiniteTalentTrees } from '#server/api/talentTree.actions.ts';
-import { TalentForm, TreesFilters } from '#server/schemas.ts';
+import { TreesFilters } from '#server/schemas.ts';
 
 const TreeGrid = () => {
 	const searchParams = useSearchParams();
@@ -26,19 +26,7 @@ const TreeGrid = () => {
 				...defaultValues,
 				limit: 42,
 				cursor: pageParam
-			}).then(r => ({
-				...r,
-				items: r.items
-					.map(i => {
-						try {
-							return TalentForm.parse(i);
-						} catch (e) {
-							console.error(e);
-							return null;
-						}
-					})
-					.filter(v => v !== null)
-			})),
+			}),
 		initialPageParam: 0,
 		getNextPageParam: prev => prev.nextCursor,
 		staleTime: Infinity

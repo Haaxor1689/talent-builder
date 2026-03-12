@@ -15,7 +15,6 @@ type Props = {
 	loading?: boolean;
 	disabled?: boolean;
 	tabIndex?: number;
-	title?: string;
 	className?: string;
 	style?: CSSProperties;
 } & (
@@ -35,8 +34,8 @@ type Props = {
 	  }
 ) &
 	(
-		| { children: ReactNode; icon?: ReactNode }
-		| { children?: never; icon: ReactNode }
+		| { children: ReactNode; icon?: ReactNode; title?: never }
+		| { children?: never; icon: ReactNode; title: string }
 	);
 
 const TextButton = ({

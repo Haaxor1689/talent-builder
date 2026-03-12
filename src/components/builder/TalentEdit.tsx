@@ -90,7 +90,12 @@ const TalentEdit = ({ selected, editable }: Props) => {
 	if (!field)
 		return (
 			<TextButton
-				onClick={() => setValue(`talents.${selected}`, Talent.parse({}))}
+				onClick={() =>
+					setValue(`talents.${selected}`, Talent.parse({}), {
+						shouldDirty: true,
+						shouldTouch: true
+					})
+				}
 				className="h-full w-full flex-col items-center justify-center p-12"
 			>
 				<p className="h1 text-7xl text-inherit">+</p>
@@ -116,7 +121,12 @@ const TalentEdit = ({ selected, editable }: Props) => {
 					<TextButton
 						icon={<Trash2 />}
 						title="Delete"
-						onClick={() => setValue(`talents.${selected}`, undefined)}
+						onClick={() =>
+							setValue(`talents.${selected}`, undefined, {
+								shouldDirty: true,
+								shouldTouch: true
+							})
+						}
 						className="text-red"
 					/>
 				)}

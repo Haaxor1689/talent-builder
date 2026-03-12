@@ -158,9 +158,7 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 					}
 					{...props}
 					className={
-						!field
-							? "*:[[alt='frame']]:opacity-10 *:[[alt='icon']]:opacity-10"
-							: undefined
+						!field ? "*:[img:not([alt='hover'])]:opacity-10" : undefined
 					}
 				/>
 			)}
