@@ -42,9 +42,9 @@ const IconPicker = ({ name, disabled }: Props) => {
 
 	const [filter, setFilter] = useState('');
 	const debouncedFilter = useDebounced(filter);
-	const filteredIcons = Object.keys(iconList).filter(icon =>
-		icon.includes(debouncedFilter.toLocaleLowerCase())
-	);
+	const filteredIcons = Object.keys(iconList)
+		.filter(icon => icon.includes(debouncedFilter.toLocaleLowerCase()))
+		.sort();
 
 	// eslint-disable-next-line react-hooks/incompatible-library
 	const virtualizer = useVirtualizer({
@@ -145,8 +145,8 @@ const IconPicker = ({ name, disabled }: Props) => {
 
 			<ScrollArea
 				ref={parentRef}
-				containerClassName="h-66 -m-3"
-				contentClassName="p-3 min-h-66"
+				containerClassName="h-100 -m-3"
+				contentClassName="p-3 min-h-100"
 			>
 				<div
 					className="relative w-full"

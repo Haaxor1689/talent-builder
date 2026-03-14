@@ -9,6 +9,10 @@ export const metadata: Metadata = {
 };
 
 const changelogText = dedent`
+# In progress
+
+- **Icon picker improvements** The icons in the grid at the bottom are now sorted by name for easier browsing and the height of the container has been increased to show more icons at once.
+
 # March 12, 2026
 
 - **Support for different tree layouts** Talent editor now handles multiple tree sizes. Filters have been added to the tree list and calculator to reflect this, and the talent tree listings now show which layout they use, and the calculator will automatically select the correct one when loading builds.
