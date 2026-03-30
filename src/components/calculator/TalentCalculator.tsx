@@ -1,8 +1,8 @@
 'use client';
 
+import { useSearchParams } from 'next/navigation';
 import { useMemo } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
-import { useSearchParams } from 'next/navigation';
 
 import VersionPicker from '#components/form/VersionPicker.tsx';
 import {

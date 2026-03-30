@@ -1,5 +1,5 @@
-import { type JSX, useMemo } from 'react';
 import cls from 'classnames';
+import { type JSX, useMemo } from 'react';
 
 import { type Talent } from '#server/schemas.ts';
 

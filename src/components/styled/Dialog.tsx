@@ -1,6 +1,6 @@
-import { useRef, useState } from 'react';
 import { Dialog as Base } from '@base-ui/react/dialog';
 import cls from 'classnames';
+import { useRef, useState } from 'react';
 
 export const closeDialog = (event: Pick<Event, 'currentTarget'>) => {
 	window.dispatchEvent(

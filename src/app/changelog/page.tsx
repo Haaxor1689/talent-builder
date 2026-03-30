@@ -1,5 +1,5 @@
-import { type Metadata } from 'next';
 import dedent from 'dedent';
+import { type Metadata } from 'next';
 
 import Md from '#components/styled/Md.tsx';
 

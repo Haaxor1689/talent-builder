@@ -1,7 +1,7 @@
-import { cache } from 'react';
-import { headers } from 'next/headers';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { headers } from 'next/headers';
+import { cache } from 'react';
 import { z } from 'zod';
 
 import { env } from '#env.js';

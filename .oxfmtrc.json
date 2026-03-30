@@ -10,7 +10,9 @@
 		"functions": ["cls"],
 		"stylesheet": "./src/theme.css"
 	},
-	"sortPackageJson": true,
+	"sortImports": {
+		"internalPattern": ["#"]
+	},
 	"ignorePatterns": [
 		"node_modules",
 		".next",

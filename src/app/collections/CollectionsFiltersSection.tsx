@@ -1,8 +1,8 @@
 'use client';
 
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useSearchParams } from 'next/navigation';
 
 import Input from '#components/form/Input.tsx';
 import useDebounced from '#hooks/useDebounced.ts';

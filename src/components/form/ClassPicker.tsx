@@ -1,8 +1,8 @@
 'use client';
 
-import { useController } from 'react-hook-form';
 import cls from 'classnames';
 import { X } from 'lucide-react';
+import { useController } from 'react-hook-form';
 
 import { classMask, maskToClass } from '#utils/index.ts';
 

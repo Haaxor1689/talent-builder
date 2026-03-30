@@ -1,8 +1,8 @@
 'use client';
 
-import { useFormContext, useWatch } from 'react-hook-form';
 import cls from 'classnames';
 import { Minus, Plus } from 'lucide-react';
+import { useFormContext, useWatch } from 'react-hook-form';
 
 import { TalentDescription } from '#components/styled/TalentDescription.tsx';
 import useIsMobile from '#hooks/useIsMobile.tsx';

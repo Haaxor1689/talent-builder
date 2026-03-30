@@ -1,7 +1,7 @@
 'use client';
 
-import { useFormContext, useWatch } from 'react-hook-form';
 import { ExternalLink, NotebookPen, Workflow, X } from 'lucide-react';
+import { useFormContext, useWatch } from 'react-hook-form';
 
 import { type BuildForm, type TalentForm } from '#server/schemas.ts';
 import { getTalentSum } from '#utils/index.ts';

@@ -1,7 +1,7 @@
 'use client';
 
-import { type HTMLProps, type ReactNode, useId } from 'react';
 import cls from 'classnames';
+import { type HTMLProps, type ReactNode, useId } from 'react';
 
 type Props = HTMLProps<HTMLInputElement> & {
 	ref?: React.Ref<HTMLInputElement>;

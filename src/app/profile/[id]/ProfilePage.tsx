@@ -1,5 +1,5 @@
-import { notFound } from 'next/navigation';
 import { Heart } from 'lucide-react';
+import { notFound } from 'next/navigation';
 
 import { getSession } from '#auth/server.ts';
 import PageTitle from '#components/layout/PageTitle.tsx';

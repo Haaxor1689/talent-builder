@@ -1,8 +1,8 @@
 'use client';
 
+import cls from 'classnames';
 import { type ComponentProps } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
-import cls from 'classnames';
 
 type Props = ComponentProps<typeof TextareaAutosize> & {
 	ref?: React.Ref<HTMLTextAreaElement>;

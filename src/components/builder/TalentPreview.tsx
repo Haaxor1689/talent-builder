@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
 import { cloneDeep } from 'es-toolkit';
 import { Link2, Pointer, Replace } from 'lucide-react';
+import { useState } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
 
 import { TalentDescription } from '#components/styled/TalentDescription.tsx';
 import { Talent, type TalentForm } from '#server/schemas.ts';

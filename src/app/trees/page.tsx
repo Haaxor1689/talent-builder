@@ -1,5 +1,5 @@
-import { type Metadata } from 'next';
 import { PlusCircle } from 'lucide-react';
+import { type Metadata } from 'next';
 
 import FiltersSection from '#app/trees/FiltersSection.tsx';
 import TreeGrid from '#app/trees/TreeGrid.tsx';

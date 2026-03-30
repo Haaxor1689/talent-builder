@@ -1,8 +1,8 @@
 'use client';
 
-import Link from 'next/link';
 import cls from 'classnames';
 import { CloudOff, EyeOff, Workflow } from 'lucide-react';
+import Link from 'next/link';
 
 import SpellIcon from '#components/styled/SpellIcon.tsx';
 import TextButton from '#components/styled/TextButton.tsx';

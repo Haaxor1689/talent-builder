@@ -1,9 +1,9 @@
 'use client';
 
-import { Fragment, useEffect, useMemo, useRef } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import cls from 'classnames';
+import { useSearchParams } from 'next/navigation';
+import { Fragment, useEffect, useMemo, useRef } from 'react';
 
 import CollectionGridItem from '#components/styled/CollectionGridItem.tsx';
 import Spinner from '#components/styled/Spinner.tsx';

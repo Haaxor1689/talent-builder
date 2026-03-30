@@ -1,6 +1,6 @@
+import { Camera } from 'lucide-react';
 import { useRef } from 'react';
 import { useWatch } from 'react-hook-form';
-import { Camera } from 'lucide-react';
 
 import Dialog, { closeDialog } from '#components/styled/Dialog.tsx';
 import SpellIcon from '#components/styled/SpellIcon.tsx';

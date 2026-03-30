@@ -1,8 +1,8 @@
 'use client';
 
+import { Camera, CloudOff, Eye, EyeOff, NotebookPen } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
-import { Camera, CloudOff, Eye, EyeOff, NotebookPen } from 'lucide-react';
 
 import { useSession } from '#auth/client.ts';
 import ScrollArea from '#components/styled/ScrollArea.tsx';

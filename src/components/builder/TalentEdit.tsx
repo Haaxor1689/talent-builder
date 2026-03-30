@@ -1,7 +1,7 @@
 'use client';
 
-import { useController, useFormContext, useWatch } from 'react-hook-form';
 import { AlertTriangle, Link2Off, Trash2 } from 'lucide-react';
+import { useController, useFormContext, useWatch } from 'react-hook-form';
 
 import { Talent, type TalentForm } from '#server/schemas.ts';
 import { nullableInput } from '#utils/index.ts';

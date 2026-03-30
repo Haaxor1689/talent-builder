@@ -1,13 +1,11 @@
-import { defineConfig, globalIgnores } from 'eslint/config';
+import eslintReact from '@eslint-react/eslint-plugin';
+import eslintJs from '@eslint/js';
 import configNextVitals from 'eslint-config-next/core-web-vitals';
 import configNextTypescript from 'eslint-config-next/typescript';
 import configPrettier from 'eslint-config-prettier';
-import pluginImport from 'eslint-plugin-import';
-import pluginSimpleImportSort from 'eslint-plugin-simple-import-sort';
 import pluginReactHooks from 'eslint-plugin-react-hooks';
-import eslintJs from '@eslint/js';
+import { defineConfig, globalIgnores } from 'eslint/config';
 import tseslint from 'typescript-eslint';
-import eslintReact from '@eslint-react/eslint-plugin';
 
 export default defineConfig([
 	// TODO: MIgrate
@@ -23,11 +21,6 @@ export default defineConfig([
 			tseslint.configs.recommended,
 			eslintReact.configs['recommended-typescript']
 		],
-
-		plugins: {
-			'import': pluginImport,
-			'simple-import-sort': pluginSimpleImportSort
-		},
 
 		// Configure language/parsing options
 		languageOptions: {
@@ -96,31 +89,7 @@ export default defineConfig([
 			'react/display-name': 'off',
 			'@eslint-react/no-array-index-key': 'off',
 			// Next.js
-			'@next/next/no-img-element': 'off',
-			// Import
-			'import/first': 'error',
-			'import/newline-after-import': 'error',
-			'import/no-duplicates': 'error',
-			'simple-import-sort/exports': 'error',
-			'simple-import-sort/imports': [
-				'error',
-				{
-					groups: [
-						// Side effect imports.
-						['^\\u0000'],
-						// Node.js builtins.
-						['^node:'],
-						// Packages.
-						['^react', '^next', '^@?\\w'],
-						// Absolute imports and other imports such as Vue-style `@/foo`.
-						['^#'],
-						// Relative imports.
-						['^\\.'],
-						// Style imports.
-						['^.+\\.css$']
-					]
-				}
-			]
+			'@next/next/no-img-element': 'off'
 		}
 	},
 

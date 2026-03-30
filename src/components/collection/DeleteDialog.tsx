@@ -1,8 +1,8 @@
 'use client';
 
-import { useWatch } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
 import { Trash2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useWatch } from 'react-hook-form';
 
 import Dialog from '#components/styled/Dialog.tsx';
 import TextButton from '#components/styled/TextButton.tsx';

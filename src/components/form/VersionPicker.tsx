@@ -1,7 +1,7 @@
 'use client';
 
-import { useController } from 'react-hook-form';
 import { X } from 'lucide-react';
+import { useController } from 'react-hook-form';
 
 import {
 	GameVersionLogo,

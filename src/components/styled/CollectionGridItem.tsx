@@ -1,8 +1,8 @@
 'use client';
 
-import Link from 'next/link';
 import cls from 'classnames';
 import { EyeOff, LibraryBig } from 'lucide-react';
+import Link from 'next/link';
 
 import Tooltip from '#components/styled/Tooltip.tsx';
 import { UserAvatar, UserRoleText } from '#components/styled/User.tsx';

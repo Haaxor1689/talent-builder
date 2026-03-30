@@ -1,5 +1,5 @@
-import { type HTMLAttributes } from 'react';
 import cls from 'classnames';
+import { type HTMLAttributes } from 'react';
 
 import { getIconPath } from '#utils/index.ts';
 

@@ -1,13 +1,13 @@
 'use client';
 
+import { CirclePlus, LockKeyhole, Save, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import {
 	Controller,
 	useController,
 	useFormContext,
 	useWatch
 } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
-import { CirclePlus, LockKeyhole, Save, X } from 'lucide-react';
 
 import IconPicker from '#components/form/IconPicker.tsx';
 import Input from '#components/form/Input.tsx';

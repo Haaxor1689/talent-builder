@@ -1,7 +1,7 @@
 'use client';
 
-import Link from 'next/link';
 import { Workflow } from 'lucide-react';
+import Link from 'next/link';
 
 import { UserAvatar, UserRoleText } from '#components/styled/User.tsx';
 import { type savedBuilds, type user } from '#server/db/schema.ts';

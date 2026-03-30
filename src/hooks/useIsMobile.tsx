@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
+import { useEffect } from 'react';
 
 const MOBILE_BREAKPOINT = 768;
 const isMobileAtom = atom(false);

@@ -1,8 +1,8 @@
 'use client';
 
-import { useWatch } from 'react-hook-form';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { LibraryBig, Link, Unlink } from 'lucide-react';
+import { useWatch } from 'react-hook-form';
 
 import CollectionGridItem from '#components/styled/CollectionGridItem.tsx';
 import Dialog from '#components/styled/Dialog.tsx';

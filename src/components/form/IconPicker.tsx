@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { useController } from 'react-hook-form';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { Check, Filter } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { useController } from 'react-hook-form';
 
 import ScrollArea from '#components/styled/ScrollArea.tsx';
 import TextButton from '#components/styled/TextButton.tsx';

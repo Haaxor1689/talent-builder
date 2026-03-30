@@ -1,6 +1,5 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
 import {
 	Calculator,
 	LibraryBig,
@@ -8,6 +7,7 @@ import {
 	PlusCircle,
 	Workflow
 } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 import TextButton from '#components/styled/TextButton.tsx';
 
