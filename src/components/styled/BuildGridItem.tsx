@@ -26,24 +26,20 @@ const BuildGridItem = (item: Props) => {
 						{item.name ? `${item.name} ` : ''}
 						{classInfo?.name}
 					</h4>
-					{item.createdBy && (
-						<>
-							<p className="whitespace-nowrap text-blue-gray">
-								Last updated:{' '}
-								<span>
-									{new Date(item.updatedAt ?? item.createdAt).toLocaleString(
-										'en-US'
-									)}
-								</span>
-							</p>
-							<div className="flex items-center gap-1.5 text-blue-gray">
-								Author: <UserAvatar image={item.createdBy.image} />{' '}
-								<UserRoleText role={item.createdBy.role}>
-									{item.createdBy.name}
-								</UserRoleText>
-							</div>
-						</>
-					)}
+					<p className="whitespace-nowrap text-blue-gray">
+						Last updated:{' '}
+						<span>
+							{new Date(item.updatedAt ?? item.createdAt).toLocaleString(
+								'en-US'
+							)}
+						</span>
+					</p>
+					<div className="flex items-center gap-1.5 text-blue-gray">
+						Author: <UserAvatar image={item.createdBy.image} />{' '}
+						<UserRoleText role={item.createdBy.role}>
+							{item.createdBy.name}
+						</UserRoleText>
+					</div>
 				</>
 			)}
 			actions={() => (
@@ -69,7 +65,7 @@ const BuildGridItem = (item: Props) => {
 							{classInfo?.name}
 						</p>
 						<div className="flex items-center gap-1.5 truncate text-blue-gray">
-							<UserAvatar image={item.createdBy?.image} />
+							<UserAvatar image={item.createdBy.image} />
 							{item.createdBy.name === 'TurtleWoW'
 								? 'TurtleWoW'
 								: getLastUpdatedString(item.updatedAt ?? item.createdAt)}

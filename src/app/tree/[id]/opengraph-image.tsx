@@ -71,39 +71,37 @@ const Image = async ({ params }: PageProps<'/tree/[id]'>) => {
 				</span>
 			</div>
 
-			{r.createdBy && (
-				<div
+			<div
+				style={{
+					display: 'flex',
+					alignItems: 'center',
+					gap: 16,
+					fontSize: 48
+				}}
+			>
+				<span style={{ color: '#929391' }}>Created by</span>
+				{r.createdBy.image && (
+					<img
+						src={`${r.createdBy.image}?size=64`}
+						alt={`${r.createdBy.name}'s avatar`}
+						width={64}
+						height={64}
+						style={{ borderRadius: '100%' }}
+					/>
+				)}
+				<span
 					style={{
-						display: 'flex',
-						alignItems: 'center',
-						gap: 16,
-						fontSize: 48
+						color:
+							r.createdBy.role === 'admin'
+								? '#8dd958'
+								: r.createdBy.role === 'supporter'
+									? '#41c8d4'
+									: 'white'
 					}}
 				>
-					<span style={{ color: '#929391' }}>Created by</span>
-					{r.createdBy?.image && (
-						<img
-							src={`${r.createdBy.image}?size=64`}
-							alt={`${r.createdBy.name}'s avatar`}
-							width={64}
-							height={64}
-							style={{ borderRadius: '100%' }}
-						/>
-					)}
-					<span
-						style={{
-							color:
-								r.createdBy.role === 'admin'
-									? '#8dd958'
-									: r.createdBy.role === 'supporter'
-										? '#41c8d4'
-										: 'white'
-						}}
-					>
-						{r.createdBy.name}
-					</span>
-				</div>
-			)}
+					{r.createdBy.name}
+				</span>
+			</div>
 		</div>
 	);
 };

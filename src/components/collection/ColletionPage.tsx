@@ -34,7 +34,7 @@ const CollectionPage = ({ defaultValues, trees }: Props) => {
 	const editable = session ? canEdit(session.user, defaultValues) : false;
 	const [dragging, setDragging] = useState(false);
 
-	const form = useForm<CollectionForm>({
+	const form = useForm({
 		defaultValues,
 		resolver: zodResolver(CollectionForm)
 	});

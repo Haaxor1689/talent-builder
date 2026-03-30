@@ -108,7 +108,7 @@ const TalentBuilder = ({ defaultValues }: Props) => {
 								<div className="flex items-center gap-1.5 text-blue-gray">
 									Author:{' '}
 									<TextButton
-										icon={<UserAvatar image={defaultValues.createdBy?.image} />}
+										icon={<UserAvatar image={defaultValues.createdBy.image} />}
 										type="link"
 										href={`/profile/${defaultValues.createdById}`}
 										className="p-0!"

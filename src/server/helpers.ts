@@ -5,14 +5,14 @@ import { type z } from 'zod';
 import { getError } from '#utils/errors.ts';
 import { logger } from '#utils/index.ts';
 
-type InputType = z.AnyZodObject | z.ZodUndefined;
+type InputType = z.ZodObject<any> | z.ZodUndefined;
 
 type ProcedureFn<
 	Input extends InputType,
 	SessionType
 > = SessionType extends never
-	? (input: z.infer<Input>) => Promise<unknown>
-	: (input: z.infer<Input>, session: Awaited<SessionType>) => Promise<unknown>;
+	? (input: z.output<Input>) => Promise<unknown>
+	: (input: z.output<Input>, session: Awaited<SessionType>) => Promise<unknown>;
 
 export type ProcedureResult<Return> =
 	| { ok: true; data: Return }
@@ -24,9 +24,9 @@ type ProcedureReturn<
 	Input extends InputType,
 	Return = Awaited<ReturnType<Func>>
 > =
-	z.infer<Input> extends undefined
+	z.output<Input> extends undefined
 		? () => Promise<ProcedureResult<Return>>
-		: (val: z.infer<Input>) => Promise<ProcedureResult<Return>>;
+		: (val: z.output<Input>) => Promise<ProcedureResult<Return>>;
 
 type QueryProps<
 	SessionType,
@@ -59,7 +59,7 @@ export const serverFunction = <
 		try {
 			const s = session ? await session() : null;
 			const value = input?.parse(val);
-			const result = await query(value, s as never);
+			const result = await query(value as never, s as never);
 			return {
 				ok: true,
 				data: transform ? await transform(result as never) : result

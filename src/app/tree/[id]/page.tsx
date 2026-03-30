@@ -17,7 +17,7 @@ export const generateMetadata = async ({
 	if (!info) return {};
 	return {
 		title: info.name,
-		description: `Talent tree created by ${info.createdBy?.name}`,
+		description: `Talent tree created by ${info.createdBy.name}`,
 		icons: [{ rel: 'icon', url: getIconPath(info.icon, env.DEPLOY_URL) }]
 	};
 };

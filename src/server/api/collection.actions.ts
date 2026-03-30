@@ -206,13 +206,7 @@ export const listTreeCollections = serverFunction({
 		}),
 	transform: async items => {
 		const user = await getUser();
-		return items.filter(
-			(
-				i
-			): i is Omit<typeof i, 'collection'> & {
-				collection: NonNullable<typeof i.collection>;
-			} => canView(user, i.collection)
-		);
+		return items.filter(i => canView(user, i.collection));
 	}
 });
 

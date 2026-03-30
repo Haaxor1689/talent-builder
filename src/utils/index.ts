@@ -11,9 +11,8 @@ import { type Talents } from '#server/schemas.ts';
 import { Errors, isErrors } from './errors';
 
 export const zodResolver = <In extends FieldValues, Out extends FieldValues>(
-	schema: z.ZodType<In, z.ZodTypeDef, Out>
-): Resolver<z.infer<z.ZodType<In, z.ZodTypeDef, Out>>> => resolver(schema);
-
+	schema: z.ZodType<Out, In>
+): Resolver<Out, In> => resolver(schema as never);
 export const nullableInput = {
 	setValueAs: (v: unknown) => (v === '' ? null : v)
 };
@@ -97,7 +96,7 @@ export const elementToPng = async (element: HTMLElement, name: string) => {
 	link.click();
 };
 
-export const safeJsonParse = <T extends z.ZodTypeAny>({
+export const safeJsonParse = <T extends z.ZodType>({
 	text,
 	schema,
 	errorMessage: message
