@@ -69,6 +69,7 @@ export const upsertSavedBuild = serverFunction({
 			...build,
 			points: build?.talents
 				.split('-')
+				// oxlint-disable-next-line typescript/no-misused-spread
 				.map(p => [...p].map(v => Number(v))) as [number[], number[], number[]]
 		};
 	}

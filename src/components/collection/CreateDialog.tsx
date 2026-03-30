@@ -68,7 +68,7 @@ const CreateDialog = () => {
 					url="/collections/"
 				/>
 
-				<Controller
+				<Controller<CollectionForm, 'visibility'>
 					name="visibility"
 					render={({ field }) => (
 						<VisibilityInput

@@ -6,12 +6,17 @@ import Dialog, { closeDialog } from '#components/styled/Dialog.tsx';
 import SpellIcon from '#components/styled/SpellIcon.tsx';
 import { TalentDescription } from '#components/styled/TalentDescription.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
+import { type TalentForm } from '#server/schemas.ts';
 import { elementToPng } from '#utils/index.ts';
 
 const TalentScreenshot = ({ selected }: { selected: number }) => {
 	const ref = useRef<HTMLDivElement>(null);
 
-	const item = useWatch({ name: `talents.${selected}` });
+	const item = useWatch<TalentForm, `talents.${number}`>({
+		name: `talents.${selected}`
+	});
+
+	if (!item) return null;
 
 	return (
 		<Dialog

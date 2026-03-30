@@ -1,7 +1,6 @@
 import cls from 'classnames';
 import { omit } from 'es-toolkit';
 import Link from 'next/link';
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
 	type CSSProperties,
 	type MouseEventHandler,

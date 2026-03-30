@@ -1,6 +1,6 @@
-/* eslint-disable jsx-a11y/alt-text */
-
 import { env } from '#env.js';
+import { type getOgInfo } from '#server/api/openGraph.ts';
+import { type ServerFunctionReturn } from '#server/helpers.ts';
 import {
 	imageResponse,
 	imageSize,
@@ -13,9 +13,11 @@ export const contentType = 'image/webp';
 
 const Image = async ({ params }: PageProps<'/tree/[id]'>) => {
 	const { id } = await params;
-	const r = await fetch(`${env.DEPLOY_URL}/api/og/${id}`).then(r => r.json());
+	const r = await fetch(`${env.DEPLOY_URL}/api/og/${id}`).then(
+		r => r.json() as Promise<ServerFunctionReturn<typeof getOgInfo>>
+	);
 	if (!r) return undefined;
-	return imageResponse(
+	return await imageResponse(
 		<div
 			style={{
 				width: '100%',
@@ -52,11 +54,13 @@ const Image = async ({ params }: PageProps<'/tree/[id]'>) => {
 				>
 					<img
 						src={getIconPath(r.icon, env.DEPLOY_URL)}
+						alt={`${r.name} Icon`}
 						width={112}
 						height={112}
 					/>
 					<img
 						src={`${env.DEPLOY_URL}/icon_frame.png`}
+						alt="Frame"
 						width={128}
 						height={128}
 						style={{ position: 'absolute' }}
@@ -80,6 +84,7 @@ const Image = async ({ params }: PageProps<'/tree/[id]'>) => {
 					{r.createdBy?.image && (
 						<img
 							src={`${r.createdBy.image}?size=64`}
+							alt={`${r.createdBy.name}'s avatar`}
 							width={64}
 							height={64}
 							style={{ borderRadius: '100%' }}

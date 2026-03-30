@@ -10,7 +10,7 @@ import { useForm, useWatch } from 'react-hook-form';
 import TreeGridItem from '#components/styled/TreeGridItem.tsx';
 import useDebounced from '#hooks/useDebounced.ts';
 import { listInfiniteTalentTrees } from '#server/api/talentTree.actions.ts';
-import { TreesFilters } from '#server/schemas.ts';
+import { type BuildForm, TreesFilters } from '#server/schemas.ts';
 import { invoke, zodResolver } from '#utils/index.ts';
 
 import Input from '../form/Input';
@@ -27,8 +27,10 @@ const TreePickDialog = ({ idx, trigger }: Props) => {
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
 
-	const calculatorClass = useWatch({ name: 'class' });
-	const calculatorRows = useWatch({ name: 'rows' });
+	const calculatorClass = useWatch<BuildForm, 'class'>({
+		name: 'class'
+	});
+	const calculatorRows = useWatch<BuildForm, 'rows'>({ name: 'rows' });
 
 	const { register, watch } = useForm({ resolver: zodResolver(TreesFilters) });
 	const values = useDebounced(watch());
@@ -57,12 +59,11 @@ const TreePickDialog = ({ idx, trigger }: Props) => {
 			return;
 		const observer = new IntersectionObserver(([o]) => {
 			if (!o?.isIntersecting) return;
-			items.fetchNextPage();
+			return items.fetchNextPage();
 		});
 		observer.observe(bottomRef.current);
 		return () => observer.disconnect();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [items.isFetchingNextPage, items.hasNextPage]);
+	}, [items, items.isFetchingNextPage, items.hasNextPage, items.fetchNextPage]);
 
 	return (
 		<Dialog

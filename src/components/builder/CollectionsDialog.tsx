@@ -17,12 +17,13 @@ import {
 	listTreeCollections,
 	removeCollectionTree
 } from '#server/api/collection.actions.ts';
+import { type CollectionForm } from '#server/schemas.ts';
 import { invoke } from '#utils/index.ts';
 
 const CollectionsDialog = () => {
 	const [isPending, startTransition] = useAsyncAction();
 
-	const treeId = useWatch({ name: 'id' });
+	const treeId = useWatch<CollectionForm, 'id'>({ name: 'id' });
 	const { isSupporter, supportCta } = useIsSupporter('Collections management');
 
 	const queryClient = useQueryClient();
@@ -47,9 +48,10 @@ const CollectionsDialog = () => {
 					title="Collections"
 					onClick={() => {
 						open();
-						if (!relations.data && !relations.isFetching) relations.refetch();
+						if (!relations.data && !relations.isFetching)
+							return relations.refetch();
 						if (isSupporter && !editable.data && !editable.isFetching)
-							editable.refetch();
+							return editable.refetch();
 					}}
 				/>
 			)}

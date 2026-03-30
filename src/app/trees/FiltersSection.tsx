@@ -27,7 +27,6 @@ const FiltersSection = () => {
 	});
 	const { register, watch } = formProps;
 
-	// eslint-disable-next-line react-hooks/incompatible-library
 	const values = useDebounced(watch(), 500);
 	useEffect(() => {
 		const params = new URLSearchParams(searchParams.toString());

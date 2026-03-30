@@ -43,7 +43,7 @@ const Dialog = ({
 			};
 			window.addEventListener('dialog-close', cbRef.current);
 		} else {
-			cbRef.current &&
+			if (cbRef.current)
 				window.removeEventListener('dialog-close', cbRef.current);
 			cbRef.current = null;
 		}
@@ -51,7 +51,6 @@ const Dialog = ({
 
 	return (
 		<Base.Root open={open} onOpenChange={handleOpenChange}>
-			{/* eslint-disable-next-line react-hooks/refs */}
 			{trigger(() => handleOpenChange(true))}
 			<Base.Portal>
 				<Base.Backdrop className="haax-backdrop-blur" />

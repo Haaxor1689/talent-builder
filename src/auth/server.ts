@@ -33,8 +33,8 @@ export const auth = betterAuth({
 	}
 });
 
-export const getSession = cache(async () =>
-	auth.api.getSession({ headers: await headers() })
+export const getSession = cache(
+	async () => await auth.api.getSession({ headers: await headers() })
 );
 
 const MemberSchema = z.object({ roles: z.array(z.string()) });

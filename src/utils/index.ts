@@ -107,7 +107,7 @@ export const safeJsonParse = <T extends z.ZodTypeAny>({
 	errorMessage?: string;
 }) => {
 	try {
-		const json = JSON.parse(text);
+		const json = JSON.parse(text) as unknown;
 		const parsed = schema.safeParse(json);
 		if (!parsed.success)
 			throw Errors.schemaValidation({

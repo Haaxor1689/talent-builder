@@ -24,6 +24,7 @@ export const getSavedBuild = serverFunction({
 
 		return {
 			...r,
+			// oxlint-disable-next-line typescript/no-misused-spread
 			points: r.talents.split('-').map(p => [...p].map(v => Number(v))) as [
 				number[],
 				number[],

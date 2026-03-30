@@ -14,9 +14,9 @@ import { invoke } from '#utils/index.ts';
 const TreeGrid = () => {
 	const searchParams = useSearchParams();
 	const defaultValues = useMemo(() => {
-		const p = TreesFilters.safeParse({
-			...Object.fromEntries(searchParams.entries())
-		});
+		const p = TreesFilters.safeParse(
+			Object.fromEntries(searchParams.entries())
+		);
 		return p.success ? p.data : TreesFilters.parse({});
 	}, [searchParams]);
 
@@ -39,14 +39,13 @@ const TreeGrid = () => {
 	useEffect(() => {
 		if (!bottomRef.current || trees.isFetchingNextPage || !trees.hasNextPage)
 			return;
-		const observer = new IntersectionObserver(([o]) => {
+		const observer = new IntersectionObserver(async ([o]) => {
 			if (!o?.isIntersecting) return;
-			trees.fetchNextPage();
+			await trees.fetchNextPage();
 		});
 		observer.observe(bottomRef.current);
 		return () => observer.disconnect();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [trees.isFetchingNextPage, trees.hasNextPage]);
+	}, [trees, trees.isFetchingNextPage, trees.hasNextPage, trees.fetchNextPage]);
 
 	if (trees.isLoading)
 		return (

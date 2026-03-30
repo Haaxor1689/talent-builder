@@ -71,9 +71,12 @@ const TalentBuilder = ({ defaultValues }: Props) => {
 							<TextButton
 								icon={<Camera />}
 								title="Screenshot"
-								onClick={() => {
+								onClick={async () => {
 									if (!treeElemRef.current) return;
-									elementToPng(treeElemRef.current, formProps.getValues().name);
+									await elementToPng(
+										treeElemRef.current,
+										formProps.getValues().name
+									);
 								}}
 								className="-m-2"
 							/>

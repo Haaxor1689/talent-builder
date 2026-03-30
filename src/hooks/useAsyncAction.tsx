@@ -8,9 +8,8 @@ const useAsyncAction = () => {
 	return [
 		isPending,
 		(callback: (currentTarget: EventTarget | null) => Promise<void>) =>
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			(...args: any[]) => {
-				const e = args[0];
+				const e = args[0] as React.MouseEvent;
 				const currentTarget =
 					e?.currentTarget instanceof EventTarget ? e.currentTarget : null;
 				return startTransition(() =>
@@ -19,7 +18,7 @@ const useAsyncAction = () => {
 						toast({
 							type: 'error',
 							message:
-								err.message ??
+								(err as Error)?.message ??
 								'An unhandled exception occurred. Please report this to the developers.'
 						});
 					})

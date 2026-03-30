@@ -41,7 +41,6 @@ type QueryProps<
 };
 
 export type ServerFunctionReturn<
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	Func extends (...args: any[]) => Promise<ProcedureResult<unknown>>
 > = Awaited<ReturnType<Func>> extends ProcedureResult<infer R> ? R : never;
 

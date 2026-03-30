@@ -14,7 +14,7 @@ import Dialog, { closeDialog } from '../styled/Dialog';
 import SpellIcon from '../styled/SpellIcon';
 import Input from './Input';
 
-type Props = { name: string; disabled?: boolean };
+type Props<T extends string> = { name: T; disabled?: boolean };
 
 const ICON_SIZE = 64;
 const GAP = 4;
@@ -29,8 +29,8 @@ const calculateCols = () => {
 	return Math.min(MAX_COLS, Math.max(MIN_COLS, availableCols));
 };
 
-const IconPicker = ({ name, disabled }: Props) => {
-	const { field } = useController({ name });
+const IconPicker = <T extends string>({ name, disabled }: Props<T>) => {
+	const { field } = useController<{ [name]: string }, T>({ name });
 	const parentRef = useRef<HTMLDivElement>(null);
 	const [cols, setCols] = useState(calculateCols);
 
@@ -44,9 +44,8 @@ const IconPicker = ({ name, disabled }: Props) => {
 	const debouncedFilter = useDebounced(filter);
 	const filteredIcons = Object.keys(iconList)
 		.filter(icon => icon.includes(debouncedFilter.toLocaleLowerCase()))
-		.sort();
+		.toSorted();
 
-	// eslint-disable-next-line react-hooks/incompatible-library
 	const virtualizer = useVirtualizer({
 		count: Math.ceil(filteredIcons.length / cols),
 		getScrollElement: () => parentRef.current,

@@ -27,7 +27,7 @@ const CloneDialog = ({ disabled }: { disabled?: boolean }) => {
 	const { upsertTree } = useLocalTrees();
 
 	const { getValues } = useFormContext<TalentForm>();
-	const name = useWatch({ name: 'name' });
+	const name = useWatch<TalentForm, 'name'>({ name: 'name' });
 
 	const newId = nanoid(10);
 	const [newName, setNewName] = useState('');

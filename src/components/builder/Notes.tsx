@@ -5,6 +5,7 @@ import { useController } from 'react-hook-form';
 import TextareaAutosize from 'react-textarea-autosize';
 
 import { Markdown } from '#components/Icons.tsx';
+import { type TalentForm } from '#server/schemas.ts';
 
 import Md from '../styled/Md';
 import ScrollArea from '../styled/ScrollArea';
@@ -16,7 +17,7 @@ type Props = {
 
 const Notes = ({ editable }: Props) => {
 	const [editing, setEditing] = useState(false);
-	const { field } = useController({ name: 'notes' });
+	const { field } = useController<TalentForm, 'notes'>({ name: 'notes' });
 
 	if (!editable || !editing)
 		return (
@@ -43,7 +44,7 @@ const Notes = ({ editable }: Props) => {
 	return (
 		<div className="relative flex h-full min-h-32 flex-col">
 			<TextareaAutosize
-				value={field.value}
+				value={field.value ?? ''}
 				minRows={3}
 				onChange={e => field.onChange(e.currentTarget.value || null)}
 				placeholder="No notes..."

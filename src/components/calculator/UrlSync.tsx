@@ -52,7 +52,7 @@ const UrlSync = ({ values }: { values?: Partial<BuildForm> }) => {
 				params.toString() === '' ? '' : `?${params.toString()}`
 			].join('')
 		);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps
 	}, [points, cls, rows, values]);
 
 	return null;

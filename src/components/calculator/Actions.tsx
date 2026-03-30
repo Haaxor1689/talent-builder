@@ -84,7 +84,7 @@ const Actions = ({ trees, isNew }: Props) => {
 							);
 							toast({ message: 'Build saved!', type: 'success' });
 							router.push(`/calculator/${values.id}`);
-							newBuild && reset(newBuild);
+							if (newBuild) reset(newBuild);
 							closeDialog({ currentTarget });
 						})}
 						loading={isPending}

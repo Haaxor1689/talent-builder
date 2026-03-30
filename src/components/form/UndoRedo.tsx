@@ -77,7 +77,7 @@ const UndoRedo = <T extends FieldValues>({
 		};
 		window.addEventListener('keydown', callback);
 		return () => window.removeEventListener('keydown', callback);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps
 	}, [reset]);
 
 	return (

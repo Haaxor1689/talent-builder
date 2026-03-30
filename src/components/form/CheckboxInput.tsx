@@ -21,15 +21,22 @@ export const Checkbox = ({ checked }: { checked?: boolean }) => (
 	</svg>
 );
 
-type Props = {
-	name: string;
+type Props<T extends string> = {
+	name: T;
 	label?: ReactNode;
 	disabled?: boolean;
 	className?: string;
 };
 
-const CheckboxInput = ({ name, label, disabled, className }: Props) => {
-	const { field } = useController({ name, defaultValue: false });
+const CheckboxInput = <T extends string>({
+	name,
+	label,
+	disabled,
+	className
+}: Props<T>) => {
+	const { field } = useController<{ [name]: boolean }, T>({
+		name
+	});
 
 	return (
 		<TextButton

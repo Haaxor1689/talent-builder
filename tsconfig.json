@@ -26,7 +26,6 @@
 		"**/*.tsx",
 		"src/env.js",
 		"drizzle.config.ts",
-		"eslint.config.js",
 		"next.config.js",
 		"postcss.config.js",
 		".next/types/**/*.ts",

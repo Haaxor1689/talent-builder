@@ -14,9 +14,9 @@ import { invoke } from '#utils/index.ts';
 const CollectionsGrid = () => {
 	const searchParams = useSearchParams();
 	const defaultValues = useMemo(() => {
-		const p = CollectionsFilters.safeParse({
-			...Object.fromEntries(searchParams.entries())
-		});
+		const p = CollectionsFilters.safeParse(
+			Object.fromEntries(searchParams.entries())
+		);
 		return p.success ? p.data : CollectionsFilters.parse({});
 	}, [searchParams]);
 
@@ -45,12 +45,16 @@ const CollectionsGrid = () => {
 			return;
 		const observer = new IntersectionObserver(([o]) => {
 			if (!o?.isIntersecting) return;
-			collections.fetchNextPage();
+			return collections.fetchNextPage();
 		});
 		observer.observe(bottomRef.current);
 		return () => observer.disconnect();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [collections.isFetchingNextPage, collections.hasNextPage]);
+	}, [
+		collections,
+		collections.isFetchingNextPage,
+		collections.hasNextPage,
+		collections.fetchNextPage
+	]);
 
 	if (collections.isLoading)
 		return (

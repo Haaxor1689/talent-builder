@@ -9,7 +9,6 @@ type Props = {
 };
 
 export const TalentDescription = ({ field, value }: Props) => {
-	// eslint-disable-next-line react-hooks/preserve-manual-memoization
 	const description = useMemo(() => {
 		if (!field?.description) return null;
 		if (!field.ranks || field.ranks <= 1) return field.description;
