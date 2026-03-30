@@ -4,6 +4,7 @@ import { z } from 'zod';
 
 import { db } from '#server/db/index.ts';
 import {
+	collections,
 	savedBuilds,
 	talentTrees,
 	user as userTable
@@ -23,7 +24,8 @@ export const getUser = serverFunction({
 			where: eq(userTable.id, input.id),
 			with: {
 				trees: { orderBy: [desc(talentTrees.updatedAt)] },
-				builds: { orderBy: [desc(savedBuilds.updatedAt)] }
+				builds: { orderBy: [desc(savedBuilds.updatedAt)] },
+				collections: { orderBy: [desc(collections.updatedAt)] }
 			}
 		});
 	}

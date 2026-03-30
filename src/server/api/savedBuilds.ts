@@ -1,5 +1,5 @@
 import { cacheLife, cacheTag } from 'next/cache';
-import { eq } from 'drizzle-orm';
+import { eq, or } from 'drizzle-orm';
 import { z } from 'zod';
 
 import { db } from '#server/db/index.ts';
@@ -13,18 +13,18 @@ export const getSavedBuild = serverFunction({
 	query: async input => {
 		'use cache';
 		cacheLife('weeks');
-		cacheTag(`savedBuilds:id:${input.id}`);
 
-		const build = await db.query.savedBuilds.findFirst({
-			where: eq(savedBuilds.id, input.id),
+		const r = await db.query.savedBuilds.findFirst({
+			where: or(eq(savedBuilds.id, input.id), eq(savedBuilds.slug, input.id)),
 			with: { createdBy: createdBySelect }
 		});
 
-		if (!build) return null;
+		if (r) cacheTag(`savedBuilds:id:${r.id}`);
+		else return undefined;
 
 		return {
-			...build,
-			points: build.talents.split('-').map(p => [...p].map(v => Number(v))) as [
+			...r,
+			points: r.talents.split('-').map(p => [...p].map(v => Number(v))) as [
 				number[],
 				number[],
 				number[]

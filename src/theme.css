@@ -24,6 +24,7 @@
 	--color-tooltip-yellow: #ffd100;
 	--color-tooltip-green: #1eff00;
 	--color-tooltip-gray: #9d9d9d;
+	--color-supporter: #41c8d4;
 
 	--icon-size: calc(var(--spacing) * 6);
 	--spell-icon-size: calc(var(--spacing) * 16);

@@ -17,18 +17,30 @@ import {
 
 import { GameVersionLogo } from './GameVersion';
 
-type Item = TalentForm & {
+type Item = {
+	item: TalentForm;
 	href: string;
 	label?: string;
 	active?: boolean;
+	hideTooltip?: boolean;
 	onClick?: (e: React.MouseEvent) => void;
+	onDragStart?: (e: React.DragEvent) => void;
 };
 
-const TreeGridItem = (item: Item) => {
+const TreeGridItem = ({
+	item,
+	href,
+	label,
+	active,
+	hideTooltip,
+	onClick,
+	onDragStart
+}: Item) => {
 	const classInfo = maskToClass(item.class);
 	const date = item.updatedAt ?? item.createdAt;
 	return (
 		<Tooltip
+			hidden={hideTooltip}
 			tooltip={() => (
 				<>
 					<h4 className="haax-color text-xl">{item.name}</h4>
@@ -73,28 +85,28 @@ const TreeGridItem = (item: Item) => {
 				<TextButton
 					icon={<Workflow />}
 					type="link"
-					href={item.href}
-					onClick={item.onClick}
+					href={href}
+					onClick={onClick}
 				>
-					{item.label ?? 'Open tree'}
+					{label ?? 'Open tree'}
 				</TextButton>
 			)}
 		>
 			{props => (
 				<Link
-					href={item.href}
+					href={href}
 					prefetch={false}
-					onClick={item.onClick}
+					onClick={onClick}
+					onDragStart={onDragStart}
 					className={cls(
 						'hocus:haax-highlight -mb-2 flex items-center gap-3 p-2',
-						{ 'text-warm-green': item.active }
+						{ 'text-warm-green': active }
 					)}
 					{...props}
 				>
 					<SpellIcon
 						icon={item.icon}
 						showDefault
-						className="cursor-pointer"
 						extraContent={
 							classInfo && (
 								<SpellIcon

@@ -2,8 +2,10 @@ import { relations } from 'drizzle-orm';
 import {
 	index,
 	integer,
+	primaryKey,
 	sqliteTableCreator,
-	text
+	text,
+	uniqueIndex
 } from 'drizzle-orm/sqlite-core';
 import { nanoid } from 'nanoid';
 
@@ -39,7 +41,8 @@ export const userRelations = relations(user, ({ many }) => ({
 	accounts: many(account),
 	sessions: many(session),
 	trees: many(talentTrees),
-	builds: many(savedBuilds)
+	builds: many(savedBuilds),
+	collections: many(collections)
 }));
 
 export const account = sqliteTable(
@@ -103,8 +106,8 @@ export const verification = sqliteTable(
 
 // Content tables
 
-export const TreeVisibility = ['public', 'private'] as const;
-export type TreeVisibilityType = (typeof TreeVisibility)[number];
+export const ItemVisibility = ['public', 'private'] as const;
+export type ItemVisibilityType = (typeof ItemVisibility)[number];
 
 export const talentTrees = sqliteTable(
 	'talentTree',
@@ -113,7 +116,8 @@ export const talentTrees = sqliteTable(
 			.primaryKey()
 			.$default(() => nanoid(10)),
 		name: text('name', { length: 255 }).notNull(),
-		visibility: text('visibility', { enum: TreeVisibility })
+		slug: text('slug', { length: 255 }).unique(),
+		visibility: text('visibility', { enum: ItemVisibility })
 			.default('public')
 			.notNull(),
 		notes: text('notes'),
@@ -152,12 +156,81 @@ export const talentTrees = sqliteTable(
 	})
 );
 
-export const treesRelations = relations(talentTrees, ({ one }) => ({
+export const treesRelations = relations(talentTrees, ({ one, many }) => ({
 	createdBy: one(user, {
 		fields: [talentTrees.createdById],
 		references: [user.id]
-	})
+	}),
+	collectionTrees: many(collectionTrees)
 }));
+
+export const collectionTrees = sqliteTable(
+	'collectionTree',
+	{
+		collectionId: text('collectionId', { length: 36 }).notNull(),
+		treeId: text('treeId', { length: 36 }).notNull()
+	},
+	t => ({
+		pk: primaryKey({ columns: [t.collectionId, t.treeId] }),
+		collectionIdIdx: index('collectionTrees_collectionId_idx').on(
+			t.collectionId
+		),
+		treeIdIdx: index('collectionTrees_treeId_idx').on(t.treeId)
+	})
+);
+
+export const collections = sqliteTable(
+	'collection',
+	{
+		id: text('id', { length: 11 })
+			.primaryKey()
+			.$default(() => nanoid(10)),
+		name: text('name', { length: 255 }).notNull(),
+		slug: text('slug', { length: 255 }).unique(),
+		visibility: text('visibility', { enum: ItemVisibility })
+			.default('public')
+			.notNull(),
+		icon: text('icon', { length: 255 })
+			.default('inv_misc_questionmark')
+			.notNull(),
+		assignedTrees: text('assignedTrees', { mode: 'json' })
+			.default('{}')
+			.notNull()
+			.$type<Record<string, string>>(),
+		createdById: text('createdById', { length: 255 }).notNull(),
+		createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
+		updatedAt: integer('updatedAt', { mode: 'timestamp' }).notNull()
+	},
+	t => ({
+		createdByIdIdx: index('collections_createdById_idx').on(t.createdById),
+		nameIdx: index('collections_name_idx').on(t.name),
+		slugIdx: uniqueIndex('collections_slug_idx').on(t.slug),
+		visibilityIdx: index('collections_visibility_idx').on(t.visibility),
+		updatedAtIdx: index('collections_updatedAt_idx').on(t.updatedAt)
+	})
+);
+
+export const collectionsRelations = relations(collections, ({ many, one }) => ({
+	createdBy: one(user, {
+		fields: [collections.createdById],
+		references: [user.id]
+	}),
+	collectionTrees: many(collectionTrees)
+}));
+
+export const collectionTreesRelations = relations(
+	collectionTrees,
+	({ one }) => ({
+		collection: one(collections, {
+			fields: [collectionTrees.collectionId],
+			references: [collections.id]
+		}),
+		tree: one(talentTrees, {
+			fields: [collectionTrees.treeId],
+			references: [talentTrees.id]
+		})
+	})
+);
 
 export const savedBuilds = sqliteTable(
 	'savedBuild',
@@ -166,6 +239,7 @@ export const savedBuilds = sqliteTable(
 			.primaryKey()
 			.$default(() => nanoid(10)),
 		name: text('name', { length: 255 }).notNull(),
+		slug: text('slug', { length: 255 }).unique(),
 		class: integer('class').notNull(),
 		tree0Id: text('tree0Id', { length: 36 }).notNull(),
 		tree1Id: text('tree1Id', { length: 36 }).notNull(),

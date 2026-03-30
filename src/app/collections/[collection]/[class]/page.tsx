@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 import TalentCalculator from '#components/calculator/TalentCalculator.tsx';
 import { env } from '#env.js';
-import { getCollectionTree } from '#server/api/collection.ts';
+import { getCollection, getCollectionTree } from '#server/api/collection.ts';
 import { classMask, getIconPath, maskToClass } from '#utils/index.ts';
 
 type Props = PageProps<'/collections/[collection]/[class]'>;
@@ -29,11 +29,12 @@ export const generateMetadata = async ({
 	const info = maskToClass(parsed.data.class);
 	if (!info) return notFound();
 
-	const collection = parsed.data.collection.replaceAll('-', ' ');
+	const collection = await getCollection({ slugOrId: parsed.data.collection });
+	if (!collection) return notFound();
 
 	return {
-		title: `${collection} ${info.name}`,
-		description: `Talent calculator from collection ${collection}.`,
+		title: `${collection.name} ${info.name}`,
+		description: `Talent calculator from collection ${collection.name}.`,
 		icons: [{ rel: 'icon', url: getIconPath(info.icon, env.DEPLOY_URL) }]
 	};
 };

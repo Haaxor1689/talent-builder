@@ -10,9 +10,10 @@ import { db } from '#server/db/index.ts';
 import { savedBuilds } from '#server/db/schema.ts';
 import { serverFunction } from '#server/helpers.ts';
 import { BuildForm } from '#server/schemas.ts';
+import { canEdit } from '#utils/auth.ts';
 import { Errors } from '#utils/errors.ts';
 
-import { createdBySelect, getUser } from './index';
+import { createdBySelect, getUser, uniqueSlugException } from './index';
 
 export const upsertSavedBuild = serverFunction({
 	input: BuildForm.extend({
@@ -29,15 +30,18 @@ export const upsertSavedBuild = serverFunction({
 		});
 
 		if (!entry) {
-			await db.insert(savedBuilds).values({
-				...restInput,
-				talents: bitPack(points),
-				createdById: user.id,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			});
+			await db
+				.insert(savedBuilds)
+				.values({
+					...restInput,
+					talents: bitPack(points),
+					createdById: user.id,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.catch(uniqueSlugException);
 		} else {
-			if (user.role !== 'admin' && user.id !== entry.createdById)
+			if (!canEdit(user, entry))
 				throw Errors.unauthorized({
 					message: 'You do not have permission to edit this build'
 				});
@@ -49,7 +53,8 @@ export const upsertSavedBuild = serverFunction({
 					talents: bitPack(points),
 					updatedAt: new Date()
 				})
-				.where(eq(savedBuilds.id, restInput.id));
+				.where(eq(savedBuilds.id, restInput.id))
+				.catch(uniqueSlugException);
 		}
 
 		const build = await db.query.savedBuilds.findFirst({
@@ -77,7 +82,7 @@ export const deleteSavedBuild = serverFunction({
 			where: eq(savedBuilds.id, input.id)
 		});
 
-		if (user.role !== 'admin' && user.id !== entry?.createdById)
+		if (!canEdit(user, entry))
 			throw Errors.unauthorized({
 				message: 'You do not have permission to delete this build'
 			});

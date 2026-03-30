@@ -59,7 +59,7 @@ const Dialog = ({
 					<Base.Popup
 						ref={ref}
 						className={cls(
-							'data-nested-dialog-open:after:haax-backdrop-blur fixed top-1/2 left-1/2 max-h-[calc(100vh-150px)] max-w-3xl -translate-x-1/2 -translate-y-1/2 transform',
+							'data-nested-dialog-open:after:haax-backdrop-blur fixed top-1/2 left-1/2 max-h-[calc(100vh-150px)] max-w-[min(calc(100%-1rem),var(--container-3xl))] -translate-x-1/2 -translate-y-1/2 transform w-max',
 							!unstyled && 'haax-surface-3',
 							className
 						)}

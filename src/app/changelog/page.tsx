@@ -11,6 +11,7 @@ export const metadata: Metadata = {
 const changelogText = dedent`
 # In progress
 
+- **Builder mobile improvements** Adjusted various elements and interactions in the talent builder for a better mobile experience on smaller screens.
 - **Icon picker improvements** The icons in the grid at the bottom are now sorted by name for easier browsing and the height of the container has been increased to show more icons at once.
 
 # March 12, 2026

@@ -56,7 +56,8 @@ const TextButton = ({
 			{...((props.type === 'link'
 				? {
 						target: props.external ? '_blank' : undefined,
-						rel: props.external ? 'noopener noreferrer' : undefined
+						rel: props.external ? 'noopener noreferrer' : undefined,
+						prefetch: false
 					}
 				: { type: 'button' }) as any)}
 			className={cls(

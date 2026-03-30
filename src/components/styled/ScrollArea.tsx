@@ -30,7 +30,7 @@ const ScrollArea = ({
 			containerClassName
 		)}
 	>
-		<Base.Viewport className="shrink" ref={ref}>
+		<Base.Viewport className="shrink grow" ref={ref}>
 			<Base.Content className={contentClassName}>{children}</Base.Content>
 		</Base.Viewport>
 		<Scrollbar orientation="vertical" />

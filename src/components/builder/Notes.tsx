@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useController } from 'react-hook-form';
 import TextareaAutosize from 'react-textarea-autosize';
+import cls from 'classnames';
 import { Pencil } from 'lucide-react';
 
 import { Markdown } from '#components/Icons.tsx';
@@ -21,7 +22,10 @@ const Notes = ({ editable }: Props) => {
 		return (
 			<ScrollArea
 				containerClassName="h-full"
-				contentClassName="flex flex-col gap-4 p-3 min-h-[102px]"
+				contentClassName={cls(
+					'p-3 flex flex-col gap-3 min-h-32',
+					!field.value && 'text-center justify-center h-full'
+				)}
 			>
 				{editable && (
 					<TextButton
@@ -32,17 +36,17 @@ const Notes = ({ editable }: Props) => {
 						Edit Notes
 					</TextButton>
 				)}
-				<Md text={field.value ?? 'No notes available.'} />
+				<Md text={field.value ?? '*This tree contains no general notes.*'} />
 			</ScrollArea>
 		);
 
 	return (
-		<div className="relative flex h-full flex-col">
+		<div className="relative flex h-full flex-col min-h-32">
 			<TextareaAutosize
 				value={field.value}
 				minRows={3}
 				onChange={e => field.onChange(e.currentTarget.value || null)}
-				placeholder="Insert notes here..."
+				placeholder="No notes..."
 				className="haax-input-hocus shrink grow p-3"
 			/>
 			<TextButton

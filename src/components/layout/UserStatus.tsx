@@ -1,6 +1,5 @@
 'use client';
 
-import { useTransition } from 'react';
 import { LogOut } from 'lucide-react';
 
 import { signIn, signOut, useSession } from '#auth/client.ts';
@@ -8,10 +7,11 @@ import { Discord } from '#components/Icons.tsx';
 import Spinner from '#components/styled/Spinner.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
 import { UserAvatar, UserRoleText } from '#components/styled/User.tsx';
+import useAsyncAction from '#hooks/useAsyncAction.tsx';
 
 const UserStatus = () => {
 	const session = useSession();
-	const [isPending, startTransition] = useTransition();
+	const [isPending, startTransition] = useAsyncAction();
 
 	if (session.isPending)
 		return (
@@ -24,14 +24,12 @@ const UserStatus = () => {
 		return (
 			<TextButton
 				icon={<Discord />}
-				onClick={() =>
-					startTransition(async () => {
-						await signIn.social({
-							provider: 'discord',
-							callbackURL: window.location.pathname + window.location.search
-						});
-					})
-				}
+				onClick={startTransition(async () => {
+					await signIn.social({
+						provider: 'discord',
+						callbackURL: window.location.pathname + window.location.search
+					});
+				})}
 				loading={isPending}
 				className="text-[#5865f2]"
 			>
@@ -53,11 +51,9 @@ const UserStatus = () => {
 			<TextButton
 				icon={<LogOut />}
 				title="Sign out"
-				onClick={() =>
-					startTransition(async () => {
-						await signOut();
-					})
-				}
+				onClick={startTransition(async () => {
+					await signOut();
+				})}
 				loading={isPending}
 			/>
 		</>

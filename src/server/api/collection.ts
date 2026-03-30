@@ -1,29 +1,37 @@
 import { cacheLife, cacheTag } from 'next/cache';
-import { and, eq } from 'drizzle-orm';
+import { and, desc, eq, or } from 'drizzle-orm';
 import { z } from 'zod';
 
 import { db } from '#server/db/index.ts';
-import { talentTrees } from '#server/db/schema.ts';
+import {
+	collections,
+	collectionTrees,
+	talentTrees
+} from '#server/db/schema.ts';
 import { serverFunction } from '#server/helpers.ts';
 import { TalentForm } from '#server/schemas.ts';
+import { canView } from '#utils/auth.ts';
 
 import { createdBySelect, getUser } from '.';
 
-export const FallbackCollection = '1.18.1';
+const findCollectionByIdOrSlug = (value: string) =>
+	db.query.collections.findFirst({
+		where: or(eq(collections.id, value), eq(collections.slug, value)),
+		columns: { id: true, assignedTrees: true }
+	});
 
 export const listCollections = serverFunction({
-	query: async () => {
+	session: () => getUser().then(u => u?.role === 'admin'),
+	query: async isAdmin => {
 		'use cache';
 		cacheLife('weeks');
 		cacheTag('collections', 'collections:list');
 
-		const response = await db
-			.selectDistinct({ collection: talentTrees.collection })
-			.from(talentTrees);
-
-		return response
-			.map(t => t.collection)
-			.filter(v => v !== null && !v.startsWith('_'));
+		return await db.query.collections.findMany({
+			orderBy: [desc(collections.updatedAt)],
+			where: isAdmin ? undefined : eq(collections.visibility, 'public'),
+			with: { createdBy: createdBySelect }
+		});
 	}
 });
 
@@ -33,29 +41,73 @@ export const getCollectionTree = serverFunction({
 		class: z.number(),
 		index: z.number()
 	}),
-	session: () => getUser().then(u => u?.role === 'admin'),
-	query: async (input, isAdmin) => {
+	query: async input => {
 		'use cache';
 		cacheLife('weeks');
-		cacheTag('collections', `collections:id:${input.collection}`);
 
-		let tree = await db.query.talentTrees.findFirst({
-			where: and(
-				eq(talentTrees.collection, input.collection),
-				eq(talentTrees.class, input.class),
-				eq(talentTrees.index, input.index),
-				isAdmin ? undefined : eq(talentTrees.visibility, 'public')
+		const key = `${input.class}:${input.index}`;
+
+		const collection = await findCollectionByIdOrSlug(input.collection);
+		if (!collection?.assignedTrees[key]) return undefined;
+
+		cacheTag('collections', `collections:id:${collection.id}`);
+
+		const tree = await db.query.talentTrees.findFirst({
+			where: and(eq(talentTrees.id, collection.assignedTrees[key]))
+		});
+		return tree ? TalentForm.parse(tree) : undefined;
+	},
+	transform: async tree => {
+		const user = await getUser();
+		return canView(user, tree) ? tree : undefined;
+	}
+});
+
+export const getCollection = serverFunction({
+	input: z.object({ slugOrId: z.string() }),
+	query: async input => {
+		'use cache';
+		cacheLife('weeks');
+
+		const r = await db.query.collections.findFirst({
+			where: or(
+				eq(collections.id, input.slugOrId),
+				eq(collections.slug, input.slugOrId)
 			),
 			with: { createdBy: createdBySelect }
 		});
-		tree ??= await db.query.talentTrees.findFirst({
-			where: and(
-				eq(talentTrees.collection, FallbackCollection),
-				eq(talentTrees.class, input.class),
-				eq(talentTrees.index, input.index)
-			),
-			with: { createdBy: createdBySelect }
-		});
-		return tree ? TalentForm.parse(tree) : tree;
+		if (r) cacheTag('collections', `collections:id:${r.id}`);
+		return r;
+	},
+	transform: async collection => {
+		if (!collection) return undefined;
+		const user = await getUser();
+		return canView(user, collection) ? collection : undefined;
+	}
+});
+
+export const getCollectionTrees = serverFunction({
+	input: z.object({ slugOrId: z.string() }),
+	query: async input => {
+		'use cache';
+		cacheLife('weeks');
+
+		const collection = await findCollectionByIdOrSlug(input.slugOrId);
+		if (!collection) return [];
+
+		cacheTag('collections', `collections:id:${collection.id}`);
+
+		return await db.query.collectionTrees
+			.findMany({
+				where: eq(collectionTrees.collectionId, collection.id),
+				with: {
+					tree: { with: { createdBy: createdBySelect } }
+				}
+			})
+			.then(items => items.map(item => TalentForm.parse(item.tree)));
+	},
+	transform: async items => {
+		const user = await getUser();
+		return items.filter(i => canView(user, i));
 	}
 });

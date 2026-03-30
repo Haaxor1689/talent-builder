@@ -1,9 +1,8 @@
 import { type Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
-import ClassCalculatorsLinks from '#components/calculator/ClassCalculatorsLinks.tsx';
-import TreeGridItem from '#components/styled/TreeGridItem.tsx';
-import { getCollectionTree } from '#server/api/collection.ts';
-import { classMask } from '#utils/index.ts';
+import CollectionPage from '#components/collection/ColletionPage.tsx';
+import { getCollection, getCollectionTrees } from '#server/api/collection.ts';
 
 type Props = PageProps<'/collections/[collection]'>;
 
@@ -11,54 +10,24 @@ export const generateMetadata = async ({
 	params
 }: Props): Promise<Metadata> => {
 	const { collection } = await params;
-	const title = collection.replaceAll('-', ' ');
-	const capitalized = title[0]?.toUpperCase() + title.slice(1);
+	const item = await getCollection({ slugOrId: collection });
+	if (!item) return notFound();
 	return {
-		title: `${capitalized} collection`,
+		title: `${item.name} collection`,
 		description: 'Collection of talents'
 	};
 };
 
 const TalentTreePage = async ({ params }: Props) => {
 	const { collection } = await params;
-	const trees = await Promise.all(
-		[...new Array(9).keys()].flatMap(classIdx =>
-			[...new Array(3).keys()].map(index =>
-				getCollectionTree({
-					class: Number(Object.keys(classMask)[classIdx]),
-					index,
-					collection
-				})
-			)
-		)
-	);
+	const [item, trees] = await Promise.all([
+		getCollection({ slugOrId: collection }),
+		getCollectionTrees({ slugOrId: collection })
+	]);
 
-	return (
-		<>
-			<h1 className="-mb-3 flex flex-wrap justify-center gap-2 text-center md:text-left">
-				<span className="h1">Collection:</span>
-				<span className="h1 haax-color shrink uppercase">
-					{collection.replaceAll('-', ' ')}
-				</span>
-			</h1>
+	if (!item) return notFound();
 
-			<h2 className="haax-color -mb-3 text-center md:text-left">
-				Talent calculators:
-			</h2>
-			<ClassCalculatorsLinks urlBase={`/collections/${collection}/`} />
-
-			<h2 className="haax-color -mb-3 text-center md:text-left">
-				Talent trees:
-			</h2>
-			<div className="haax-surface-3 grid grid-cols-[repeat(auto-fill,minmax(340px,1fr))] items-start">
-				{trees.map(item =>
-					!item ? null : (
-						<TreeGridItem key={item.id} {...item} href={`/tree/${item.id}`} />
-					)
-				)}
-			</div>
-		</>
-	);
+	return <CollectionPage defaultValues={item} trees={trees} />;
 };
 
 export default TalentTreePage;

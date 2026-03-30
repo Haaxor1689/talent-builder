@@ -5,28 +5,28 @@ import { useSearchParams } from 'next/navigation';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import cls from 'classnames';
 
+import CollectionGridItem from '#components/styled/CollectionGridItem.tsx';
 import Spinner from '#components/styled/Spinner.tsx';
-import TreeGridItem from '#components/styled/TreeGridItem.tsx';
-import { listInfiniteTalentTrees } from '#server/api/talentTree.actions.ts';
-import { TreesFilters } from '#server/schemas.ts';
+import { listInfiniteCollections } from '#server/api/collection.actions.ts';
+import { CollectionsFilters } from '#server/schemas.ts';
 import { invoke } from '#utils/index.ts';
 
-const TreeGrid = () => {
+const CollectionsGrid = () => {
 	const searchParams = useSearchParams();
 	const defaultValues = useMemo(() => {
-		const p = TreesFilters.safeParse({
+		const p = CollectionsFilters.safeParse({
 			...Object.fromEntries(searchParams.entries())
 		});
-		return p.success ? p.data : TreesFilters.parse({});
+		return p.success ? p.data : CollectionsFilters.parse({});
 	}, [searchParams]);
 
-	const trees = useInfiniteQuery({
-		queryKey: ['talentTrees', defaultValues],
+	const collections = useInfiniteQuery({
+		queryKey: ['collections', defaultValues],
 		queryFn: ({ pageParam }) =>
 			invoke(
-				listInfiniteTalentTrees({
+				listInfiniteCollections({
 					...defaultValues,
-					limit: 15,
+					limit: 42,
 					cursor: pageParam
 				})
 			),
@@ -37,40 +37,44 @@ const TreeGrid = () => {
 
 	const bottomRef = useRef<HTMLDivElement>(null);
 	useEffect(() => {
-		if (!bottomRef.current || trees.isFetchingNextPage || !trees.hasNextPage)
+		if (
+			!bottomRef.current ||
+			collections.isFetchingNextPage ||
+			!collections.hasNextPage
+		)
 			return;
 		const observer = new IntersectionObserver(([o]) => {
 			if (!o?.isIntersecting) return;
-			trees.fetchNextPage();
+			collections.fetchNextPage();
 		});
 		observer.observe(bottomRef.current);
 		return () => observer.disconnect();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [trees.isFetchingNextPage, trees.hasNextPage]);
+	}, [collections.isFetchingNextPage, collections.hasNextPage]);
 
-	if (trees.isLoading)
+	if (collections.isLoading)
 		return (
 			<div className="haax-surface-6 text-blue-gray grow items-center justify-center text-center">
 				<Spinner className="icon-size-8" />
 			</div>
 		);
 
-	if (!trees.data?.pages[0]?.items.length)
+	if (!collections.data?.pages[0]?.items.length)
 		return (
 			<div className="haax-surface-6 text-blue-gray grow items-center justify-center text-center">
-				No results found
+				No collections found
 			</div>
 		);
 
 	return (
 		<div className="haax-surface-3 grid items-start md:grid-cols-[repeat(auto-fill,minmax(340px,1fr))]">
-			{trees.data?.pages.map((page, index) => (
+			{collections.data?.pages.map((page, index) => (
 				<Fragment key={page.items[0]?.id ?? index}>
 					{page.items.map(item => (
-						<TreeGridItem
+						<CollectionGridItem
 							key={item.id}
 							item={item}
-							href={`/tree/${item.slug ?? item.id}`}
+							href={`/collections/${item.slug ?? item.id}`}
 						/>
 					))}
 				</Fragment>
@@ -79,7 +83,7 @@ const TreeGrid = () => {
 			<div
 				ref={bottomRef}
 				className={cls('col-span-full flex h-16 items-center justify-center', {
-					hidden: !trees.hasNextPage
+					hidden: !collections.hasNextPage
 				})}
 			>
 				<Spinner className="icon-size-8" />
@@ -88,4 +92,4 @@ const TreeGrid = () => {
 	);
 };
 
-export default TreeGrid;
+export default CollectionsGrid;

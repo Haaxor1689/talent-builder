@@ -2,6 +2,7 @@
 	"name": "talent-builder",
 	"version": "0.1.0",
 	"private": true,
+	"license": "GPL-3.0-only",
 	"type": "module",
 	"scripts": {
 		"dev": "next dev",
@@ -48,6 +49,7 @@
 	"devDependencies": {
 		"@eslint-react/eslint-plugin": "^2.13.0",
 		"@eslint/js": "9.39.3",
+		"@hookform/devtools": "^4.4.0",
 		"@tailwindcss/postcss": "4.2.1",
 		"@types/node": "25.3.3",
 		"@types/react": "19.2.14",

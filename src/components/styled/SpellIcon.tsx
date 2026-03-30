@@ -3,8 +3,11 @@ import cls from 'classnames';
 
 import { getIconPath } from '#utils/index.ts';
 
+import Img from './Img';
+
 type Props = HTMLAttributes<HTMLElement> & {
 	icon?: string | null;
+	fallbackIcon?: string;
 	currentRank?: number;
 	ranks?: number | null;
 	showDefault?: boolean;
@@ -16,6 +19,7 @@ type Props = HTMLAttributes<HTMLElement> & {
 
 const SpellIcon = ({
 	icon,
+	fallbackIcon = getIconPath(null),
 	currentRank,
 	ranks,
 	showDefault,
@@ -38,23 +42,24 @@ const SpellIcon = ({
 			)}
 		>
 			{(!!showDefault || !!icon) && (
-				<img
+				<Img
 					src={getIconPath(icon)}
+					fallback={fallbackIcon}
 					alt={`${icon ?? 'empty'} icon`}
-					className="size-[87.5%]"
+					className="size-[87.5%] object-contain"
 				/>
 			)}
 			<img
 				src="/icon_frame.png"
 				alt="frame"
-				className="absolute inset-0 size-full"
+				className="absolute inset-0 size-full [image-rendering:pixelated]"
 			/>
 
 			{isClickable && (
 				<img
 					src="/icon_hover.png"
 					alt="hover"
-					className="pointer-events-none absolute inset-0 hidden size-full p-[5%] group-hover/icon:block group-focus/icon:block"
+					className="pointer-events-none absolute inset-0 hidden size-full p-[5%] group-hover/icon:block group-focus/icon:block [image-rendering:pixelated]"
 				/>
 			)}
 

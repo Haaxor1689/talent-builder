@@ -120,6 +120,13 @@ export const safeJsonParse = <T extends z.ZodTypeAny>({
 	}
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const invoke = <T extends Promise<any>>(value: T) =>
+	value.then<Awaited<T>>(res => {
+		if (res && '__functionError' in res) throw res.__functionError;
+		return res;
+	});
+
 const createLogger = (): Logger => {
 	if (typeof window !== 'undefined') {
 		return pino({

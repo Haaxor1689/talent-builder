@@ -24,7 +24,7 @@ export const generateMetadata = async ({
 
 const Page = async ({ params }: Props) => {
 	const { id } = await params;
-	const talentTree = await getTalentTree({ id });
+	const talentTree = await getTalentTree({ slugOrId: id });
 	if (!talentTree) return notFound();
 	return <TalentBuilder defaultValues={talentTree} />;
 };

@@ -18,37 +18,52 @@ type ProcedureFn<
 type ProcedureReturn<
 	SessionType,
 	Func extends ProcedureFn<Input, SessionType>,
-	Input extends InputType
+	Input extends InputType,
+	Return = Awaited<ReturnType<Func>>
 > =
 	z.infer<Input> extends undefined
-		? () => Promise<Awaited<ReturnType<Func>>>
-		: (val: z.infer<Input>) => Promise<Awaited<ReturnType<Func>>>;
+		? () => Promise<Return>
+		: (val: z.infer<Input>) => Promise<Return>;
 
 type QueryProps<
 	SessionType,
 	Func extends ProcedureFn<Input, SessionType>,
-	Input extends InputType
+	Input extends InputType,
+	Return = Awaited<ReturnType<Func>>
 > = {
 	input?: Input;
 	session?: () => SessionType;
 	query: Func;
+	transform?: (r: Awaited<ReturnType<Func>>) => Promise<Return>;
 };
 
 export const serverFunction = <
 	SessionType,
 	Func extends ProcedureFn<Input, SessionType>,
-	Input extends InputType = z.ZodUndefined
+	Input extends InputType = z.ZodUndefined,
+	Return = Awaited<ReturnType<Func>>
 >({
 	input,
 	session,
-	query
-}: QueryProps<SessionType, Func, Input>) =>
+	query,
+	transform
+}: QueryProps<SessionType, Func, Input, Return>) =>
 	(async (val: z.infer<Input>) => {
-		const s = session ? await session() : null;
-		const value = input?.parse(val);
-		// TODO: Error handling
-		return query(value, s as never);
-	}) as ProcedureReturn<SessionType, Func, Input>;
+		try {
+			const s = session ? await session() : null;
+			const value = input?.parse(val);
+			const result = await query(value, s as never);
+			return transform ? await transform(result as never) : result;
+		} catch (err) {
+			const error = getError(err);
+			logger.error({
+				source: 'API function error',
+				context: { input: val, session },
+				error
+			});
+			return { __functionError: error };
+		}
+	}) as ProcedureReturn<SessionType, Func, Input, Return>;
 
 type RouteInput = Record<string, string | string[]>;
 
@@ -70,7 +85,7 @@ export const serverRoute =
 				context: {
 					method: req.method,
 					url: req.url,
-					headers: Object.fromEntries(req.headers)
+					headers: Object.fromEntries(req.headers as never)
 				},
 				error
 			});

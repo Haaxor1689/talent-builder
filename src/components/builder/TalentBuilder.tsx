@@ -2,9 +2,11 @@
 
 import { useRef, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
+import { DevTool } from '@hookform/devtools';
 import { Camera, CloudOff, Eye, EyeOff, NotebookPen } from 'lucide-react';
 
 import { useSession } from '#auth/client.ts';
+import ScrollArea from '#components/styled/ScrollArea.tsx';
 import { UserAvatar, UserRoleText } from '#components/styled/User.tsx';
 import { TalentForm } from '#server/schemas.ts';
 import { elementToPng, zodResolver } from '#utils/index.ts';
@@ -43,16 +45,18 @@ const TalentBuilder = ({ defaultValues }: Props) => {
 
 	return (
 		<FormProvider {...formProps}>
+			<DevTool control={formProps.control} />
 			<form className="haax-surface-3 flex flex-col gap-3">
 				<TopBar editable={editable} isNew={isNew} />
 
 				<hr />
 
-				<div className="-m-3 flex flex-col md:flex-row md:justify-center">
+				<div className="-m-3 flex flex-col md:flex-row md:justify-center md:min-h-184">
 					<div className="relative flex grow">
-						<div
+						<ScrollArea
 							ref={treeElemRef}
-							className="grid grow grid-cols-[repeat(4,max-content)] content-center justify-center gap-6 overflow-x-auto p-10 select-none md:py-18"
+							containerClassName="grow shrink"
+							contentClassName="grid grid-cols-[repeat(4,max-content)] content-center justify-center gap-6 py-10 px-3 md:px-10 select-none md:py-18 h-full"
 						>
 							{[...Array(rows * 4).keys()].map(i => (
 								<TalentPreview
@@ -63,7 +67,7 @@ const TalentBuilder = ({ defaultValues }: Props) => {
 									editable={editable}
 								/>
 							))}
-						</div>
+						</ScrollArea>
 						{editable && <UndoRedo defaultValues={defaultValues} />}
 						<div className="absolute top-3 right-3 flex gap-2 overflow-hidden">
 							<TextButton
@@ -118,16 +122,14 @@ const TalentBuilder = ({ defaultValues }: Props) => {
 						<PointsSummary />
 					</div>
 
-					<div
-						className="border-gray/40 shrink grow border-t md:ml-0 md:w-lg md:border-t-0 md:border-l"
-						style={{ height: Math.max(rows, 7) * (64 + 24) - 24 + 72 * 2 }}
-					>
+					<div className="border-gray/40 shrink grow border-t md:ml-0 md:w-lg md:border-t-0 md:border-l">
 						{selected === -1 ? (
 							<Notes editable={editable} />
 						) : (
 							<TalentEdit
 								key={selected}
 								selected={selected}
+								setSelected={setSelected}
 								editable={editable}
 							/>
 						)}

@@ -34,9 +34,9 @@ const Page = async ({ params, searchParams }: Props) => {
 	if (!savedBuild) return notFound();
 
 	const trees = await Promise.all([
-		getTalentTree({ id: parsed.data.t0 ?? savedBuild.tree0Id }),
-		getTalentTree({ id: parsed.data.t1 ?? savedBuild.tree1Id }),
-		getTalentTree({ id: parsed.data.t2 ?? savedBuild.tree2Id })
+		getTalentTree({ slugOrId: parsed.data.t0 ?? savedBuild.tree0Id }),
+		getTalentTree({ slugOrId: parsed.data.t1 ?? savedBuild.tree1Id }),
+		getTalentTree({ slugOrId: parsed.data.t2 ?? savedBuild.tree2Id })
 	] as const);
 
 	return <TalentCalculator trees={trees} values={savedBuild} />;

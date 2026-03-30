@@ -7,6 +7,7 @@ import { X } from 'lucide-react';
 import useIsMobile from '#hooks/useIsMobile.tsx';
 
 import Dialog, { closeDialog } from './Dialog';
+import ScrollArea from './ScrollArea';
 import TextButton from './TextButton';
 
 const PADDING = 8;
@@ -42,7 +43,9 @@ const MobileTooltip = ({ children, tooltip, actions }: Props) => (
 		className="flex flex-col items-center gap-3"
 	>
 		<div className="group/tooltip pointer-events-none">{children({})}</div>
-		<div className="haax-surface-3 gap-0">{resolveContent(tooltip)}</div>
+		<ScrollArea containerClassName="haax-surface-0" contentClassName="p-3">
+			{resolveContent(tooltip)}
+		</ScrollArea>
 		{resolveContent(actions)}
 		<TextButton icon={<X />} onClick={closeDialog} className="text-red">
 			Close

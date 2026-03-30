@@ -1,7 +1,10 @@
 import { type Metadata } from 'next';
+import { PlusCircle } from 'lucide-react';
 
 import FiltersSection from '#app/trees/FiltersSection.tsx';
 import TreeGrid from '#app/trees/TreeGrid.tsx';
+import PageTitle from '#components/layout/PageTitle.tsx';
+import TextButton from '#components/styled/TextButton.tsx';
 
 export const metadata: Metadata = {
 	title: 'Talent Trees',
@@ -10,7 +13,11 @@ export const metadata: Metadata = {
 
 const Page = () => (
 	<>
-		<h2 className="haax-color -mb-3 text-center md:text-left">Talent Trees</h2>
+		<PageTitle title="Talent Trees">
+			<TextButton icon={<PlusCircle />} type="link" href="/tree/new">
+				Create new
+			</TextButton>
+		</PageTitle>
 		<FiltersSection />
 		<TreeGrid />
 	</>

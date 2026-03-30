@@ -1,7 +1,7 @@
 'use server';
 
 import { updateTag } from 'next/cache';
-import { and, desc, eq, inArray, like, not } from 'drizzle-orm';
+import { and, desc, eq, inArray, like, not, or } from 'drizzle-orm';
 import { z } from 'zod';
 
 import { GameVersions } from '#components/styled/GameVersion.tsx';
@@ -9,9 +9,10 @@ import { db } from '#server/db/index.ts';
 import { talentTrees, user as userTable } from '#server/db/schema.ts';
 import { serverFunction } from '#server/helpers.ts';
 import { TalentForm, TreesFilters } from '#server/schemas.ts';
+import { canEdit } from '#utils/auth.ts';
 import { Errors } from '#utils/errors.ts';
 
-import { createdBySelect, getUser } from '.';
+import { createdBySelect, getUser, uniqueSlugException } from '.';
 
 const getVersionFilter = (rows?: number) => {
 	if (rows === undefined) return undefined;
@@ -30,8 +31,8 @@ export const listInfiniteTalentTrees = serverFunction({
 		limit: z.number().min(1).max(100).optional(),
 		cursor: z.number().optional()
 	}),
-	session: () => getUser().then(u => u?.role === 'admin'),
-	query: async (input, isAdmin) => {
+	session: () => getUser().then(u => ({ id: u?.id, role: u?.role })),
+	query: async (input, user) => {
 		const { limit = 32, cursor: offset = 0 } = input;
 
 		const whereAcc = input.from
@@ -51,7 +52,12 @@ export const listInfiniteTalentTrees = serverFunction({
 			offset,
 			orderBy: [desc(talentTrees.updatedAt)],
 			where: and(
-				!isAdmin ? eq(talentTrees.visibility, 'public') : undefined,
+				user.role === 'admin'
+					? undefined
+					: or(
+							eq(talentTrees.visibility, 'public'),
+							user.id ? eq(talentTrees.createdById, user.id) : undefined
+						),
 				input.name ? like(talentTrees.name, `%${input.name}%`) : undefined,
 				whereAcc.length
 					? inArray(talentTrees.createdById, whereAcc)
@@ -71,24 +77,33 @@ export const listInfiniteTalentTrees = serverFunction({
 	}
 });
 
+const updateTags = (id: string, userId: string) => {
+	updateTag(`talentTrees:id:${id}`);
+	updateTag(`users:id:${userId}`);
+};
+
 export const upsertTalentTree = serverFunction({
 	input: TalentForm,
 	session: () => getUser('user').then(u => ({ id: u?.id, role: u?.role })),
 	query: async (input, user) => {
-		const entry = await db.query.talentTrees.findFirst({
+		const current = await db.query.talentTrees.findFirst({
 			where: eq(talentTrees.id, input.id)
 		});
 
-		if (!entry) {
-			await db.insert(talentTrees).values({
-				...input,
-				visibility: input.visibility ?? 'public',
-				createdById: user.id,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			});
+		const now = new Date();
+		if (!current) {
+			await db
+				.insert(talentTrees)
+				.values({
+					...input,
+					visibility: input.visibility ?? 'public',
+					createdById: user.id,
+					createdAt: now,
+					updatedAt: now
+				})
+				.catch(uniqueSlugException);
 		} else {
-			if (user.role !== 'admin' && user.id !== entry.createdById)
+			if (!canEdit(user, current))
 				throw Errors.unauthorized({
 					message: 'You do not have permission to edit this tree'
 				});
@@ -97,16 +112,16 @@ export const upsertTalentTree = serverFunction({
 				.update(talentTrees)
 				.set({
 					...input,
-					visibility: input.visibility ?? entry.visibility,
-					createdById: entry.createdById,
-					createdAt: entry.createdAt,
-					updatedAt: new Date()
+					visibility: input.visibility ?? current.visibility,
+					createdById: current.createdById,
+					createdAt: current.createdAt,
+					updatedAt: now
 				})
-				.where(eq(talentTrees.id, input.id));
+				.where(eq(talentTrees.id, input.id))
+				.catch(uniqueSlugException);
 		}
 
-		updateTag(`talentTrees:id:${input.id}`);
-		updateTag(`users:id:${entry?.createdById ?? user.id}`);
+		updateTags(input.id, current?.createdById ?? user.id);
 	}
 });
 
@@ -114,18 +129,17 @@ export const deleteTalentTree = serverFunction({
 	input: z.object({ id: z.string() }),
 	session: () => getUser('user').then(u => ({ id: u?.id, role: u?.role })),
 	query: async (input, user) => {
-		const entry = await db.query.talentTrees.findFirst({
+		const current = await db.query.talentTrees.findFirst({
 			where: eq(talentTrees.id, input.id)
 		});
 
-		if (user.role !== 'admin' && user.id !== entry?.createdById)
+		if (!canEdit(user, current))
 			throw Errors.unauthorized({
 				message: 'You do not have permission to delete this tree'
 			});
 
-		updateTag(`talentTrees:id:${input.id}`);
-		updateTag(`users:id:${entry?.createdById ?? user.id}`);
-
 		await db.delete(talentTrees).where(eq(talentTrees.id, input.id));
+
+		updateTags(input.id, current?.createdById ?? user.id);
 	}
 });

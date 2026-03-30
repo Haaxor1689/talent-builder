@@ -2,6 +2,8 @@ import cls from 'classnames';
 
 import { type user } from '#server/db/schema.ts';
 
+import SpellIcon from './SpellIcon';
+
 export const UserRoleText = ({
 	role,
 	className,
@@ -14,7 +16,7 @@ export const UserRoleText = ({
 	<span
 		className={cls(className, {
 			'text-green font-bold': role === 'admin',
-			'text-[#41c8d4]': role === 'supporter'
+			'text-supporter': role === 'supporter'
 		})}
 	>
 		{children}
@@ -23,19 +25,14 @@ export const UserRoleText = ({
 
 export const UserAvatar = ({
 	image,
-	size = 24,
-	className
+	size = 24
 }: {
 	image?: string | null;
-	size?: 24 | 32 | 128 | 160 | 256;
-	className?: string;
+	size?: 24 | 32 | 160;
 }) => (
-	<div
-		className={cls('rounded-full bg-contain', className)}
-		style={{
-			width: size,
-			height: size,
-			backgroundImage: `url(${image}?size=${size}), url(https://cdn.discordapp.com/embed/avatars/0.png)`
-		}}
+	<SpellIcon
+		icon={`${image}?size=${size}`}
+		fallbackIcon="https://cdn.discordapp.com/embed/avatars/0.png"
+		className={size === 24 ? 'size-6' : size === 32 ? 'size-8' : 'size-40'}
 	/>
 );

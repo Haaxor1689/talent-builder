@@ -6,7 +6,7 @@ import cls from 'classnames';
 type Props = HTMLProps<HTMLInputElement> & {
 	ref?: React.Ref<HTMLInputElement>;
 	label?: string;
-	error?: string;
+	error?: boolean;
 	hint?: string;
 	before?: ReactNode;
 	after?: ReactNode;
@@ -50,7 +50,7 @@ const Input = ({
 						if (e.key.toLocaleLowerCase() === 'z' && e.ctrlKey)
 							e.preventDefault();
 					}}
-					className="shrink grow"
+					className="shrink grow w-0"
 				/>
 				{after}
 			</label>

@@ -10,7 +10,6 @@ import CheckboxInput from '../form/CheckboxInput';
 import IconPicker from '../form/IconPicker';
 import Input from '../form/Input';
 import Textarea from '../form/Textarea';
-import ScrollArea from '../styled/ScrollArea';
 import SpellIcon from '../styled/SpellIcon';
 import TextButton from '../styled/TextButton';
 import TalentScreenshot from './TalentScreenshot';
@@ -32,10 +31,10 @@ const RanksInput = ({ selected, editable }: Props) => {
 				if (isNaN(value)) return;
 				field.onChange(Math.min(Math.max(value, 0), 7));
 			}}
-			label="Ranks"
 			type="number"
+			after={<p>rank{field.value !== 1 ? 's' : ''}</p>}
 			disabled={!editable}
-			className="grow"
+			className="shrink grow [&_input]:w-3 [&_input]:text-right"
 		/>
 	);
 };
@@ -48,18 +47,18 @@ const RequiredTalent = ({ selected, editable }: Props) => {
 	if (!requires && !editable) return <p className="text-blue-gray">Nothing</p>;
 	if (typeof requiresId !== 'number' && !requires) return null;
 	return (
-		<div className="flex items-center gap-3">
+		<div className="flex items-center gap-3 shrink">
 			{requires ? (
 				<>
 					<SpellIcon icon={requires.icon} className="size-12" showDefault />
-					<p className="haax-color grow font-bold">
+					<p className="haax-color grow font-bold shrink">
 						{requires.name || '[Unnamed talent]'}
 					</p>
 				</>
 			) : (
 				<>
 					<AlertTriangle className="text-red m-2 size-8" />
-					<span className="text-red grow">
+					<span className="text-red grow shrink">
 						Missing talent #{requiresId}. Please change this link.
 					</span>
 				</>
@@ -81,7 +80,13 @@ const RequiredTalent = ({ selected, editable }: Props) => {
 	);
 };
 
-const TalentEdit = ({ selected, editable }: Props) => {
+const TalentEdit = ({
+	selected,
+	setSelected,
+	editable
+}: Props & {
+	setSelected: (i: number) => void;
+}) => {
 	const { register, setValue } = useFormContext<TalentForm>();
 	const field = useWatch<TalentForm, `talents.${number}`>({
 		name: `talents.${selected}`
@@ -104,48 +109,48 @@ const TalentEdit = ({ selected, editable }: Props) => {
 		);
 
 	return (
-		<ScrollArea
-			containerClassName="h-full"
-			contentClassName="flex flex-col gap-4 p-3 h-full"
-		>
-			<div className="flex items-center">
-				<IconPicker name={`talents.${selected}.icon`} disabled={!editable} />
-				<Input
-					{...register(`talents.${selected}.name`)}
-					disabled={!editable}
-					className="mx-2 shrink grow [&_input]:text-xl"
-				/>
-
-				<TalentScreenshot selected={selected} />
-				{editable && (
-					<TextButton
-						icon={<Trash2 />}
-						title="Delete"
-						onClick={() =>
-							setValue(`talents.${selected}`, undefined, {
-								shouldDirty: true,
-								shouldTouch: true
-							})
-						}
-						className="text-red"
+		<div className="flex flex-col gap-4 p-3 h-full">
+			<div className="flex items-center flex-wrap justify-end">
+				<div className="flex items-center gap-2 grow shrink">
+					<IconPicker name={`talents.${selected}.icon`} disabled={!editable} />
+					<Input
+						placeholder="No talent name..."
+						{...register(`talents.${selected}.name`)}
+						disabled={!editable}
+						className="shrink grow [&_input]:text-xl min-w-48"
 					/>
-				)}
-			</div>
+				</div>
 
-			<div className="flex items-end gap-2">
-				<RanksInput selected={selected} editable={editable} />
-				<CheckboxInput
-					name={`talents.${selected}.highlight`}
-					label="Highlight change"
-					disabled={!editable}
-				/>
+				<div className="flex items-center">
+					<RanksInput selected={selected} editable={editable} />
+					<CheckboxInput
+						name={`talents.${selected}.highlight`}
+						label="Highlight"
+						disabled={!editable}
+					/>
+					<TalentScreenshot selected={selected} />
+					{editable && (
+						<TextButton
+							icon={<Trash2 />}
+							title="Delete"
+							onClick={() => {
+								setValue(`talents.${selected}`, undefined, {
+									shouldDirty: true,
+									shouldTouch: true
+								});
+								setSelected(-1);
+							}}
+							className="text-red"
+						/>
+					)}
+				</div>
 			</div>
 
 			<Textarea
 				{...register(`talents.${selected}.description`, nullableInput)}
-				label="Text"
+				label="Description:"
 				disabled={!editable}
-				className="min-h-48 shrink grow"
+				className="grow-2 shrink"
 			/>
 
 			<div className="flex flex-col gap-2">
@@ -160,11 +165,11 @@ const TalentEdit = ({ selected, editable }: Props) => {
 
 			<Input
 				{...register(`talents.${selected}.spellIds`, nullableInput)}
-				label="Spell Ids"
+				label="Spell Ids:"
 				disabled={!editable}
 				hint="Comma-separated list of spell IDs for each rank (optional)"
 			/>
-		</ScrollArea>
+		</div>
 	);
 };
 

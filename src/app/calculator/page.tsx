@@ -2,6 +2,7 @@ import { type Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import TalentCalculator from '#components/calculator/TalentCalculator.tsx';
+import PageTitle from '#components/layout/PageTitle.tsx';
 import { env } from '#env.js';
 import { getTalentTree } from '#server/api/talentTree.ts';
 import { CalculatorParams } from '#server/schemas.ts';
@@ -16,9 +17,9 @@ export const generateMetadata = async ({
 	if (!parsed.success) return {};
 
 	const trees = await Promise.all([
-		getTalentTree({ id: parsed.data.t0 }),
-		getTalentTree({ id: parsed.data.t1 }),
-		getTalentTree({ id: parsed.data.t2 })
+		getTalentTree({ slugOrId: parsed.data.t0 }),
+		getTalentTree({ slugOrId: parsed.data.t1 }),
+		getTalentTree({ slugOrId: parsed.data.t2 })
 	] as const);
 
 	const classInfo = maskToClass(parsed.data.class);
@@ -37,16 +38,14 @@ const Page = async ({ searchParams }: Props) => {
 	if (!parsed.success) return notFound();
 
 	const trees = await Promise.all([
-		getTalentTree({ id: parsed.data.t0 }),
-		getTalentTree({ id: parsed.data.t1 }),
-		getTalentTree({ id: parsed.data.t2 })
+		getTalentTree({ slugOrId: parsed.data.t0 }),
+		getTalentTree({ slugOrId: parsed.data.t1 }),
+		getTalentTree({ slugOrId: parsed.data.t2 })
 	] as const);
 
 	return (
 		<>
-			<h2 className="haax-color -mb-3 text-center md:text-left">
-				Talent Calculator
-			</h2>
+			<PageTitle title="Talent Calculator" />
 			<TalentCalculator trees={trees} isNew />
 		</>
 	);

@@ -11,7 +11,7 @@ import TreeGridItem from '#components/styled/TreeGridItem.tsx';
 import useDebounced from '#hooks/useDebounced.ts';
 import { listInfiniteTalentTrees } from '#server/api/talentTree.actions.ts';
 import { TreesFilters } from '#server/schemas.ts';
-import { zodResolver } from '#utils/index.ts';
+import { invoke, zodResolver } from '#utils/index.ts';
 
 import Input from '../form/Input';
 import Dialog, { closeDialog } from '../styled/Dialog';
@@ -39,7 +39,13 @@ const TreePickDialog = ({ idx, trigger }: Props) => {
 			{ ...values, class: calculatorClass, rows: calculatorRows }
 		] as const,
 		queryFn: ({ queryKey, pageParam }) =>
-			listInfiniteTalentTrees({ ...queryKey[1], limit: 42, cursor: pageParam }),
+			invoke(
+				listInfiniteTalentTrees({
+					...queryKey[1],
+					limit: 42,
+					cursor: pageParam
+				})
+			),
 		initialPageParam: 0,
 		getNextPageParam: prev => prev.nextCursor,
 		staleTime: Infinity
@@ -62,7 +68,7 @@ const TreePickDialog = ({ idx, trigger }: Props) => {
 		<Dialog
 			trigger={trigger}
 			unstyled
-			className="haax-surface-0 w-full max-w-5xl"
+			className="haax-surface-0 w-full! max-w-[min(calc(100%-1rem),var(--container-5xl))]"
 		>
 			<div className="flex flex-col items-stretch gap-2 p-3 md:flex-row md:items-center">
 				<div className="flex grow items-center justify-between gap-2">
@@ -96,7 +102,7 @@ const TreePickDialog = ({ idx, trigger }: Props) => {
 							{page.items.map(item => (
 								<TreeGridItem
 									key={item.id}
-									{...item}
+									item={item}
 									href={`${pathname}?${new URLSearchParams({
 										...Object.fromEntries(searchParams.entries()),
 										[`t${idx}`]: item.id

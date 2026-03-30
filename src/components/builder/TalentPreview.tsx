@@ -6,7 +6,7 @@ import { cloneDeep } from 'es-toolkit';
 import { Link2, Pointer, Replace } from 'lucide-react';
 
 import { TalentDescription } from '#components/styled/TalentDescription.tsx';
-import { type TalentForm } from '#server/schemas.ts';
+import { Talent, type TalentForm } from '#server/schemas.ts';
 
 import { closeDialog } from '../styled/Dialog';
 import SpellIcon from '../styled/SpellIcon';
@@ -50,28 +50,34 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 		<Tooltip
 			hidden={dragging || !field}
 			tooltip={
-				<>
-					<p className="haax-color h4">{field?.name ?? '[Empty talent]'}</p>
-					<TalentDescription field={field} />
-				</>
+				field ? (
+					<>
+						<p className="haax-color h4">{field?.name ?? '[Empty talent]'}</p>
+						<TalentDescription field={field} />
+					</>
+				) : (
+					<p className="text-blue-gray">Empty slot</p>
+				)
 			}
 			actions={
 				selected !== i && (
 					<>
 						{selected !== -1 && (
 							<>
-								<TextButton
-									icon={<Link2 />}
-									onClick={e => {
-										setValue(`talents.${selected}.requires`, i, {
-											shouldDirty: true,
-											shouldTouch: true
-										});
-										closeDialog(e);
-									}}
-								>
-									Link as requirement
-								</TextButton>
+								{field && (
+									<TextButton
+										icon={<Link2 />}
+										onClick={e => {
+											setValue(`talents.${selected}.requires`, i, {
+												shouldDirty: true,
+												shouldTouch: true
+											});
+											closeDialog(e);
+										}}
+									>
+										Link as requirement
+									</TextButton>
+								)}
 								<TextButton
 									icon={<Replace />}
 									onClick={e => {
@@ -83,15 +89,31 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 								</TextButton>
 							</>
 						)}
-						<TextButton
-							icon={<Pointer />}
-							onClick={e => {
-								setSelected(i);
-								closeDialog(e);
-							}}
-						>
-							Select
-						</TextButton>
+						{field ? (
+							<TextButton
+								icon={<Pointer />}
+								onClick={e => {
+									setSelected(i);
+									closeDialog(e);
+								}}
+							>
+								Select
+							</TextButton>
+						) : (
+							<TextButton
+								icon={<p className="h1 -my-4 pb-1.5 pr-1">+</p>}
+								onClick={e => {
+									setSelected(i);
+									setValue(`talents.${i}`, Talent.parse({}), {
+										shouldDirty: true,
+										shouldTouch: true
+									});
+									closeDialog(e);
+								}}
+							>
+								Add talent
+							</TextButton>
+						)}
 					</>
 				)
 			}
@@ -121,13 +143,16 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 					ranks={field?.ranks}
 					selected={selected === i}
 					onDragStart={e => {
+						e.stopPropagation();
 						if (!editable || !field) {
 							e.preventDefault();
 							return;
 						}
 
 						setDragging(true);
-						e.dataTransfer.setData('text/plain', i.toString());
+						e.dataTransfer.setData('text', `idx:${i}`);
+						e.dataTransfer.dropEffect = 'move';
+						e.dataTransfer.setDragImage(e.currentTarget, 0, 0);
 						window.addEventListener('dragend', () => setDragging(false), {
 							once: true
 						});
@@ -139,22 +164,25 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 					onDrop={e => {
 						if (!editable) return;
 						e.preventDefault();
-						const idx = Number(e.dataTransfer.getData('text/plain'));
-						swapTalents(i, idx);
+						const idx = e.dataTransfer.getData('text').match(/idx:(\d+)/)?.[1];
+						if (!idx) return;
+						swapTalents(i, Number(idx));
 					}}
 					extraContent={
-						<>
-							{typeof field?.requires === 'number' && (
-								<TalentArrow start={field.requires} end={i} />
-							)}
-							{!!field?.highlight && (
-								<img
-									src="/icon_hover.png"
-									alt="hover"
-									className="pointer-events-none absolute inset-0 size-full scale-125 animate-pulse -hue-rotate-90"
-								/>
-							)}
-						</>
+						!dragging && (
+							<>
+								{typeof field?.requires === 'number' && (
+									<TalentArrow start={field.requires} end={i} />
+								)}
+								{!!field?.highlight && (
+									<img
+										src="/icon_hover.png"
+										alt="hover"
+										className="pointer-events-none absolute inset-0 size-full scale-125 animate-pulse -hue-rotate-90"
+									/>
+								)}
+							</>
+						)
 					}
 					{...props}
 					className={
