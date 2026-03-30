@@ -9,10 +9,12 @@ export const metadata: Metadata = {
 };
 
 const changelogText = dedent`
-# In progress
+# March 30, 2026
 
+- **Collections 2.0** The collections feature has been rewritten and made available to supporters. You can now create custom private and public collections and assign trees for convenient calculator access and sharing.
 - **Builder mobile improvements** Adjusted various elements and interactions in the talent builder for a better mobile experience on smaller screens.
 - **Icon picker improvements** The icons in the grid at the bottom are now sorted by name for easier browsing and the height of the container has been increased to show more icons at once.
+- **Custom URL slugs** Supporters can now customize URLs for talent trees, collections and builds.
 
 # March 12, 2026
 
