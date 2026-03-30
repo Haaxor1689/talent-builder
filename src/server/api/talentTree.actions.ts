@@ -1,30 +1,18 @@
 'use server';
 
-import { and, desc, eq, inArray, like, not, or } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { updateTag } from 'next/cache';
 import { z } from 'zod';
 
 import { GameVersions } from '#components/styled/GameVersion.tsx';
 import { db } from '#server/db/index.ts';
-import { talentTrees, user as userTable } from '#server/db/schema.ts';
+import { talentTrees } from '#server/db/schema.ts';
 import { serverFunction } from '#server/helpers.ts';
 import { TalentForm, TreesFilters } from '#server/schemas.ts';
 import { canEdit } from '#utils/auth.ts';
 import { Errors } from '#utils/errors.ts';
 
-import { createdBySelect, getUser, uniqueSlugException } from '.';
-
-const getVersionFilter = (rows?: number) => {
-	if (rows === undefined) return undefined;
-	if (rows > 0) return eq(talentTrees.rows, rows);
-	// -1 represents "custom" version that is everything except known versions
-	return not(
-		inArray(
-			talentTrees.rows,
-			GameVersions.map(v => v.rows)
-		)
-	);
-};
+import { columns, createdBy, getUser, uniqueSlugException } from '.';
 
 export const listInfiniteTalentTrees = serverFunction({
 	input: TreesFilters.extend({
@@ -38,8 +26,8 @@ export const listInfiniteTalentTrees = serverFunction({
 		const whereAcc = input.from
 			? (
 					await db.query.user.findMany({
-						where: like(userTable.name, `%${input.from}%`),
-						columns: { id: true }
+						where: { name: { like: `%${input.from}%` } },
+						...columns('id')
 					})
 				).map(a => a.id)
 			: [];
@@ -50,22 +38,28 @@ export const listInfiniteTalentTrees = serverFunction({
 		const items = await db.query.talentTrees.findMany({
 			limit: limit + 1,
 			offset,
-			orderBy: [desc(talentTrees.updatedAt)],
-			where: and(
-				user.role === 'admin'
-					? undefined
-					: or(
-							eq(talentTrees.visibility, 'public'),
-							user.id ? eq(talentTrees.createdById, user.id) : undefined
-						),
-				input.name ? like(talentTrees.name, `%${input.name}%`) : undefined,
-				whereAcc.length
-					? inArray(talentTrees.createdById, whereAcc)
-					: undefined,
-				input.class ? eq(talentTrees.class, input.class) : undefined,
-				getVersionFilter(input.rows)
-			),
-			with: { createdBy: createdBySelect }
+			orderBy: { updatedAt: 'desc' },
+			where: {
+				AND: [
+					{
+						OR:
+							user.role !== 'admin'
+								? [{ visibility: 'public' }, { createdById: user.id }]
+								: undefined
+					},
+					{ name: input.name ? { like: `%${input.name}%` } : undefined },
+					{ createdById: whereAcc.length ? { in: whereAcc } : undefined },
+					{ class: input.class || undefined },
+					{
+						rows:
+							// -1 represents "custom" version that is everything except known versions
+							input.rows === -1
+								? { NOT: { in: GameVersions.map(v => v.rows) } }
+								: input.rows
+					}
+				]
+			},
+			with: createdBy
 		});
 
 		const hasMore = items.length > limit;
@@ -87,7 +81,7 @@ export const upsertTalentTree = serverFunction({
 	session: () => getUser('user').then(u => ({ id: u?.id, role: u?.role })),
 	query: async (input, user) => {
 		const current = await db.query.talentTrees.findFirst({
-			where: eq(talentTrees.id, input.id)
+			where: { id: input.id }
 		});
 
 		const now = new Date();
@@ -130,7 +124,7 @@ export const deleteTalentTree = serverFunction({
 	session: () => getUser('user').then(u => ({ id: u?.id, role: u?.role })),
 	query: async (input, user) => {
 		const current = await db.query.talentTrees.findFirst({
-			where: eq(talentTrees.id, input.id)
+			where: { id: input.id }
 		});
 
 		if (!canEdit(user, current))

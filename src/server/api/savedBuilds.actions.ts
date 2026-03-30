@@ -13,7 +13,7 @@ import { BuildForm } from '#server/schemas.ts';
 import { canEdit } from '#utils/auth.ts';
 import { Errors } from '#utils/errors.ts';
 
-import { createdBySelect, getUser, uniqueSlugException } from './index';
+import { createdBy, getUser, uniqueSlugException } from './index';
 
 export const upsertSavedBuild = serverFunction({
 	input: BuildForm.extend({
@@ -26,7 +26,7 @@ export const upsertSavedBuild = serverFunction({
 		const { points, ...restInput } = input;
 
 		const entry = await db.query.savedBuilds.findFirst({
-			where: eq(savedBuilds.id, restInput.id)
+			where: { id: restInput.id }
 		});
 
 		if (!entry) {
@@ -58,8 +58,8 @@ export const upsertSavedBuild = serverFunction({
 		}
 
 		const build = await db.query.savedBuilds.findFirst({
-			where: eq(savedBuilds.id, restInput.id),
-			with: { createdBy: createdBySelect }
+			where: { id: restInput.id },
+			with:  createdBy 
 		});
 
 		updateTag(`savedBuilds:id:${restInput.id}`);
@@ -80,7 +80,7 @@ export const deleteSavedBuild = serverFunction({
 	session: () => getUser('user').then(u => ({ id: u.id, role: u.role })),
 	query: async (input, user) => {
 		const entry = await db.query.savedBuilds.findFirst({
-			where: eq(savedBuilds.id, input.id)
+			where: { id: input.id }
 		});
 
 		if (!canEdit(user, entry))

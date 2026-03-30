@@ -1,13 +1,11 @@
-import { eq, or } from 'drizzle-orm';
 import { cacheLife, cacheTag } from 'next/cache';
 import { z } from 'zod';
 
 import { db } from '#server/db/index.ts';
-import { talentTrees } from '#server/db/schema.ts';
 import { serverFunction } from '#server/helpers.ts';
 import { TalentForm } from '#server/schemas.ts';
 
-import { createdBySelect } from '.';
+import { createdBy, slugOrId } from '.';
 
 export const getTalentTree = serverFunction({
 	input: z.object({ slugOrId: z.string().optional() }),
@@ -19,11 +17,8 @@ export const getTalentTree = serverFunction({
 
 		const r = await db.query.talentTrees
 			.findFirst({
-				where: or(
-					eq(talentTrees.id, input.slugOrId),
-					eq(talentTrees.slug, input.slugOrId)
-				),
-				with: { createdBy: createdBySelect }
+				where: slugOrId(input.slugOrId),
+				with: createdBy
 			})
 			.then(tree => (tree ? TalentForm.parse(tree) : undefined));
 

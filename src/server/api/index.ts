@@ -31,6 +31,12 @@ export const uniqueSlugException = (e: unknown) => {
 	throw e;
 };
 
-export const createdBySelect = {
-	columns: { name: true, image: true, role: true }
-} as const;
+export const columns = <const T extends string[]>(...cols: T) => ({
+	columns: Object.fromEntries(cols.map(c => [c, true])) as {
+		[K in T[number]]: true;
+	}
+});
+
+export const createdBy = { createdBy: columns('name', 'image', 'role') };
+
+export const slugOrId = (val: string) => ({ OR: [{ id: val }, { slug: val }] });

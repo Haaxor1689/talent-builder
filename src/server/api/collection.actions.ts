@@ -1,21 +1,17 @@
 'use server';
 
-import { and, desc, eq, inArray, like } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { updateTag } from 'next/cache';
 import { z } from 'zod';
 
 import { db } from '#server/db/index.ts';
-import {
-	collections,
-	collectionTrees,
-	user as userTable
-} from '#server/db/schema.ts';
+import { collections, collectionTrees } from '#server/db/schema.ts';
 import { serverFunction } from '#server/helpers.ts';
 import { CollectionForm, CollectionsFilters } from '#server/schemas.ts';
 import { canEdit, canView } from '#utils/auth.ts';
 import { Errors } from '#utils/errors.ts';
 
-import { createdBySelect, getUser, uniqueSlugException } from '.';
+import { columns, createdBy, getUser, uniqueSlugException } from '.';
 
 export const listInfiniteCollections = serverFunction({
 	input: CollectionsFilters.extend({
@@ -29,8 +25,8 @@ export const listInfiniteCollections = serverFunction({
 		const whereAcc = input.from
 			? (
 					await db.query.user.findMany({
-						where: like(userTable.name, `%${input.from}%`),
-						columns: { id: true }
+						where: { name: { like: `%${input.from}%` } },
+						...columns('id')
 					})
 				).map(a => a.id)
 			: [];
@@ -41,13 +37,15 @@ export const listInfiniteCollections = serverFunction({
 		const items = await db.query.collections.findMany({
 			limit: limit + 1,
 			offset,
-			orderBy: [desc(collections.updatedAt)],
-			where: and(
-				!isAdmin ? eq(collections.visibility, 'public') : undefined,
-				input.name ? like(collections.name, `%${input.name}%`) : undefined,
-				whereAcc.length ? inArray(collections.createdById, whereAcc) : undefined
-			),
-			with: { createdBy: createdBySelect }
+			orderBy: { updatedAt: 'desc' },
+			where: {
+				AND: [
+					{ visibility: !isAdmin ? 'public' : undefined },
+					{ name: input.name ? { like: `%${input.name}%` } : undefined },
+					{ createdById: whereAcc.length ? { in: whereAcc } : undefined }
+				]
+			},
+			with: createdBy
 		});
 
 		const hasMore = items.length > limit;
@@ -70,7 +68,7 @@ export const upsertCollection = serverFunction({
 	session: () => getUser('supporter').then(u => ({ id: u.id, role: u.role })),
 	query: async (input, user) => {
 		const current = await db.query.collections.findFirst({
-			where: eq(collections.id, input.id)
+			where: { id: input.id }
 		});
 
 		const now = new Date();
@@ -111,7 +109,7 @@ export const deleteCollection = serverFunction({
 	session: () => getUser('supporter').then(u => ({ id: u.id, role: u.role })),
 	query: async (input, user) => {
 		const current = await db.query.collections.findFirst({
-			where: eq(collections.id, input.id)
+			where: { id: input.id }
 		});
 
 		if (!canEdit(user, current))
@@ -135,7 +133,7 @@ export const addCollectionTree = serverFunction({
 	session: () => getUser('user').then(u => ({ id: u.id, role: u.role })),
 	query: async (input, user) => {
 		const current = await db.query.collections.findFirst({
-			where: eq(collections.id, input.collectionId)
+			where: { id: input.collectionId }
 		});
 		if (!current) throw Errors.generic({ message: 'Collection not found' });
 		if (!canEdit(user, current))
@@ -164,7 +162,7 @@ export const removeCollectionTree = serverFunction({
 	session: () => getUser('user').then(u => ({ id: u.id, role: u.role })),
 	query: async (input, user) => {
 		const current = await db.query.collections.findFirst({
-			where: eq(collections.id, input.collectionId)
+			where: { id: input.collectionId }
 		});
 		if (!current) throw Errors.generic({ message: 'Collection not found' });
 		if (!canEdit(user, current))
@@ -203,19 +201,25 @@ export const listTreeCollections = serverFunction({
 	input: z.object({ treeId: z.string() }),
 	query: async input =>
 		await db.query.collectionTrees.findMany({
-			where: eq(collectionTrees.treeId, input.treeId),
-			with: { collection: { with: { createdBy: true } } }
+			where: { treeId: input.treeId },
+			with: { collection: { with: createdBy } }
 		}),
 	transform: async items => {
 		const user = await getUser();
-		return items.filter(i => canView(user, i.collection));
+		return items.filter(
+			(
+				i
+			): i is Omit<typeof i, 'collection'> & {
+				collection: NonNullable<typeof i.collection>;
+			} => canView(user, i.collection)
+		);
 	}
 });
 
 export const listEditableCollections = serverFunction({
 	query: async () =>
 		await db.query.collections.findMany({
-			with: { createdBy: createdBySelect }
+			with: createdBy
 		}),
 	transform: async collections => {
 		const user = await getUser('supporter');

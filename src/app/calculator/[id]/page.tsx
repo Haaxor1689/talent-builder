@@ -19,7 +19,7 @@ export const generateMetadata = async ({
 	const cls = maskToClass(savedBuild.class);
 	return {
 		title: `${savedBuild.name || cls?.name}`,
-		description: `Talent tree created by ${savedBuild.createdBy.name}`,
+		description: `Talent tree created by ${savedBuild.createdBy?.name}`,
 		icons: [{ rel: 'icon', url: getIconPath(cls?.icon, env.DEPLOY_URL) }]
 	};
 };

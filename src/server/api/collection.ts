@@ -1,23 +1,17 @@
-import { and, eq, or } from 'drizzle-orm';
 import { cacheLife, cacheTag } from 'next/cache';
 import { z } from 'zod';
 
 import { db } from '#server/db/index.ts';
-import {
-	collections,
-	collectionTrees,
-	talentTrees
-} from '#server/db/schema.ts';
 import { serverFunction } from '#server/helpers.ts';
 import { TalentForm } from '#server/schemas.ts';
 import { canView } from '#utils/auth.ts';
 
-import { createdBySelect, getUser } from '.';
+import { columns, createdBy, getUser, slugOrId } from '.';
 
 const findCollectionByIdOrSlug = (value: string) =>
 	db.query.collections.findFirst({
-		where: or(eq(collections.id, value), eq(collections.slug, value)),
-		columns: { id: true, assignedTrees: true }
+		where: slugOrId(value),
+		...columns('id', 'assignedTrees')
 	});
 
 export const getCollectionTree = serverFunction({
@@ -38,7 +32,7 @@ export const getCollectionTree = serverFunction({
 		cacheTag('collections', `collections:id:${collection.id}`);
 
 		const tree = await db.query.talentTrees.findFirst({
-			where: and(eq(talentTrees.id, collection.assignedTrees[key]))
+			where: { id: collection.assignedTrees[key] }
 		});
 		return tree ? TalentForm.parse(tree) : undefined;
 	},
@@ -55,11 +49,8 @@ export const getCollection = serverFunction({
 		cacheLife('weeks');
 
 		const r = await db.query.collections.findFirst({
-			where: or(
-				eq(collections.id, input.slugOrId),
-				eq(collections.slug, input.slugOrId)
-			),
-			with: { createdBy: createdBySelect }
+			where: slugOrId(input.slugOrId),
+			with: createdBy
 		});
 		if (r) cacheTag('collections', `collections:id:${r.id}`);
 		return r;
@@ -84,10 +75,8 @@ export const getCollectionTrees = serverFunction({
 
 		return await db.query.collectionTrees
 			.findMany({
-				where: eq(collectionTrees.collectionId, collection.id),
-				with: {
-					tree: { with: { createdBy: createdBySelect } }
-				}
+				where: { collectionId: collection.id },
+				with: { tree: { with: createdBy } }
 			})
 			.then(items => items.map(item => TalentForm.parse(item.tree)));
 	},

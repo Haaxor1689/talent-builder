@@ -1,4 +1,3 @@
-import { relations } from 'drizzle-orm';
 import {
 	index,
 	integer,
@@ -35,14 +34,6 @@ export const user = sqliteTable(
 	},
 	t => [index('user_name_idx').on(t.name)]
 );
-
-export const userRelations = relations(user, ({ many }) => ({
-	accounts: many(account),
-	sessions: many(session),
-	trees: many(talentTrees),
-	builds: many(savedBuilds),
-	collections: many(collections)
-}));
 
 export const account = sqliteTable(
 	'account',
@@ -154,14 +145,6 @@ export const talentTrees = sqliteTable(
 	]
 );
 
-export const treesRelations = relations(talentTrees, ({ one, many }) => ({
-	createdBy: one(user, {
-		fields: [talentTrees.createdById],
-		references: [user.id]
-	}),
-	collectionTrees: many(collectionTrees)
-}));
-
 export const collectionTrees = sqliteTable(
 	'collectionTree',
 	{
@@ -205,28 +188,6 @@ export const collections = sqliteTable(
 	]
 );
 
-export const collectionsRelations = relations(collections, ({ many, one }) => ({
-	createdBy: one(user, {
-		fields: [collections.createdById],
-		references: [user.id]
-	}),
-	collectionTrees: many(collectionTrees)
-}));
-
-export const collectionTreesRelations = relations(
-	collectionTrees,
-	({ one }) => ({
-		collection: one(collections, {
-			fields: [collectionTrees.collectionId],
-			references: [collections.id]
-		}),
-		tree: one(talentTrees, {
-			fields: [collectionTrees.treeId],
-			references: [talentTrees.id]
-		})
-	})
-);
-
 export const savedBuilds = sqliteTable(
 	'savedBuild',
 	{
@@ -249,10 +210,3 @@ export const savedBuilds = sqliteTable(
 		index('builds_createdById_updatedAt_idx').on(t.createdById, t.updatedAt)
 	]
 );
-
-export const savedBuildsRelations = relations(savedBuilds, ({ one }) => ({
-	createdBy: one(user, {
-		fields: [savedBuilds.createdById],
-		references: [user.id]
-	})
-}));

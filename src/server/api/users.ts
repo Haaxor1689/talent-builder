@@ -1,14 +1,7 @@
-import { desc, eq } from 'drizzle-orm';
 import { cacheLife, cacheTag } from 'next/cache';
 import { z } from 'zod';
 
 import { db } from '#server/db/index.ts';
-import {
-	collections,
-	savedBuilds,
-	talentTrees,
-	user as userTable
-} from '#server/db/schema.ts';
 import { serverFunction } from '#server/helpers.ts';
 
 export const getUser = serverFunction({
@@ -21,11 +14,11 @@ export const getUser = serverFunction({
 		cacheTag('users', `users:id:${input.id}`);
 
 		return await db.query.user.findFirst({
-			where: eq(userTable.id, input.id),
+			where: { id: input.id },
 			with: {
-				trees: { orderBy: [desc(talentTrees.updatedAt)] },
-				builds: { orderBy: [desc(savedBuilds.updatedAt)] },
-				collections: { orderBy: [desc(collections.updatedAt)] }
+				trees: { orderBy: { updatedAt: 'desc' } },
+				builds: { orderBy: { updatedAt: 'desc' } },
+				collections: { orderBy: { updatedAt: 'desc' } }
 			}
 		});
 	}
