@@ -6,7 +6,7 @@ import { type HTMLProps, type ReactNode, useId } from 'react';
 type Props = HTMLProps<HTMLInputElement> & {
 	ref?: React.Ref<HTMLInputElement>;
 	label?: string;
-	error?: boolean;
+	error?: string;
 	hint?: string;
 	before?: ReactNode;
 	after?: ReactNode;

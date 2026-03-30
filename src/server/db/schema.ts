@@ -4,8 +4,7 @@ import {
 	integer,
 	primaryKey,
 	sqliteTableCreator,
-	text,
-	uniqueIndex
+	text
 } from 'drizzle-orm/sqlite-core';
 import { nanoid } from 'nanoid';
 
@@ -204,7 +203,6 @@ export const collections = sqliteTable(
 	t => ({
 		createdByIdIdx: index('collections_createdById_idx').on(t.createdById),
 		nameIdx: index('collections_name_idx').on(t.name),
-		slugIdx: uniqueIndex('collections_slug_idx').on(t.slug),
 		visibilityIdx: index('collections_visibility_idx').on(t.visibility),
 		updatedAtIdx: index('collections_updatedAt_idx').on(t.updatedAt)
 	})
