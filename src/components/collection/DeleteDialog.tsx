@@ -1,23 +1,22 @@
 'use client';
 
-import { useFormContext, useWatch } from 'react-hook-form';
+import { useWatch } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { Trash2 } from 'lucide-react';
 
 import Dialog from '#components/styled/Dialog.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
 import useAsyncAction from '#hooks/useAsyncAction.tsx';
-import useLocalTrees from '#hooks/useLocalTrees.ts';
-import { deleteTalentTree } from '#server/api/talentTree.actions.ts';
-import { type TalentForm } from '#server/schemas.ts';
+import { deleteCollection } from '#server/api/collection.actions.ts';
+import { type CollectionForm } from '#server/schemas.ts';
 import { invoke } from '#utils/index.ts';
 
 const DeleteDialog = () => {
 	const [isPending, startTransition] = useAsyncAction();
 	const router = useRouter();
-	const { deleteTree } = useLocalTrees();
-	const { getValues } = useFormContext<TalentForm>();
-	const name = useWatch<TalentForm, 'name'>({ name: 'name' });
+
+	const id = useWatch<CollectionForm, 'id'>({ name: 'id' });
+	const name = useWatch<CollectionForm, 'name'>({ name: 'name' });
 
 	return (
 		<Dialog
@@ -30,10 +29,11 @@ const DeleteDialog = () => {
 				/>
 			)}
 		>
-			<h3 className="haax-color">Delete tree?</h3>
+			<h3 className="haax-color">Delete collection?</h3>
 			<hr />
 			<p className="text-blue-gray">
-				Are you sure you want to delete <span>&quot;{name}&quot;</span> tree?
+				Are you sure you want to delete <span>&quot;{name}&quot;</span>{' '}
+				collection?
 			</p>
 			<p className="text-blue-gray">This action cannot be undone!</p>
 			<hr />
@@ -42,10 +42,7 @@ const DeleteDialog = () => {
 					icon={<Trash2 />}
 					loading={isPending}
 					onClick={startTransition(async () => {
-						const values = getValues();
-
-						if (values.createdById === null) deleteTree(values.id);
-						else await invoke(deleteTalentTree({ id: values.id }));
+						await invoke(deleteCollection({ id }));
 
 						if (window.history.length > 1) router.back();
 						else router.push('/');

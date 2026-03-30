@@ -21,6 +21,7 @@ import {
 	zodResolver
 } from '#utils/index.ts';
 
+import DeleteDialog from './DeleteDialog';
 import SaveDialog from './SaveDialog';
 
 type Props = {
@@ -79,7 +80,12 @@ const CollectionPage = ({ defaultValues, trees }: Props) => {
 						</TextButton>
 					</div>
 				)}
-				{editable && <SaveDialog />}
+				{editable && (
+					<>
+						<SaveDialog />
+						<DeleteDialog />
+					</>
+				)}
 			</div>
 
 			<h2 className="haax-color -mb-3 text-center md:text-left">
