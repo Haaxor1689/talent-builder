@@ -1,5 +1,5 @@
 import { cacheLife, cacheTag } from 'next/cache';
-import { and, desc, eq, or } from 'drizzle-orm';
+import { and, eq, or } from 'drizzle-orm';
 import { z } from 'zod';
 
 import { db } from '#server/db/index.ts';

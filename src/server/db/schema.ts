@@ -167,7 +167,7 @@ export const treesRelations = relations(talentTrees, ({ one, many }) => ({
 export const collectionTrees = sqliteTable(
 	'collectionTree',
 	{
-		collectionId: text('collectionId', { length: 36 }).notNull(),
+		collectionId: text('collectionId', { length: 11 }).notNull(),
 		treeId: text('treeId', { length: 36 }).notNull()
 	},
 	t => ({

@@ -15,6 +15,10 @@ type ProcedureFn<
 	? (input: z.infer<Input>) => Promise<unknown>
 	: (input: z.infer<Input>, session: Awaited<SessionType>) => Promise<unknown>;
 
+export type ProcedureResult<Return> =
+	| { ok: true; data: Return }
+	| { ok: false; error: unknown };
+
 type ProcedureReturn<
 	SessionType,
 	Func extends ProcedureFn<Input, SessionType>,
@@ -22,8 +26,8 @@ type ProcedureReturn<
 	Return = Awaited<ReturnType<Func>>
 > =
 	z.infer<Input> extends undefined
-		? () => Promise<Return>
-		: (val: z.infer<Input>) => Promise<Return>;
+		? () => Promise<ProcedureResult<Return>>
+		: (val: z.infer<Input>) => Promise<ProcedureResult<Return>>;
 
 type QueryProps<
 	SessionType,
@@ -36,6 +40,11 @@ type QueryProps<
 	query: Func;
 	transform?: (r: Awaited<ReturnType<Func>>) => Promise<Return>;
 };
+
+export type ServerFunctionReturn<
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	Func extends (...args: any[]) => Promise<ProcedureResult<unknown>>
+> = Awaited<ReturnType<Func>> extends ProcedureResult<infer R> ? R : never;
 
 export const serverFunction = <
 	SessionType,
@@ -53,15 +62,18 @@ export const serverFunction = <
 			const s = session ? await session() : null;
 			const value = input?.parse(val);
 			const result = await query(value, s as never);
-			return transform ? await transform(result as never) : result;
+			return {
+				ok: true,
+				data: transform ? await transform(result as never) : result
+			};
 		} catch (err) {
 			const error = getError(err);
 			logger.error({
 				source: 'API function error',
-				context: { input: val, session },
+				input: val,
 				error
 			});
-			return { __functionError: error };
+			return { ok: false, error };
 		}
 	}) as ProcedureReturn<SessionType, Func, Input, Return>;
 

@@ -11,6 +11,7 @@ import TextButton from '#components/styled/TextButton.tsx';
 import TreeGridItem from '#components/styled/TreeGridItem.tsx';
 import { UserAvatar, UserRoleText } from '#components/styled/User.tsx';
 import { type getCollectionTrees } from '#server/api/collection.ts';
+import { type ServerFunctionReturn } from '#server/helpers.ts';
 import { CollectionForm } from '#server/schemas.ts';
 import { canEdit } from '#utils/auth.ts';
 import {
@@ -24,7 +25,7 @@ import SaveDialog from './SaveDialog';
 
 type Props = {
 	defaultValues: CollectionForm;
-	trees: Awaited<ReturnType<typeof getCollectionTrees>>;
+	trees: ServerFunctionReturn<typeof getCollectionTrees>;
 };
 
 const CollectionPage = ({ defaultValues, trees }: Props) => {

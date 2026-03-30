@@ -5,7 +5,7 @@ import { z } from 'zod';
 import TalentCalculator from '#components/calculator/TalentCalculator.tsx';
 import { env } from '#env.js';
 import { getCollection, getCollectionTree } from '#server/api/collection.ts';
-import { classMask, getIconPath, maskToClass } from '#utils/index.ts';
+import { classMask, getIconPath, invoke, maskToClass } from '#utils/index.ts';
 
 type Props = PageProps<'/collections/[collection]/[class]'>;
 
@@ -29,7 +29,9 @@ export const generateMetadata = async ({
 	const info = maskToClass(parsed.data.class);
 	if (!info) return notFound();
 
-	const collection = await getCollection({ slugOrId: parsed.data.collection });
+	const collection = await invoke(
+		getCollection({ slugOrId: parsed.data.collection })
+	);
 	if (!collection) return notFound();
 
 	return {
@@ -46,9 +48,9 @@ const TalentTreePage = async ({ params }: Props) => {
 	}
 
 	const trees = await Promise.all([
-		getCollectionTree({ ...parsed.data, index: 0 }),
-		getCollectionTree({ ...parsed.data, index: 1 }),
-		getCollectionTree({ ...parsed.data, index: 2 })
+		invoke(getCollectionTree({ ...parsed.data, index: 0 })),
+		invoke(getCollectionTree({ ...parsed.data, index: 1 })),
+		invoke(getCollectionTree({ ...parsed.data, index: 2 }))
 	] as const);
 
 	return (

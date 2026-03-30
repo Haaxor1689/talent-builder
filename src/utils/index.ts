@@ -5,6 +5,7 @@ import pino, { type Logger } from 'pino';
 import { type z } from 'zod';
 
 import iconListRaw from '#assets/icon-list.json';
+import { type ProcedureResult } from '#server/helpers.ts';
 import { type Talents } from '#server/schemas.ts';
 
 import { Errors, isErrors } from './errors';
@@ -120,11 +121,10 @@ export const safeJsonParse = <T extends z.ZodTypeAny>({
 	}
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const invoke = <T extends Promise<any>>(value: T) =>
-	value.then<Awaited<T>>(res => {
-		if (res && '__functionError' in res) throw res.__functionError;
-		return res;
+export const invoke = <T>(value: Promise<ProcedureResult<T>>) =>
+	value.then(res => {
+		if (!res.ok) throw res.error;
+		return res.data;
 	});
 
 const createLogger = (): Logger => {

@@ -9,13 +9,15 @@ import TextButton from '#components/styled/TextButton.tsx';
 import TreeGridItem from '#components/styled/TreeGridItem.tsx';
 import { UserAvatar, UserRoleText } from '#components/styled/User.tsx';
 import { getUser } from '#server/api/users.ts';
-
-import AdminPanel from './AdminPanel';
+import { invoke } from '#utils/index.ts';
 
 type Props = { id: string };
 
 const ProfilePage = async ({ id }: Props) => {
-	const [user, session] = await Promise.all([getUser({ id }), getSession()]);
+	const [user, session] = await Promise.all([
+		invoke(getUser({ id })),
+		getSession()
+	]);
 
 	if (!user) return notFound();
 
@@ -171,13 +173,6 @@ const ProfilePage = async ({ id }: Props) => {
 					</div>
 				)}
 			</section>
-
-			{isOwnProfile && user.role === 'admin' && (
-				<section className="contents">
-					<PageTitle title="Admin Panel" />
-					<AdminPanel />
-				</section>
-			)}
 		</>
 	);
 };

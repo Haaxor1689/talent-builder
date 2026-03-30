@@ -2,7 +2,6 @@
 
 import { useRef, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
-import { DevTool } from '@hookform/devtools';
 import { Camera, CloudOff, Eye, EyeOff, NotebookPen } from 'lucide-react';
 
 import { useSession } from '#auth/client.ts';
@@ -45,7 +44,6 @@ const TalentBuilder = ({ defaultValues }: Props) => {
 
 	return (
 		<FormProvider {...formProps}>
-			<DevTool control={formProps.control} />
 			<form className="haax-surface-3 flex flex-col gap-3">
 				<TopBar editable={editable} isNew={isNew} />
 

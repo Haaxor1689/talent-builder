@@ -81,8 +81,9 @@ const SaveDialog = ({ disabled }: { disabled?: boolean }) => {
 				<TextButton
 					icon={<Save />}
 					onClick={startTransition(async currentTarget => {
+						const old = getValues();
 						const tree = {
-							...getValues(),
+							...old,
 							id: newId,
 							slug: newVisibility ? newSlug : null,
 							visibility: newVisibility
@@ -92,10 +93,10 @@ const SaveDialog = ({ disabled }: { disabled?: boolean }) => {
 
 						if (!tree.visibility) {
 							upsertTree(tree);
-							if (shouldDelete) await invoke(deleteTalentTree({ id: tree.id }));
+							if (shouldDelete) await invoke(deleteTalentTree({ id: old.id }));
 						} else {
 							await invoke(upsertTalentTree(tree));
-							if (shouldDelete) deleteTree(tree.id);
+							if (shouldDelete) deleteTree(old.id);
 						}
 						toast({
 							message: 'Changes saved successfully!',

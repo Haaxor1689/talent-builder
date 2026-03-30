@@ -1,6 +1,7 @@
 import { type Metadata } from 'next';
 
 import { getUser } from '#server/api/users.ts';
+import { invoke } from '#utils/index.ts';
 
 import ProfilePage from './ProfilePage';
 
@@ -10,7 +11,7 @@ export const generateMetadata = async ({
 	params
 }: Props): Promise<Metadata> => {
 	const { id } = await params;
-	const user = await getUser({ id });
+	const user = await invoke(getUser({ id }));
 
 	if (!user) return {};
 	return {

@@ -23,6 +23,8 @@ export const UserRoleText = ({
 	</span>
 );
 
+const fallbackAvatar = 'https://cdn.discordapp.com/embed/avatars/0.png';
+
 export const UserAvatar = ({
 	image,
 	size = 24
@@ -31,8 +33,8 @@ export const UserAvatar = ({
 	size?: 24 | 32 | 160;
 }) => (
 	<SpellIcon
-		icon={`${image}?size=${size}`}
-		fallbackIcon="https://cdn.discordapp.com/embed/avatars/0.png"
+		icon={image ? `${image}?size=${size}` : fallbackAvatar}
+		fallbackIcon={fallbackAvatar}
 		className={size === 24 ? 'size-6' : size === 32 ? 'size-8' : 'size-40'}
 	/>
 );
