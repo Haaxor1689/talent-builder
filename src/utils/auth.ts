@@ -8,7 +8,7 @@ export type Session = Exclude<
 
 type UserPermFields = Pick<Session, 'id' | 'role'>;
 
-export type VisibilityItem = {
+type VisibilityItem = {
 	visibility?: 'public' | 'private' | null;
 	createdById: string | null;
 };

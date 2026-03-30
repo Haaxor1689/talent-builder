@@ -11,12 +11,12 @@ import SpellIcon from '../styled/SpellIcon';
 import TextButton from '../styled/TextButton';
 import Tooltip from '../styled/Tooltip';
 
-export type BuildGridItemProps = typeof savedBuilds.$inferSelect & {
+type Props = typeof savedBuilds.$inferSelect & {
 	href: string;
 	createdBy: Pick<typeof user.$inferSelect, 'image' | 'name' | 'role'>;
 };
 
-const BuildGridItem = (item: BuildGridItemProps) => {
+const BuildGridItem = (item: Props) => {
 	const classInfo = maskToClass(item.class);
 	return (
 		<Tooltip

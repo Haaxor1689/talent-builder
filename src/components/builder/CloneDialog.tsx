@@ -14,7 +14,7 @@ import { type TalentForm } from '#server/schemas.ts';
 import { invoke } from '#utils/index.ts';
 
 import Input from '../form/Input';
-import { VisibilityInput } from '../form/VisibilityInput';
+import VisibilityInput from '../form/VisibilityInput';
 import Dialog, { closeDialog } from '../styled/Dialog';
 import TextButton from '../styled/TextButton';
 import { toast } from '../ToastProvider';

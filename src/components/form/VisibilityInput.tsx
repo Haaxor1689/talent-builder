@@ -44,7 +44,7 @@ type Props = { disabled?: boolean } & (
 	  }
 );
 
-export const VisibilityInput = ({
+const VisibilityInput = ({
 	visibility,
 	setVisibility,
 	noLocal,

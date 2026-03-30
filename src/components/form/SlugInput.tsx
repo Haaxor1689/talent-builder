@@ -12,7 +12,7 @@ type Props = {
 	url: string;
 };
 
-export const SlugInput = ({ placeholder, slug, setSlug, url }: Props) => {
+const SlugInput = ({ placeholder, slug, setSlug, url }: Props) => {
 	const session = useSession().data;
 	const locked = !isRoleSufficient('supporter', session?.user.role);
 	return (

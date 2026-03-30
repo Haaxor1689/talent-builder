@@ -20,21 +20,6 @@ const findCollectionByIdOrSlug = (value: string) =>
 		columns: { id: true, assignedTrees: true }
 	});
 
-export const listCollections = serverFunction({
-	session: () => getUser().then(u => u?.role === 'admin'),
-	query: async isAdmin => {
-		'use cache';
-		cacheLife('weeks');
-		cacheTag('collections', 'collections:list');
-
-		return await db.query.collections.findMany({
-			orderBy: [desc(collections.updatedAt)],
-			where: isAdmin ? undefined : eq(collections.visibility, 'public'),
-			with: { createdBy: createdBySelect }
-		});
-	}
-});
-
 export const getCollectionTree = serverFunction({
 	input: z.object({
 		collection: z.string(),
