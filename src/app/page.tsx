@@ -25,7 +25,7 @@ const Page = async () => (
 				<TextButton
 					type="link"
 					href="https://haaxor1689.dev/"
-					className="text-blue-gray -m-2 inline"
+					className="-m-2 inline text-blue-gray"
 				>
 					Haaxor1689
 				</TextButton>
@@ -35,7 +35,7 @@ const Page = async () => (
 
 			<MainActions />
 
-			<div className="*:text-blue-gray flex flex-col gap-3 **:text-xl md:text-center">
+			<div className="flex flex-col gap-3 *:text-blue-gray **:text-xl md:text-center">
 				<p>
 					Welcome to Talent Builder! You can use this tool to create completely
 					custom World of Warcraft style talent trees.

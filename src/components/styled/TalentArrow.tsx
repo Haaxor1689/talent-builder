@@ -21,7 +21,7 @@ const TalentArrow = ({ start, end, highlighted }: Props) => {
 	if (y1 > y2)
 		return (
 			<Link2Off
-				className={cls('text-red icon-size-12 animate-pulse', className)}
+				className={cls('animate-pulse text-red icon-size-12', className)}
 			/>
 		);
 
@@ -57,7 +57,7 @@ const TalentArrow = ({ start, end, highlighted }: Props) => {
 
 		return (
 			<Link2Off
-				className={cls('text-red icon-size-12 animate-pulse', className)}
+				className={cls('animate-pulse text-red icon-size-12', className)}
 			/>
 		);
 	}

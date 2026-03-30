@@ -65,8 +65,8 @@ const TextButton = ({
 				className,
 				{
 					'text-warm-green': active && !loading && !disabled,
-					'text-gray pointer-events-none': !!loading || !!disabled,
-					'hocus:haax-highlight transition-all': !loading && !disabled
+					'pointer-events-none text-gray': !!loading || !!disabled,
+					'transition-all hocus:haax-highlight': !loading && !disabled
 				}
 			)}
 		>

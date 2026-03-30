@@ -4,7 +4,7 @@ type Props = {
 };
 
 const PageTitle = ({ title, children }: Props) => (
-	<div className="flex items-center flex-col text-center md:text-left md:flex-row gap-2 -mb-3">
+	<div className="-mb-3 flex flex-col items-center gap-2 text-center md:flex-row md:text-left">
 		<h2 className="haax-color">{title}</h2>
 		{children}
 	</div>

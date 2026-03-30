@@ -100,7 +100,7 @@ const IconPicker = ({ name, disabled }: Props) => {
 				</TextButton>
 			</div>
 
-			<p className="text-blue-gray -mb-2">Supported icon sources:</p>
+			<p className="-mb-2 text-blue-gray">Supported icon sources:</p>
 			<ul className="list-disc pl-5">
 				<li className="text-blue-gray">
 					Pick an icon from the list of available icons below.

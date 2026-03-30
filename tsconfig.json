@@ -29,7 +29,6 @@
 		"eslint.config.js",
 		"next.config.js",
 		"postcss.config.js",
-		"prettier.config.cjs",
 		".next/types/**/*.ts",
 		".next/dev/types/**/*.ts"
 	],

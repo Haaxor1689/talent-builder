@@ -59,7 +59,7 @@ const CollectionsDialog = () => {
 			<hr />
 
 			{relations.isLoading || relations.isFetching ? (
-				<Spinner className="self-center my-6" />
+				<Spinner className="my-6 self-center" />
 			) : !relations.data?.length ? (
 				<p className="text-blue-gray">
 					This tree is not included in any collections visible to you.
@@ -113,7 +113,7 @@ const CollectionsDialog = () => {
 			{supportCta}
 			{isSupporter &&
 				(editable.isLoading || editable.isFetching ? (
-					<Spinner className="self-center my-6" />
+					<Spinner className="my-6 self-center" />
 				) : !editable.data?.length ? (
 					<p className="text-blue-gray">
 						You don&apos;t have permission to edit any collections.
@@ -123,7 +123,7 @@ const CollectionsDialog = () => {
 						containerClassName="-m-3 min-h-24"
 						contentClassName="grid items-start md:grid-cols-[repeat(auto-fill,minmax(340px,1fr))] gap-3 p-3"
 					>
-						<p className="text-blue-gray col-start-1 -col-end-1">
+						<p className="col-start-1 -col-end-1 text-blue-gray">
 							You can add this tree to any collection you have permission to
 							edit, or remove it from collections you have permission to edit
 							that it is already in.

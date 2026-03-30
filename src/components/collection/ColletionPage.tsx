@@ -57,16 +57,16 @@ const CollectionPage = ({ defaultValues, trees }: Props) => {
 
 	return (
 		<FormProvider {...form}>
-			<div className="haax-surface-3 flex-row justify-center items-center gap-2 flex-wrap">
+			<div className="haax-surface-3 flex-row flex-wrap items-center justify-center gap-2">
 				<IconPicker name="icon" disabled={!editable} />
 				<Input
 					placeholder="No tree name..."
 					{...form.register('name', nullableInput)}
 					disabled={!editable}
-					className="shrink grow [&_input]:text-3xl min-w-64"
+					className="min-w-64 shrink grow [&_input]:text-3xl"
 				/>
 				{defaultValues.createdBy && (
-					<div className="flex items-center gap-1.5 grow">
+					<div className="flex grow items-center gap-1.5">
 						<span className="mr-2">by</span>
 						<TextButton
 							icon={<UserAvatar image={defaultValues.createdBy.image} />}
@@ -88,14 +88,14 @@ const CollectionPage = ({ defaultValues, trees }: Props) => {
 				)}
 			</div>
 
-			<h2 className="haax-color -mb-3 text-center md:text-left">
+			<h2 className="-mb-3 haax-color text-center md:text-left">
 				Talent calculators:
 			</h2>
 			<ClassCalculatorsLinks
 				urlBase={`/collections/${defaultValues.slug ?? defaultValues.id}/`}
 			/>
 
-			<h2 className="haax-color -mb-3 text-center md:text-left">
+			<h2 className="-mb-3 haax-color text-center md:text-left">
 				Class trees:
 			</h2>
 			<div className="haax-surface-3 grid gap-3 md:grid-cols-3">
@@ -128,10 +128,10 @@ const CollectionPage = ({ defaultValues, trees }: Props) => {
 								});
 								setDragging(false);
 							}}
-							className="relative inline items-center min-h-20"
+							className="relative inline min-h-20 items-center"
 						>
 							{!tree ? (
-								<div className="text-blue-gray text-center flex items-center justify-center h-full text-sm">
+								<div className="flex h-full items-center justify-center text-center text-sm text-blue-gray">
 									No {classInfo?.name ?? classId} tab {tab + 1} tree
 								</div>
 							) : (
@@ -159,14 +159,14 @@ const CollectionPage = ({ defaultValues, trees }: Props) => {
 								/>
 							)}
 							{dragging && (
-								<div className="absolute inset-0 pointer-events-none border-2 border-blue-gray/50 border-dashed" />
+								<div className="pointer-events-none absolute inset-0 border-2 border-dashed border-blue-gray/50" />
 							)}
 						</div>
 					));
 				})}
 			</div>
 
-			<h2 className="haax-color -mb-3 text-center md:text-left">
+			<h2 className="-mb-3 haax-color text-center md:text-left">
 				Other trees in this collection:
 			</h2>
 			<div
@@ -215,12 +215,12 @@ const CollectionPage = ({ defaultValues, trees }: Props) => {
 						) : null
 					)
 				) : (
-					<p className="text-blue-gray text-center my-6 col-span-3">
+					<p className="col-span-3 my-6 text-center text-blue-gray">
 						No unassigned trees in this collection
 					</p>
 				)}
 				{dragging && (
-					<div className="absolute inset-0 pointer-events-none border-2 border-blue-gray/50 border-dashed" />
+					<div className="pointer-events-none absolute inset-0 border-2 border-dashed border-blue-gray/50" />
 				)}
 			</div>
 		</FormProvider>

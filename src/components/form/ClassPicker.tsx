@@ -34,7 +34,7 @@ const ClassPicker = ({ name, title, disabled, large }: Props) => {
 					}
 					disabled={disabled}
 					onClick={open}
-					className={cls('text-blue-gray', { 'h2 gap-2': large })}
+					className={cls('text-blue-gray', { 'gap-2 h2': large })}
 					style={{ color: classInfo?.color }}
 				>
 					{title ? `${title} ` : ''}
@@ -52,7 +52,7 @@ const ClassPicker = ({ name, title, disabled, large }: Props) => {
 						field.onBlur();
 						closeDialog(e);
 					}}
-					className="text-red -m-2"
+					className="-m-2 text-red"
 				>
 					Clear
 				</TextButton>

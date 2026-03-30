@@ -62,7 +62,7 @@ const RootLayout = async ({ children }: LayoutProps<'/'>) => (
 			)}
 		</head>
 		<body
-			className={`${fontin.variable} ${din.variable} bg-dark-gray flex min-h-screen flex-col items-stretch overflow-auto overflow-x-hidden`}
+			className={`${fontin.variable} ${din.variable} flex min-h-screen flex-col items-stretch overflow-auto overflow-x-hidden bg-dark-gray`}
 		>
 			<PageBackground />
 			<Providers>

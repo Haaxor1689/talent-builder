@@ -16,7 +16,7 @@ const Md = ({ text }: { text: string }) => (
 				) : (
 					props.children
 				),
-			h1: props => <p className="h1 haax-color text-2xl">{props.children}</p>,
+			h1: props => <p className="haax-color h1 text-2xl">{props.children}</p>,
 			h2: props => <p className="h2 text-xl">{props.children}</p>,
 			h3: props => <p className="h3 text-lg">{props.children}</p>,
 			ul: props => <ul className="list-disc pl-6">{props.children}</ul>,
@@ -45,7 +45,7 @@ const Md = ({ text }: { text: string }) => (
 					!props.children.includes('\n')
 				)
 					return (
-						<code className="border-blue-gray/20 -my-1 border p-1 font-mono">
+						<code className="-my-1 border border-blue-gray/20 p-1 font-mono">
 							{props.children}
 						</code>
 					);

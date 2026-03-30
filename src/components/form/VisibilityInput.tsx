@@ -75,7 +75,7 @@ const VisibilityInput = ({
 								{o.label}
 							</div>
 						</TextButton>
-						<span className="text-blue-gray my-1 shrink grow text-sm">
+						<span className="my-1 shrink grow text-sm text-blue-gray">
 							{o.text}
 						</span>
 					</Fragment>
@@ -83,7 +83,7 @@ const VisibilityInput = ({
 			})}
 
 			{!noLocal && !session && (
-				<p className="text-yellow col-span-2 mt-1">
+				<p className="col-span-2 mt-1 text-yellow">
 					<AlertTriangle className="mr-1 inline-block" />
 					Sign in to save online and share with others.
 				</p>

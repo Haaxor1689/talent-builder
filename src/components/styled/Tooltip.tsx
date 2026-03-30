@@ -191,7 +191,7 @@ const DesktopTooltip = ({ children, tooltip, hidden }: Props) => {
 				createPortal(
 					<div
 						ref={tooltipRef}
-						className="haax-surface-3 pointer-events-none invisible fixed z-10 max-w-100 min-w-62.5 gap-0"
+						className="pointer-events-none invisible haax-surface-3 fixed z-10 max-w-100 min-w-62.5 gap-0"
 						style={{
 							left: 0,
 							top: 0,

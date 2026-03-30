@@ -45,7 +45,7 @@ const TreeGridItem = ({
 				<>
 					<h4 className="haax-color text-xl">{item.name}</h4>
 					{item.visibility === 'private' && (
-						<span className="text-warm-green flex items-center gap-1 text-sm">
+						<span className="flex items-center gap-1 text-sm text-warm-green">
 							<EyeOff size={14} />
 							Private
 						</span>
@@ -53,19 +53,19 @@ const TreeGridItem = ({
 					<div className="text-blue-gray">
 						Points: <span>{getTalentSum(item.talents, item.rows)}</span>
 					</div>
-					<div className="text-blue-gray flex items-center gap-1.5">
+					<div className="flex items-center gap-1.5 text-blue-gray">
 						Version:
 						<GameVersionLogo rows={item.rows} />
 						<span>{item.rows} rows</span>
 					</div>
 					{date && (
-						<div className="text-blue-gray whitespace-nowrap">
+						<div className="whitespace-nowrap text-blue-gray">
 							Last updated:{' '}
 							<span>{new Date(date).toLocaleString('en-US')}</span>
 						</div>
 					)}
 					{item.createdBy && (
-						<div className="text-blue-gray flex items-center gap-1.5">
+						<div className="flex items-center gap-1.5 text-blue-gray">
 							Author: <UserAvatar image={item.createdBy.image} />{' '}
 							<UserRoleText role={item.createdBy.role}>
 								{item.createdBy.name}
@@ -73,7 +73,7 @@ const TreeGridItem = ({
 						</div>
 					)}
 					{classInfo && (
-						<div className="text-blue-gray flex items-center gap-1">
+						<div className="flex items-center gap-1 text-blue-gray">
 							Class:{' '}
 							<SpellIcon icon={classInfo.icon} showDefault className="size-6" />{' '}
 							<span style={{ color: classInfo.color }}>{classInfo.name}</span>
@@ -99,7 +99,7 @@ const TreeGridItem = ({
 					onClick={onClick}
 					onDragStart={onDragStart}
 					className={cls(
-						'hocus:haax-highlight -mb-2 flex items-center gap-3 p-2',
+						'-mb-2 flex items-center gap-3 p-2 hocus:haax-highlight',
 						{ 'text-warm-green': active }
 					)}
 					{...props}
@@ -136,7 +136,7 @@ const TreeGridItem = ({
 							) : (
 								<CloudOff className="text-blue-gray" />
 							)}
-							<span className="text-blue-gray shrink truncate overflow-hidden whitespace-nowrap">
+							<span className="shrink truncate overflow-hidden whitespace-nowrap text-blue-gray">
 								{date ? getLastUpdatedString(date) : 'Local only'}
 							</span>
 						</div>

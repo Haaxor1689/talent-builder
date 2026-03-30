@@ -49,7 +49,7 @@ const ProfilePage = async ({ id }: Props) => {
 						{roleLabel}
 					</UserRoleText>
 					{!!oldestTree && (
-						<p className="text-blue-gray text-sm">
+						<p className="text-sm text-blue-gray">
 							Active since{' '}
 							{new Date(oldestTree).toLocaleDateString('en-US', {
 								year: 'numeric',
@@ -57,7 +57,7 @@ const ProfilePage = async ({ id }: Props) => {
 							})}
 						</p>
 					)}
-					<p className="text-blue-gray text-sm">
+					<p className="text-sm text-blue-gray">
 						{user.trees.length} tree{user.trees.length !== 1 ? 's' : ''} •{' '}
 						{user.builds.length} build{user.builds.length !== 1 ? 's' : ''}
 					</p>
@@ -67,14 +67,14 @@ const ProfilePage = async ({ id }: Props) => {
 			{isOwnProfile && user.role !== 'admin' && (
 				<div className="haax-surface-3 -mt-5 items-center text-center md:flex-row">
 					{user.role === 'supporter' ? (
-						<p className="text-supporter grow text-sm">
+						<p className="grow text-sm text-supporter">
 							<Heart className="mr-1 inline-block size-5" />
 							Thank you for supporting Talent Builder! Your support helps keep
 							the project online and actively maintained.
 						</p>
 					) : (
 						<>
-							<p className="text-supporter shrink grow text-lg">
+							<p className="shrink grow text-lg text-supporter">
 								Enjoying Talent Builder? Support development to help keep the
 								project online and unlock supporter perks.
 							</p>
@@ -118,7 +118,7 @@ const ProfilePage = async ({ id }: Props) => {
 						))}
 					</div>
 				) : (
-					<div className="haax-surface-6 text-blue-gray flex min-h-24 items-center justify-center text-center">
+					<div className="haax-surface-6 flex min-h-24 items-center justify-center text-center text-blue-gray">
 						No public trees created yet.
 					</div>
 				)}
@@ -142,7 +142,7 @@ const ProfilePage = async ({ id }: Props) => {
 						))}
 					</div>
 				) : (
-					<div className="haax-surface-6 text-blue-gray flex min-h-24 items-center justify-center text-center">
+					<div className="haax-surface-6 flex min-h-24 items-center justify-center text-center text-blue-gray">
 						No builds created yet.
 					</div>
 				)}
@@ -168,7 +168,7 @@ const ProfilePage = async ({ id }: Props) => {
 						))}
 					</div>
 				) : (
-					<div className="haax-surface-6 text-blue-gray flex min-h-24 items-center justify-center text-center">
+					<div className="haax-surface-6 flex min-h-24 items-center justify-center text-center text-blue-gray">
 						No public collections created yet.
 					</div>
 				)}

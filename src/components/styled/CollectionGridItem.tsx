@@ -25,19 +25,19 @@ const CollectionGridItem = ({ item, href }: Props) => {
 				<>
 					<h4 className="haax-color text-xl">{item.name}</h4>
 					{item.visibility === 'private' && (
-						<span className="text-warm-green flex items-center gap-1 text-sm">
+						<span className="flex items-center gap-1 text-sm text-warm-green">
 							<EyeOff size={14} />
 							Private
 						</span>
 					)}
 					{date && (
-						<div className="text-blue-gray whitespace-nowrap">
+						<div className="whitespace-nowrap text-blue-gray">
 							Last updated:{' '}
 							<span>{new Date(date).toLocaleString('en-US')}</span>
 						</div>
 					)}
 					{item.createdBy && (
-						<div className="text-blue-gray flex items-center gap-1.5">
+						<div className="flex items-center gap-1.5 text-blue-gray">
 							Author: <UserAvatar image={item.createdBy.image} />{' '}
 							<UserRoleText role={item.createdBy.role}>
 								{item.createdBy.name}
@@ -56,7 +56,7 @@ const CollectionGridItem = ({ item, href }: Props) => {
 				<Link
 					href={href}
 					prefetch={false}
-					className="hocus:haax-highlight -mb-2 flex items-center gap-3 p-2"
+					className="-mb-2 flex items-center gap-3 p-2 hocus:haax-highlight"
 					{...props}
 				>
 					<SpellIcon icon={item.icon} showDefault />
@@ -76,7 +76,7 @@ const CollectionGridItem = ({ item, href }: Props) => {
 						<div className="flex items-center gap-1.5">
 							<UserAvatar image={item.createdBy?.image} />
 
-							<span className="text-blue-gray shrink truncate overflow-hidden whitespace-nowrap">
+							<span className="shrink truncate overflow-hidden whitespace-nowrap text-blue-gray">
 								{date ? getLastUpdatedString(date) : 'Local only'}
 							</span>
 						</div>

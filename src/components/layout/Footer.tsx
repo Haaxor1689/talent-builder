@@ -4,7 +4,7 @@ import TextButton from '#components/styled/TextButton.tsx';
 
 const Footer = async () => (
 	<>
-		<p className="text-blue-gray mx-auto -mb-2 max-w-7xl p-2 text-center text-xs">
+		<p className="mx-auto -mb-2 max-w-7xl p-2 text-center text-xs text-blue-gray">
 			All World of Warcraft assets (including images, logos, text, audio, and
 			other game content) used on this site are the property of Blizzard
 			Entertainment, Inc. and are used here with no claim of ownership or
@@ -12,13 +12,13 @@ const Footer = async () => (
 			Entertainment are trademarks or registered trademarks of Blizzard
 			Entertainment, Inc.
 		</p>
-		<footer className="text-blue-gray flex max-w-7xl flex-wrap items-center justify-center gap-3 p-2 md:px-6 md:py-2 xl:mx-auto xl:w-full">
-			<p className="text-blue-gray truncate text-sm whitespace-nowrap">
+		<footer className="flex max-w-7xl flex-wrap items-center justify-center gap-3 p-2 text-blue-gray md:px-6 md:py-2 xl:mx-auto xl:w-full">
+			<p className="truncate text-sm whitespace-nowrap text-blue-gray">
 				Created by{' '}
 				<TextButton
 					type="link"
 					href="https://haaxor1689.dev/"
-					className="text-blue-gray -m-2 inline-flex text-sm"
+					className="-m-2 inline-flex text-sm text-blue-gray"
 				>
 					Haaxor1689
 				</TextButton>
@@ -43,7 +43,7 @@ const Footer = async () => (
 				type="link"
 				href="https://discord.gg/pDeTHQH99B"
 				icon={<Bug />}
-				className="text-orange icon-size-4 -m-2 text-sm"
+				className="-m-2 text-sm text-orange icon-size-4"
 			>
 				Report a bug
 			</TextButton>
@@ -51,7 +51,7 @@ const Footer = async () => (
 			<TextButton
 				type="link"
 				href="https://haaxor1689.dev/privacy-policy"
-				className="text-blue-gray -m-2 text-sm"
+				className="-m-2 text-sm text-blue-gray"
 			>
 				Privacy Policy
 			</TextButton>
@@ -60,7 +60,7 @@ const Footer = async () => (
 				type="link"
 				href="/changelog"
 				icon={<ScrollText className="size-4" />}
-				className="text-blue-gray -m-2 text-sm"
+				className="-m-2 text-sm text-blue-gray"
 			>
 				Changelog
 			</TextButton>

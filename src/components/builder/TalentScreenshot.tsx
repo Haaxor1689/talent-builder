@@ -33,7 +33,7 @@ const TalentScreenshot = ({ selected }: { selected: number }) => {
 				</TextButton>
 				<div ref={ref} className="flex items-start gap-2">
 					<SpellIcon icon={item.icon} showDefault />
-					<div className="haax-surface-3 pointer-events-none z-10 max-w-100 min-w-62.5">
+					<div className="pointer-events-none haax-surface-3 z-10 max-w-100 min-w-62.5">
 						<h4 className="haax-color">{item.name ?? '[Empty talent]'}</h4>
 						<TalentDescription field={item} />
 					</div>

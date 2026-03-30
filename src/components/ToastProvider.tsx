@@ -27,7 +27,7 @@ const ToastComponent = ({ id, type, message }: ToastProps) => {
 				: CircleHelp;
 
 	return (
-		<div className="haax-surface-3 bg-dark-gray max-w-md min-w-xs">
+		<div className="haax-surface-3 max-w-md min-w-xs bg-dark-gray">
 			<div className="flex gap-2">
 				<Icon
 					size={18}

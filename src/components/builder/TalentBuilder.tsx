@@ -49,7 +49,7 @@ const TalentBuilder = ({ defaultValues }: Props) => {
 
 				<hr />
 
-				<div className="-m-3 flex flex-col md:flex-row md:justify-center md:min-h-184">
+				<div className="-m-3 flex flex-col md:min-h-184 md:flex-row md:justify-center">
 					<div className="relative flex grow">
 						<ScrollArea
 							ref={treeElemRef}
@@ -86,12 +86,12 @@ const TalentBuilder = ({ defaultValues }: Props) => {
 						</div>
 						<div className="absolute bottom-3 left-3 flex flex-col items-start gap-2">
 							{isLocal ? (
-								<p className="text-blue-gray flex items-center gap-1 text-sm">
+								<p className="flex items-center gap-1 text-sm text-blue-gray">
 									<CloudOff size={14} />
 									Local only
 								</p>
 							) : defaultValues.visibility === 'private' ? (
-								<p className="text-warm-green flex items-center gap-1 text-sm">
+								<p className="flex items-center gap-1 text-sm text-warm-green">
 									<EyeOff size={14} />
 									Private
 								</p>
@@ -102,7 +102,7 @@ const TalentBuilder = ({ defaultValues }: Props) => {
 								</p>
 							)}
 							{defaultValues.createdBy && (
-								<div className="text-blue-gray flex items-center gap-1.5">
+								<div className="flex items-center gap-1.5 text-blue-gray">
 									Author:{' '}
 									<TextButton
 										icon={<UserAvatar image={defaultValues.createdBy?.image} />}
@@ -120,7 +120,7 @@ const TalentBuilder = ({ defaultValues }: Props) => {
 						<PointsSummary />
 					</div>
 
-					<div className="border-gray/40 shrink grow border-t md:ml-0 md:w-lg md:border-t-0 md:border-l">
+					<div className="shrink grow border-t border-gray/40 md:ml-0 md:w-lg md:border-t-0 md:border-l">
 						{selected === -1 ? (
 							<Notes editable={editable} />
 						) : (

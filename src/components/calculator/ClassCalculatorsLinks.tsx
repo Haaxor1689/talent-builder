@@ -19,7 +19,7 @@ const ClassCalculatorsLinks = ({ urlBase }: Props) => (
 				<Link
 					key={e.name}
 					href={`${urlBase}${e.name.toLocaleLowerCase()}`}
-					className="hocus:haax-highlight flex flex-col items-center gap-1 p-4 pb-2"
+					className="flex flex-col items-center gap-1 p-4 pb-2 hocus:haax-highlight"
 				>
 					<SpellIcon icon={e.icon} className="size-12" />
 					<span style={{ color: e.color }}>{e.name}</span>

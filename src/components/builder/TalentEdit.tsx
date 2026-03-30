@@ -47,18 +47,18 @@ const RequiredTalent = ({ selected, editable }: Props) => {
 	if (!requires && !editable) return <p className="text-blue-gray">Nothing</p>;
 	if (typeof requiresId !== 'number' && !requires) return null;
 	return (
-		<div className="flex items-center gap-3 shrink">
+		<div className="flex shrink items-center gap-3">
 			{requires ? (
 				<>
 					<SpellIcon icon={requires.icon} className="size-12" showDefault />
-					<p className="haax-color grow font-bold shrink">
+					<p className="haax-color shrink grow font-bold">
 						{requires.name || '[Unnamed talent]'}
 					</p>
 				</>
 			) : (
 				<>
-					<AlertTriangle className="text-red m-2 size-8" />
-					<span className="text-red grow shrink">
+					<AlertTriangle className="m-2 size-8 text-red" />
+					<span className="shrink grow text-red">
 						Missing talent #{requiresId}. Please change this link.
 					</span>
 				</>
@@ -109,15 +109,15 @@ const TalentEdit = ({
 		);
 
 	return (
-		<div className="flex flex-col gap-4 p-3 h-full">
-			<div className="flex items-center flex-wrap justify-end">
-				<div className="flex items-center gap-2 grow shrink">
+		<div className="flex h-full flex-col gap-4 p-3">
+			<div className="flex flex-wrap items-center justify-end">
+				<div className="flex shrink grow items-center gap-2">
 					<IconPicker name={`talents.${selected}.icon`} disabled={!editable} />
 					<Input
 						placeholder="No talent name..."
 						{...register(`talents.${selected}.name`)}
 						disabled={!editable}
-						className="shrink grow [&_input]:text-xl min-w-48"
+						className="min-w-48 shrink grow [&_input]:text-xl"
 					/>
 				</div>
 
@@ -150,7 +150,7 @@ const TalentEdit = ({
 				{...register(`talents.${selected}.description`, nullableInput)}
 				label="Description:"
 				disabled={!editable}
-				className="grow-2 shrink"
+				className="shrink grow-2"
 			/>
 
 			<div className="flex flex-col gap-2">

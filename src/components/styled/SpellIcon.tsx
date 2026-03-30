@@ -59,7 +59,7 @@ const SpellIcon = ({
 				<img
 					src="/icon_hover.png"
 					alt="hover"
-					className="pointer-events-none absolute inset-0 hidden size-full p-[5%] group-hover/icon:block group-focus/icon:block [image-rendering:pixelated]"
+					className="pointer-events-none absolute inset-0 hidden size-full p-[5%] [image-rendering:pixelated] group-hover/icon:block group-focus/icon:block"
 				/>
 			)}
 
@@ -67,7 +67,7 @@ const SpellIcon = ({
 			{!!ranks && (
 				<p
 					className={cls(
-						'bg-dark-gray absolute right-1 bottom-1 translate-x-1/2 translate-y-1/2 rounded border-0 px-1',
+						'absolute right-1 bottom-1 translate-x-1/2 translate-y-1/2 rounded border-0 bg-dark-gray px-1',
 						{
 							'text-green': currentRank !== undefined && ranks !== currentRank,
 							'text-yellow': currentRank !== undefined && ranks === currentRank

@@ -11,8 +11,8 @@ const Cta = ({
 	isSupporter: boolean;
 }) =>
 	isSupporter ? null : (
-		<div className="flex gap-2 items-center flex-col sm:flex-row">
-			<p className="text-supporter shrink">
+		<div className="flex flex-col items-center gap-2 sm:flex-row">
+			<p className="shrink text-supporter">
 				<LockKeyhole className="mr-1 inline-block" />
 				{featureName ?? 'This feature'} is a supporter feature. Support
 				development to unlock it.

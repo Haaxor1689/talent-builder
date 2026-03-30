@@ -23,8 +23,8 @@ const Notes = ({ editable }: Props) => {
 			<ScrollArea
 				containerClassName="h-full"
 				contentClassName={cls(
-					'p-3 flex flex-col gap-3 min-h-32',
-					!field.value && 'text-center justify-center h-full'
+					'flex min-h-32 flex-col gap-3 p-3',
+					!field.value && 'h-full justify-center text-center'
 				)}
 			>
 				{editable && (
@@ -41,20 +41,20 @@ const Notes = ({ editable }: Props) => {
 		);
 
 	return (
-		<div className="relative flex h-full flex-col min-h-32">
+		<div className="relative flex h-full min-h-32 flex-col">
 			<TextareaAutosize
 				value={field.value}
 				minRows={3}
 				onChange={e => field.onChange(e.currentTarget.value || null)}
 				placeholder="No notes..."
-				className="haax-input-hocus shrink grow p-3"
+				className="shrink grow haax-input-hocus p-3"
 			/>
 			<TextButton
 				icon={<Markdown />}
 				type="link"
 				href="https://www.markdownguide.org/basic-syntax/"
 				external
-				className="text-blue-gray icon-size-5 absolute bottom-2 left-2 text-sm italic"
+				className="absolute bottom-2 left-2 text-sm text-blue-gray italic icon-size-5"
 			>
 				Markdown supported
 			</TextButton>

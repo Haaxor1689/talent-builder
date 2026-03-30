@@ -101,7 +101,7 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 							</TextButton>
 						) : (
 							<TextButton
-								icon={<p className="h1 -my-4 pb-1.5 pr-1">+</p>}
+								icon={<p className="-my-4 pr-1 pb-1.5 h1">+</p>}
 								onClick={e => {
 									setSelected(i);
 									setValue(`talents.${i}`, Talent.parse({}), {

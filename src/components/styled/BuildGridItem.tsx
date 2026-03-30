@@ -28,7 +28,7 @@ const BuildGridItem = (item: Props) => {
 					</h4>
 					{item.createdBy && (
 						<>
-							<p className="text-blue-gray whitespace-nowrap">
+							<p className="whitespace-nowrap text-blue-gray">
 								Last updated:{' '}
 								<span>
 									{new Date(item.updatedAt ?? item.createdAt).toLocaleString(
@@ -36,7 +36,7 @@ const BuildGridItem = (item: Props) => {
 									)}
 								</span>
 							</p>
-							<div className="text-blue-gray flex items-center gap-1.5">
+							<div className="flex items-center gap-1.5 text-blue-gray">
 								Author: <UserAvatar image={item.createdBy.image} />{' '}
 								<UserRoleText role={item.createdBy.role}>
 									{item.createdBy.name}
@@ -55,7 +55,7 @@ const BuildGridItem = (item: Props) => {
 			{props => (
 				<Link
 					href={item.href}
-					className="hocus:haax-highlight -mb-2 flex items-center gap-3 p-2"
+					className="-mb-2 flex items-center gap-3 p-2 hocus:haax-highlight"
 					prefetch={false}
 					{...props}
 				>
@@ -68,7 +68,7 @@ const BuildGridItem = (item: Props) => {
 							{item.name ? `${item.name} ` : ''}
 							{classInfo?.name}
 						</p>
-						<div className="text-blue-gray flex items-center gap-1.5 truncate">
+						<div className="flex items-center gap-1.5 truncate text-blue-gray">
 							<UserAvatar image={item.createdBy?.image} />
 							{item.createdBy.name === 'TurtleWoW'
 								? 'TurtleWoW'

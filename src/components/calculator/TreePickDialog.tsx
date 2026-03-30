@@ -89,7 +89,7 @@ const TreePickDialog = ({ idx, trigger }: Props) => {
 					<Spinner className="icon-size-8" />
 				</div>
 			) : !items.data?.pages[0]?.items?.length ? (
-				<div className="text-blue-gray flex h-135 grow items-center justify-center">
+				<div className="flex h-135 grow items-center justify-center text-blue-gray">
 					No results found
 				</div>
 			) : (

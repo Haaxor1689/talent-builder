@@ -26,7 +26,7 @@ const changelogText = dedent`
 
 const Page = () => (
 	<>
-		<h2 className="haax-color -mb-3 text-center md:text-left">Changelog</h2>
+		<h2 className="-mb-3 haax-color text-center md:text-left">Changelog</h2>
 		<div className="haax-surface-3 md:haax-surface-5">
 			<Md text={changelogText} />
 		</div>

@@ -15,7 +15,7 @@ export const UserRoleText = ({
 }) => (
 	<span
 		className={cls(className, {
-			'text-green font-bold': role === 'admin',
+			'font-bold text-green': role === 'admin',
 			'text-supporter': role === 'supporter'
 		})}
 	>

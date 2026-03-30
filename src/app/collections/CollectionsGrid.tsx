@@ -54,14 +54,14 @@ const CollectionsGrid = () => {
 
 	if (collections.isLoading)
 		return (
-			<div className="haax-surface-6 text-blue-gray grow items-center justify-center text-center">
+			<div className="haax-surface-6 grow items-center justify-center text-center text-blue-gray">
 				<Spinner className="icon-size-8" />
 			</div>
 		);
 
 	if (!collections.data?.pages[0]?.items.length)
 		return (
-			<div className="haax-surface-6 text-blue-gray grow items-center justify-center text-center">
+			<div className="haax-surface-6 grow items-center justify-center text-center text-blue-gray">
 				No collections found
 			</div>
 		);

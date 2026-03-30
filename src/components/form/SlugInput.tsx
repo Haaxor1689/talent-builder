@@ -22,12 +22,12 @@ const SlugInput = ({ placeholder, slug, setSlug, url }: Props) => {
 			onChange={e => setSlug(e.target.value || null)}
 			placeholder={placeholder ?? '...'}
 			disabled={locked}
-			before={<p className="text-blue-gray -mr-2">{url}</p>}
+			before={<p className="-mr-2 text-blue-gray">{url}</p>}
 			after={
 				locked && (
 					<>
 						<LockKeyhole className="text-supporter" />
-						<p className="text-supporter hidden sm:inline">Supporter only</p>
+						<p className="hidden text-supporter sm:inline">Supporter only</p>
 					</>
 				)
 			}

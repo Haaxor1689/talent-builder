@@ -10,6 +10,7 @@ import tseslint from 'typescript-eslint';
 import eslintReact from '@eslint-react/eslint-plugin';
 
 export default defineConfig([
+	// TODO: MIgrate
 	configPrettier,
 	...configNextVitals,
 	...configNextTypescript,

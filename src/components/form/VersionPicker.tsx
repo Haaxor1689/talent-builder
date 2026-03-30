@@ -45,7 +45,7 @@ const VersionPicker = ({ name, required, disabled }: Props) => {
 							field.onBlur();
 							closeDialog(e);
 						}}
-						className="text-red -m-2"
+						className="-m-2 text-red"
 					>
 						Clear
 					</TextButton>

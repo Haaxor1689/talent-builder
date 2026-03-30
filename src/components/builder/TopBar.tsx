@@ -66,7 +66,7 @@ const TopBar = ({ editable, isNew }: Props) => {
 					placeholder="No tree name..."
 					{...register('name', nullableInput)}
 					disabled={!editable}
-					className="shrink grow [&_input]:text-3xl min-w-64"
+					className="min-w-64 shrink grow [&_input]:text-3xl"
 				/>
 			</div>
 

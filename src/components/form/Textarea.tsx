@@ -32,12 +32,12 @@ const Textarea = ({
 				}
 			}}
 			{...props}
-			className={cls('haax-input-underline shrink grow', {
+			className={cls('shrink haax-input-underline grow', {
 				'haax-input-hocus': !props.disabled,
 				'haax-input-error': error
 			})}
 		/>
-		{error && <p className="text-red text-sm">{error}</p>}
+		{error && <p className="text-sm text-red">{error}</p>}
 	</div>
 );
 
