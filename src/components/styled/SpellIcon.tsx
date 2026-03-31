@@ -3,6 +3,8 @@ import { type HTMLAttributes } from 'react';
 
 import { getIconPath } from '#utils/index.ts';
 
+import FallbackImage from './FallbackImage';
+
 type Props = HTMLAttributes<HTMLElement> & {
 	icon?: string | null;
 	fallbackIcon?: string;
@@ -40,12 +42,10 @@ const SpellIcon = ({
 			)}
 		>
 			{(!!showDefault || !!icon) && (
-				<img
+				<FallbackImage
 					src={getIconPath(icon)}
 					alt={`${icon ?? 'empty'} icon`}
-					onError={e => {
-						if (fallbackIcon) e.currentTarget.src = fallbackIcon;
-					}}
+					fallback={fallbackIcon}
 					className="size-[87.5%] object-contain"
 				/>
 			)}

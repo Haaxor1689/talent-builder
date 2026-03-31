@@ -150,7 +150,7 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 						}
 
 						setDragging(true);
-						e.dataTransfer.setData('text', `idx:${i}`);
+						e.dataTransfer.setData('text/plain', `idx:${i}`);
 						e.dataTransfer.dropEffect = 'move';
 						e.dataTransfer.setDragImage(e.currentTarget, 0, 0);
 						window.addEventListener('dragend', () => setDragging(false), {
@@ -164,7 +164,9 @@ const TalentPreview = ({ i, selected, setSelected, editable }: Props) => {
 					onDrop={e => {
 						if (!editable) return;
 						e.preventDefault();
-						const idx = e.dataTransfer.getData('text').match(/idx:(\d+)/)?.[1];
+						const idx = e.dataTransfer
+							.getData('text/plain')
+							.match(/idx:(\d+)/)?.[1];
 						if (!idx) return;
 						swapTalents(i, Number(idx));
 					}}

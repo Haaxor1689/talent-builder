@@ -114,7 +114,7 @@ const CollectionPage = ({ defaultValues, trees }: Props) => {
 							onDrop={e => {
 								if (!editable || !dragging) return;
 								e.preventDefault();
-								const treeId = e.dataTransfer.getData('text');
+								const treeId = e.dataTransfer.getData('text/plain');
 
 								const newAssignedTrees = { ...assignedTrees };
 								const key = Object.entries(assignedTrees).find(
@@ -148,7 +148,7 @@ const CollectionPage = ({ defaultValues, trees }: Props) => {
 										}
 
 										setDragging(true);
-										e.dataTransfer.setData('text', tree.id);
+										e.dataTransfer.setData('text/plain', tree.id);
 										e.dataTransfer.setDragImage(e.currentTarget, 0, 0);
 										window.addEventListener(
 											'dragend',
@@ -178,7 +178,7 @@ const CollectionPage = ({ defaultValues, trees }: Props) => {
 					if (!editable || !dragging) return;
 					e.preventDefault();
 					setDragging(false);
-					const treeId = e.dataTransfer.getData('text');
+					const treeId = e.dataTransfer.getData('text/plain');
 					const key = Object.entries(assignedTrees).find(
 						([_, id]) => id === treeId
 					)?.[0];
@@ -205,7 +205,7 @@ const CollectionPage = ({ defaultValues, trees }: Props) => {
 									}
 
 									setDragging(true);
-									e.dataTransfer.setData('text', tree.id);
+									e.dataTransfer.setData('text/plain', tree.id);
 									e.dataTransfer.setDragImage(e.currentTarget, 0, 0);
 									window.addEventListener('dragend', () => setDragging(false), {
 										once: true

@@ -4,6 +4,9 @@ import './src/env.js';
 const config = {
 	cacheComponents: true,
 	reactCompiler: true,
+	experimental: {
+		optimizePackageImports: ['lucide-react']
+	},
 	redirects: () => [
 		{
 			source: '/c/:slug*',

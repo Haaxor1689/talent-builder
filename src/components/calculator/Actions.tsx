@@ -83,7 +83,7 @@ const Actions = ({ trees, isNew }: Props) => {
 								})
 							);
 							toast({ message: 'Build saved!', type: 'success' });
-							router.push(`/calculator/${values.id}`);
+							router.push(`/calculator/${values.slug ?? values.id}`);
 							if (newBuild) reset(newBuild);
 							closeDialog({ currentTarget });
 						})}

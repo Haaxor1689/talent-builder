@@ -1,7 +1,7 @@
 import { type Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import CollectionPage from '#components/collection/ColletionPage.tsx';
+import CollectionPage from '#components/collection/CollectionPage.tsx';
 import { getCollection, getCollectionTrees } from '#server/api/collection.ts';
 import { invoke } from '#utils/index.ts';
 

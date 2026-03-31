@@ -63,7 +63,8 @@ const TreePickDialog = ({ idx, trigger }: Props) => {
 		});
 		observer.observe(bottomRef.current);
 		return () => observer.disconnect();
-	}, [items, items.isFetchingNextPage, items.hasNextPage, items.fetchNextPage]);
+		// oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps
+	}, [items.isFetchingNextPage, items.hasNextPage, items.fetchNextPage]);
 
 	return (
 		<Dialog

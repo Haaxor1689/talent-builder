@@ -45,7 +45,8 @@ const TreeGrid = () => {
 		});
 		observer.observe(bottomRef.current);
 		return () => observer.disconnect();
-	}, [trees, trees.isFetchingNextPage, trees.hasNextPage, trees.fetchNextPage]);
+		// oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps
+	}, [trees.isFetchingNextPage, trees.hasNextPage, trees.fetchNextPage]);
 
 	if (trees.isLoading)
 		return (

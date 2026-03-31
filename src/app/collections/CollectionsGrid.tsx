@@ -37,6 +37,7 @@ const CollectionsGrid = () => {
 
 	const bottomRef = useRef<HTMLDivElement>(null);
 	useEffect(() => {
+		console.log('useEffect');
 		if (
 			!bottomRef.current ||
 			collections.isFetchingNextPage ||
@@ -49,8 +50,8 @@ const CollectionsGrid = () => {
 		});
 		observer.observe(bottomRef.current);
 		return () => observer.disconnect();
+		// oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps
 	}, [
-		collections,
 		collections.isFetchingNextPage,
 		collections.hasNextPage,
 		collections.fetchNextPage
