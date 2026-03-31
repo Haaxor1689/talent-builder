@@ -2,6 +2,7 @@ import { logger } from '#utils/index.ts';
 
 export const bitPack = (raw: number[][]): string =>
 	raw
+		// oxlint-disable-next-line array-callback-return
 		.map(tree => {
 			// Trim trailing zeros for sparse arrays
 			const trimmed = Array.isArray(tree) ? [...tree] : [];
@@ -32,6 +33,7 @@ export const bitPack = (raw: number[][]): string =>
 		.join('-');
 
 export const legacyBitUnpack = (str: string): number[][] =>
+	// oxlint-disable-next-line typescript/no-misused-spread
 	str?.split('-').map(t => [...t].map(Number)) as never;
 
 export const bitUnpack = (raw: string): number[][] => {
@@ -50,6 +52,7 @@ export const bitUnpack = (raw: string): number[][] => {
 
 		try {
 			// Convert Base64 string to binary string
+			// oxlint-disable-next-line typescript/no-misused-spread
 			const binaryString = [...atob(padded)]
 				.map(char => char.charCodeAt(0).toString(2).padStart(8, '0'))
 				.join('');

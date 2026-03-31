@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { useController } from 'react-hook-form';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { Check, Filter } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { useController } from 'react-hook-form';
 
 import ScrollArea from '#components/styled/ScrollArea.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
@@ -14,7 +14,7 @@ import Dialog, { closeDialog } from '../styled/Dialog';
 import SpellIcon from '../styled/SpellIcon';
 import Input from './Input';
 
-type Props = { name: string; disabled?: boolean };
+type Props<T extends string> = { name: T; disabled?: boolean };
 
 const ICON_SIZE = 64;
 const GAP = 4;
@@ -29,8 +29,8 @@ const calculateCols = () => {
 	return Math.min(MAX_COLS, Math.max(MIN_COLS, availableCols));
 };
 
-const IconPicker = ({ name, disabled }: Props) => {
-	const { field } = useController({ name });
+const IconPicker = <T extends string>({ name, disabled }: Props<T>) => {
+	const { field } = useController<{ [name]: string }, T>({ name });
 	const parentRef = useRef<HTMLDivElement>(null);
 	const [cols, setCols] = useState(calculateCols);
 
@@ -42,11 +42,10 @@ const IconPicker = ({ name, disabled }: Props) => {
 
 	const [filter, setFilter] = useState('');
 	const debouncedFilter = useDebounced(filter);
-	const filteredIcons = Object.keys(iconList).filter(icon =>
-		icon.includes(debouncedFilter.toLocaleLowerCase())
-	);
+	const filteredIcons = Object.keys(iconList)
+		.filter(icon => icon.includes(debouncedFilter.toLocaleLowerCase()))
+		.toSorted();
 
-	// eslint-disable-next-line react-hooks/incompatible-library
 	const virtualizer = useVirtualizer({
 		count: Math.ceil(filteredIcons.length / cols),
 		getScrollElement: () => parentRef.current,
@@ -100,7 +99,7 @@ const IconPicker = ({ name, disabled }: Props) => {
 				</TextButton>
 			</div>
 
-			<p className="text-blue-gray -mb-2">Supported icon sources:</p>
+			<p className="-mb-2 text-blue-gray">Supported icon sources:</p>
 			<ul className="list-disc pl-5">
 				<li className="text-blue-gray">
 					Pick an icon from the list of available icons below.
@@ -145,8 +144,8 @@ const IconPicker = ({ name, disabled }: Props) => {
 
 			<ScrollArea
 				ref={parentRef}
-				containerClassName="h-66 -m-3"
-				contentClassName="p-3 min-h-66"
+				containerClassName="h-100 -m-3"
+				contentClassName="p-3 min-h-100"
 			>
 				<div
 					className="relative w-full"

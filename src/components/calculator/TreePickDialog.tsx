@@ -1,17 +1,17 @@
 'use client';
 
-import { type ComponentProps, Fragment, useEffect, useRef } from 'react';
-import { useForm, useWatch } from 'react-hook-form';
-import { usePathname, useSearchParams } from 'next/navigation';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import cls from 'classnames';
 import { ListFilter } from 'lucide-react';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { type ComponentProps, Fragment, useEffect, useRef } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
 
 import TreeGridItem from '#components/styled/TreeGridItem.tsx';
 import useDebounced from '#hooks/useDebounced.ts';
 import { listInfiniteTalentTrees } from '#server/api/talentTree.actions.ts';
-import { TreesFilters } from '#server/schemas.ts';
-import { zodResolver } from '#utils/index.ts';
+import { type BuildForm, TreesFilters } from '#server/schemas.ts';
+import { invoke, zodResolver } from '#utils/index.ts';
 
 import Input from '../form/Input';
 import Dialog, { closeDialog } from '../styled/Dialog';
@@ -27,8 +27,10 @@ const TreePickDialog = ({ idx, trigger }: Props) => {
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
 
-	const calculatorClass = useWatch({ name: 'class' });
-	const calculatorRows = useWatch({ name: 'rows' });
+	const calculatorClass = useWatch<BuildForm, 'class'>({
+		name: 'class'
+	});
+	const calculatorRows = useWatch<BuildForm, 'rows'>({ name: 'rows' });
 
 	const { register, watch } = useForm({ resolver: zodResolver(TreesFilters) });
 	const values = useDebounced(watch());
@@ -39,7 +41,13 @@ const TreePickDialog = ({ idx, trigger }: Props) => {
 			{ ...values, class: calculatorClass, rows: calculatorRows }
 		] as const,
 		queryFn: ({ queryKey, pageParam }) =>
-			listInfiniteTalentTrees({ ...queryKey[1], limit: 42, cursor: pageParam }),
+			invoke(
+				listInfiniteTalentTrees({
+					...queryKey[1],
+					limit: 42,
+					cursor: pageParam
+				})
+			),
 		initialPageParam: 0,
 		getNextPageParam: prev => prev.nextCursor,
 		staleTime: Infinity
@@ -51,18 +59,18 @@ const TreePickDialog = ({ idx, trigger }: Props) => {
 			return;
 		const observer = new IntersectionObserver(([o]) => {
 			if (!o?.isIntersecting) return;
-			items.fetchNextPage();
+			return items.fetchNextPage();
 		});
 		observer.observe(bottomRef.current);
 		return () => observer.disconnect();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [items.isFetchingNextPage, items.hasNextPage]);
+		// oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps
+	}, [items.isFetchingNextPage, items.hasNextPage, items.fetchNextPage]);
 
 	return (
 		<Dialog
 			trigger={trigger}
 			unstyled
-			className="haax-surface-0 w-full max-w-5xl"
+			className="haax-surface-0 w-full! max-w-[min(calc(100%-1rem),var(--container-5xl))]"
 		>
 			<div className="flex flex-col items-stretch gap-2 p-3 md:flex-row md:items-center">
 				<div className="flex grow items-center justify-between gap-2">
@@ -83,7 +91,7 @@ const TreePickDialog = ({ idx, trigger }: Props) => {
 					<Spinner className="icon-size-8" />
 				</div>
 			) : !items.data?.pages[0]?.items?.length ? (
-				<div className="text-blue-gray flex h-135 grow items-center justify-center">
+				<div className="flex h-135 grow items-center justify-center text-blue-gray">
 					No results found
 				</div>
 			) : (
@@ -96,7 +104,7 @@ const TreePickDialog = ({ idx, trigger }: Props) => {
 							{page.items.map(item => (
 								<TreeGridItem
 									key={item.id}
-									{...item}
+									item={item}
 									href={`${pathname}?${new URLSearchParams({
 										...Object.fromEntries(searchParams.entries()),
 										[`t${idx}`]: item.id

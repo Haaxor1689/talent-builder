@@ -12,7 +12,7 @@ const Scrollbar = (props: { orientation: 'vertical' | 'horizontal' }) => (
 	<Base.Scrollbar orientation={props.orientation} className="group/scrollbar">
 		<Base.Thumb
 			className={cls(
-				'group-hover/scroll:bg-blue-gray/50 group-hover/scrollbar:bg-blue-gray/80 cursor-pointer p-1 transition-colors'
+				'cursor-pointer p-1 transition-colors group-hover/scroll:bg-blue-gray/50 group-hover/scrollbar:bg-blue-gray/80'
 			)}
 		/>
 	</Base.Scrollbar>
@@ -30,7 +30,7 @@ const ScrollArea = ({
 			containerClassName
 		)}
 	>
-		<Base.Viewport className="shrink" ref={ref}>
+		<Base.Viewport className="shrink grow" ref={ref}>
 			<Base.Content className={contentClassName}>{children}</Base.Content>
 		</Base.Viewport>
 		<Scrollbar orientation="vertical" />

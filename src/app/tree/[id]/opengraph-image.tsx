@@ -1,6 +1,6 @@
-/* eslint-disable jsx-a11y/alt-text */
-
 import { env } from '#env.js';
+import { type getOgInfo } from '#server/api/openGraph.ts';
+import { type ServerFunctionReturn } from '#server/helpers.ts';
 import {
 	imageResponse,
 	imageSize,
@@ -13,9 +13,11 @@ export const contentType = 'image/webp';
 
 const Image = async ({ params }: PageProps<'/tree/[id]'>) => {
 	const { id } = await params;
-	const r = await fetch(`${env.DEPLOY_URL}/api/og/${id}`).then(r => r.json());
+	const r = await fetch(`${env.DEPLOY_URL}/api/og/${id}`).then(
+		r => r.json() as Promise<ServerFunctionReturn<typeof getOgInfo>>
+	);
 	if (!r) return undefined;
-	return imageResponse(
+	return await imageResponse(
 		<div
 			style={{
 				width: '100%',
@@ -52,11 +54,13 @@ const Image = async ({ params }: PageProps<'/tree/[id]'>) => {
 				>
 					<img
 						src={getIconPath(r.icon, env.DEPLOY_URL)}
+						alt={`${r.name} Icon`}
 						width={112}
 						height={112}
 					/>
 					<img
 						src={`${env.DEPLOY_URL}/icon_frame.png`}
+						alt="Frame"
 						width={128}
 						height={128}
 						style={{ position: 'absolute' }}
@@ -67,38 +71,37 @@ const Image = async ({ params }: PageProps<'/tree/[id]'>) => {
 				</span>
 			</div>
 
-			{r.createdBy && (
-				<div
+			<div
+				style={{
+					display: 'flex',
+					alignItems: 'center',
+					gap: 16,
+					fontSize: 48
+				}}
+			>
+				<span style={{ color: '#929391' }}>Created by</span>
+				{r.createdBy.image && (
+					<img
+						src={`${r.createdBy.image}?size=64`}
+						alt={`${r.createdBy.name}'s avatar`}
+						width={64}
+						height={64}
+						style={{ borderRadius: '100%' }}
+					/>
+				)}
+				<span
 					style={{
-						display: 'flex',
-						alignItems: 'center',
-						gap: 16,
-						fontSize: 48
+						color:
+							r.createdBy.role === 'admin'
+								? '#8dd958'
+								: r.createdBy.role === 'supporter'
+									? '#41c8d4'
+									: 'white'
 					}}
 				>
-					<span style={{ color: '#929391' }}>Created by</span>
-					{r.createdBy?.image && (
-						<img
-							src={`${r.createdBy.image}?size=64`}
-							width={64}
-							height={64}
-							style={{ borderRadius: '100%' }}
-						/>
-					)}
-					<span
-						style={{
-							color:
-								r.createdBy.role === 'admin'
-									? '#8dd958'
-									: r.createdBy.role === 'supporter'
-										? '#41c8d4'
-										: 'white'
-						}}
-					>
-						{r.createdBy.name}
-					</span>
-				</div>
-			)}
+					{r.createdBy.name}
+				</span>
+			</div>
 		</div>
 	);
 };

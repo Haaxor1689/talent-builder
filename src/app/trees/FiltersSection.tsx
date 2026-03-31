@@ -1,8 +1,8 @@
 'use client';
 
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useSearchParams } from 'next/navigation';
 
 import ClassPicker from '#components/form/ClassPicker.tsx';
 import Input from '#components/form/Input.tsx';
@@ -27,7 +27,6 @@ const FiltersSection = () => {
 	});
 	const { register, watch } = formProps;
 
-	// eslint-disable-next-line react-hooks/incompatible-library
 	const values = useDebounced(watch(), 500);
 	useEffect(() => {
 		const params = new URLSearchParams(searchParams.toString());

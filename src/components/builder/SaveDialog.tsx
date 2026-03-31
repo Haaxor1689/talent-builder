@@ -1,24 +1,29 @@
 'use client';
 
-import { useState, useTransition } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
 import { Save, X } from 'lucide-react';
+import { nanoid } from 'nanoid';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
 
+import Input from '#components/form/Input.tsx';
+import SlugInput from '#components/form/SlugInput.tsx';
+import useAsyncAction from '#hooks/useAsyncAction.tsx';
 import useLocalTrees from '#hooks/useLocalTrees.ts';
 import {
 	deleteTalentTree,
 	upsertTalentTree
 } from '#server/api/talentTree.actions.ts';
 import { type TalentForm } from '#server/schemas.ts';
+import { invoke } from '#utils/index.ts';
 
+import VisibilityInput from '../form/VisibilityInput';
 import Dialog, { closeDialog } from '../styled/Dialog';
 import TextButton from '../styled/TextButton';
 import { toast } from '../ToastProvider';
-import { VisibilityInput } from './VisibilityInput';
 
-const SaveDialog = ({ disabled }: { disabled?: boolean }) => {
-	const [isPending, startTransition] = useTransition();
+const SaveDialog = () => {
+	const [isPending, startTransition] = useAsyncAction();
 
 	const router = useRouter();
 
@@ -26,28 +31,41 @@ const SaveDialog = ({ disabled }: { disabled?: boolean }) => {
 
 	const { getValues, reset } = useFormContext<TalentForm>();
 
-	const name = useWatch({ name: 'name' });
-	const [visibility, setVisibility] = useState<TalentForm['visibility']>(
-		useWatch({ name: 'visibility' })
-	);
+	const id = useWatch<TalentForm, 'id'>({ name: 'id' });
+	const name = useWatch<TalentForm, 'name'>({ name: 'name' });
+	const slug = useWatch<TalentForm, 'slug'>({ name: 'slug' });
+	const visibility = useWatch<TalentForm, 'visibility'>({ name: 'visibility' });
+
+	const [newSlug, setNewSlug] = useState(slug);
+	const [newVisibility, setNewVisibility] = useState(visibility);
+
+	const changingStorage =
+		visibility !== newVisibility && (!visibility || !newVisibility);
+	const newId = changingStorage ? nanoid(10) : id;
 
 	return (
 		<Dialog
 			trigger={open => (
-				<TextButton
-					icon={<Save />}
-					title="Save"
-					onClick={open}
-					disabled={disabled}
-				/>
+				<TextButton icon={<Save />} title="Save" onClick={open} />
 			)}
-			className="w-full"
 		>
-			<h3 className="haax-color">Save changes to &quot;{name}&quot;</h3>
+			<h3 className="haax-color">Save changes</h3>
 
 			<hr />
 
-			<VisibilityInput visibility={visibility} setVisibility={setVisibility} />
+			<Input label="Name:" value={name} disabled />
+			{!!newVisibility && (
+				<SlugInput
+					placeholder={newId}
+					slug={newSlug}
+					setSlug={setNewSlug}
+					url="/tree/"
+				/>
+			)}
+			<VisibilityInput
+				visibility={newVisibility}
+				setVisibility={setNewVisibility}
+			/>
 
 			<hr />
 
@@ -57,30 +75,36 @@ const SaveDialog = ({ disabled }: { disabled?: boolean }) => {
 				</TextButton>
 				<TextButton
 					icon={<Save />}
-					onClick={e => {
-						const currentTarget = e.currentTarget;
-						startTransition(async () => {
-							const values = getValues();
-							const tree = { ...values, visibility };
-							const isNew = tree.createdBy === null;
-							const shouldDelete = !isNew && values.visibility !== visibility;
-							if (!tree.visibility) {
-								upsertTree(tree);
-								if (shouldDelete) await deleteTalentTree({ id: tree.id });
-								if (isNew) router.push(`/local?tree=${tree.id}`);
-							} else {
-								await upsertTalentTree(tree);
-								if (shouldDelete) deleteTree(tree.id);
-								if (isNew) router.push(`/tree/${tree.id}`);
-							}
-							toast({
-								message: 'Changes saved successfully!',
-								type: 'success'
-							});
-							if (!isNew) reset(tree);
-							closeDialog({ currentTarget });
+					onClick={startTransition(async currentTarget => {
+						const old = getValues();
+						const tree = {
+							...old,
+							id: newId,
+							slug: newVisibility ? newSlug : null,
+							visibility: newVisibility
+						};
+						const isNew = tree.createdAt === null;
+						const shouldDelete = !isNew && changingStorage;
+
+						if (!tree.visibility) {
+							upsertTree(tree);
+							if (shouldDelete) await invoke(deleteTalentTree({ id: old.id }));
+						} else {
+							await invoke(upsertTalentTree(tree));
+							if (shouldDelete) deleteTree(old.id);
+						}
+						toast({
+							message: 'Changes saved successfully!',
+							type: 'success'
 						});
-					}}
+						router.push(
+							newVisibility
+								? `/tree/${newSlug ?? newId}`
+								: `/local?tree=${newId}`
+						);
+						reset(tree, { keepDefaultValues: false });
+						closeDialog({ currentTarget });
+					})}
 					loading={isPending}
 				>
 					Save

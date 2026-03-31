@@ -1,54 +1,79 @@
 import 'server-only';
-
 import { type NextRequest, NextResponse } from 'next/server';
 import { type z } from 'zod';
 
 import { getError } from '#utils/errors.ts';
 import { logger } from '#utils/index.ts';
 
-type InputType = z.AnyZodObject | z.ZodUndefined;
+type InputType = z.ZodObject<any> | z.ZodUndefined;
 
 type ProcedureFn<
 	Input extends InputType,
 	SessionType
 > = SessionType extends never
-	? (input: z.infer<Input>) => Promise<unknown>
-	: (input: z.infer<Input>, session: Awaited<SessionType>) => Promise<unknown>;
+	? (input: z.output<Input>) => Promise<unknown>
+	: (input: z.output<Input>, session: Awaited<SessionType>) => Promise<unknown>;
+
+export type ProcedureResult<Return> =
+	| { ok: true; data: Return }
+	| { ok: false; error: unknown };
 
 type ProcedureReturn<
 	SessionType,
 	Func extends ProcedureFn<Input, SessionType>,
-	Input extends InputType
+	Input extends InputType,
+	Return = Awaited<ReturnType<Func>>
 > =
-	z.infer<Input> extends undefined
-		? () => Promise<Awaited<ReturnType<Func>>>
-		: (val: z.infer<Input>) => Promise<Awaited<ReturnType<Func>>>;
+	z.output<Input> extends undefined
+		? () => Promise<ProcedureResult<Return>>
+		: (val: z.output<Input>) => Promise<ProcedureResult<Return>>;
 
 type QueryProps<
 	SessionType,
 	Func extends ProcedureFn<Input, SessionType>,
-	Input extends InputType
+	Input extends InputType,
+	Return = Awaited<ReturnType<Func>>
 > = {
 	input?: Input;
 	session?: () => SessionType;
 	query: Func;
+	transform?: (r: Awaited<ReturnType<Func>>) => Promise<Return>;
 };
+
+export type ServerFunctionReturn<
+	Func extends (...args: any[]) => Promise<ProcedureResult<unknown>>
+> = Awaited<ReturnType<Func>> extends ProcedureResult<infer R> ? R : never;
 
 export const serverFunction = <
 	SessionType,
 	Func extends ProcedureFn<Input, SessionType>,
-	Input extends InputType = z.ZodUndefined
+	Input extends InputType = z.ZodUndefined,
+	Return = Awaited<ReturnType<Func>>
 >({
 	input,
 	session,
-	query
-}: QueryProps<SessionType, Func, Input>) =>
+	query,
+	transform
+}: QueryProps<SessionType, Func, Input, Return>) =>
 	(async (val: z.infer<Input>) => {
-		const s = session ? await session() : null;
-		const value = input?.parse(val);
-		// TODO: Error handling
-		return query(value, s as never);
-	}) as ProcedureReturn<SessionType, Func, Input>;
+		try {
+			const s = session ? await session() : null;
+			const value = input?.parse(val);
+			const result = await query(value as never, s as never);
+			return {
+				ok: true,
+				data: transform ? await transform(result as never) : result
+			};
+		} catch (err) {
+			const error = getError(err);
+			logger.error({
+				source: 'API function error',
+				input: val,
+				error
+			});
+			return { ok: false, error };
+		}
+	}) as ProcedureReturn<SessionType, Func, Input, Return>;
 
 type RouteInput = Record<string, string | string[]>;
 
@@ -70,7 +95,7 @@ export const serverRoute =
 				context: {
 					method: req.method,
 					url: req.url,
-					headers: Object.fromEntries(req.headers)
+					headers: Object.fromEntries(req.headers as never)
 				},
 				error
 			});

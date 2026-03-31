@@ -24,6 +24,7 @@
 	--color-tooltip-yellow: #ffd100;
 	--color-tooltip-green: #1eff00;
 	--color-tooltip-gray: #9d9d9d;
+	--color-supporter: #41c8d4;
 
 	--icon-size: calc(var(--spacing) * 6);
 	--spell-icon-size: calc(var(--spacing) * 16);
@@ -72,7 +73,7 @@
 
 @utility haax-color {
 	display: inline;
-	@apply from-yellow to-pink bg-linear-to-t;
+	@apply bg-linear-to-t from-yellow to-pink;
 	-webkit-box-decoration-break: clone;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
@@ -85,7 +86,7 @@
 	padding: calc(var(--spacing) * --value(integer, [integer]));
 	gap: calc(var(--spacing) * --value(integer, [integer]));
 	box-shadow: rgb(0 0 0 / 45%) 0px 25px 20px -20px;
-	@apply border-blue-gray/20 bg-dark-gray/70 border backdrop-blur-xs;
+	@apply border border-blue-gray/20 bg-dark-gray/70 backdrop-blur-xs;
 
 	& hr {
 		margin-left: calc(-1 * var(--spacing) * --value(integer, [integer]));
@@ -130,11 +131,11 @@
 }
 
 @utility haax-input {
-	@apply border-gray/40 bg-darker-gray/50 placeholder-blue-gray/70 grow border p-2;
+	@apply grow border border-gray/40 bg-darker-gray/50 p-2 placeholder-blue-gray/70;
 }
 
 @utility haax-input-hocus {
-	@apply hocus-within:border-blue-gray hocus-within:bg-dark-gray cursor-text transition-colors;
+	@apply cursor-text transition-colors hocus-within:border-blue-gray hocus-within:bg-dark-gray;
 }
 
 @utility haax-input-underline {
@@ -142,7 +143,7 @@
 }
 
 @utility haax-input-error {
-	@apply border-red/60 hocus-within:border-red hocus-within:bg-red/5 transition-colors;
+	@apply border-red/60 transition-colors hocus-within:border-red hocus-within:bg-red/5;
 }
 
 @layer components {

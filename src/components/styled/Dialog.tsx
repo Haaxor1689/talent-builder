@@ -1,6 +1,6 @@
-import { useRef, useState } from 'react';
 import { Dialog as Base } from '@base-ui/react/dialog';
 import cls from 'classnames';
+import { useRef, useState } from 'react';
 
 export const closeDialog = (event: Pick<Event, 'currentTarget'>) => {
 	window.dispatchEvent(
@@ -43,7 +43,7 @@ const Dialog = ({
 			};
 			window.addEventListener('dialog-close', cbRef.current);
 		} else {
-			cbRef.current &&
+			if (cbRef.current)
 				window.removeEventListener('dialog-close', cbRef.current);
 			cbRef.current = null;
 		}
@@ -51,7 +51,6 @@ const Dialog = ({
 
 	return (
 		<Base.Root open={open} onOpenChange={handleOpenChange}>
-			{/* eslint-disable-next-line react-hooks/refs */}
 			{trigger(() => handleOpenChange(true))}
 			<Base.Portal>
 				<Base.Backdrop className="haax-backdrop-blur" />
@@ -59,7 +58,7 @@ const Dialog = ({
 					<Base.Popup
 						ref={ref}
 						className={cls(
-							'data-nested-dialog-open:after:haax-backdrop-blur fixed top-1/2 left-1/2 max-h-[calc(100vh-150px)] max-w-3xl -translate-x-1/2 -translate-y-1/2 transform',
+							'fixed top-1/2 left-1/2 max-h-[calc(100vh-150px)] w-max max-w-[min(calc(100%-1rem),var(--container-3xl))] -translate-x-1/2 -translate-y-1/2 transform data-nested-dialog-open:after:haax-backdrop-blur',
 							!unstyled && 'haax-surface-3',
 							className
 						)}

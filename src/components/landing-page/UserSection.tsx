@@ -24,7 +24,7 @@ const UserSection = () => {
 
 	return (
 		<div className="flex items-center gap-2">
-			<span className="text-blue-gray text-2xl">Welcome back</span>
+			<span className="text-2xl text-blue-gray">Welcome back</span>
 			<UserAvatar image={user.image} size={32} />
 			<UserRoleText role={user.role} className="text-2xl">
 				{user.name}

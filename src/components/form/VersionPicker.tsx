@@ -1,7 +1,7 @@
 'use client';
 
-import { useController } from 'react-hook-form';
 import { X } from 'lucide-react';
+import { useController } from 'react-hook-form';
 
 import {
 	GameVersionLogo,
@@ -11,14 +11,18 @@ import {
 import Dialog, { closeDialog } from '../styled/Dialog';
 import TextButton from '../styled/TextButton';
 
-type Props = {
-	name: string;
+type Props<T extends string> = {
+	name: T;
 	required?: boolean;
 	disabled?: boolean;
 };
 
-const VersionPicker = ({ name, required, disabled }: Props) => {
-	const { field } = useController({ name });
+const VersionPicker = <T extends string>({
+	name,
+	required,
+	disabled
+}: Props<T>) => {
+	const { field } = useController<{ [name]: number }, T>({ name });
 	const version =
 		GameVersions.find(v => v.rows === field.value) ?? GameVersions[0];
 	return (
@@ -45,7 +49,7 @@ const VersionPicker = ({ name, required, disabled }: Props) => {
 							field.onBlur();
 							closeDialog(e);
 						}}
-						className="text-red -m-2"
+						className="-m-2 text-red"
 					>
 						Clear
 					</TextButton>

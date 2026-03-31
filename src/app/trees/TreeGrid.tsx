@@ -1,32 +1,35 @@
 'use client';
 
-import { Fragment, useEffect, useMemo, useRef } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import cls from 'classnames';
+import { useSearchParams } from 'next/navigation';
+import { Fragment, useEffect, useMemo, useRef } from 'react';
 
 import Spinner from '#components/styled/Spinner.tsx';
 import TreeGridItem from '#components/styled/TreeGridItem.tsx';
 import { listInfiniteTalentTrees } from '#server/api/talentTree.actions.ts';
 import { TreesFilters } from '#server/schemas.ts';
+import { invoke } from '#utils/index.ts';
 
 const TreeGrid = () => {
 	const searchParams = useSearchParams();
 	const defaultValues = useMemo(() => {
-		const p = TreesFilters.safeParse({
-			...Object.fromEntries(searchParams.entries())
-		});
+		const p = TreesFilters.safeParse(
+			Object.fromEntries(searchParams.entries())
+		);
 		return p.success ? p.data : TreesFilters.parse({});
 	}, [searchParams]);
 
 	const trees = useInfiniteQuery({
 		queryKey: ['talentTrees', defaultValues],
 		queryFn: ({ pageParam }) =>
-			listInfiniteTalentTrees({
-				...defaultValues,
-				limit: 42,
-				cursor: pageParam
-			}),
+			invoke(
+				listInfiniteTalentTrees({
+					...defaultValues,
+					limit: 15,
+					cursor: pageParam
+				})
+			),
 		initialPageParam: 0,
 		getNextPageParam: prev => prev.nextCursor,
 		staleTime: Infinity
@@ -36,25 +39,25 @@ const TreeGrid = () => {
 	useEffect(() => {
 		if (!bottomRef.current || trees.isFetchingNextPage || !trees.hasNextPage)
 			return;
-		const observer = new IntersectionObserver(([o]) => {
+		const observer = new IntersectionObserver(async ([o]) => {
 			if (!o?.isIntersecting) return;
-			trees.fetchNextPage();
+			await trees.fetchNextPage();
 		});
 		observer.observe(bottomRef.current);
 		return () => observer.disconnect();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [trees.isFetchingNextPage, trees.hasNextPage]);
+		// oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps
+	}, [trees.isFetchingNextPage, trees.hasNextPage, trees.fetchNextPage]);
 
 	if (trees.isLoading)
 		return (
-			<div className="haax-surface-6 text-blue-gray grow items-center justify-center text-center">
+			<div className="haax-surface-6 grow items-center justify-center text-center text-blue-gray">
 				<Spinner className="icon-size-8" />
 			</div>
 		);
 
 	if (!trees.data?.pages[0]?.items.length)
 		return (
-			<div className="haax-surface-6 text-blue-gray grow items-center justify-center text-center">
+			<div className="haax-surface-6 grow items-center justify-center text-center text-blue-gray">
 				No results found
 			</div>
 		);
@@ -64,7 +67,11 @@ const TreeGrid = () => {
 			{trees.data?.pages.map((page, index) => (
 				<Fragment key={page.items[0]?.id ?? index}>
 					{page.items.map(item => (
-						<TreeGridItem key={item.id} {...item} href={`/tree/${item.id}`} />
+						<TreeGridItem
+							key={item.id}
+							item={item}
+							href={`/tree/${item.slug ?? item.id}`}
+						/>
 					))}
 				</Fragment>
 			))}

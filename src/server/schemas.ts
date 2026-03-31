@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 import { bitUnpack, legacyBitUnpack } from '#components/calculator/utils.ts';
 
-import { TreeVisibility, UserRoles } from './db/schema';
+import { ItemVisibility, UserRoles } from './db/schema';
 
 export const Talent = z.object({
 	icon: z.string().default('inv_misc_questionmark'),
@@ -42,12 +42,11 @@ export const TalentForm = z.object({
 	id: z.string().default(nanoid(10)),
 	icon: z.string().default('inv_misc_questionmark'),
 	name: z.string().default('New talent tree'),
+	slug: z.string().nullish(),
 	class: z.number().default(0),
-	index: z.number().default(0),
 	rows: z.number().min(1).max(11).default(7),
 	talents: Talents.default({}),
-	collection: z.string().nullable().default(null),
-	visibility: z.enum(TreeVisibility).nullable().default(null),
+	visibility: z.enum(ItemVisibility).nullable().default(null),
 	notes: z.string().nullable().default(null),
 	createdById: z.string().nullable().default(null),
 	createdBy: z
@@ -70,6 +69,33 @@ export const TreesFilters = z.object({
 	rows: z.coerce.number().optional()
 });
 export type TreesFilters = z.infer<typeof TreesFilters>;
+
+export const CollectionForm = z.object({
+	id: z.string().default(nanoid(10)),
+	icon: z.string().default('inv_misc_questionmark'),
+	name: z.string().default('New collection'),
+	slug: z.string().nullable().default(null),
+	visibility: z.enum(ItemVisibility).default('public'),
+	assignedTrees: z.record(z.string(), z.string()).default({}),
+	createdById: z.string().nullable().default(null),
+	createdBy: z
+		.object({
+			name: z.string(),
+			image: z.string().nullable(),
+			role: z.enum(UserRoles)
+		})
+		.nullable()
+		.default(null),
+	createdAt: z.coerce.date().nullable().default(null),
+	updatedAt: z.coerce.date().nullable().default(null)
+});
+export type CollectionForm = z.infer<typeof CollectionForm>;
+
+export const CollectionsFilters = z.object({
+	name: z.string().optional().default(''),
+	from: z.string().optional().default('')
+});
+export type CollectionsFilters = z.infer<typeof CollectionsFilters>;
 
 export const CalculatorParams = z
 	.object({
@@ -103,6 +129,7 @@ export type CalculatorParams = z.infer<typeof CalculatorParams>;
 export const BuildForm = z.object({
 	id: z.string().default(nanoid(10)),
 	name: z.string().default(''),
+	slug: z.string().nullish(),
 	class: z.number().default(0),
 	rows: z.number().min(1).max(11).default(7),
 	points: z

@@ -1,8 +1,8 @@
 'use server';
 
-import { updateTag } from 'next/cache';
 import { eq } from 'drizzle-orm';
 import { omit } from 'es-toolkit';
+import { updateTag } from 'next/cache';
 import { z } from 'zod';
 
 import { bitPack } from '#components/calculator/utils.ts';
@@ -10,9 +10,10 @@ import { db } from '#server/db/index.ts';
 import { savedBuilds } from '#server/db/schema.ts';
 import { serverFunction } from '#server/helpers.ts';
 import { BuildForm } from '#server/schemas.ts';
+import { canEdit } from '#utils/auth.ts';
 import { Errors } from '#utils/errors.ts';
 
-import { createdBySelect, getUser } from './index';
+import { createdBy, getUser, uniqueSlugException } from './index';
 
 export const upsertSavedBuild = serverFunction({
 	input: BuildForm.extend({
@@ -25,19 +26,22 @@ export const upsertSavedBuild = serverFunction({
 		const { points, ...restInput } = input;
 
 		const entry = await db.query.savedBuilds.findFirst({
-			where: eq(savedBuilds.id, restInput.id)
+			where: { id: restInput.id }
 		});
 
 		if (!entry) {
-			await db.insert(savedBuilds).values({
-				...restInput,
-				talents: bitPack(points),
-				createdById: user.id,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			});
+			await db
+				.insert(savedBuilds)
+				.values({
+					...restInput,
+					talents: bitPack(points),
+					createdById: user.id,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.catch(uniqueSlugException);
 		} else {
-			if (user.role !== 'admin' && user.id !== entry.createdById)
+			if (!canEdit(user, entry))
 				throw Errors.unauthorized({
 					message: 'You do not have permission to edit this build'
 				});
@@ -49,12 +53,13 @@ export const upsertSavedBuild = serverFunction({
 					talents: bitPack(points),
 					updatedAt: new Date()
 				})
-				.where(eq(savedBuilds.id, restInput.id));
+				.where(eq(savedBuilds.id, restInput.id))
+				.catch(uniqueSlugException);
 		}
 
 		const build = await db.query.savedBuilds.findFirst({
-			where: eq(savedBuilds.id, restInput.id),
-			with: { createdBy: createdBySelect }
+			where: { id: restInput.id },
+			with:  createdBy 
 		});
 
 		updateTag(`savedBuilds:id:${restInput.id}`);
@@ -64,6 +69,7 @@ export const upsertSavedBuild = serverFunction({
 			...build,
 			points: build?.talents
 				.split('-')
+				// oxlint-disable-next-line typescript/no-misused-spread
 				.map(p => [...p].map(v => Number(v))) as [number[], number[], number[]]
 		};
 	}
@@ -74,10 +80,10 @@ export const deleteSavedBuild = serverFunction({
 	session: () => getUser('user').then(u => ({ id: u.id, role: u.role })),
 	query: async (input, user) => {
 		const entry = await db.query.savedBuilds.findFirst({
-			where: eq(savedBuilds.id, input.id)
+			where: { id: input.id }
 		});
 
-		if (user.role !== 'admin' && user.id !== entry?.createdById)
+		if (!canEdit(user, entry))
 			throw Errors.unauthorized({
 				message: 'You do not have permission to delete this build'
 			});

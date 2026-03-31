@@ -19,13 +19,13 @@ const LocalTrees = () => {
 			{selected && localTrees?.[selected] && (
 				<TalentBuilder key={selected} defaultValues={localTrees[selected]} />
 			)}
-			<h2 className="haax-color -mb-3 text-center md:text-left">Local Trees</h2>
+			<h2 className="-mb-3 haax-color text-center md:text-left">Local Trees</h2>
 			{trees.length ? (
 				<div className="haax-surface-3 grid items-start md:grid-cols-[repeat(auto-fill,minmax(340px,1fr))]">
 					{trees.map(tree => (
 						<TreeGridItem
 							key={tree.id}
-							{...tree}
+							item={tree}
 							href={`/local?tree=${tree.id}`}
 							active={tree.id === selected}
 							label="Open local tree"
@@ -33,7 +33,7 @@ const LocalTrees = () => {
 					))}
 				</div>
 			) : (
-				<div className="haax-surface-6 text-blue-gray flex min-h-24 items-center justify-center text-center">
+				<div className="haax-surface-6 flex min-h-24 items-center justify-center text-center text-blue-gray">
 					No local trees found.
 				</div>
 			)}

@@ -1,8 +1,8 @@
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { type Metadata } from 'next';
 import localFont from 'next/font/local';
 import Script from 'next/script';
-import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Toaster } from 'sonner';
 
 import Footer from '#components/layout/Footer.tsx';
@@ -62,7 +62,7 @@ const RootLayout = async ({ children }: LayoutProps<'/'>) => (
 			)}
 		</head>
 		<body
-			className={`${fontin.variable} ${din.variable} bg-dark-gray flex min-h-screen flex-col items-stretch overflow-auto overflow-x-hidden`}
+			className={`${fontin.variable} ${din.variable} flex min-h-screen flex-col items-stretch overflow-auto overflow-x-hidden bg-dark-gray`}
 		>
 			<PageBackground />
 			<Providers>

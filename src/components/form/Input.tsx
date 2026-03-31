@@ -1,7 +1,7 @@
 'use client';
 
-import { type HTMLProps, type ReactNode, useId } from 'react';
 import cls from 'classnames';
+import { type HTMLProps, type ReactNode, useId } from 'react';
 
 type Props = HTMLProps<HTMLInputElement> & {
 	ref?: React.Ref<HTMLInputElement>;
@@ -30,7 +30,7 @@ const Input = ({
 			{label && <label htmlFor={id ?? customId}>{label}</label>}
 			<label
 				htmlFor={id ?? customId}
-				className={cls('haax-input-underline flex shrink items-center gap-2', {
+				className={cls('flex shrink haax-input-underline items-center gap-2', {
 					'haax-input-hocus': !props.disabled,
 					'haax-input-error': !!error
 				})}
@@ -50,14 +50,14 @@ const Input = ({
 						if (e.key.toLocaleLowerCase() === 'z' && e.ctrlKey)
 							e.preventDefault();
 					}}
-					className="shrink grow"
+					className="w-0 shrink grow"
 				/>
 				{after}
 			</label>
 			{error ? (
-				<p className="text-red text-sm">{error}</p>
+				<p className="text-sm text-red">{error}</p>
 			) : hint ? (
-				<p className="text-blue-gray text-sm">{hint}</p>
+				<p className="text-sm text-blue-gray">{hint}</p>
 			) : null}
 		</div>
 	);

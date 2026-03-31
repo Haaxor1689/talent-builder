@@ -1,10 +1,13 @@
-import { type HTMLAttributes } from 'react';
 import cls from 'classnames';
+import { type HTMLAttributes } from 'react';
 
 import { getIconPath } from '#utils/index.ts';
 
+import FallbackImage from './FallbackImage';
+
 type Props = HTMLAttributes<HTMLElement> & {
 	icon?: string | null;
+	fallbackIcon?: string;
 	currentRank?: number;
 	ranks?: number | null;
 	showDefault?: boolean;
@@ -16,6 +19,7 @@ type Props = HTMLAttributes<HTMLElement> & {
 
 const SpellIcon = ({
 	icon,
+	fallbackIcon = getIconPath(null),
 	currentRank,
 	ranks,
 	showDefault,
@@ -38,23 +42,24 @@ const SpellIcon = ({
 			)}
 		>
 			{(!!showDefault || !!icon) && (
-				<img
+				<FallbackImage
 					src={getIconPath(icon)}
 					alt={`${icon ?? 'empty'} icon`}
-					className="size-[87.5%]"
+					fallback={fallbackIcon}
+					className="size-[87.5%] object-contain"
 				/>
 			)}
 			<img
 				src="/icon_frame.png"
 				alt="frame"
-				className="absolute inset-0 size-full"
+				className="absolute inset-0 size-full [image-rendering:pixelated]"
 			/>
 
 			{isClickable && (
 				<img
 					src="/icon_hover.png"
 					alt="hover"
-					className="pointer-events-none absolute inset-0 hidden size-full p-[5%] group-hover/icon:block group-focus/icon:block"
+					className="pointer-events-none absolute inset-0 hidden size-full p-[5%] [image-rendering:pixelated] group-hover/icon:block group-focus/icon:block"
 				/>
 			)}
 
@@ -62,7 +67,7 @@ const SpellIcon = ({
 			{!!ranks && (
 				<p
 					className={cls(
-						'bg-dark-gray absolute right-1 bottom-1 translate-x-1/2 translate-y-1/2 rounded border-0 px-1',
+						'absolute right-1 bottom-1 translate-x-1/2 translate-y-1/2 rounded border-0 bg-dark-gray px-1',
 						{
 							'text-green': currentRank !== undefined && ranks !== currentRank,
 							'text-yellow': currentRank !== undefined && ranks === currentRank

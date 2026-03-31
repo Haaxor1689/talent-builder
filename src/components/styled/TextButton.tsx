@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import cls from 'classnames';
+import { omit } from 'es-toolkit';
+import Link from 'next/link';
 import {
 	type CSSProperties,
 	type MouseEventHandler,
 	type ReactNode
 } from 'react';
-import Link from 'next/link';
-import cls from 'classnames';
-import { omit } from 'es-toolkit';
 
 import Spinner from './Spinner';
 
@@ -56,7 +55,8 @@ const TextButton = ({
 			{...((props.type === 'link'
 				? {
 						target: props.external ? '_blank' : undefined,
-						rel: props.external ? 'noopener noreferrer' : undefined
+						rel: props.external ? 'noopener noreferrer' : undefined,
+						prefetch: false
 					}
 				: { type: 'button' }) as any)}
 			className={cls(
@@ -64,8 +64,8 @@ const TextButton = ({
 				className,
 				{
 					'text-warm-green': active && !loading && !disabled,
-					'text-gray pointer-events-none': !!loading || !!disabled,
-					'hocus:haax-highlight transition-all': !loading && !disabled
+					'pointer-events-none text-gray': !!loading || !!disabled,
+					'transition-all hocus:haax-highlight': !loading && !disabled
 				}
 			)}
 		>

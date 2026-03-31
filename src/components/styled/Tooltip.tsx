@@ -1,12 +1,13 @@
 'use client';
 
+import { X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { X } from 'lucide-react';
 
 import useIsMobile from '#hooks/useIsMobile.tsx';
 
 import Dialog, { closeDialog } from './Dialog';
+import ScrollArea from './ScrollArea';
 import TextButton from './TextButton';
 
 const PADDING = 8;
@@ -42,7 +43,9 @@ const MobileTooltip = ({ children, tooltip, actions }: Props) => (
 		className="flex flex-col items-center gap-3"
 	>
 		<div className="group/tooltip pointer-events-none">{children({})}</div>
-		<div className="haax-surface-3 gap-0">{resolveContent(tooltip)}</div>
+		<ScrollArea containerClassName="haax-surface-0" contentClassName="p-3">
+			{resolveContent(tooltip)}
+		</ScrollArea>
 		{resolveContent(actions)}
 		<TextButton icon={<X />} onClick={closeDialog} className="text-red">
 			Close
@@ -188,7 +191,7 @@ const DesktopTooltip = ({ children, tooltip, hidden }: Props) => {
 				createPortal(
 					<div
 						ref={tooltipRef}
-						className="haax-surface-3 pointer-events-none invisible fixed z-10 max-w-100 min-w-62.5 gap-0"
+						className="pointer-events-none invisible haax-surface-3 fixed z-10 max-w-100 min-w-62.5 gap-0"
 						style={{
 							left: 0,
 							top: 0,

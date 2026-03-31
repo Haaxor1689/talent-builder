@@ -1,0 +1,72 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"env": { "builtin": true },
+	"options": {
+		"typeAware": true,
+		"maxWarnings": 10
+	},
+	"plugins": [
+		"oxc",
+		"unicorn",
+		"nextjs",
+		"typescript",
+		"react",
+		"import",
+		"promise",
+		"jsx-a11y",
+		"eslint"
+	],
+	"categories": { "correctness": "error" },
+	"ignorePatterns": [".next/**", "out/**", "build/**", "next-env.d.ts"],
+	"rules": {
+		"no-var": "error",
+		"no-template-curly-in-string": "error",
+		"consistent-type-definitions": ["error", "type"],
+		"import/no-cycle": ["error", { "maxDepth": 3 }],
+		"oxc/bad-bitwise-operator": "error",
+		"oxc/branches-sharing-code": "error",
+		"eslint/array-callback-return": "error",
+		"eslint/block-scoped-var": "error",
+		"eslint/capitalized-comments": "warn",
+		"eslint/no-restricted-globals": "error",
+		"eslint/eqeqeq": ["error", "always"],
+		"eslint/arrow-body-style": ["error", "as-needed"],
+		"eslint/prefer-const": "error",
+		"eslint/prefer-template": "error",
+		"eslint/no-unused-vars": [
+			"warn",
+			{
+				"args": "all",
+				"argsIgnorePattern": "^_",
+				"varsIgnorePattern": "^_",
+				"caughtErrorsIgnorePattern": "^_"
+			}
+		],
+		"unicorn/catch-error-name": ["error", { "name": "err" }],
+		"unicorn/no-array-reverse": "error",
+		"unicorn/no-array-sort": "error",
+		"promise/avoid-new": "error",
+		"promise/always-return": "error",
+		"typescript/array-type": "error",
+		"typescript/consistent-type-imports": [
+			"warn",
+			{ "prefer": "type-imports", "fixStyle": "inline-type-imports" }
+		],
+		"typescript/no-floating-promises": "error",
+		"typescript/no-unsafe-assignment": "warn",
+		"typescript/dot-notation": "error",
+		"typescript/prefer-optional-chain": "error",
+		"typescript/prefer-nullish-coalescing": "error",
+		"typescript/no-inferrable-types": "error",
+		"typescript/return-await": ["error", "always"],
+		"react/self-closing-comp": "error",
+		"react/jsx-boolean-value": ["error", "never"],
+		"react/jsx-curly-brace-presence": [
+			"error",
+			{ "propElementValues": "always" }
+		],
+		"react/jsx-fragments": "error",
+		"react/jsx-no-useless-fragment": "error",
+		"nextjs/no-img-element": "off"
+	}
+}

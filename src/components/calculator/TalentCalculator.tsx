@@ -1,8 +1,8 @@
 'use client';
 
+import { useSearchParams } from 'next/navigation';
 import { useMemo } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
-import { useSearchParams } from 'next/navigation';
 
 import VersionPicker from '#components/form/VersionPicker.tsx';
 import {
@@ -27,7 +27,7 @@ const PointsSpent = () => {
 	const pointsLeft = rows * 5 + 16 - reqLvl;
 	return (
 		<>
-			<span className="h3 grow">{sums.join(' / ')}</span>
+			<span className="grow h3">{sums.join(' / ')}</span>
 			<div className="flex gap-3">
 				{!!reqLvl && (
 					<span className="h4 text-blue-gray">

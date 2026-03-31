@@ -1,7 +1,7 @@
 'use client';
 
-import Link from 'next/link';
 import { Workflow } from 'lucide-react';
+import Link from 'next/link';
 
 import { UserAvatar, UserRoleText } from '#components/styled/User.tsx';
 import { type savedBuilds, type user } from '#server/db/schema.ts';
@@ -11,12 +11,12 @@ import SpellIcon from '../styled/SpellIcon';
 import TextButton from '../styled/TextButton';
 import Tooltip from '../styled/Tooltip';
 
-export type BuildGridItemProps = typeof savedBuilds.$inferSelect & {
+type Props = typeof savedBuilds.$inferSelect & {
 	href: string;
 	createdBy: Pick<typeof user.$inferSelect, 'image' | 'name' | 'role'>;
 };
 
-const BuildGridItem = (item: BuildGridItemProps) => {
+const BuildGridItem = (item: Props) => {
 	const classInfo = maskToClass(item.class);
 	return (
 		<Tooltip
@@ -26,24 +26,20 @@ const BuildGridItem = (item: BuildGridItemProps) => {
 						{item.name ? `${item.name} ` : ''}
 						{classInfo?.name}
 					</h4>
-					{item.createdBy && (
-						<>
-							<p className="text-blue-gray whitespace-nowrap">
-								Last updated:{' '}
-								<span>
-									{new Date(item.updatedAt ?? item.createdAt).toLocaleString(
-										'en-US'
-									)}
-								</span>
-							</p>
-							<div className="text-blue-gray flex items-center gap-1.5">
-								Author: <UserAvatar image={item.createdBy.image} />{' '}
-								<UserRoleText role={item.createdBy.role}>
-									{item.createdBy.name}
-								</UserRoleText>
-							</div>
-						</>
-					)}
+					<p className="whitespace-nowrap text-blue-gray">
+						Last updated:{' '}
+						<span>
+							{new Date(item.updatedAt ?? item.createdAt).toLocaleString(
+								'en-US'
+							)}
+						</span>
+					</p>
+					<div className="flex items-center gap-1.5 text-blue-gray">
+						Author: <UserAvatar image={item.createdBy.image} />{' '}
+						<UserRoleText role={item.createdBy.role}>
+							{item.createdBy.name}
+						</UserRoleText>
+					</div>
 				</>
 			)}
 			actions={() => (
@@ -55,7 +51,7 @@ const BuildGridItem = (item: BuildGridItemProps) => {
 			{props => (
 				<Link
 					href={item.href}
-					className="hocus:haax-highlight -mb-2 flex items-center gap-3 p-2"
+					className="-mb-2 flex items-center gap-3 p-2 hocus:haax-highlight"
 					prefetch={false}
 					{...props}
 				>
@@ -68,8 +64,8 @@ const BuildGridItem = (item: BuildGridItemProps) => {
 							{item.name ? `${item.name} ` : ''}
 							{classInfo?.name}
 						</p>
-						<div className="text-blue-gray flex items-center gap-1.5 truncate">
-							<UserAvatar image={item.createdBy?.image} />
+						<div className="flex items-center gap-1.5 truncate text-blue-gray">
+							<UserAvatar image={item.createdBy.image} />
 							{item.createdBy.name === 'TurtleWoW'
 								? 'TurtleWoW'
 								: getLastUpdatedString(item.updatedAt ?? item.createdAt)}

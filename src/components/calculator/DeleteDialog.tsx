@@ -1,17 +1,18 @@
 'use client';
 
-import { useTransition } from 'react';
-import { useFormContext } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
 import { Trash2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useFormContext } from 'react-hook-form';
 
 import Dialog from '#components/styled/Dialog.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
+import useAsyncAction from '#hooks/useAsyncAction.tsx';
 import { deleteSavedBuild } from '#server/api/savedBuilds.actions.ts';
 import { type BuildForm } from '#server/schemas.ts';
+import { invoke } from '#utils/index.ts';
 
 const DeleteDialog = ({ name }: { name: string }) => {
-	const [isPending, startTransition] = useTransition();
+	const [isPending, startTransition] = useAsyncAction();
 	const router = useRouter();
 	const { getValues } = useFormContext<BuildForm>();
 
@@ -26,7 +27,7 @@ const DeleteDialog = ({ name }: { name: string }) => {
 				/>
 			)}
 		>
-			<h3 className="haax-color">Delete &quot;{name}&quot;?</h3>
+			<h3 className="haax-color">Delete saved calculator?</h3>
 			<hr />
 			<p className="text-blue-gray">
 				Are you sure you want to delete <span>&quot;{name}&quot;</span> build?
@@ -37,13 +38,11 @@ const DeleteDialog = ({ name }: { name: string }) => {
 				<TextButton
 					icon={<Trash2 />}
 					loading={isPending}
-					onClick={() =>
-						startTransition(async () => {
-							const { id } = getValues();
-							await deleteSavedBuild({ id });
-							router.push('/calculator');
-						})
-					}
+					onClick={startTransition(async () => {
+						const { id } = getValues();
+						await invoke(deleteSavedBuild({ id }));
+						router.push('/calculator');
+					})}
 					className="text-red"
 				>
 					Delete

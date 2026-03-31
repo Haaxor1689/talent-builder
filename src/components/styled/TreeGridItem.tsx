@@ -1,8 +1,8 @@
 'use client';
 
-import Link from 'next/link';
 import cls from 'classnames';
 import { CloudOff, EyeOff, Workflow } from 'lucide-react';
+import Link from 'next/link';
 
 import SpellIcon from '#components/styled/SpellIcon.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
@@ -17,23 +17,35 @@ import {
 
 import { GameVersionLogo } from './GameVersion';
 
-type Item = TalentForm & {
+type Item = {
+	item: TalentForm;
 	href: string;
 	label?: string;
 	active?: boolean;
+	hideTooltip?: boolean;
 	onClick?: (e: React.MouseEvent) => void;
+	onDragStart?: (e: React.DragEvent) => void;
 };
 
-const TreeGridItem = (item: Item) => {
+const TreeGridItem = ({
+	item,
+	href,
+	label,
+	active,
+	hideTooltip,
+	onClick,
+	onDragStart
+}: Item) => {
 	const classInfo = maskToClass(item.class);
 	const date = item.updatedAt ?? item.createdAt;
 	return (
 		<Tooltip
+			hidden={hideTooltip}
 			tooltip={() => (
 				<>
 					<h4 className="haax-color text-xl">{item.name}</h4>
 					{item.visibility === 'private' && (
-						<span className="text-warm-green flex items-center gap-1 text-sm">
+						<span className="flex items-center gap-1 text-sm text-warm-green">
 							<EyeOff size={14} />
 							Private
 						</span>
@@ -41,19 +53,19 @@ const TreeGridItem = (item: Item) => {
 					<div className="text-blue-gray">
 						Points: <span>{getTalentSum(item.talents, item.rows)}</span>
 					</div>
-					<div className="text-blue-gray flex items-center gap-1.5">
+					<div className="flex items-center gap-1.5 text-blue-gray">
 						Version:
 						<GameVersionLogo rows={item.rows} />
 						<span>{item.rows} rows</span>
 					</div>
 					{date && (
-						<div className="text-blue-gray whitespace-nowrap">
+						<div className="whitespace-nowrap text-blue-gray">
 							Last updated:{' '}
 							<span>{new Date(date).toLocaleString('en-US')}</span>
 						</div>
 					)}
 					{item.createdBy && (
-						<div className="text-blue-gray flex items-center gap-1.5">
+						<div className="flex items-center gap-1.5 text-blue-gray">
 							Author: <UserAvatar image={item.createdBy.image} />{' '}
 							<UserRoleText role={item.createdBy.role}>
 								{item.createdBy.name}
@@ -61,7 +73,7 @@ const TreeGridItem = (item: Item) => {
 						</div>
 					)}
 					{classInfo && (
-						<div className="text-blue-gray flex items-center gap-1">
+						<div className="flex items-center gap-1 text-blue-gray">
 							Class:{' '}
 							<SpellIcon icon={classInfo.icon} showDefault className="size-6" />{' '}
 							<span style={{ color: classInfo.color }}>{classInfo.name}</span>
@@ -73,28 +85,28 @@ const TreeGridItem = (item: Item) => {
 				<TextButton
 					icon={<Workflow />}
 					type="link"
-					href={item.href}
-					onClick={item.onClick}
+					href={href}
+					onClick={onClick}
 				>
-					{item.label ?? 'Open tree'}
+					{label ?? 'Open tree'}
 				</TextButton>
 			)}
 		>
 			{props => (
 				<Link
-					href={item.href}
+					href={href}
 					prefetch={false}
-					onClick={item.onClick}
+					onClick={onClick}
+					onDragStart={onDragStart}
 					className={cls(
-						'hocus:haax-highlight -mb-2 flex items-center gap-3 p-2',
-						{ 'text-warm-green': item.active }
+						'-mb-2 flex items-center gap-3 p-2 hocus:haax-highlight',
+						{ 'text-warm-green': active }
 					)}
 					{...props}
 				>
 					<SpellIcon
 						icon={item.icon}
 						showDefault
-						className="cursor-pointer"
 						extraContent={
 							classInfo && (
 								<SpellIcon
@@ -124,7 +136,7 @@ const TreeGridItem = (item: Item) => {
 							) : (
 								<CloudOff className="text-blue-gray" />
 							)}
-							<span className="text-blue-gray shrink truncate overflow-hidden whitespace-nowrap">
+							<span className="shrink truncate overflow-hidden whitespace-nowrap text-blue-gray">
 								{date ? getLastUpdatedString(date) : 'Local only'}
 							</span>
 						</div>

@@ -25,7 +25,7 @@ const Page = async () => (
 				<TextButton
 					type="link"
 					href="https://haaxor1689.dev/"
-					className="text-blue-gray -m-2 inline"
+					className="-m-2 inline text-blue-gray"
 				>
 					Haaxor1689
 				</TextButton>
@@ -35,7 +35,7 @@ const Page = async () => (
 
 			<MainActions />
 
-			<div className="*:text-blue-gray flex flex-col gap-3 **:text-xl md:text-center">
+			<div className="flex flex-col gap-3 *:text-blue-gray **:text-xl md:text-center">
 				<p>
 					Welcome to Talent Builder! You can use this tool to create completely
 					custom World of Warcraft style talent trees.
@@ -106,7 +106,7 @@ const Page = async () => (
 				- **Fund new features and improvements** More support means I can justify dedicating more time to building new features, polishing existing ones, fixing bugs faster, and experimenting with ideas that would otherwise stay on the backlog.
 				- **Ad-free Talent Builder experience** Supporters get a special Discord role that unlocks an ad-free experience on my sites. This helps me rely less on ads and more on direct community support.
 				- **Unlock extra features in Talent Builder** Donating also gives you access to additional features in Talent Builder (and other tools over time), so you get more powerful functionality while helping development.
-				- **Shape the roadmap** As a supporter, you'll have more influence over what I work on next—through feedback, polls, and direct suggestions. Your voice carries more weight when I decide which features to prioritize.	
+				- **Shape the roadmap** As a supporter, you'll have more influence over what I work on next—through feedback, polls, and direct suggestions. Your voice carries more weight when I decide which features to prioritize.
 				
 				Even if you can't contribute financially, sharing the projects with friends or providing feedback is a huge help. Every bit of support makes a difference and helps me keep building and improving these tools for everyone.
 				

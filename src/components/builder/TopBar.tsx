@@ -1,7 +1,5 @@
 import { useController, useFormContext } from 'react-hook-form';
-import { LibraryBig, NotebookTabs } from 'lucide-react';
 
-import { useSession } from '#auth/client.ts';
 import ClassPicker from '#components/form/ClassPicker.tsx';
 import IconPicker from '#components/form/IconPicker.tsx';
 import Input from '#components/form/Input.tsx';
@@ -14,26 +12,11 @@ import { type TalentForm } from '#server/schemas.ts';
 import { nullableInput } from '#utils/index.ts';
 
 import CloneDialog from './CloneDialog';
+import CollectionsDialog from './CollectionsDialog';
 import DeleteDialog from './DeleteDialog';
 import SaveDialog from './SaveDialog';
 
 type Props = { editable?: boolean; isNew?: boolean };
-
-const IdxInput = ({ editable }: Props) => {
-	const { field } = useController({ name: 'index' });
-	return (
-		<TextButton
-			icon={<NotebookTabs />}
-			disabled={!editable}
-			onClick={() => {
-				field.onChange((field.value + 1) % 3);
-			}}
-			className="text-white"
-		>
-			Tab{field.value + 1}
-		</TextButton>
-	);
-};
 
 const RowsInput = ({ editable }: Props) => {
 	const { field } = useController<TalentForm, 'rows'>({ name: 'rows' });
@@ -47,6 +30,7 @@ const RowsInput = ({ editable }: Props) => {
 				if (isNaN(value)) return;
 				field.onChange(Math.min(Math.max(value, 1), 11));
 			}}
+			onBlur={field.onBlur}
 			type="number"
 			disabled={!editable}
 			before={
@@ -66,44 +50,35 @@ const RowsInput = ({ editable }: Props) => {
 				/>
 			}
 			after={<span className="grow">rows</span>}
-			className="grow [&_input]:w-5 [&_input]:grow-0 [&_input]:text-right"
+			className="grow [&_input]:w-5 [&_input]:grow-0 [&_input]:text-center"
 		/>
 	);
 };
 
 const TopBar = ({ editable, isNew }: Props) => {
-	const session = useSession();
-	const { register, formState } = useFormContext<TalentForm>();
+	const { register } = useFormContext<TalentForm>();
 	return (
 		<div className="flex flex-wrap items-center justify-end gap-2">
 			<div className="flex shrink grow items-center gap-2">
 				<IconPicker name="icon" disabled={!editable} />
 				<Input
+					placeholder="No tree name..."
 					{...register('name', nullableInput)}
 					disabled={!editable}
-					className="shrink grow [&_input]:text-3xl"
+					className="min-w-64 shrink grow [&_input]:text-3xl"
 				/>
 			</div>
 
-			<div className="flex shrink grow flex-wrap items-center md:grow-0">
-				<div className="flex shrink grow items-center">
-					<ClassPicker name="class" disabled={!editable} />
-					<RowsInput editable={editable} />
-					<IdxInput editable={editable} />
-				</div>
+			<div className="flex items-center">
+				<ClassPicker name="class" disabled={!editable} />
+				<RowsInput editable={editable} />
+			</div>
 
-				<div className="flex shrink grow items-center">
-					<Input
-						{...register('collection', nullableInput)}
-						before={<LibraryBig />}
-						placeholder="No collection"
-						disabled={session.data?.user?.role !== 'admin'}
-						className="shrink grow"
-					/>
-					{editable && <SaveDialog disabled={!formState.isDirty} />}
-					{!isNew && <CloneDialog />}
-					{editable && <DeleteDialog />}
-				</div>
+			<div className="flex items-center justify-end">
+				<CollectionsDialog />
+				{editable && <SaveDialog />}
+				{!isNew && <CloneDialog />}
+				{editable && <DeleteDialog />}
 			</div>
 		</div>
 	);

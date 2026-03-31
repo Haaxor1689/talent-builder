@@ -39,7 +39,7 @@ export const Errors = {
 
 type Errors = {
 	[K in keyof typeof Errors]: (typeof Errors)[K] extends (
-		...args: infer A
+		...args: any
 	) => AppError<infer T, infer Args>
 		? { type: T } & Args
 		: never;

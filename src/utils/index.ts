@@ -1,18 +1,18 @@
-import { type FieldValues, type Resolver } from 'react-hook-form';
 import { zodResolver as resolver } from '@hookform/resolvers/zod';
 import { toPng } from 'html-to-image';
 import pino, { type Logger } from 'pino';
+import { type FieldValues, type Resolver } from 'react-hook-form';
 import { type z } from 'zod';
 
 import iconListRaw from '#assets/icon-list.json';
+import { type ProcedureResult } from '#server/helpers.ts';
 import { type Talents } from '#server/schemas.ts';
 
 import { Errors, isErrors } from './errors';
 
 export const zodResolver = <In extends FieldValues, Out extends FieldValues>(
-	schema: z.ZodType<In, z.ZodTypeDef, Out>
-): Resolver<z.infer<z.ZodType<In, z.ZodTypeDef, Out>>> => resolver(schema);
-
+	schema: z.ZodType<Out, In>
+): Resolver<Out, In> => resolver(schema as never);
 export const nullableInput = {
 	setValueAs: (v: unknown) => (v === '' ? null : v)
 };
@@ -96,7 +96,7 @@ export const elementToPng = async (element: HTMLElement, name: string) => {
 	link.click();
 };
 
-export const safeJsonParse = <T extends z.ZodTypeAny>({
+export const safeJsonParse = <T extends z.ZodType>({
 	text,
 	schema,
 	errorMessage: message
@@ -106,7 +106,7 @@ export const safeJsonParse = <T extends z.ZodTypeAny>({
 	errorMessage?: string;
 }) => {
 	try {
-		const json = JSON.parse(text);
+		const json = JSON.parse(text) as unknown;
 		const parsed = schema.safeParse(json);
 		if (!parsed.success)
 			throw Errors.schemaValidation({
@@ -119,6 +119,12 @@ export const safeJsonParse = <T extends z.ZodTypeAny>({
 		throw isErrors(err) ? err : Errors.jsonParse({ message, data: text });
 	}
 };
+
+export const invoke = <T>(value: Promise<ProcedureResult<T>>) =>
+	value.then(res => {
+		if (!res.ok) throw res.error;
+		return res.data;
+	});
 
 const createLogger = (): Logger => {
 	if (typeof window !== 'undefined') {

@@ -1,7 +1,7 @@
 'use client';
 
-import { useFormContext, useWatch } from 'react-hook-form';
 import { ExternalLink, NotebookPen, Workflow, X } from 'lucide-react';
+import { useFormContext, useWatch } from 'react-hook-form';
 
 import { type BuildForm, type TalentForm } from '#server/schemas.ts';
 import { getTalentSum } from '#utils/index.ts';
@@ -37,7 +37,7 @@ const ClearPoints = ({ idx }: { idx: 0 | 1 | 2 }) => {
 		<TextButton
 			icon={<X />}
 			onClick={() => setValue(`points.${idx}`, [])}
-			className="text-red icon-size-4 text-sm"
+			className="text-sm text-red icon-size-4"
 		>
 			Clear points
 		</TextButton>
@@ -46,7 +46,7 @@ const ClearPoints = ({ idx }: { idx: 0 | 1 | 2 }) => {
 
 const TalentSpec = ({ idx, tree, canChangeTree }: Props) =>
 	!tree ? (
-		<div className="border-blue-gray/20 min-h-[50vh] grow first:border-r last:border-l">
+		<div className="min-h-[50vh] grow border-blue-gray/20 first:border-r last:border-l">
 			<TreePickDialog
 				idx={idx}
 				trigger={open => (
@@ -61,11 +61,11 @@ const TalentSpec = ({ idx, tree, canChangeTree }: Props) =>
 			/>
 		</div>
 	) : (
-		<div className="border-blue-gray/20 flex grow flex-col first:border-r last:border-l">
+		<div className="flex grow flex-col border-blue-gray/20 first:border-r last:border-l">
 			<div className="flex items-center gap-2 p-3">
 				<SpellIcon icon={tree.icon} className="size-8" />
 				<div className="relative h-full grow overflow-hidden">
-					<span className="h3 absolute inset-0 truncate" title={tree.name}>
+					<span className="absolute inset-0 truncate h3" title={tree.name}>
 						{tree.name}
 					</span>
 				</div>
@@ -100,7 +100,7 @@ const TalentSpec = ({ idx, tree, canChangeTree }: Props) =>
 							<TextButton
 								icon={<Workflow />}
 								onClick={open}
-								className="text-blue-gray icon-size-4 text-sm"
+								className="text-sm text-blue-gray icon-size-4"
 							>
 								Change tree
 							</TextButton>
@@ -113,7 +113,7 @@ const TalentSpec = ({ idx, tree, canChangeTree }: Props) =>
 							<TextButton
 								icon={<NotebookPen />}
 								onClick={open}
-								className="text-blue-gray icon-size-4 text-sm"
+								className="text-sm text-blue-gray icon-size-4"
 							>
 								Notes
 							</TextButton>

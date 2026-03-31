@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
 import { debounce, isEqual } from 'es-toolkit';
+import { useEffect, useRef, useState } from 'react';
 
 const useDebounced = <T>(value: T, wait = 300) => {
 	const [state, setState] = useState(value);

@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
-import { type FieldValues, useFormContext } from 'react-hook-form';
 import { cloneDeep, isEqual } from 'es-toolkit';
 import { Redo2, Undo2 } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { type FieldValues, useFormContext } from 'react-hook-form';
 
 import TextButton from '../styled/TextButton';
 
@@ -77,7 +77,7 @@ const UndoRedo = <T extends FieldValues>({
 		};
 		window.addEventListener('keydown', callback);
 		return () => window.removeEventListener('keydown', callback);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps
 	}, [reset]);
 
 	return (

@@ -9,7 +9,7 @@ const PointsSummary = () => {
 	const field = useWatch<TalentForm, 'talents'>({ name: 'talents' });
 	const rows = useWatch<TalentForm, 'rows'>({ name: 'rows' });
 	return (
-		<p className="text-blue-gray absolute right-3 bottom-3">
+		<p className="absolute right-3 bottom-3 text-blue-gray">
 			Points: <span>{getTalentSum(field, rows)}</span>
 		</p>
 	);

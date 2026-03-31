@@ -1,5 +1,5 @@
 import cls from 'classnames';
-import { CornerDownRight } from 'lucide-react';
+import { Link2Off } from 'lucide-react';
 
 const getXY = (pos: number) => [pos % 4, Math.floor(pos / 4)] as const;
 
@@ -20,11 +20,8 @@ const TalentArrow = ({ start, end, highlighted }: Props) => {
 
 	if (y1 > y2)
 		return (
-			<CornerDownRight
-				className={cls(
-					'text-red bottom-0 left-0 -translate-x-1/2 translate-y-1/2',
-					className
-				)}
+			<Link2Off
+				className={cls('animate-pulse text-red icon-size-12', className)}
 			/>
 		);
 
@@ -59,11 +56,8 @@ const TalentArrow = ({ start, end, highlighted }: Props) => {
 			);
 
 		return (
-			<CornerDownRight
-				className={cls(
-					'text-red absolute bottom-0 left-0 -translate-x-1/2 -translate-y-1/2',
-					className
-				)}
+			<Link2Off
+				className={cls('animate-pulse text-red icon-size-12', className)}
 			/>
 		);
 	}

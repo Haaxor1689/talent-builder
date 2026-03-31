@@ -1,17 +1,22 @@
+import { Camera } from 'lucide-react';
 import { useRef } from 'react';
 import { useWatch } from 'react-hook-form';
-import { Camera } from 'lucide-react';
 
 import Dialog, { closeDialog } from '#components/styled/Dialog.tsx';
 import SpellIcon from '#components/styled/SpellIcon.tsx';
 import { TalentDescription } from '#components/styled/TalentDescription.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
+import { type TalentForm } from '#server/schemas.ts';
 import { elementToPng } from '#utils/index.ts';
 
 const TalentScreenshot = ({ selected }: { selected: number }) => {
 	const ref = useRef<HTMLDivElement>(null);
 
-	const item = useWatch({ name: `talents.${selected}` });
+	const item = useWatch<TalentForm, `talents.${number}`>({
+		name: `talents.${selected}`
+	});
+
+	if (!item) return null;
 
 	return (
 		<Dialog
@@ -33,7 +38,7 @@ const TalentScreenshot = ({ selected }: { selected: number }) => {
 				</TextButton>
 				<div ref={ref} className="flex items-start gap-2">
 					<SpellIcon icon={item.icon} showDefault />
-					<div className="haax-surface-3 pointer-events-none z-10 max-w-100 min-w-62.5">
+					<div className="pointer-events-none haax-surface-3 z-10 max-w-100 min-w-62.5">
 						<h4 className="haax-color">{item.name ?? '[Empty talent]'}</h4>
 						<TalentDescription field={item} />
 					</div>

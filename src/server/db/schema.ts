@@ -1,7 +1,7 @@
-import { relations } from 'drizzle-orm';
 import {
 	index,
 	integer,
+	primaryKey,
 	sqliteTableCreator,
 	text
 } from 'drizzle-orm/sqlite-core';
@@ -32,15 +32,8 @@ export const user = sqliteTable(
 		updatedAt: integer('updatedAt', { mode: 'timestamp' }).notNull(),
 		role: text('role', { enum: UserRoles }).default('user').notNull()
 	},
-	t => ({ nameIdx: index('user_name_idx').on(t.name) })
+	t => [index('user_name_idx').on(t.name)]
 );
-
-export const userRelations = relations(user, ({ many }) => ({
-	accounts: many(account),
-	sessions: many(session),
-	trees: many(talentTrees),
-	builds: many(savedBuilds)
-}));
 
 export const account = sqliteTable(
 	'account',
@@ -64,7 +57,7 @@ export const account = sqliteTable(
 		createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
 		updatedAt: integer('updatedAt', { mode: 'timestamp' }).notNull()
 	},
-	t => ({ userIdIdx: index('account_userId_idx').on(t.userId) })
+	t => [index('account_userId_idx').on(t.userId)]
 );
 
 export const session = sqliteTable(
@@ -79,7 +72,7 @@ export const session = sqliteTable(
 		createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
 		updatedAt: integer('updatedAt', { mode: 'timestamp' }).notNull()
 	},
-	t => ({ userIdIdx: index('session_userId_idx').on(t.userId) })
+	t => [index('session_userId_idx').on(t.userId)]
 );
 
 export const verification = sqliteTable(
@@ -92,19 +85,16 @@ export const verification = sqliteTable(
 		createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
 		updatedAt: integer('updatedAt', { mode: 'timestamp' }).notNull()
 	},
-	t => ({
-		identifierIdx: index('verification_identifier_idx').on(t.identifier),
-		identifierExpiresAtIdx: index('verification_identifier_expiresAt_idx').on(
-			t.identifier,
-			t.expiresAt
-		)
-	})
+	t => [
+		index('verification_identifier_idx').on(t.identifier),
+		index('verification_identifier_expiresAt_idx').on(t.identifier, t.expiresAt)
+	]
 );
 
 // Content tables
 
-export const TreeVisibility = ['public', 'private'] as const;
-export type TreeVisibilityType = (typeof TreeVisibility)[number];
+export const ItemVisibility = ['public', 'private'] as const;
+export type ItemVisibilityType = (typeof ItemVisibility)[number];
 
 export const talentTrees = sqliteTable(
 	'talentTree',
@@ -113,7 +103,8 @@ export const talentTrees = sqliteTable(
 			.primaryKey()
 			.$default(() => nanoid(10)),
 		name: text('name', { length: 255 }).notNull(),
-		visibility: text('visibility', { enum: TreeVisibility })
+		slug: text('slug', { length: 255 }).unique(),
+		visibility: text('visibility', { enum: ItemVisibility })
 			.default('public')
 			.notNull(),
 		notes: text('notes'),
@@ -132,32 +123,70 @@ export const talentTrees = sqliteTable(
 		createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
 		updatedAt: integer('updatedAt', { mode: 'timestamp' }).notNull()
 	},
-	t => ({
-		createdByIdIdx: index('trees_createdById_idx').on(t.createdById),
-		nameIndex: index('trees_name_idx').on(t.name),
-		visibilityIndex: index('trees_visibility_idx').on(t.visibility),
-		rowsIdx: index('trees_rows_idx').on(t.rows),
-		collectionIdx: index('trees_collection_idx').on(t.collection),
-		classIdx: index('trees_class_idx').on(t.class),
-		collectionClassIndexRowsIdx: index(
-			'trees_collection_class_index_rows_idx'
-		).on(t.collection, t.class, t.index, t.rows),
-		visibilityCreatedByUpdatedAtIdx: index(
-			'trees_visibility_createdById_updatedAt_idx'
-		).on(t.visibility, t.createdById, t.updatedAt),
-		createdByUpdatedAtIdx: index('trees_createdById_updatedAt_idx').on(
+	t => [
+		index('trees_createdById_idx').on(t.createdById),
+		index('trees_name_idx').on(t.name),
+		index('trees_visibility_idx').on(t.visibility),
+		index('trees_rows_idx').on(t.rows),
+		index('trees_collection_idx').on(t.collection),
+		index('trees_class_idx').on(t.class),
+		index('trees_collection_class_index_rows_idx').on(
+			t.collection,
+			t.class,
+			t.index,
+			t.rows
+		),
+		index('trees_visibility_createdById_updatedAt_idx').on(
+			t.visibility,
 			t.createdById,
 			t.updatedAt
-		)
-	})
+		),
+		index('trees_createdById_updatedAt_idx').on(t.createdById, t.updatedAt)
+	]
 );
 
-export const treesRelations = relations(talentTrees, ({ one }) => ({
-	createdBy: one(user, {
-		fields: [talentTrees.createdById],
-		references: [user.id]
-	})
-}));
+export const collectionTrees = sqliteTable(
+	'collectionTree',
+	{
+		collectionId: text('collectionId', { length: 11 }).notNull(),
+		treeId: text('treeId', { length: 36 }).notNull()
+	},
+	t => [
+		primaryKey({ columns: [t.collectionId, t.treeId] }),
+		index('collectionTrees_collectionId_idx').on(t.collectionId),
+		index('collectionTrees_treeId_idx').on(t.treeId)
+	]
+);
+
+export const collections = sqliteTable(
+	'collection',
+	{
+		id: text('id', { length: 11 })
+			.primaryKey()
+			.$default(() => nanoid(10)),
+		name: text('name', { length: 255 }).notNull(),
+		slug: text('slug', { length: 255 }).unique(),
+		visibility: text('visibility', { enum: ItemVisibility })
+			.default('public')
+			.notNull(),
+		icon: text('icon', { length: 255 })
+			.default('inv_misc_questionmark')
+			.notNull(),
+		assignedTrees: text('assignedTrees', { mode: 'json' })
+			.default('{}')
+			.notNull()
+			.$type<Record<string, string>>(),
+		createdById: text('createdById', { length: 255 }).notNull(),
+		createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
+		updatedAt: integer('updatedAt', { mode: 'timestamp' }).notNull()
+	},
+	t => [
+		index('collections_createdById_idx').on(t.createdById),
+		index('collections_name_idx').on(t.name),
+		index('collections_visibility_idx').on(t.visibility),
+		index('collections_updatedAt_idx').on(t.updatedAt)
+	]
+);
 
 export const savedBuilds = sqliteTable(
 	'savedBuild',
@@ -166,6 +195,7 @@ export const savedBuilds = sqliteTable(
 			.primaryKey()
 			.$default(() => nanoid(10)),
 		name: text('name', { length: 255 }).notNull(),
+		slug: text('slug', { length: 255 }).unique(),
 		class: integer('class').notNull(),
 		tree0Id: text('tree0Id', { length: 36 }).notNull(),
 		tree1Id: text('tree1Id', { length: 36 }).notNull(),
@@ -175,18 +205,8 @@ export const savedBuilds = sqliteTable(
 		createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
 		updatedAt: integer('updatedAt', { mode: 'timestamp' }).notNull()
 	},
-	t => ({
-		createdByIdIdx: index('builds_createdById_idx').on(t.createdById),
-		createdByUpdatedAtIdx: index('builds_createdById_updatedAt_idx').on(
-			t.createdById,
-			t.updatedAt
-		)
-	})
+	t => [
+		index('builds_createdById_idx').on(t.createdById),
+		index('builds_createdById_updatedAt_idx').on(t.createdById, t.updatedAt)
+	]
 );
-
-export const savedBuildsRelations = relations(savedBuilds, ({ one }) => ({
-	createdBy: one(user, {
-		fields: [savedBuilds.createdById],
-		references: [user.id]
-	})
-}));

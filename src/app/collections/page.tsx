@@ -1,35 +1,24 @@
 import { type Metadata } from 'next';
 
-import TextButton from '#components/styled/TextButton.tsx';
-import { listCollections } from '#server/api/collection.ts';
+import CreateDialog from '#components/collection/CreateDialog.tsx';
+import PageTitle from '#components/layout/PageTitle.tsx';
+
+import CollectionsFiltersSection from './CollectionsFiltersSection';
+import CollectionsGrid from './CollectionsGrid';
 
 export const metadata: Metadata = {
 	title: 'Talent Collections',
 	description: 'Browse public talent collections'
 };
 
-const Page = async () => {
-	const collections = await listCollections();
-	return (
-		<>
-			<h2 className="haax-color -mb-3 text-center md:text-left">
-				Talent Collections
-			</h2>
-			<div className="grid auto-cols-fr items-stretch justify-stretch gap-3 md:grid-flow-col md:gap-5">
-				{collections.map(c => (
-					<div key={c} className="haax-surface-0">
-						<TextButton
-							type="link"
-							href={`/collections/${c}`}
-							className="w-full justify-center p-5 text-2xl uppercase"
-						>
-							{c?.replaceAll('-', ' ')}
-						</TextButton>
-					</div>
-				))}
-			</div>
-		</>
-	);
-};
+const Page = () => (
+	<>
+		<PageTitle title="Talent Collections">
+			<CreateDialog />
+		</PageTitle>
+		<CollectionsFiltersSection />
+		<CollectionsGrid />
+	</>
+);
 
 export default Page;

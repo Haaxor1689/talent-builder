@@ -5,7 +5,7 @@ import { useLocalStorage } from 'usehooks-ts';
 import { TalentForm } from '#server/schemas.ts';
 
 const parseLocalTrees = (v: string) => {
-	const val = JSON.parse(v);
+	const val = JSON.parse(v) as unknown;
 	if (!val || typeof val !== 'object') return {};
 	return Object.fromEntries(
 		Object.values(val)
