@@ -22,7 +22,7 @@ import Dialog, { closeDialog } from '../styled/Dialog';
 import TextButton from '../styled/TextButton';
 import { toast } from '../ToastProvider';
 
-const SaveDialog = ({ disabled }: { disabled?: boolean }) => {
+const SaveDialog = () => {
 	const [isPending, startTransition] = useAsyncAction();
 
 	const router = useRouter();
@@ -46,12 +46,7 @@ const SaveDialog = ({ disabled }: { disabled?: boolean }) => {
 	return (
 		<Dialog
 			trigger={open => (
-				<TextButton
-					icon={<Save />}
-					title="Save"
-					onClick={open}
-					disabled={disabled}
-				/>
+				<TextButton icon={<Save />} title="Save" onClick={open} />
 			)}
 		>
 			<h3 className="haax-color">Save changes</h3>
@@ -88,7 +83,7 @@ const SaveDialog = ({ disabled }: { disabled?: boolean }) => {
 							slug: newVisibility ? newSlug : null,
 							visibility: newVisibility
 						};
-						const isNew = tree.createdBy === null;
+						const isNew = tree.createdAt === null;
 						const shouldDelete = !isNew && changingStorage;
 
 						if (!tree.visibility) {

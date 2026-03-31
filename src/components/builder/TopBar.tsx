@@ -1,4 +1,4 @@
-import { useController, useFormContext, useFormState } from 'react-hook-form';
+import { useController, useFormContext } from 'react-hook-form';
 
 import ClassPicker from '#components/form/ClassPicker.tsx';
 import IconPicker from '#components/form/IconPicker.tsx';
@@ -56,8 +56,7 @@ const RowsInput = ({ editable }: Props) => {
 };
 
 const TopBar = ({ editable, isNew }: Props) => {
-	const { register, control } = useFormContext<TalentForm>();
-	const { isDirty } = useFormState({ control });
+	const { register } = useFormContext<TalentForm>();
 	return (
 		<div className="flex flex-wrap items-center justify-end gap-2">
 			<div className="flex shrink grow items-center gap-2">
@@ -77,7 +76,7 @@ const TopBar = ({ editable, isNew }: Props) => {
 
 			<div className="flex items-center justify-end">
 				<CollectionsDialog />
-				{editable && <SaveDialog disabled={!isDirty} />}
+				{editable && <SaveDialog />}
 				{!isNew && <CloneDialog />}
 				{editable && <DeleteDialog />}
 			</div>
