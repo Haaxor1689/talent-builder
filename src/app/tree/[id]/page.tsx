@@ -1,6 +1,7 @@
 import { type Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+import AdsenseScript from '#components/AdsenseScript.tsx';
 import TalentBuilder from '#components/builder/TalentBuilder.tsx';
 import { env } from '#env.js';
 import { getOgInfo } from '#server/api/openGraph.ts';
@@ -26,7 +27,12 @@ const Page = async ({ params }: Props) => {
 	const { id } = await params;
 	const talentTree = await invoke(getTalentTree({ slugOrId: id }));
 	if (!talentTree) return notFound();
-	return <TalentBuilder defaultValues={talentTree} />;
+	return (
+		<>
+			<TalentBuilder defaultValues={talentTree} />
+			<AdsenseScript />
+		</>
+	);
 };
 
 export default Page;

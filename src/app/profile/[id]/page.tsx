@@ -1,5 +1,6 @@
 import { type Metadata } from 'next';
 
+import AdsenseScript from '#components/AdsenseScript.tsx';
 import { getUser } from '#server/api/users.ts';
 import { invoke } from '#utils/index.ts';
 
@@ -22,7 +23,12 @@ export const generateMetadata = async ({
 
 const Page = async ({ params }: Props) => {
 	const { id } = await params;
-	return <ProfilePage id={id} />;
+	return (
+		<>
+			<ProfilePage id={id} />
+			<AdsenseScript />
+		</>
+	);
 };
 
 export default Page;
