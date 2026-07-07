@@ -1,6 +1,7 @@
 import dedent from 'dedent';
 import { Calculator, PlusCircle, ScrollText, Workflow } from 'lucide-react';
 
+import AdsenseScript from '#components/AdsenseScript.tsx';
 import { Discord } from '#components/Icons.tsx';
 import MainActions from '#components/landing-page/MainActions.tsx';
 import UserSection from '#components/landing-page/UserSection.tsx';
@@ -140,6 +141,7 @@ const Page = async () => (
 				</TextButton>
 			</div>
 		</div>
+		<AdsenseScript />
 	</>
 );
 

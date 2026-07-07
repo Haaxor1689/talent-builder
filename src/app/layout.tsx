@@ -36,17 +36,10 @@ const RootLayout = async ({ children }: LayoutProps<'/'>) => (
 		<head>
 			{process.env.NODE_ENV === 'production' ? (
 				<>
-					{/* Google Ads */}
+					{/* Google Ads — site verification only, script is loaded per content page */}
 					<meta
 						name="google-adsense-account"
 						content="ca-pub-8795217129609015"
-					/>
-					<Script
-						id="adsense-global"
-						async
-						strategy="afterInteractive"
-						src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8795217129609015"
-						crossOrigin="anonymous"
 					/>
 					{/* Anti AI scrape */}
 					<meta name="robots" content="noai, noimageai" />

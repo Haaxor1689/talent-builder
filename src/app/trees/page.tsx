@@ -3,6 +3,7 @@ import { type Metadata } from 'next';
 
 import FiltersSection from '#app/trees/FiltersSection.tsx';
 import TreeGrid from '#app/trees/TreeGrid.tsx';
+import AdsenseScript from '#components/AdsenseScript.tsx';
 import PageTitle from '#components/layout/PageTitle.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
 
@@ -20,6 +21,7 @@ const Page = () => (
 		</PageTitle>
 		<FiltersSection />
 		<TreeGrid />
+		<AdsenseScript />
 	</>
 );
 
