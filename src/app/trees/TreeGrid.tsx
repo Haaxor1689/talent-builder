@@ -70,7 +70,7 @@ const TreeGrid = () => {
 						<TreeGridItem
 							key={item.id}
 							item={item}
-							href={`/tree/${item.slug ?? item.id}`}
+							href={`/trees/${item.slug ?? item.id}`}
 						/>
 					))}
 				</Fragment>

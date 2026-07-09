@@ -11,7 +11,7 @@ import { getIconPath } from '#utils/index.ts';
 export const size = imageSize;
 export const contentType = 'image/webp';
 
-const Image = async ({ params }: PageProps<'/tree/[id]'>) => {
+const Image = async ({ params }: PageProps<'/trees/[id]'>) => {
 	const { id } = await params;
 	const r = await fetch(`${env.DEPLOY_URL}/api/og/${id}`).then(
 		r => r.json() as Promise<ServerFunctionReturn<typeof getOgInfo>>

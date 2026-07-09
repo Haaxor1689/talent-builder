@@ -3,7 +3,6 @@ import { type Metadata } from 'next';
 
 import FiltersSection from '#app/trees/FiltersSection.tsx';
 import TreeGrid from '#app/trees/TreeGrid.tsx';
-import AdsenseScript from '#components/AdsenseScript.tsx';
 import PageTitle from '#components/layout/PageTitle.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
 
@@ -15,13 +14,12 @@ export const metadata: Metadata = {
 const Page = () => (
 	<>
 		<PageTitle title="Talent Trees">
-			<TextButton icon={<PlusCircle />} type="link" href="/tree/new">
+			<TextButton icon={<PlusCircle />} type="link" href="/trees/new">
 				Create new
 			</TextButton>
 		</PageTitle>
 		<FiltersSection />
 		<TreeGrid />
-		<AdsenseScript />
 	</>
 );
 

@@ -84,6 +84,12 @@ export const upsertTalentTree = serverFunction({
 			where: { id: input.id }
 		});
 
+		if (input.slug && ['new', 'local'].includes(input.slug))
+			throw Errors.generic({
+				message:
+					'Provided custom URL is already in use. Please choose a different one.'
+			});
+
 		const now = new Date();
 		if (!current) {
 			await db

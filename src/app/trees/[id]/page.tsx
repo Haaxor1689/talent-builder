@@ -7,9 +7,9 @@ import { env } from '#env.js';
 import { getOgInfo } from '#server/api/openGraph.ts';
 import { getTalentTree } from '#server/api/talentTree.ts';
 import { getIconPath, invoke } from '#utils/index.ts';
-import { isRichTreeContent } from '#utils/richTreeContent.ts';
+import { isRichTreeContent } from '#utils/isRichContent.ts';
 
-type Props = PageProps<'/tree/[id]'>;
+type Props = PageProps<'/trees/[id]'>;
 
 export const generateMetadata = async ({
 	params

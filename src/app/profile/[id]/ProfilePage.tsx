@@ -113,7 +113,7 @@ const ProfilePage = async ({ id }: Props) => {
 										role: user.role
 									}
 								}}
-								href={`/tree/${tree.slug ?? tree.id}`}
+								href={`/trees/${tree.slug ?? tree.id}`}
 							/>
 						))}
 					</div>

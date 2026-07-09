@@ -73,7 +73,7 @@ const TalentSpec = ({ idx, tree, canChangeTree }: Props) =>
 					icon={<ExternalLink />}
 					title="Open tree"
 					type="link"
-					href={`/tree/${tree.id}`}
+					href={`/trees/${tree.id}`}
 					className="-m-2"
 				/>
 				<PointsSpent idx={idx} total={getTalentSum(tree.talents, tree.rows)} />
