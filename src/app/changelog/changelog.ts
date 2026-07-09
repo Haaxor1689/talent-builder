@@ -4,10 +4,11 @@ const changelog = [
 	dedent`
 		# July 09, 2026
 
-		- **Tree URL reorganization** Talent tree pages now live under the '/trees/*' routes, including the create and local tree views. Existing '/tree/*' and '/local' links will redirect automatically.
-		- **Builder and calculator instructions** Added collapsible help sections to the talent builder and calculator with quick usage guidance. Their open or closed state is remembered between visits.
-		- **Custom URL protection** Tree saves now prevent reserved slugs such as 'new' and 'local' from being used as custom URLs.
-		- **Page cleanup and discovery improvements** Adjust potential ad placement on some pages and updated sitemap generation to focus on richer public trees, collections, and profiles.
+		- **Cleaner tree links** Talent tree pages now use clearer links, and older links continue to work through automatic redirects.
+		- **Better in-page guidance** The builder and calculator now include instructions sections describing how to use each feature.
+		- **Safer custom URLs** Some protected words are now blocked when saving custom links to avoid confusing or broken pages.
+		- **Page polish and discovery** Several pages were cleaned up and public content is now easier to discover.
+		- **Better sharing and search behavior** Shared links now have more consistent previews, private or invalid pages are less likely to appear in search, and missing pages show clearer information.
 `,
 	dedent`
 		# March 30, 2026

@@ -15,11 +15,17 @@ export const generateMetadata = async ({
 }: Props): Promise<Metadata> => {
 	const { id } = await params;
 	const savedBuild = await invoke(getSavedBuild({ id }));
-	if (!savedBuild) return {};
+	if (!savedBuild)
+		return {
+			title: 'Build Not Found',
+			description: 'This talent build could not be found.',
+			robots: { index: false, follow: false }
+		};
 	const cls = maskToClass(savedBuild.class);
+	const authorName = savedBuild.createdBy.name || 'unknown creator';
 	return {
 		title: `${savedBuild.name || cls?.name}`,
-		description: `Talent tree created by ${savedBuild.createdBy.name}`,
+		description: `Talent build created by ${authorName}`,
 		icons: [{ rel: 'icon', url: getIconPath(cls?.icon, env.DEPLOY_URL) }]
 	};
 };

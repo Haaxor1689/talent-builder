@@ -66,9 +66,7 @@ const BuildGridItem = (item: Props) => {
 						</p>
 						<div className="flex items-center gap-1.5 truncate text-blue-gray">
 							<UserAvatar image={item.createdBy.image} />
-							{item.createdBy.name === 'TurtleWoW'
-								? 'TurtleWoW'
-								: getLastUpdatedString(item.updatedAt ?? item.createdAt)}
+							{getLastUpdatedString(item.updatedAt ?? item.createdAt)}
 						</div>
 					</div>
 				</Link>
