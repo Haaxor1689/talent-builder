@@ -13,7 +13,12 @@ export const generateMetadata = async ({
 	const { id } = await params;
 	const user = await invoke(getUser({ id }));
 
-	if (!user) return {};
+	if (!user)
+		return {
+			title: 'Profile Not Found',
+			description: 'This profile does not exist.',
+			robots: { index: false, follow: false }
+		};
 	return {
 		title: `${user.name}'s profile`,
 		description: `View ${user.name}'s profile, talent trees, and builds`

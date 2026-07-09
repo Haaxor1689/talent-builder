@@ -27,8 +27,26 @@ export const metadata: Metadata = {
 	title: { default: 'Talent Builder', template: '%s | Talent Builder' },
 	description:
 		'A tool for creating and sharing your custom World of Warcraft talent trees and builds',
+	applicationName: 'Talent Builder',
+	openGraph: {
+		title: 'Talent Builder',
+		description:
+			'A tool for creating and sharing your custom World of Warcraft talent trees and builds',
+		type: 'website',
+		siteName: 'Talent Builder',
+		url: './'
+	},
+	twitter: {
+		card: 'summary_large_image',
+		title: 'Talent Builder',
+		description:
+			'A tool for creating and sharing your custom World of Warcraft talent trees and builds'
+	},
 	icons: [{ rel: 'icon', url: '/icon.png' }],
-	metadataBase: new URL(env.DEPLOY_URL)
+	metadataBase: new URL(env.DEPLOY_URL),
+	alternates: {
+		canonical: './'
+	}
 };
 
 const RootLayout = async ({ children }: LayoutProps<'/'>) => (

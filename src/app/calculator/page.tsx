@@ -13,8 +13,16 @@ type Props = PageProps<'/calculator'>;
 export const generateMetadata = async ({
 	searchParams
 }: Props): Promise<Metadata> => {
-	const parsed = CalculatorParams.safeParse(await searchParams);
-	if (!parsed.success) return {};
+	const rawSearchParams = await searchParams;
+	const hasCustomState = Object.keys(rawSearchParams).length > 0;
+	const parsed = CalculatorParams.safeParse(rawSearchParams);
+	if (!parsed.success)
+		return {
+			title: 'Talent Calculator',
+			description:
+				'Plan a custom build using up to three talent trees in the Talent Calculator.',
+			robots: { index: false, follow: false }
+		};
 
 	const trees = await Promise.all([
 		invoke(getTalentTree({ slugOrId: parsed.data.t0 })),
@@ -24,11 +32,15 @@ export const generateMetadata = async ({
 
 	const classInfo = maskToClass(parsed.data.class);
 	const className = classInfo ? `${classInfo.name} ` : '';
+	const treeNames = trees
+		.map(t => t?.name)
+		.filter((name): name is string => Boolean(name));
 	return {
 		title: `${className} Talent Calculator`,
-		description: `Custom ${className} talent tree calculator consisting of trees: ${trees
-			.map(t => t?.name)
-			.join(', ')}`,
+		description: treeNames.length
+			? `Custom ${className}talent tree calculator with trees: ${treeNames.join(', ')}`
+			: `Custom ${className}talent tree calculator`,
+		robots: { index: !hasCustomState, follow: !hasCustomState },
 		icons: [{ rel: 'icon', url: getIconPath(classInfo?.icon, env.DEPLOY_URL) }]
 	};
 };

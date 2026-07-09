@@ -7,7 +7,8 @@ import ProfilePage from './[id]/ProfilePage';
 
 export const metadata: Metadata = {
 	title: 'Profile',
-	description: 'View your profile'
+	description: 'View your profile',
+	robots: { index: false, follow: false }
 };
 
 const Page = async () => {

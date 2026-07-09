@@ -16,10 +16,16 @@ export const generateMetadata = async ({
 }: Props): Promise<Metadata> => {
 	const { id } = await params;
 	const info = await invoke(getOgInfo({ id }));
-	if (!info) return {};
+	if (!info)
+		return {
+			title: 'Talent Tree Not Found',
+			description: 'This talent tree does not exist.',
+			robots: { index: false, follow: false }
+		};
+	const authorName = info.createdBy.name || 'unknown creator';
 	return {
 		title: info.name,
-		description: `Talent tree created by ${info.createdBy.name}`,
+		description: `Talent tree created by ${authorName}`,
 		icons: [{ rel: 'icon', url: getIconPath(info.icon, env.DEPLOY_URL) }]
 	};
 };
