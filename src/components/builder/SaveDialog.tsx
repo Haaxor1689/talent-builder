@@ -59,7 +59,7 @@ const SaveDialog = () => {
 					placeholder={newId}
 					slug={newSlug}
 					setSlug={setNewSlug}
-					url="/tree/"
+					url="/trees/"
 				/>
 			)}
 			<VisibilityInput
@@ -99,7 +99,7 @@ const SaveDialog = () => {
 						});
 						router.push(
 							newVisibility
-								? `/tree/${newSlug ?? newId}`
+								? `/trees/${newSlug ?? newId}`
 								: `/local?tree=${newId}`
 						);
 						reset(tree, { keepDefaultValues: false });

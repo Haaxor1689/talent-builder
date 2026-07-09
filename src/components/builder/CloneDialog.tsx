@@ -64,7 +64,7 @@ const CloneDialog = ({ disabled }: { disabled?: boolean }) => {
 					placeholder={newId}
 					slug={newSlug}
 					setSlug={setNewSlug}
-					url="/tree/"
+					url="/trees/"
 				/>
 			)}
 			<VisibilityInput visibility={visibility} setVisibility={setVisibility} />
@@ -97,7 +97,7 @@ const CloneDialog = ({ disabled }: { disabled?: boolean }) => {
 						} else {
 							await invoke(upsertTalentTree(tree));
 							toast({ message: 'Saved!', type: 'success' });
-							router.push(`/tree/${tree.slug ?? tree.id}`);
+							router.push(`/trees/${tree.slug ?? tree.id}`);
 						}
 						toast({
 							message: 'Cloned successfully!',

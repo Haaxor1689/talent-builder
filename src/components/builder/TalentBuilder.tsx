@@ -1,10 +1,20 @@
 'use client';
 
-import { Camera, CloudOff, Eye, EyeOff, NotebookPen } from 'lucide-react';
+import dedent from 'dedent';
+import {
+	BookOpenText,
+	Camera,
+	CloudOff,
+	Eye,
+	EyeOff,
+	NotebookPen
+} from 'lucide-react';
 import { useRef, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 
 import { useSession } from '#auth/client.ts';
+import CollapsibleSection from '#components/styled/CollapsibleSection.tsx';
+import Md from '#components/styled/Md.tsx';
 import ScrollArea from '#components/styled/ScrollArea.tsx';
 import { UserAvatar, UserRoleText } from '#components/styled/User.tsx';
 import { TalentForm } from '#server/schemas.ts';
@@ -19,6 +29,40 @@ import TalentPreview from './TalentPreview';
 import TopBar from './TopBar';
 
 type Props = { defaultValues: TalentForm };
+
+const builderInstructionsText = dedent`
+# Builder Basics
+
+The builder is for creating and editing full talent trees. Use it when you want to define talent layout, requirements, descriptions, and tree notes.
+
+1. **Fill out basic info:** This is purely for display and searching purposes and does not affect any functionality.
+1. **Pick a game version:** select how many rows your tree will have. You can either click through existing game versions or enter a custom number of rows. This will also determine which calculators your tree is compatible with.
+1. **Write notes:** you can use the \`Edit Notes\` button in the right panel to add context, explanations, or any other information relevant to your tree. This input supports Markdown formatting, so you can use headings, lists, links, and other [Markdown features](https://www.markdownguide.org/basic-syntax/) to structure your notes effectively.
+
+# Tree Editing
+
+Pick a talent slot in the left panel to select it. You can then edit its properties like icon, name, rank and description in the right panel.
+
+You can also drag and drop talents to rearrange them within the tree. Use the undo/redo buttons in the top right corner to revert or reapply changes.
+
+Numerical values that differ based on the rank can be entered as \`/\` seperated values. Postfixes such as \`%\` should not be repeated. When written correctly, you will see these values formatted in \`[10/20/30]%\` style in the tooltip when hovering over the talent. When viewed in calculator, the current allocated rank value will be highlighted.
+
+To set requirements for a talent, shift + click on the talent you want to require. If you see a red icon, it meant the requirement is invalid. To remove a requirement, either shift + click on the current talent or click the remove link button in the right panel.
+
+You can also use the \`Highlight\` checkbox in the right panel to mark a talent as important. This will add a visual highlight to the talent, making it stand out in the tree. This functionality is purely cosmetic and does not affect any calculations or requirements.
+
+The Spell Ids field is for exporting your tree to DBC format using collections. The talent will not be exported if this field is empty and should contain comma separated spell ids for each rank of the talent.
+
+# Collections
+
+Collections are a way to group multiple trees together. You can either add your tree to a collection you have access to or remove it from a collection. Collections can be used to organize trees by theme, class, or any other criteria you choose and they allow you to import/export trees from game files. You can also create new collections and manage existing ones through the collections page.
+
+# Saving and Sharing
+
+Use top bar actions to save updates, clone trees, or remove trees you own. You can change the visibility of your tree while saving. Public trees are visible in listings and can be shared by URL. Private trees are hidden from public listings but can still be accessed by URL.
+
+Local trees are only stored in your browser, do not require you to be signed in, and will not be saved to the server. This means that they also can't be shared with others and will not be accessible from other devices.
+`;
 
 const TalentBuilder = ({ defaultValues }: Props) => {
 	const treeElemRef = useRef<HTMLDivElement>(null);
@@ -137,6 +181,16 @@ const TalentBuilder = ({ defaultValues }: Props) => {
 					</div>
 				</div>
 			</form>
+			<CollapsibleSection
+				title={
+					<>
+						<BookOpenText /> Instructions
+					</>
+				}
+				storageKey="talent-builder"
+			>
+				<Md text={builderInstructionsText} />
+			</CollapsibleSection>
 		</FormProvider>
 	);
 };

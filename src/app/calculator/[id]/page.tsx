@@ -1,7 +1,6 @@
 import { type Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import AdsenseScript from '#components/AdsenseScript.tsx';
 import TalentCalculator from '#components/calculator/TalentCalculator.tsx';
 import { env } from '#env.js';
 import { getSavedBuild } from '#server/api/savedBuilds.ts';
@@ -40,12 +39,7 @@ const Page = async ({ params, searchParams }: Props) => {
 		invoke(getTalentTree({ slugOrId: parsed.data.t2 ?? savedBuild.tree2Id }))
 	] as const);
 
-	return (
-		<>
-			<TalentCalculator trees={trees} values={savedBuild} />
-			<AdsenseScript />
-		</>
-	);
+	return <TalentCalculator trees={trees} values={savedBuild} />;
 };
 
 export default Page;

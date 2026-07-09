@@ -7,7 +7,7 @@ const actions = [
 	{
 		title: 'Create a new tree',
 		icon: <PlusCircle />,
-		href: '/tree/new',
+		href: '/trees/new',
 		className: 'text-warm-green'
 	},
 	{

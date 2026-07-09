@@ -9,6 +9,16 @@ const config = {
 	},
 	redirects: () => [
 		{
+			source: '/tree/:slug*',
+			destination: '/trees/:slug*',
+			permanent: true
+		},
+		{
+			source: '/local',
+			destination: '/trees/local',
+			permanent: true
+		},
+		{
 			source: '/c/:slug*',
 			destination: '/collections/:slug*',
 			permanent: true

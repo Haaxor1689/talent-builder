@@ -1,6 +1,7 @@
 import dedent from 'dedent';
 import { Calculator, PlusCircle, ScrollText, Workflow } from 'lucide-react';
 
+import changelog from '#app/changelog/changelog.ts';
 import AdsenseScript from '#components/AdsenseScript.tsx';
 import { Discord } from '#components/Icons.tsx';
 import MainActions from '#components/landing-page/MainActions.tsx';
@@ -45,7 +46,7 @@ const Page = async () => (
 					Start by{' '}
 					<TextButton
 						type="link"
-						href="/tree/new"
+						href="/trees/new"
 						icon={<PlusCircle />}
 						className="-m-2 inline-flex icon-size-4"
 					>
@@ -79,19 +80,26 @@ const Page = async () => (
 					</span>{' '}
 					account.
 				</p>
-				<p>
-					Check out the{' '}
-					<TextButton
-						type="link"
-						href="/changelog"
-						icon={<ScrollText />}
-						className="-m-2 inline-flex icon-size-4"
-					>
-						changelog
-					</TextButton>{' '}
-					to see what&apos;s new.
-				</p>
 			</div>
+		</div>
+
+		<div className="my-6 flex max-w-4xl flex-col gap-3 self-center">
+			<h2 className="mb-2 self-center border-b-2">Latest changes</h2>
+
+			<Md text={changelog[0] ?? ''} />
+
+			<p className="text-blue-gray">
+				You can also check out the{' '}
+				<TextButton
+					type="link"
+					href="/changelog"
+					icon={<ScrollText />}
+					className="-m-2 inline-flex icon-size-4"
+				>
+					full changelog
+				</TextButton>{' '}
+				to see what&apos;s new.
+			</p>
 		</div>
 
 		<div className="flex max-w-4xl flex-col gap-3 self-center">

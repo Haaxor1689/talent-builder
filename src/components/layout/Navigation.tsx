@@ -14,7 +14,7 @@ import TextButton from '#components/styled/TextButton.tsx';
 import Dialog, { closeDialog } from '../styled/Dialog';
 
 const topNavigation = [
-	{ href: '/tree/new', icon: <PlusCircle />, text: 'New Tree' },
+	{ href: '/trees/new', icon: <PlusCircle />, text: 'New Tree' },
 	{ href: '/trees', icon: <Workflow />, text: 'Trees' },
 	{ href: '/collections', icon: <LibraryBig />, text: 'Collections' },
 	{ href: '/calculator', icon: <Calculator />, text: 'Calculator' }

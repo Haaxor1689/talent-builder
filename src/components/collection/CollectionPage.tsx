@@ -137,7 +137,7 @@ const CollectionPage = ({ defaultValues, trees }: Props) => {
 							) : (
 								<TreeGridItem
 									item={tree}
-									href={`/tree/${tree.slug ?? tree.id}`}
+									href={`/trees/${tree.slug ?? tree.id}`}
 									label={`Open ${classInfo?.name ?? classId} tab ${tab + 1}`}
 									hideTooltip={!!dragging}
 									onDragStart={e => {
@@ -195,7 +195,7 @@ const CollectionPage = ({ defaultValues, trees }: Props) => {
 							<TreeGridItem
 								key={tree.id}
 								item={tree}
-								href={`/tree/${tree.id}`}
+								href={`/trees/${tree.id}`}
 								hideTooltip={!!dragging}
 								onDragStart={e => {
 									e.stopPropagation();
