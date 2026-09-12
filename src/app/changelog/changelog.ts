@@ -2,6 +2,11 @@ import dedent from 'dedent';
 
 const changelog = [
 	dedent`
+		# September 12, 2026
+
+		- **Fixed collections bug** Collections that contain deleted trees will no longer break and will handle missing trees gracefully.
+`,
+	dedent`
 		# July 09, 2026
 
 		- **Cleaner tree links** Talent tree pages now use clearer links, and older links continue to work through automatic redirects.

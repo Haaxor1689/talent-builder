@@ -78,7 +78,11 @@ export const getCollectionTrees = serverFunction({
 				where: { collectionId: collection.id },
 				with: { tree: { with: createdBy } }
 			})
-			.then(items => items.map(item => TalentForm.parse(item.tree)));
+			.then(items =>
+				items
+					.filter(item => item.tree)
+					.map(item => TalentForm.parse(item.tree))
+			);
 	},
 	transform: async items => {
 		const user = await getUser();
