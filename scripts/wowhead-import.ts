@@ -150,20 +150,23 @@ const iconUrl = (icon: string) =>
 const tooltipDescription = (tooltip: string) => {
 	const matches = [...tooltip.matchAll(/<div class="q">([\s\S]*?)<\/div>/gi)];
 	const descriptions = matches
-		.map(([, text]) => stripHtml(text))
+		.map(([, text]) => stripHtml(text ?? ''))
 		.filter(Boolean);
 	if (!descriptions.length)
 		throw new Error('Wowhead tooltip had no description');
 	return descriptions.join('\n');
 };
 
-const mergeRankDescriptions = (descriptions: string[]) => {
+const mergeRankDescriptions = (descriptions: string[]): string => {
 	if (!descriptions.length) throw new Error('Talent has no rank descriptions');
+	const firstDescription = descriptions[0];
+	if (firstDescription === undefined)
+		throw new Error('Talent has no rank descriptions');
 	if (
 		descriptions.length === 1 ||
-		descriptions.every(d => d === descriptions[0])
+		descriptions.every(d => d === firstDescription)
 	)
-		return descriptions[0];
+		return firstDescription;
 
 	const split = descriptions.map(description => {
 		const segments: string[] = [];
@@ -181,12 +184,13 @@ const mergeRankDescriptions = (descriptions: string[]) => {
 	});
 
 	const first = split[0];
+	if (!first) throw new Error('Talent has no rank descriptions');
 	if (split.some(current => current.values.length !== first.values.length))
 		return descriptions.join('\n\nNext rank:\n');
 
 	const mergedSegments = first.segments.map((_, index) => {
-		const variants = split.map(current => current.segments[index]);
-		if (variants.every(segment => segment === variants[0])) return variants[0];
+		const variants = split.map(current => current.segments[index]!);
+		if (variants.every(segment => segment === variants[0])) return variants[0]!;
 
 		const words = variants.map(segment =>
 			segment.match(/[A-Za-z]+|[^A-Za-z]+/g)
@@ -221,7 +225,7 @@ const mergeRankDescriptions = (descriptions: string[]) => {
 	if (mergedSegments.some(segment => segment === undefined))
 		return descriptions.join('\n\nNext rank:\n');
 
-	return mergedSegments.reduce((result, segment, index) => {
+	return mergedSegments.reduce<string>((result, segment, index) => {
 		const values = [...new Set(split.map(current => current.values[index]))];
 		return `${result}${segment ?? ''}${values.join('/')}`;
 	}, '');
@@ -377,9 +381,12 @@ for (const { version, source } of loadedVersions) {
 					throw fail('has unsupported prerequisite alternatives');
 
 				const requirement = talent.requires[0];
-				const requires = requirement ? indexById.get(requirement.id) : null;
-				if (requirement && requires === undefined)
+				const prerequisiteIndex = requirement
+					? indexById.get(requirement.id)
+					: undefined;
+				if (requirement && prerequisiteIndex === undefined)
 					throw fail('references a missing prerequisite');
+				const requires = prerequisiteIndex ?? null;
 				if (
 					requirement &&
 					sourceTalents[String(requirement.id)]?.ranks.length !==
