@@ -76,7 +76,9 @@ export const CollectionForm = z.object({
 	name: z.string().default('New collection'),
 	slug: z.string().nullable().default(null),
 	visibility: z.enum(ItemVisibility).default('public'),
+	notes: z.string().nullable().default(null),
 	assignedTrees: z.record(z.string(), z.string()).default({}),
+	classNotes: z.record(z.string(), z.string()).default({}),
 	createdById: z.string().nullable().default(null),
 	createdBy: z
 		.object({

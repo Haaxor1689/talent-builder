@@ -167,7 +167,7 @@ const TalentBuilder = ({ defaultValues }: Props) => {
 						<PointsSummary />
 					</div>
 
-					<div className="contain-size min-h-0 shrink grow overflow-y-auto border-t border-gray/40 md:ml-0 md:w-lg md:border-t-0 md:border-l">
+					<div className="min-h-0 shrink grow overflow-y-auto border-t border-gray/40 contain-size md:ml-0 md:w-lg md:border-t-0 md:border-l">
 						{selected === -1 ? (
 							<Notes editable={editable} />
 						) : (

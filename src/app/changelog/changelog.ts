@@ -2,6 +2,12 @@ import dedent from 'dedent';
 
 const changelog = [
 	dedent`
+		# October 02, 2026
+
+		- **Classic talent collections** Public talent collections are now available for Forever, TBC 2.4.3, and Wrath 3.3.5, including Death Knight trees where supported.
+		- **Collection notes** Collections now support shared Markdown notes and editable class-specific notes alongside their talent calculators.
+`,
+	dedent`
 		# September 12, 2026
 
 		- **Fixed collections bug** Collections that contain deleted trees will no longer break and will handle missing trees gracefully.

@@ -109,6 +109,7 @@ export const talentTrees = sqliteTable(
 			.notNull(),
 		notes: text('notes'),
 		class: integer('class').default(0).notNull(),
+		// TODO: remove
 		index: integer('index').default(0).notNull(),
 		icon: text('icon', { length: 255 })
 			.default('inv_misc_questionmark')
@@ -130,12 +131,7 @@ export const talentTrees = sqliteTable(
 		index('trees_rows_idx').on(t.rows),
 		index('trees_collection_idx').on(t.collection),
 		index('trees_class_idx').on(t.class),
-		index('trees_collection_class_index_rows_idx').on(
-			t.collection,
-			t.class,
-			t.index,
-			t.rows
-		),
+		index('trees_collection_class_rows_idx').on(t.collection, t.class, t.rows),
 		index('trees_visibility_createdById_updatedAt_idx').on(
 			t.visibility,
 			t.createdById,
@@ -169,10 +165,15 @@ export const collections = sqliteTable(
 		visibility: text('visibility', { enum: ItemVisibility })
 			.default('public')
 			.notNull(),
+		notes: text('notes'),
 		icon: text('icon', { length: 255 })
 			.default('inv_misc_questionmark')
 			.notNull(),
 		assignedTrees: text('assignedTrees', { mode: 'json' })
+			.default('{}')
+			.notNull()
+			.$type<Record<string, string>>(),
+		classNotes: text('classNotes', { mode: 'json' })
 			.default('{}')
 			.notNull()
 			.$type<Record<string, string>>(),
