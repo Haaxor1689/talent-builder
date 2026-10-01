@@ -79,7 +79,14 @@ As you make changes, the calculator will automatically update the URL to reflect
 Signed in users can also save build templates. All saved builds are public and can be found in your profile. You can also clone and modify existing builds from other users.
 `;
 
-const TalentCalculator = ({ urlBase, classIds, trees, isNew, values, footer }: Props) => {
+const TalentCalculator = ({
+	urlBase,
+	classIds,
+	trees,
+	isNew,
+	values,
+	footer
+}: Props) => {
 	const searchParams = useSearchParams();
 	const defaultValues = useMemo(() => {
 		const search = CalculatorParams.safeParse(
@@ -103,7 +110,9 @@ const TalentCalculator = ({ urlBase, classIds, trees, isNew, values, footer }: P
 	return (
 		<FormProvider {...formProps}>
 			<UrlSync values={values} />
-			{urlBase && <ClassCalculatorsLinks urlBase={urlBase} classIds={classIds} />}
+			{urlBase && (
+				<ClassCalculatorsLinks urlBase={urlBase} classIds={classIds} />
+			)}
 			<form className="haax-surface-3">
 				<div className="flex grow flex-wrap items-center gap-3">
 					<ClassPicker
