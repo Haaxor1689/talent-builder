@@ -1,3 +1,5 @@
+import { notFound } from 'next/navigation';
+
 import { env } from '#env.js';
 import { type getOgInfo } from '#server/api/openGraph.ts';
 import { type ServerFunctionReturn } from '#server/helpers.ts';
@@ -16,7 +18,7 @@ const Image = async ({ params }: PageProps<'/trees/[id]'>) => {
 	const r = await fetch(`${env.DEPLOY_URL}/api/og/${id}`).then(
 		r => r.json() as Promise<ServerFunctionReturn<typeof getOgInfo>>
 	);
-	if (!r) return undefined;
+	if (!r) notFound();
 	return await imageResponse(
 		<div
 			style={{

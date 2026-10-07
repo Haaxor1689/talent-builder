@@ -10,8 +10,6 @@ import {
 const staticRoutes = [
 	'/',
 	'/trees',
-	'/trees/new',
-	'/trees/local',
 	'/collections',
 	'/calculator',
 	'/changelog'
