@@ -115,32 +115,39 @@ const parsePageData = <T>(text: string, key: string) => {
 	return JSON.parse(text.slice(dataStart, findObjectEnd(text, dataStart))) as T;
 };
 
-const stripHtml = (value: string) =>
-	value
-		.replace(/<!--[\s\S]*?-->/g, '')
-		.replace(
-			/<(script|style|svg|iframe|object|noscript)\b[^>]*>[\s\S]*?<\/\1\s*>/gi,
-			''
-		)
-		.replace(/<br\s*\/?\s*>/gi, '\n')
-		.replace(/<\/?(?:p|div|li|tr|td|th|h[1-6]|ul|ol|table)\b[^>]*>/gi, '\n')
-		.replace(/<img\b[^>]*\balt=(['"])(.*?)\1[^>]*>/gi, '$2')
-		.replace(/<[^>]*>/g, '')
-		.replace(/&#x([\da-f]+);/gi, (_, code: string) =>
-			String.fromCodePoint(parseInt(code, 16))
-		)
-		.replace(/&#(\d+);/g, (_, code: string) =>
-			String.fromCodePoint(Number(code))
-		)
-		.replace(/&nbsp;/gi, ' ')
-		.replace(/&lt;/gi, '<')
-		.replace(/&gt;/gi, '>')
-		.replace(/&quot;/gi, '"')
-		.replace(/&#39;/gi, "'")
-		.replace(/&amp;/gi, '&')
-		.replace(/[ \t]+\n/g, '\n')
-		.replace(/\n{3,}/g, '\n\n')
-		.trim();
+const stripHtml = (value: string) => {
+	let previous: string;
+	let current = value;
+	do {
+		previous = current;
+		current = current
+			.replace(/<!--[\s\S]*?-->/g, '')
+			.replace(
+				/<(script|style|svg|iframe|object|noscript)\b[^>]*>[\s\S]*?<\/\1\s*>/gi,
+				''
+			)
+			.replace(/<br\s*\/?\s*>/gi, '\n')
+			.replace(/<\/?(?:p|div|li|tr|td|th|h[1-6]|ul|ol|table)\b[^>]*>/gi, '\n')
+			.replace(/<img\b[^>]*\balt=(['"])(.*?)\1[^>]*>/gi, '$2')
+			.replace(/<[^>]*>/g, '')
+			.replace(/&#x([\da-f]+);/gi, (_, code: string) =>
+				String.fromCodePoint(parseInt(code, 16))
+			)
+			.replace(/&#(\d+);/g, (_, code: string) =>
+				String.fromCodePoint(Number(code))
+			)
+			.replace(/&nbsp;/gi, ' ')
+			.replace(/&lt;/gi, '<')
+			.replace(/&gt;/gi, '>')
+			.replace(/&quot;/gi, '"')
+			.replace(/&#39;/gi, "'")
+			.replace(/&amp;/gi, '&')
+			.replace(/[ \t]+\n/g, '\n')
+			.replace(/\n{3,}/g, '\n\n')
+			.trim();
+	} while (current !== previous);
+	return current;
+};
 
 const iconUrl = (icon: string) =>
 	icon.startsWith('http')
