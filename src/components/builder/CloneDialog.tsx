@@ -93,7 +93,7 @@ const CloneDialog = ({ disabled }: { disabled?: boolean }) => {
 						if (!tree.visibility) {
 							upsertTree(tree);
 							toast({ message: 'Saved locally!', type: 'success' });
-							router.push(`/local?tree=${tree.id}`);
+							router.push(`/trees/local?tree=${tree.id}`);
 						} else {
 							await invoke(upsertTalentTree(tree));
 							toast({ message: 'Saved!', type: 'success' });

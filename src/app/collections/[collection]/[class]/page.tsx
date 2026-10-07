@@ -41,7 +41,12 @@ export const generateMetadata = async ({
 	return {
 		title: `${collection.name} ${info.name}`,
 		description: `Talent calculator from collection ${collection.name}.`,
-		icons: [{ rel: 'icon', url: getIconPath(info.icon, env.DEPLOY_URL) }]
+		icons: [{ rel: 'icon', url: getIconPath(info.icon, env.DEPLOY_URL) }],
+		alternates: {
+			canonical: `/collections/${collection.slug ?? collection.id}/${info.name
+				.toLowerCase()
+				.replaceAll(' ', '-')}`
+		}
 	};
 };
 

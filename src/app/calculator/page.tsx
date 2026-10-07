@@ -21,7 +21,8 @@ export const generateMetadata = async ({
 			title: 'Talent Calculator',
 			description:
 				'Plan a custom build using up to three talent trees in the Talent Calculator.',
-			robots: { index: false, follow: false }
+			robots: { index: false, follow: false },
+			alternates: { canonical: '/calculator' }
 		};
 
 	const trees = await Promise.all([
@@ -41,7 +42,8 @@ export const generateMetadata = async ({
 			? `Custom ${className}talent tree calculator with trees: ${treeNames.join(', ')}`
 			: `Custom ${className}talent tree calculator`,
 		robots: { index: !hasCustomState, follow: !hasCustomState },
-		icons: [{ rel: 'icon', url: getIconPath(classInfo?.icon, env.DEPLOY_URL) }]
+		icons: [{ rel: 'icon', url: getIconPath(classInfo?.icon, env.DEPLOY_URL) }],
+		alternates: { canonical: '/calculator' }
 	};
 };
 

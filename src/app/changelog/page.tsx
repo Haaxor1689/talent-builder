@@ -6,7 +6,8 @@ import changelog from './changelog';
 
 export const metadata: Metadata = {
 	title: 'Changelog',
-	description: 'Recent Talent Builder feature updates and fixes'
+	description: 'Recent Talent Builder feature updates and fixes',
+	alternates: { canonical: '/changelog' }
 };
 
 const Page = () => (

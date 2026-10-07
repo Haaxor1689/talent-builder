@@ -26,7 +26,8 @@ export const generateMetadata = async ({
 	return {
 		title: info.name,
 		description: `Talent tree created by ${authorName}`,
-		icons: [{ rel: 'icon', url: getIconPath(info.icon, env.DEPLOY_URL) }]
+		icons: [{ rel: 'icon', url: getIconPath(info.icon, env.DEPLOY_URL) }],
+		alternates: { canonical: `/trees/${info.slug ?? info.id}` }
 	};
 };
 

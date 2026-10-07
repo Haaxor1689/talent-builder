@@ -21,7 +21,8 @@ export const generateMetadata = async ({
 		};
 	return {
 		title: `${user.name}'s profile`,
-		description: `View ${user.name}'s profile, talent trees, and builds`
+		description: `View ${user.name}'s profile, talent trees, and builds`,
+		alternates: { canonical: `/profile/${user.id}` }
 	};
 };
 

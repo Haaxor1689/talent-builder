@@ -26,7 +26,7 @@ const LocalTrees = () => {
 						<TreeGridItem
 							key={tree.id}
 							item={tree}
-							href={`/local?tree=${tree.id}`}
+							href={`/trees/local?tree=${tree.id}`}
 							active={tree.id === selected}
 							label="Open local tree"
 						/>
