@@ -444,7 +444,6 @@ for (const { version, source } of loadedVersions) {
 				icon: iconUrl(treeIcon),
 				rows: lastRow + 1,
 				talents,
-				collection: null,
 				createdById: ownerId,
 				createdAt: now,
 				updatedAt: now
@@ -583,7 +582,6 @@ await db.transaction(async tx => {
 					icon: sql`excluded.icon`,
 					rows: sql`excluded.rows`,
 					talents: sql`excluded.talents`,
-					collection: sql`excluded.collection`,
 					updatedAt: sql`excluded.updatedAt`
 				}
 			});

@@ -122,7 +122,6 @@ export const talentTrees = sqliteTable(
 			.default('{}')
 			.notNull()
 			.$type<Talents>(),
-		collection: text('collection', { length: 255 }),
 		createdById: text('createdById', { length: 255 }).notNull(),
 		createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
 		updatedAt: integer('updatedAt', { mode: 'timestamp' }).notNull()
@@ -132,9 +131,7 @@ export const talentTrees = sqliteTable(
 		index('trees_name_idx').on(t.name),
 		index('trees_visibility_idx').on(t.visibility),
 		index('trees_rows_idx').on(t.rows),
-		index('trees_collection_idx').on(t.collection),
 		index('trees_class_idx').on(t.class),
-		index('trees_collection_class_rows_idx').on(t.collection, t.class, t.rows),
 		index('trees_visibility_createdById_updatedAt_idx').on(
 			t.visibility,
 			t.createdById,
