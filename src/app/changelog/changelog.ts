@@ -2,6 +2,12 @@ import dedent from 'dedent';
 
 const changelog = [
 	dedent`
+		# October 18, 2026
+
+		- **Automatic Ko-fi supporter access** Ko-fi donations now automatically grant supporter access to linked Discord accounts, including donations made before the account is linked.
+		- **More reliable page updates** Cache invalidation has been improved so profiles and shared talent content reflect changes more reliably.
+`,
+	dedent`
 		# October 02, 2026
 
 		- **Classic talent collections** Public talent collections are now available for Forever, TBC 2.4.3, and Wrath 3.3.5, including Death Knight trees where supported.
