@@ -26,7 +26,8 @@ export const generateMetadata = async ({
 	return {
 		title: `${savedBuild.name || cls?.name}`,
 		description: `Talent build created by ${authorName}`,
-		icons: [{ rel: 'icon', url: getIconPath(cls?.icon, env.DEPLOY_URL) }]
+		icons: [{ rel: 'icon', url: getIconPath(cls?.icon, env.DEPLOY_URL) }],
+		alternates: { canonical: `/calculator/${savedBuild.slug ?? savedBuild.id}` }
 	};
 };
 

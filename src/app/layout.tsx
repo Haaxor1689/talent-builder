@@ -43,10 +43,7 @@ export const metadata: Metadata = {
 			'A tool for creating and sharing your custom World of Warcraft talent trees and builds'
 	},
 	icons: [{ rel: 'icon', url: '/icon.png' }],
-	metadataBase: new URL(env.DEPLOY_URL),
-	alternates: {
-		canonical: './'
-	}
+	metadataBase: new URL(env.DEPLOY_URL)
 };
 
 const RootLayout = async ({ children }: LayoutProps<'/'>) => (

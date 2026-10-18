@@ -1,5 +1,6 @@
 import dedent from 'dedent';
 import { Calculator, PlusCircle, ScrollText, Workflow } from 'lucide-react';
+import { type Metadata } from 'next';
 
 import changelog from '#app/changelog/changelog.ts';
 import AdsenseScript from '#components/AdsenseScript.tsx';
@@ -8,6 +9,10 @@ import MainActions from '#components/landing-page/MainActions.tsx';
 import UserSection from '#components/landing-page/UserSection.tsx';
 import Md from '#components/styled/Md.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
+
+export const metadata: Metadata = {
+	alternates: { canonical: '/' }
+};
 
 const Page = async () => (
 	<>

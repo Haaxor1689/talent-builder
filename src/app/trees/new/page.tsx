@@ -5,7 +5,8 @@ import { TalentForm } from '#server/schemas.ts';
 
 export const metadata: Metadata = {
 	title: 'New Talent Tree',
-	description: 'Create a new talent tree'
+	description: 'Create a new talent tree',
+	robots: { index: false, follow: false }
 };
 
 const Page = () => <TalentBuilder defaultValues={TalentForm.parse({})} />;

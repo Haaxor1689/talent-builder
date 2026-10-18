@@ -4,6 +4,7 @@ import { and, eq } from 'drizzle-orm';
 import { updateTag } from 'next/cache';
 import { z } from 'zod';
 
+import { itemWriteTags } from '#server/cacheTags.ts';
 import { db } from '#server/db/index.ts';
 import { collections, collectionTrees } from '#server/db/schema.ts';
 import { serverFunction } from '#server/helpers.ts';
@@ -58,11 +59,6 @@ export const listInfiniteCollections = serverFunction({
 	}
 });
 
-const updateTags = (id: string, userId: string) => {
-	updateTag(`collections:id:${id}`);
-	updateTag(`users:id:${userId}`);
-};
-
 export const upsertCollection = serverFunction({
 	input: CollectionForm,
 	session: () => getUser('supporter').then(u => ({ id: u.id, role: u.role })),
@@ -100,7 +96,12 @@ export const upsertCollection = serverFunction({
 				.catch(uniqueSlugException);
 		}
 
-		updateTags(input.id, current?.createdById ?? user.id);
+		for (const tag of itemWriteTags(
+			'collections',
+			{ ...input, createdById: current ? current.createdById : user.id },
+			current
+		))
+			updateTag(tag);
 	}
 });
 
@@ -124,7 +125,7 @@ export const deleteCollection = serverFunction({
 			await tx.delete(collections).where(eq(collections.id, input.id));
 		});
 
-		updateTags(input.id, current?.createdById ?? user.id);
+		updateTag(`collections:id:${input.id}`);
 	}
 });
 
@@ -153,7 +154,7 @@ export const addCollectionTree = serverFunction({
 				.where(eq(collections.id, input.collectionId));
 		});
 
-		updateTags(input.collectionId, current.createdById);
+		updateTag(`collections:id:${input.collectionId}`);
 	}
 });
 
@@ -193,7 +194,7 @@ export const removeCollectionTree = serverFunction({
 				.where(eq(collections.id, input.collectionId));
 		});
 
-		updateTags(input.collectionId, current.createdById);
+		updateTag(`collections:id:${input.collectionId}`);
 	}
 });
 

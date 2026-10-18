@@ -8,7 +8,8 @@ import CollectionsGrid from './CollectionsGrid';
 
 export const metadata: Metadata = {
 	title: 'Talent Collections',
-	description: 'Browse public talent collections'
+	description: 'Browse public talent collections',
+	alternates: { canonical: '/collections' }
 };
 
 const Page = () => (

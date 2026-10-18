@@ -15,7 +15,8 @@ export const generateMetadata = async ({
 	if (!item) return notFound();
 	return {
 		title: `${item.name} collection`,
-		description: 'Collection of talents'
+		description: 'Collection of talents',
+		alternates: { canonical: `/collections/${item.slug ?? item.id}` }
 	};
 };
 

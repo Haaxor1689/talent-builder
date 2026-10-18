@@ -16,6 +16,7 @@ export const env = createEnv({
 		AUTH_DISCORD_ID: z.string(),
 		AUTH_DISCORD_SECRET: z.string(),
 		DISCORD_BOT_TOKEN: z.string(),
+		KOFI_VERIFICATION_TOKEN: z.string(),
 		DEPLOY_URL: z.url()
 	},
 
@@ -40,6 +41,7 @@ export const env = createEnv({
 		AUTH_DISCORD_ID: process.env.AUTH_DISCORD_ID,
 		AUTH_DISCORD_SECRET: process.env.AUTH_DISCORD_SECRET,
 		DISCORD_BOT_TOKEN: process.env.DISCORD_BOT_TOKEN,
+		KOFI_VERIFICATION_TOKEN: process.env.KOFI_VERIFICATION_TOKEN,
 		DEPLOY_URL: process.env.DEPLOY_URL
 	},
 	/**

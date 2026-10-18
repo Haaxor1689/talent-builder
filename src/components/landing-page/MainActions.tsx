@@ -23,7 +23,7 @@ const actions = [
 	{
 		title: 'Manage local trees',
 		icon: <CloudOff />,
-		href: '/local',
+		href: '/trees/local',
 		className: 'text-blue-gray'
 	}
 ];

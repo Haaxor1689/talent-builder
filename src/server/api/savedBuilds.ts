@@ -1,6 +1,7 @@
 import { cacheLife, cacheTag } from 'next/cache';
 import { z } from 'zod';
 
+import { buildTags, missingTag, tagDependencies } from '#server/cacheTags.ts';
 import { db } from '#server/db/index.ts';
 import { serverFunction } from '#server/helpers.ts';
 
@@ -17,8 +18,11 @@ export const getSavedBuild = serverFunction({
 			with: createdBy
 		});
 
-		if (r) cacheTag(`savedBuilds:id:${r.id}`);
-		else return undefined;
+		if (!r) {
+			cacheTag(missingTag('savedBuilds', input.id));
+			return undefined;
+		}
+		tagDependencies(buildTags(r));
 
 		return {
 			...r,

@@ -6,6 +6,7 @@ import { updateTag } from 'next/cache';
 import { z } from 'zod';
 
 import { bitPack } from '#components/calculator/utils.ts';
+import { itemWriteTags } from '#server/cacheTags.ts';
 import { db } from '#server/db/index.ts';
 import { savedBuilds } from '#server/db/schema.ts';
 import { serverFunction } from '#server/helpers.ts';
@@ -57,13 +58,17 @@ export const upsertSavedBuild = serverFunction({
 				.catch(uniqueSlugException);
 		}
 
+		for (const tag of itemWriteTags(
+			'savedBuilds',
+			{ ...restInput, createdById: entry ? entry.createdById : user.id },
+			entry
+		))
+			updateTag(tag);
+
 		const build = await db.query.savedBuilds.findFirst({
 			where: { id: restInput.id },
-			with:  createdBy 
+			with: createdBy
 		});
-
-		updateTag(`savedBuilds:id:${restInput.id}`);
-		updateTag(`users:id:${entry?.createdById ?? user.id}`);
 
 		return {
 			...build,
@@ -88,9 +93,7 @@ export const deleteSavedBuild = serverFunction({
 				message: 'You do not have permission to delete this build'
 			});
 
-		updateTag(`savedBuilds:id:${input.id}`);
-		updateTag(`users:id:${entry?.createdById ?? user.id}`);
-
 		await db.delete(savedBuilds).where(eq(savedBuilds.id, input.id));
+		updateTag(`savedBuilds:id:${input.id}`);
 	}
 });

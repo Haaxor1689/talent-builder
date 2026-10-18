@@ -5,6 +5,7 @@ import { updateTag } from 'next/cache';
 import { z } from 'zod';
 
 import { GameVersions } from '#components/styled/GameVersion.tsx';
+import { itemWriteTags } from '#server/cacheTags.ts';
 import { db } from '#server/db/index.ts';
 import { talentTrees } from '#server/db/schema.ts';
 import { serverFunction } from '#server/helpers.ts';
@@ -71,11 +72,6 @@ export const listInfiniteTalentTrees = serverFunction({
 	}
 });
 
-const updateTags = (id: string, userId: string) => {
-	updateTag(`talentTrees:id:${id}`);
-	updateTag(`users:id:${userId}`);
-};
-
 export const upsertTalentTree = serverFunction({
 	input: TalentForm,
 	session: () => getUser('user').then(u => ({ id: u?.id, role: u?.role })),
@@ -121,7 +117,12 @@ export const upsertTalentTree = serverFunction({
 				.catch(uniqueSlugException);
 		}
 
-		updateTags(input.id, current?.createdById ?? user.id);
+		for (const tag of itemWriteTags(
+			'talentTrees',
+			{ ...input, createdById: current ? current.createdById : user.id },
+			current
+		))
+			updateTag(tag);
 	}
 });
 
@@ -140,6 +141,6 @@ export const deleteTalentTree = serverFunction({
 
 		await db.delete(talentTrees).where(eq(talentTrees.id, input.id));
 
-		updateTags(input.id, current?.createdById ?? user.id);
+		updateTag(`talentTrees:id:${input.id}`);
 	}
 });

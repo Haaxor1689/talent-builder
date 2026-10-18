@@ -58,6 +58,7 @@ export const classMask = {
 	4: { name: 'Hunter', icon: 'class_hunter', color: '#ABD473' },
 	8: { name: 'Rogue', icon: 'class_rogue', color: '#FFF569' },
 	16: { name: 'Priest', icon: 'class_priest', color: '#FFFFFF' },
+	32: { name: 'Death Knight', icon: 'class_deathknight', color: '#C41F3A' },
 	64: { name: 'Shaman', icon: 'class_shaman', color: '#0070DE' },
 	128: { name: 'Mage', icon: 'class_mage', color: '#40C7EB' },
 	256: { name: 'Warlock', icon: 'class_warlock', color: '#8787ED' },

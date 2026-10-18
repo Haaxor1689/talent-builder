@@ -100,7 +100,7 @@ const SaveDialog = () => {
 						router.push(
 							newVisibility
 								? `/trees/${newSlug ?? newId}`
-								: `/local?tree=${newId}`
+								: `/trees/local?tree=${newId}`
 						);
 						reset(tree, { keepDefaultValues: false });
 						closeDialog({ currentTarget });

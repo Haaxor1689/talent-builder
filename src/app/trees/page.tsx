@@ -8,7 +8,8 @@ import TextButton from '#components/styled/TextButton.tsx';
 
 export const metadata: Metadata = {
 	title: 'Talent Trees',
-	description: 'Browse public custom talent trees'
+	description: 'Browse public custom talent trees',
+	alternates: { canonical: '/trees' }
 };
 
 const Page = () => (

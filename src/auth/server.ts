@@ -1,12 +1,14 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { revalidateTag } from 'next/cache';
 import { headers } from 'next/headers';
 import { cache } from 'react';
 import { z } from 'zod';
 
 import { env } from '#env.js';
+import { missingTag } from '#server/cacheTags.ts';
 import { db } from '#server/db/index.ts';
-import { UserRoles } from '#server/db/schema.ts';
+import { type UserRole, UserRoles } from '#server/db/schema.ts';
 
 export const auth = betterAuth({
 	baseURL: env.DEPLOY_URL,
@@ -14,6 +16,19 @@ export const auth = betterAuth({
 	user: {
 		additionalFields: {
 			role: { type: UserRoles, defaultValue: 'user', input: false }
+		}
+	},
+	databaseHooks: {
+		user: {
+			create: {
+				after: async user => {
+					revalidateTag(missingTag('users', user.id), { expire: 0 });
+					revalidateTag(`users:id:${user.id}`, { expire: 0 });
+				}
+			},
+			update: {
+				after: async user => revalidateTag(`users:id:${user.id}`, { expire: 0 })
+			}
 		}
 	},
 	socialProviders: {
@@ -27,7 +42,7 @@ export const auth = betterAuth({
 				email: profile.email,
 				emailVerified: profile.verified,
 				image: `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.webp`,
-				role: await getDiscordRole(profile.id)
+				role: await getUserRole(profile.id)
 			})
 		}
 	}
@@ -55,4 +70,13 @@ const getDiscordRole = async (userId: string) => {
 	} catch {
 		return 'user';
 	}
+};
+
+const getUserRole = async (userId: string): Promise<UserRole> => {
+	const [discordRole, kofi] = await Promise.all([
+		getDiscordRole(userId),
+		db.query.kofiSupporters.findFirst({ where: { discordId: userId } })
+	]);
+	if (discordRole !== 'user') return discordRole;
+	return kofi ? 'supporter' : 'user';
 };

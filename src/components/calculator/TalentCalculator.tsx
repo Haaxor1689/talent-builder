@@ -3,7 +3,7 @@
 import dedent from 'dedent';
 import { BookOpenText } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
-import { useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 
 import VersionPicker from '#components/form/VersionPicker.tsx';
@@ -50,9 +50,11 @@ const PointsSpent = () => {
 
 type Props = {
 	urlBase?: string;
+	classIds?: readonly number[];
 	values?: Partial<BuildForm>;
 	trees: [TalentForm?, TalentForm?, TalentForm?];
 	isNew?: boolean;
+	footer?: ReactNode;
 };
 
 const calculatorInstructionsText = dedent`
@@ -77,7 +79,14 @@ As you make changes, the calculator will automatically update the URL to reflect
 Signed in users can also save build templates. All saved builds are public and can be found in your profile. You can also clone and modify existing builds from other users.
 `;
 
-const TalentCalculator = ({ urlBase, trees, isNew, values }: Props) => {
+const TalentCalculator = ({
+	urlBase,
+	classIds,
+	trees,
+	isNew,
+	values,
+	footer
+}: Props) => {
 	const searchParams = useSearchParams();
 	const defaultValues = useMemo(() => {
 		const search = CalculatorParams.safeParse(
@@ -101,7 +110,9 @@ const TalentCalculator = ({ urlBase, trees, isNew, values }: Props) => {
 	return (
 		<FormProvider {...formProps}>
 			<UrlSync values={values} />
-			{urlBase && <ClassCalculatorsLinks urlBase={urlBase} />}
+			{urlBase && (
+				<ClassCalculatorsLinks urlBase={urlBase} classIds={classIds} />
+			)}
 			<form className="haax-surface-3">
 				<div className="flex grow flex-wrap items-center gap-3">
 					<ClassPicker
@@ -135,7 +146,15 @@ const TalentCalculator = ({ urlBase, trees, isNew, values }: Props) => {
 				</ScrollArea>
 
 				<Actions trees={trees} isNew={isNew} />
+
+				{footer && (
+					<>
+						<hr />
+						{footer}
+					</>
+				)}
 			</form>
+
 			<CollapsibleSection
 				title={
 					<>

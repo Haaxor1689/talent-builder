@@ -1,6 +1,7 @@
 import { cacheLife, cacheTag } from 'next/cache';
 import { z } from 'zod';
 
+import { missingTag, tagDependencies, treeTags } from '#server/cacheTags.ts';
 import { db } from '#server/db/index.ts';
 import { serverFunction } from '#server/helpers.ts';
 import { TalentForm } from '#server/schemas.ts';
@@ -22,7 +23,8 @@ export const getTalentTree = serverFunction({
 			})
 			.then(tree => (tree ? TalentForm.parse(tree) : undefined));
 
-		if (r) cacheTag('talentTrees', `talentTrees:id:${r.id}`);
+		if (r) tagDependencies(treeTags(r));
+		else cacheTag(missingTag('talentTrees', input.slugOrId));
 		return r;
 	}
 });

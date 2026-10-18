@@ -1,12 +1,13 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 
 import { useSession } from '#auth/client.ts';
-import ClassCalculatorsLinks from '#components/calculator/ClassCalculatorsLinks.tsx';
 import IconPicker from '#components/form/IconPicker.tsx';
 import Input from '#components/form/Input.tsx';
+import SpellIcon from '#components/styled/SpellIcon.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
 import TreeGridItem from '#components/styled/TreeGridItem.tsx';
 import { UserAvatar, UserRoleText } from '#components/styled/User.tsx';
@@ -21,6 +22,7 @@ import {
 	zodResolver
 } from '#utils/index.ts';
 
+import CollectionNotes from './CollectionNotes';
 import DeleteDialog from './DeleteDialog';
 import SaveDialog from './SaveDialog';
 
@@ -57,112 +59,138 @@ const CollectionPage = ({ defaultValues, trees }: Props) => {
 
 	return (
 		<FormProvider {...form}>
-			<div className="haax-surface-3 flex-row flex-wrap items-center justify-center gap-2">
-				<IconPicker name="icon" disabled={!editable} />
-				<Input
-					placeholder="No tree name..."
-					{...form.register('name', nullableInput)}
-					disabled={!editable}
-					className="min-w-64 shrink grow [&_input]:text-3xl"
-				/>
-				{defaultValues.createdBy && (
-					<div className="flex grow items-center gap-1.5">
-						<span className="mr-2">by</span>
-						<TextButton
-							icon={<UserAvatar image={defaultValues.createdBy.image} />}
-							type="link"
-							href={`/profile/${defaultValues.createdById}`}
-							className="p-0!"
-						>
-							<UserRoleText role={defaultValues.createdBy.role}>
-								{defaultValues.createdBy.name}
-							</UserRoleText>
-						</TextButton>
-					</div>
-				)}
-				{editable && (
-					<>
-						<SaveDialog />
-						<DeleteDialog />
-					</>
-				)}
+			<div className="haax-surface-3 flex-col">
+				<div className="flex flex-wrap items-center justify-center gap-2">
+					<IconPicker name="icon" disabled={!editable} />
+					<Input
+						placeholder="No tree name..."
+						{...form.register('name', nullableInput)}
+						disabled={!editable}
+						className="min-w-64 shrink grow [&_input]:text-3xl"
+					/>
+					{defaultValues.createdBy && (
+						<div className="flex grow items-center gap-1.5">
+							<span className="mr-2">by</span>
+							<TextButton
+								icon={<UserAvatar image={defaultValues.createdBy.image} />}
+								type="link"
+								href={`/profile/${defaultValues.createdById}`}
+								className="p-0!"
+							>
+								<UserRoleText role={defaultValues.createdBy.role}>
+									{defaultValues.createdBy.name}
+								</UserRoleText>
+							</TextButton>
+						</div>
+					)}
+					{editable && (
+						<>
+							<SaveDialog />
+							<DeleteDialog />
+						</>
+					)}
+				</div>
+				<hr />
+				<CollectionNotes editable={editable} />
 			</div>
-
-			<h2 className="-mb-3 haax-color text-center md:text-left">
-				Talent calculators:
-			</h2>
-			<ClassCalculatorsLinks
-				urlBase={`/collections/${defaultValues.slug ?? defaultValues.id}/`}
-			/>
 
 			<h2 className="-mb-3 haax-color text-center md:text-left">
 				Class trees:
 			</h2>
-			<div className="haax-surface-3 grid gap-3 md:grid-cols-3">
+			<div className="haax-surface-3 grid gap-3 md:grid-cols-[auto_1fr_1fr_1fr]">
 				{classOrder.flatMap(classId => {
 					const classTrees = [0, 1, 2].map(tab =>
 						assigned.get(`${classId}:${tab}`)
 					);
 					const classInfo = maskToClass(classId);
-					return classTrees.map((tree, tab) => (
-						<div
-							key={`${classId}:${tab}`}
-							onDragOver={e => {
-								if (!editable) return;
-								e.preventDefault();
-							}}
-							onDrop={e => {
-								if (!editable || !dragging) return;
-								e.preventDefault();
-								const treeId = e.dataTransfer.getData('text/plain');
-
-								const newAssignedTrees = { ...assignedTrees };
-								const key = Object.entries(assignedTrees).find(
-									([_, id]) => id === treeId
-								)?.[0];
-								if (key) delete newAssignedTrees[key];
-
-								form.setValue('assignedTrees', {
-									...newAssignedTrees,
-									[`${classId}:${tab}`]: treeId
-								});
-								setDragging(false);
-							}}
-							className="relative inline min-h-20 items-center"
+					const hasTrees = classTrees.some(Boolean);
+					const calculatorContent = classInfo && (
+						<>
+							<SpellIcon icon={classInfo.icon} className="size-12" />
+							<span style={{ color: classInfo.color }}>{classInfo.name}</span>
+						</>
+					);
+					const calculatorLink = hasTrees ? (
+						<Link
+							key={`${classId}:calculator`}
+							href={`/collections/${defaultValues.slug ?? defaultValues.id}/${classInfo?.name.toLocaleLowerCase().replaceAll(' ', '-')}`}
+							title={`Open ${classInfo?.name ?? classId} talent calculator`}
+							className="flex flex-col items-center justify-center gap-1 p-4 pb-2 hocus:haax-highlight"
 						>
-							{!tree ? (
-								<div className="flex h-full items-center justify-center text-center text-sm text-blue-gray">
-									No {classInfo?.name ?? classId} tab {tab + 1} tree
-								</div>
-							) : (
-								<TreeGridItem
-									item={tree}
-									href={`/trees/${tree.slug ?? tree.id}`}
-									label={`Open ${classInfo?.name ?? classId} tab ${tab + 1}`}
-									hideTooltip={!!dragging}
-									onDragStart={e => {
-										e.stopPropagation();
-										if (!editable || !tree) {
-											e.preventDefault();
-											return;
-										}
-
-										setDragging(true);
-										e.dataTransfer.setData('text/plain', tree.id);
-										e.dataTransfer.setDragImage(e.currentTarget, 0, 0);
-										window.addEventListener(
-											'dragend',
-											() => setDragging(false),
-											{ once: true }
-										);
-									}}
-								/>
-							)}
-							{dragging && (
-								<div className="pointer-events-none absolute inset-0 border-2 border-dashed border-blue-gray/50" />
-							)}
+							{calculatorContent}
+						</Link>
+					) : (
+						<div
+							key={`${classId}:calculator`}
+							aria-disabled
+							title={`No ${classInfo?.name ?? classId} trees assigned`}
+							className="flex cursor-not-allowed flex-col items-center justify-center gap-1 p-4 pb-2 opacity-40 grayscale"
+						>
+							{calculatorContent}
 						</div>
-					));
+					);
+					return [
+						calculatorLink,
+						...classTrees.map((tree, tab) => (
+							<div
+								key={`${classId}:${tab}`}
+								onDragOver={e => {
+									if (!editable) return;
+									e.preventDefault();
+								}}
+								onDrop={e => {
+									if (!editable || !dragging) return;
+									e.preventDefault();
+									const treeId = e.dataTransfer.getData('text/plain');
+
+									const newAssignedTrees = { ...assignedTrees };
+									const key = Object.entries(assignedTrees).find(
+										([_, id]) => id === treeId
+									)?.[0];
+									if (key) delete newAssignedTrees[key];
+
+									form.setValue('assignedTrees', {
+										...newAssignedTrees,
+										[`${classId}:${tab}`]: treeId
+									});
+									setDragging(false);
+								}}
+								className="relative inline min-h-20 items-center"
+							>
+								{!tree ? (
+									<div className="flex h-full items-center justify-center text-center text-sm text-blue-gray">
+										No {classInfo?.name ?? classId} tab {tab + 1} tree
+									</div>
+								) : (
+									<TreeGridItem
+										item={tree}
+										href={`/trees/${tree.slug ?? tree.id}`}
+										label={`Open ${classInfo?.name ?? classId} tab ${tab + 1}`}
+										hideTooltip={!!dragging}
+										onDragStart={e => {
+											e.stopPropagation();
+											if (!editable || !tree) {
+												e.preventDefault();
+												return;
+											}
+
+											setDragging(true);
+											e.dataTransfer.setData('text/plain', tree.id);
+											e.dataTransfer.setDragImage(e.currentTarget, 0, 0);
+											window.addEventListener(
+												'dragend',
+												() => setDragging(false),
+												{ once: true }
+											);
+										}}
+									/>
+								)}
+								{dragging && (
+									<div className="pointer-events-none absolute inset-0 border-2 border-dashed border-blue-gray/50" />
+								)}
+							</div>
+						))
+					];
 				})}
 			</div>
 

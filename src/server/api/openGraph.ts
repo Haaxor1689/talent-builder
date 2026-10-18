@@ -2,26 +2,33 @@ import 'server-only';
 import { cacheLife, cacheTag } from 'next/cache';
 import { z } from 'zod';
 
+import { missingTag, tagDependencies, treeTags } from '#server/cacheTags.ts';
 import { db } from '#server/db/index.ts';
 import { serverFunction } from '#server/helpers.ts';
 
-import { createdBy } from '.';
+import { createdBy, slugOrId } from '.';
 
 export const getOgInfo = serverFunction({
 	input: z.object({ id: z.string() }),
 	query: async input => {
 		'use cache';
 		cacheLife('weeks');
-		cacheTag('talentTrees', `talentTrees:id:${input.id}`);
+		cacheTag('talentTrees');
 
 		const talentTree = await db.query.talentTrees.findFirst({
-			where: { id: input.id },
+			where: slugOrId(input.id),
 			with: createdBy
 		});
 
-		if (!talentTree) return null;
+		if (!talentTree) {
+			cacheTag(missingTag('talentTrees', input.id));
+			return null;
+		}
+		tagDependencies(treeTags(talentTree));
 
 		return {
+			id: talentTree.id,
+			slug: talentTree.slug,
 			icon: talentTree.icon,
 			name: talentTree.name,
 			createdBy: talentTree.createdBy
