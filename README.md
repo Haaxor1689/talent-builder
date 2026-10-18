@@ -59,6 +59,7 @@ Required variables (see .env.example):
 - AUTH_DISCORD_ID
 - AUTH_DISCORD_SECRET
 - DISCORD_BOT_TOKEN
+- KOFI_VERIFICATION_TOKEN
 - DEPLOY_URL
 
 Notes:

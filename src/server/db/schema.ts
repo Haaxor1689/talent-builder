@@ -91,6 +91,11 @@ export const verification = sqliteTable(
 	]
 );
 
+export const kofiSupporters = sqliteTable('kofiSupporter', {
+	discordId: text('discordId').primaryKey(),
+	createdAt: integer('createdAt', { mode: 'timestamp' }).notNull()
+});
+
 // Content tables
 
 export const ItemVisibility = ['public', 'private'] as const;
