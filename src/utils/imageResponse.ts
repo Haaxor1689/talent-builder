@@ -1,6 +1,5 @@
 import { ImageResponse } from 'next/og';
 import { type ReactElement } from 'react';
-import sharp from 'sharp';
 
 import { env } from '#env.js';
 
@@ -59,6 +58,7 @@ export const randomBackground = async (): Promise<string | undefined> => {
 	const img = source[Math.floor(Math.random() * source.length)];
 	if (!img) return undefined;
 
+	const { default: sharp } = await import('sharp');
 	const imgResponse = await fetch(img);
 	const imgBuffer = await imgResponse.arrayBuffer();
 
@@ -84,6 +84,8 @@ export const randomBackground = async (): Promise<string | undefined> => {
 };
 
 export const imageResponse = async (content: ReactElement) => {
+	const { default: sharp } = await import('sharp');
+
 	// Font
 	const fontinSans = await fetch(
 		`${env.DEPLOY_URL}/FontinSans-Regular.otf`
