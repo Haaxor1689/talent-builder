@@ -114,8 +114,6 @@ export const talentTrees = sqliteTable(
 			.notNull(),
 		notes: text('notes'),
 		class: integer('class').default(0).notNull(),
-		// TODO: remove
-		index: integer('index').default(0).notNull(),
 		icon: text('icon', { length: 255 })
 			.default('inv_misc_questionmark')
 			.notNull(),
