@@ -8,14 +8,14 @@ import CollectionGridItem from '#components/styled/CollectionGridItem.tsx';
 import TextButton from '#components/styled/TextButton.tsx';
 import TreeGridItem from '#components/styled/TreeGridItem.tsx';
 import { UserAvatar, UserRoleText } from '#components/styled/User.tsx';
-import { getUser } from '#server/api/users.ts';
+import { getUserProfile } from '#server/api/users.ts';
 import { invoke } from '#utils/index.ts';
 
 type Props = { id: string };
 
 const ProfilePage = async ({ id }: Props) => {
 	const [user, session] = await Promise.all([
-		invoke(getUser({ id })),
+		invoke(getUserProfile({ id })),
 		getSession()
 	]);
 

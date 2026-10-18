@@ -6,6 +6,7 @@ import { cache } from 'react';
 import { z } from 'zod';
 
 import { env } from '#env.js';
+import { missingTag } from '#server/cacheTags.ts';
 import { db } from '#server/db/index.ts';
 import { type UserRole, UserRoles } from '#server/db/schema.ts';
 
@@ -19,6 +20,12 @@ export const auth = betterAuth({
 	},
 	databaseHooks: {
 		user: {
+			create: {
+				after: async user => {
+					revalidateTag(missingTag('users', user.id), { expire: 0 });
+					revalidateTag(`users:id:${user.id}`, { expire: 0 });
+				}
+			},
 			update: {
 				after: async user => revalidateTag(`users:id:${user.id}`, { expire: 0 })
 			}

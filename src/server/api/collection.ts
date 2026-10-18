@@ -1,6 +1,12 @@
 import { cacheLife, cacheTag } from 'next/cache';
 import { z } from 'zod';
 
+import {
+	collectionTags,
+	missingTag,
+	tagDependencies,
+	treeTags
+} from '#server/cacheTags.ts';
 import { db } from '#server/db/index.ts';
 import { serverFunction } from '#server/helpers.ts';
 import { TalentForm } from '#server/schemas.ts';
@@ -11,7 +17,7 @@ import { columns, createdBy, getUser, slugOrId } from '.';
 const findCollectionByIdOrSlug = (value: string) =>
 	db.query.collections.findFirst({
 		where: slugOrId(value),
-		...columns('id', 'assignedTrees')
+		...columns('id', 'assignedTrees', 'createdById')
 	});
 
 export const getCollectionTree = serverFunction({
@@ -27,13 +33,19 @@ export const getCollectionTree = serverFunction({
 		const key = `${input.class}:${input.index}`;
 
 		const collection = await findCollectionByIdOrSlug(input.collection);
-		if (!collection?.assignedTrees[key]) return undefined;
-
-		cacheTag('collections', `collections:id:${collection.id}`);
+		if (!collection) {
+			cacheTag(missingTag('collections', input.collection));
+			return undefined;
+		}
+		tagDependencies(collectionTags(collection));
+		const treeId = collection.assignedTrees[key];
+		if (!treeId) return undefined;
 
 		const tree = await db.query.talentTrees.findFirst({
-			where: { id: collection.assignedTrees[key] }
+			where: { id: treeId }
 		});
+		if (tree) tagDependencies(treeTags(tree));
+		else cacheTag(missingTag('talentTrees', treeId));
 		return tree ? TalentForm.parse(tree) : undefined;
 	},
 	transform: async tree => {
@@ -52,7 +64,8 @@ export const getCollection = serverFunction({
 			where: slugOrId(input.slugOrId),
 			with: createdBy
 		});
-		if (r) cacheTag('collections', `collections:id:${r.id}`);
+		if (r) tagDependencies(collectionTags(r));
+		else cacheTag(missingTag('collections', input.slugOrId));
 		return r;
 	},
 	transform: async collection => {
@@ -69,18 +82,27 @@ export const getCollectionTrees = serverFunction({
 		cacheLife('weeks');
 
 		const collection = await findCollectionByIdOrSlug(input.slugOrId);
-		if (!collection) return [];
+		if (!collection) {
+			cacheTag(missingTag('collections', input.slugOrId));
+			return [];
+		}
+		tagDependencies(collectionTags(collection));
 
-		cacheTag('collections', `collections:id:${collection.id}`);
-
-		return await db.query.collectionTrees
-			.findMany({
-				where: { collectionId: collection.id },
-				with: { tree: { with: createdBy } }
-			})
-			.then(items =>
-				items.filter(item => item.tree).map(item => TalentForm.parse(item.tree))
+		const items = await db.query.collectionTrees.findMany({
+			where: { collectionId: collection.id },
+			with: { tree: { with: createdBy } }
+		});
+		for (const item of items) {
+			cacheTag(
+				`collections:id:${item.collectionId}`,
+				`talentTrees:id:${item.treeId}`
 			);
+			if (item.tree) tagDependencies(treeTags(item.tree));
+			else cacheTag(missingTag('talentTrees', item.treeId));
+		}
+		return items
+			.filter(item => item.tree)
+			.map(item => TalentForm.parse(item.tree));
 	},
 	transform: async items => {
 		const user = await getUser();

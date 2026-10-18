@@ -2,6 +2,7 @@ import 'server-only';
 import { cacheLife, cacheTag } from 'next/cache';
 import { z } from 'zod';
 
+import { missingTag, tagDependencies, treeTags } from '#server/cacheTags.ts';
 import { db } from '#server/db/index.ts';
 import { serverFunction } from '#server/helpers.ts';
 
@@ -19,8 +20,11 @@ export const getOgInfo = serverFunction({
 			with: createdBy
 		});
 
-		if (!talentTree) return null;
-		cacheTag(`talentTrees:id:${talentTree.id}`);
+		if (!talentTree) {
+			cacheTag(missingTag('talentTrees', input.id));
+			return null;
+		}
+		tagDependencies(treeTags(talentTree));
 
 		return {
 			id: talentTree.id,
