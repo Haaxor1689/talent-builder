@@ -1,5 +1,6 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { revalidateTag } from 'next/cache';
 import { headers } from 'next/headers';
 import { cache } from 'react';
 import { z } from 'zod';
@@ -14,6 +15,13 @@ export const auth = betterAuth({
 	user: {
 		additionalFields: {
 			role: { type: UserRoles, defaultValue: 'user', input: false }
+		}
+	},
+	databaseHooks: {
+		user: {
+			update: {
+				after: async user => revalidateTag(`users:id:${user.id}`, { expire: 0 })
+			}
 		}
 	},
 	socialProviders: {
